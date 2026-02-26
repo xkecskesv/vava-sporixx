@@ -1,1 +1,0 @@
-package sk.sporixx.model;
