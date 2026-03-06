@@ -69,8 +69,13 @@ Zakladny root package:
 - `Goal`
 - `User`
 - `Category`
+- `RecurringItem`
+- `BudgetTemplate`
+- `EmergencyFund`
+- `MonthlyOverview` (volitelne/DTO)
+- `Money` (volitelne/typ pre amount+currency)
 
-Zatial jednoduche datove objekty, ktore budu neskor rozsirovane o dalsie atributy podla potrieb aplikacie- dohodnutie na meetingu
+Zatial jednoduche datove objekty, ktore budu neskor rozsirovane o dalsie atributy podla potrieb aplikacie - dohodnutie na meetingu
 
 ---
 
@@ -81,6 +86,12 @@ Zatial jednoduche datove objekty, ktore budu neskor rozsirovane o dalsie atribut
 - `GoalService`
 - `StatisticsService`
 - `LoanCalculatorService`
+- `CategoryService`
+- `RecurringItemService`
+- `CurrencyService`
+- `BalanceService`
+- `BudgetTemplateService`
+- `EmergencyFundService`
 
 Tieto interfacy predstavuju rozhranie biznis vrstvy, ktore bude volat UI vrstva
 
@@ -93,6 +104,9 @@ Tieto interfacy predstavuju rozhranie biznis vrstvy, ktore bude volat UI vrstva
 - `BudgetRepository`
 - `GoalRepository`
 - `CategoryRepository`
+- `RecurringItemRepository`
+- `BudgetTemplateRepository`
+- `EmergencyFundRepository`
 
 Tieto interfacy predstavuju rozhranie datovej vrstvy, ktore bude volat Service vrstva
 
@@ -121,3 +135,22 @@ Pouzivatel prida vydavok "Jedlo" 10 EUR.
 
 4) Model (`sk.sporixx.model`)
 - `Transaction` je cisty datovy objekt, ktory sa prenasa medzi vrstvami
+
+---
+
+## Mapovanie funkcionalit na modely / service / repository (kostra)
+
+```text
+Funkcionalita | Modely (model) | Service (service) | Repository (repository)
+---------------------------------------------------------------------------
+Pridavanie prijmov a vydavkov | Transaction, Category, User | TransactionService, CategoryService | TransactionRepository, CategoryRepository, UserRepository
+Sledovanie teoretickeho zostatku | Transaction, Money (volitelne) | BalanceService, StatisticsService | TransactionRepository
+Kategorizacia + default kategorie | Category, Transaction | CategoryService, TransactionService | CategoryRepository, TransactionRepository
+Vytvorenie vlastnych kategorii | Category, User | CategoryService | CategoryRepository, UserRepository
+Upcoming payments (bliziace sa platby) | RecurringItem, Transaction | RecurringItemService | RecurringItemRepository, TransactionRepository
+Prehlady mesiac/rok (income vs expense, per-category) | MonthlyOverview (volitelne), Transaction, Category | StatisticsService, BalanceService | TransactionRepository, CategoryRepository
+Budget templates (50/30/20, zero-based...) | BudgetTemplate | BudgetTemplateService | BudgetTemplateRepository (ak sa bude ukladat, inak netreba)
+Opakovane platby (recurring) | RecurringItem | RecurringItemService | RecurringItemRepository
+Sledovanie cashflow | Transaction | BalanceService, StatisticsService | TransactionRepository
+Zmena currency (multi-currency) | Money (volitelne), Transaction, User | CurrencyService | (zatial bez DB, neskor podla potreby)
+Emergency fund tracker | EmergencyFund | EmergencyFundService, BudgetService | EmergencyFundRepository
