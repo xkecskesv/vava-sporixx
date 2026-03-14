@@ -1,0 +1,63 @@
+INSERT INTO currencies (code, name, symbol) VALUES
+('EUR', 'Euro', '€'),
+('USD', 'US Dollar', '$'),
+('GBP', 'British Pound', '£'),
+('CZK', 'Česká koruna', 'Kč'),
+('PLN', 'Polski Złoty', 'zł');
+
+INSERT INTO regions (locale_code, currency_id, decimal_separator, thousands_separator, date_format, time_format)
+VALUES
+
+('sk_SK', 1, ',', ' ', '%d.%m.%Y', '%H:%M:%S'),
+('en_US', 2, '.', ',', '%m/%d/%Y', '%I:%M:%S %p'),
+('en_GB', 3, '.', ',', '%d/%m/%Y', '%H:%M:%S'),
+('pl_PL', 5, ',', ' ', '%d.%m.%Y', '%H:%M:%S'),
+('de_DE', 1, ',', '.', '%d.%m.%Y', '%H:%M:%S');
+
+
+INSERT INTO exchange_rates (base_currency_code, target_currency_code, rate) VALUES
+('EUR', 'USD', 1.16),
+('EUR', 'GBP', 0.87),
+('EUR', 'CZK', 24.42),
+('EUR', 'PLN', 4.28),
+
+
+('USD', 'EUR', 0.87),
+('USD', 'GBP', 0.75),
+('USD', 'CZK', 21.14),
+('USD', 'PLN', 3.70),
+
+
+('GBP', 'EUR', 1.15),
+('GBP', 'USD', 1.32),
+('GBP', 'CZK', 28.18),
+('GBP', 'PLN', 4.96),
+
+
+('CZK', 'EUR', 0.041),
+('CZK', 'USD', 0.047),
+('CZK', 'GBP', 0.035),
+('CZK', 'PLN', 0.18),
+
+
+('PLN', 'EUR', 0.23),
+('PLN', 'USD', 0.27),
+('PLN', 'GBP', 0.2),
+('PLN', 'CZK', 5.7);
+
+INSERT INTO categories (name) VALUES ('food'), ('car'), ('entertainment'), ('Living');
+INSERT INTO transaction_type (name) VALUES ('Income'), ('Expense'), ('Savings'),('Invest'); ----
+INSERT INTO transaction_status (name) VALUES ('Completed'), ('Pending');
+
+INSERT INTO budget_templates (name,needs,wants,saving, description) VALUES
+('Pravidlo 50/30/20',50,30,20, 'Ideálne pre začiatočníkov: 50% potreby, 30% chcenie, 20% úspory.'),
+('Pravidlo 70/20/10',70,20,10, 'Pre tých, ktorí majú vyššie životné náklady: 70% potreby, 20% úspory, 10% chcenie.'),
+('Pay Yourself First (60/40)',60,40,0, 'Agresívne sporenie: 40% ide okamžite na úspory a investície.');
+
+INSERT INTO spending_classification (name) VALUES
+('Needs'),
+('Wants'),
+('Savings');
+
+
+
