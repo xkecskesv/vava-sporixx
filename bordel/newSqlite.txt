@@ -34,10 +34,10 @@ CREATE TABLE regions (
 
 
 CREATE TABLE exchange_rates (
-    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     base_currency_code       TEXT NOT NULL,
     target_currency_code     TEXT NOT NULL,
-    rate                REAL NOT NULL,
+    rate                    REAL NOT NULL,
     captured_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (base_currency_code) REFERENCES currencies(code) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -79,10 +79,11 @@ CREATE TABLE account_access (
 
 CREATE TABLE categories ( --jedlo, auto, zábava, subscriptions, oblečenie, utilities
   id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id               INTEGER NOT NULL,
-  name                  TEXT NOT NULL UNIQUE,
+  user_id               INTEGER,
+  name                  TEXT NOT NULL,
   created_at            DATETIME DEFAULT CURRENT_TIMESTAMP,
 
+  UNIQUE(user_id, name),
   FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -97,15 +98,15 @@ CREATE TABLE transaction_status (
 CREATE TABLE transactions (
     id                          INTEGER PRIMARY KEY AUTOINCREMENT,
     account_id                  INTEGER NOT NULL,
-    category_id                 INTEGER NOT NULL,
-    status_id                   INTEGER NOT NULL,
 
-    transaction_type_id         INTEGER NOT NULL,
+    name                        TEXT NOT NULL,
+    category_id                 INTEGER NOT NULL,
     spending_classification_id  INTEGER NOT NULL,
+    transaction_type_id         INTEGER NOT NULL,
     amount                      REAL NOT NULL CHECK (amount >= 0),
 
 
-    description                 TEXT,
+    status_id                   INTEGER NOT NULL,
     transaction_date            DATETIME NOT NULL,
     created_at                  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
