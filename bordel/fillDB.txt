@@ -46,18 +46,48 @@ INSERT INTO exchange_rates (base_currency_code, target_currency_code, rate) VALU
 ('PLN', 'CZK', 5.7);
 
 INSERT INTO categories (name) VALUES ('food'), ('car'), ('entertainment'), ('Living');
+INSERT INTO budget_categories (name) VALUES ('food'), ('rent'), ('transport'), ('utilities'),('other');
+
 INSERT INTO transaction_type (name) VALUES ('Income'), ('Expense'), ('Savings'),('Invest'); ----
 INSERT INTO transaction_status (name) VALUES ('Completed'), ('Pending');
 
-INSERT INTO budget_templates (name,needs,wants,saving, description) VALUES
-('Pravidlo 50/30/20',50,30,20, 'Ideálne pre začiatočníkov: 50% potreby, 30% chcenie, 20% úspory.'),
-('Pravidlo 70/20/10',70,20,10, 'Pre tých, ktorí majú vyššie životné náklady: 70% potreby, 20% úspory, 10% chcenie.'),
-('Pay Yourself First (60/40)',60,40,0, 'Agresívne sporenie: 40% ide okamžite na úspory a investície.');
+
 
 INSERT INTO spending_classification (name) VALUES
 ('Needs'),
 ('Wants'),
 ('Savings');
+
+INSERT INTO milestones (badge_name,rank,xp) VALUES
+('Saving Master','starter',10),
+('Budget Keeper','starter',10),
+('Investor','starter',10),
+('Smart Spender','starter',10),
+
+('Saving Master','bronze',20),
+('Budget Keeper','bronze',20),
+('Investor','bronze',20),
+('Smart Spender','bronze',20),
+
+('Saving Master','silver',30),
+('Budget Keeper','silver',30),
+('Investor','silver',30),
+('Smart Spender','silver',30),
+
+('Saving Master','gold',40),
+('Budget Keeper','gold',40),
+('Investor','gold',40),
+('Smart Spender','gold',40),
+
+('Saving Master','platinum',69),
+('Budget Keeper','platinum',69),
+('Investor','platinum',69),
+('Smart Spender','platinum',69),
+
+('Saving Master','diamond',420),
+('Budget Keeper','diamond',420),
+('Investor','diamond',420),
+('Smart Spender','diamond',420);
 
 
 

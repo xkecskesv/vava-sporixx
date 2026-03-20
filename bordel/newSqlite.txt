@@ -7,8 +7,32 @@ CREATE TABLE users (
     password_hash     TEXT NOT NULL,
     first_name        TEXT NOT NULL,
     last_name         TEXT NOT NULL,
+
+    photo_path        TEXT,
+    gender            TEXT NOT NULL CHECK ( gender IN ('M','F','ONHSR' )),
+
+
+    saving_xp         REAL NOT NULL DEFAULT 0.0,
+    budget_xp         REAL NOT NULL DEFAULT 0.0,
+    investor_xp       REAL NOT NULL DEFAULT 0.0,
+    spender_xp        REAL NOT NULL DEFAULT 0.0,
+
+    saving_level      INTEGER NOT NULL CHECK ( saving_level IN (0,1,2,3,4,5)) DEFAULT 0,
+    budget_level      INTEGER NOT NULL CHECK ( budget_level IN (0,1,2,3,4,5)) DEFAULT 0,
+    investor_level    INTEGER NOT NULL CHECK ( investor_level IN (0,1,2,3,4,5)) DEFAULT 0,
+    spender_level     INTEGER NOT NULL CHECK ( spender_level IN (0,1,2,3,4,5)) DEFAULT 0,
+
+    created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+);
+
+CREATE TABLE milestones(
+    badge_name        TEXT NOT NULL CHECK ( rank IN ('Saving Master','Budget Keeper','Investor','Smart Spender')),
+    rank              TEXT NOT NULL CHECK ( rank IN ('starter','bronze','silver','gold','platinum','diamond')) ,
+    xp                INTEGER NOT NULL,
     created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 CREATE TABLE currencies (
