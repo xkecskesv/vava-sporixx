@@ -27,7 +27,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE milestones(
-    badge_name        TEXT NOT NULL CHECK ( rank IN ('Saving Master','Budget Keeper','Investor','Smart Spender')),
+    badge_name        TEXT NOT NULL CHECK ( badge_name IN ('Saving Master','Budget Keeper','Investor','Smart Spender')),
     rank              TEXT NOT NULL CHECK ( rank IN ('starter','bronze','silver','gold','platinum','diamond')) ,
     xp                INTEGER NOT NULL,
     created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -72,19 +72,29 @@ CREATE TABLE exchange_rates (
 
 
 CREATE TABLE accounts (
-    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-    owner_user_id         INTEGER NOT NULL,
-    region_id             INTEGER NOT NULL,
-    account_name          TEXT NOT NULL,
-    default_currency_code TEXT NOT NULL,
-    initial_balance         REAL NOT NULL DEFAULT 0.0,
-    current_balance         REAL NOT NULL DEFAULT 0.0,
-    is_active             INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
-    created_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                          INTEGER PRIMARY KEY AUTOINCREMENT,
+    owner_user_id               INTEGER NOT NULL,
+    region_id                   INTEGER NOT NULL,
+    account_type_id             TEXT NOT NULL,
+    default_currency_code       TEXT NOT NULL,
+    initial_balance             REAL NOT NULL DEFAULT 0.0,
+    current_balance             REAL NOT NULL DEFAULT 0.0,
+    is_active                   INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+    created_at                  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (owner_user_id, account_type_id),
 
     FOREIGN KEY (owner_user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (region_id) REFERENCES regions(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    FOREIGN KEY (default_currency_code) REFERENCES currencies(code) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY (default_currency_code) REFERENCES currencies(code) ON UPDATE CASCADE ON DELETE RESTRICT,
+    FOREIGN KEY (account_type_id) REFERENCES account_types(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE account_types(
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL,
+    description     TEXT,
+    created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -111,6 +121,11 @@ CREATE TABLE categories ( --jedlo, auto, zábava, subscriptions, oblečenie, uti
   FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE budget_categories ( --food,rent, transport,utilities,other
+  id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+  name                  TEXT NOT NULL,
+  created_at            DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE transaction_status (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,11 +139,11 @@ CREATE TABLE transactions (
     account_id                  INTEGER NOT NULL,
 
     name                        TEXT NOT NULL,
-    category_id                 INTEGER NOT NULL,
-    spending_classification_id  INTEGER NOT NULL,
-    transaction_type_id         INTEGER NOT NULL,
-    amount                      REAL NOT NULL CHECK (amount >= 0),
+    category_id                 INTEGER NOT NULL, --clothing, paycheck...
+    spending_classification_id  INTEGER,          --need/want
+    transaction_type_id         INTEGER NOT NULL, --INCOME/expense
 
+    amount                      REAL NOT NULL CHECK (amount >= 0),
 
     status_id                   INTEGER NOT NULL,
     transaction_date            DATETIME NOT NULL,
@@ -139,6 +154,7 @@ CREATE TABLE transactions (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (status_id) REFERENCES transaction_status(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (spending_classification_id) REFERENCES  spending_classification(id) ON UPDATE CASCADE ON DELETE RESTRICT
+
 );
 
 
@@ -150,7 +166,7 @@ CREATE TABLE transaction_type ( -- income,expense-------------------------------
 );
 
 
-CREATE TABLE spending_classification( --needs needs wants invest ...
+CREATE TABLE spending_classification( --needs wants invest ...
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL UNIQUE,
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -163,8 +179,8 @@ CREATE TABLE recurring_rules (
     category_id                 INTEGER NOT NULL,
 
     status_id                   INTEGER NOT NULL,
-    transaction_type_id         INTEGER NOT NULL,
-    spending_classification_id  INTEGER NOT NULL,
+    transaction_type_id         INTEGER NOT NULL, --INCOME/expense
+    spending_classification_id  INTEGER NOT NULL, --need/want
 
     amount                      REAL NOT NULL CHECK (amount >= 0),
 
@@ -191,11 +207,12 @@ CREATE TABLE recurring_rules (
 );
 
 
-CREATE TABLE saving_goals (
+
+CREATE TABLE saving_goals ( -- definuje target napr 20000 auto
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
     account_id        INTEGER NOT NULL,
     name              TEXT NOT NULL,
-    goal_type         TEXT NOT NULL,
+    goal_type_id      INTEGER NOT NULL ,
     target_amount     REAL NOT NULL CHECK (target_amount > 0),
     current_amount    REAL NOT NULL DEFAULT 0 CHECK (current_amount >= 0),
     target_date       DATETIME,
@@ -203,24 +220,25 @@ CREATE TABLE saving_goals (
     is_active         INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
     created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (account_id) REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (goal_type_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 
-CREATE TABLE saving_goal_contributions (
-    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    saving_goal_id      INTEGER NOT NULL,
-    transaction_id      INTEGER NOT NULL,
-    amount              REAL NOT NULL CHECK (amount > 0),
-    contribution_date   DATETIME NOT NULL,
-    created_at          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE saving_goal_contributions ( --jednotlive vklady k targetu
+id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+saving_goal_id      INTEGER NOT NULL,
+transaction_id      INTEGER NOT NULL,
+amount              REAL NOT NULL CHECK (amount > 0),
+contribution_date   DATETIME NOT NULL,
+created_at          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (saving_goal_id) REFERENCES saving_goals(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON UPDATE CASCADE ON DELETE CASCADE
+FOREIGN KEY (saving_goal_id) REFERENCES saving_goals(id) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
-CREATE TABLE saving_milestones (
+CREATE TABLE saving_milestones ( --ciastkove milniki v saving idk ci je treba
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
     saving_goal_id    INTEGER NOT NULL,
     label             TEXT NOT NULL,
@@ -231,47 +249,42 @@ CREATE TABLE saving_milestones (
 );
 
 
-CREATE TABLE budget_templates (
-    id                INTEGER PRIMARY KEY AUTOINCREMENT,
-    name              TEXT NOT NULL UNIQUE,
-    user_id           INTEGER,
-
-    needs             REAL NOT NULL CHECK (needs >= 0),
-    wants             REAL NOT NULL CHECK (wants >= 0),
-    saving            REAL NOT NULL CHECK (saving >= 0),
-
-    description       TEXT,
-    created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-
-    CONSTRAINT check_total_percentage CHECK (needs + wants + saving <= 100.0)
-);
 
 
 CREATE TABLE user_budgets (
-    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-    account_id            INTEGER NOT NULL,
-    budget_template_id    INTEGER NOT NULL,
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id                 INTEGER NOT NULL,
 
-    period_type           TEXT NOT NULL,
-    start_date            DATETIME NOT NULL,
-    end_date              DATETIME,
-    is_active             INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
-    created_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (account_id) REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (budget_template_id) REFERENCES budget_templates(id) ON UPDATE CASCADE ON DELETE RESTRICT
+    monthly_income          REAL NOT NULL CHECK (monthly_income >= 0),
+    food                    REAL NOT NULL CHECK (food >= 0),
+    rent                    REAL NOT NULL CHECK (rent >= 0),
+    transport               REAL NOT NULL CHECK (transport >= 0),
+    utilities               REAL NOT NULL CHECK (utilities >= 0),
+    other                   REAL NOT NULL CHECK (other >= 0),
+
+    essential_expenses      REAL NOT NULL CHECK (essential_expenses >= 0),
+    emergency_fund          REAL NOT NULL CHECK (emergency_fund >= 0),
+    savings                 REAL NOT NULL CHECK (savings >= 0),
+    to_invest               REAL NOT NULL CHECK (to_invest >= 0),
+    fun_money               REAL NOT NULL CHECK (fun_money >= 0),
+
+    minimal_emergency_fund  REAL NOT NULL CHECK (minimal_emergency_fund >= 0),
+    optimal_emergency_fund  REAL NOT NULL CHECK (optimal_emergency_fund >= 0),
+
+
+
+    period_type             TEXT NOT NULL,
+    start_date              DATETIME,
+    end_date                DATETIME,
+
+    is_active               INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+    created_at              DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+
+    CONSTRAINT check_total_percentage CHECK (essential_expenses + emergency_fund + savings + to_invest + fun_money <= 100.0)
 );
 
 
-CREATE TABLE financial_scores (
-    id                INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id           INTEGER NOT NULL,
-    score_value       REAL NOT NULL,
-    calculated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    period_start      DATETIME NOT NULL,
-    period_end        DATETIME NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
-);
