@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="500.0" prefWidth="800.0">
+         <children>
+            <VBox prefHeight="500.0" prefWidth="450.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label text="Be smart with your money." />
+               </children>
+            </VBox>
+            <VBox prefHeight="500.0" prefWidth="350.0">
+               <children>
+                  <Label text="Welcome Back" />
+                  <Label text="Log in to your account" />
+                  <Label text="E-mail" />
+                  <TextField />
+                  <Label text="Password" />
+                  <PasswordField />
+                  <Button mnemonicParsing="false" text="Log in" />
+                  <Label text="Create a New Account" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</StackPane>
