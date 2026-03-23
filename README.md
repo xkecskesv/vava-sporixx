@@ -1,64 +1,156 @@
-# Šporixx
-Desktopová aplikácia na správu osobných financií.
-Vyvinutá v rámci predmetu VAVA 2026, STU FIIT.
+# Architektura
+
+## 3-vrstvova architektura
+
+### 1) UI vrstva (Presentation)
+- Obsahuje obrazovky, formulare, tlacidla, tabulky a obsluhu udalosti (kliknutia)
+- Zobrazuje data pouzivatelovi a zbiera jeho vstupy
+- Neriesi databazu ani biznis pravidla - posiela poziadavky do Service vrstvy
+
+### 2) Service vrstva (Business Logic)
+- Obsahuje biznis logiku aplikacie: pravidla, vypocty, spracovanie operacii a logicke validacie
+- Koordinuje operacie medzi UI a Repository vrstvou
+- Vola Repository vrstvu pre citanie a ukladanie dat
+
+### 3) Repository vrstva (Data Access)
+- Obsahuje pristup k datam a databaze cez JDBC/SQL
+- Riesi CRUD operacie a dotazy do databazy
+- Repository vrstva neriesi UI ani biznis logiku
 
 ---
 
-## Nastavenie projektu
+## Pravidla komunikacie medzi vrstvami
 
-### Požiadavky
-- Java SE JDK 25
-- IntelliJ IDEA Ultimate
-- Maven (zabudovaný v IntelliJ)
+### Povolene
+- UI -> Service: OK
+- Service -> Repository: OK
+- Repository -> DB: OK
+- Navrat vysledkov ide naspat cez Repository -> Service -> UI
 
----
+### Zakazane
+- UI -> Repository: NIE
+- UI -> DB: NIE
+- Repository -> Service: NIE
+- Repository -> UI: NIE
 
-## Vetvy (Branch stratégia)
-
-| Vetva | Účel |
-|---|---|
-| `main` | Finálna, odovzdaná verzia |
-| `develop` | Hlavná vývojová vetva |
-| `feature/xxx` | Vývoj konkrétnej funkcie |
-
-**Nikto nepushuje priamo na `main` ani `develop`.**
-Každá zmena ide cez Pull Request.
+Povoleny tok volani je iba:
+`UI -> Service -> Repository -> DB`
 
 ---
 
-## Pravidlá code review
+## Balicky
 
-### Pred otvorením Pull Requestu
-- Kód musí byť otestovaný lokálne – aplikácia nesmie padať
-- Názov PR musí jasne popisovať čo robí, napr. `Pridanie JDBC pre transakcie`
-- PR smeruje vždy do `develop`, nikdy priamo do `main`
-- Jeden PR = jedna funkcionalita, nemiešaj viac vecí dokopy
+Zakladny root package:
+`sk.sporixx`
 
-### Počas code review
-- Každý PR musí schváliť aspoň **1 člen tímu** pred mergnutím
-- Reviewer kontroluje:
-  - Či kód funguje a dáva zmysel
-  - Či sú dodržané konvencie pomenovania (camelCase pre premenné, PascalCase pre triedy)
-  - Či nie sú public polia – všetko cez gettery/settery (alebo Lombok)
-  - Či je prítomné logovanie pri dôležitých akciách
-  - Či nie sú v kóde SQL injekcie (používať prepared statements)
-  - Či nie je zbytočne duplicitný kód (DRY princíp)
+### Core balicky
+- `sk.sporixx.ui`
+  UI vrstva - obrazovky, controllery a obsluha udalosti
 
-### Komentáre v PR
-- Komentáre píš konštruktívne – nie "toto je zle" ale "navrhoval/a by som to urobiť takto: ..."
-- Autor PR musí reagovať na každý komentár – buď opraviť alebo vysvetliť prečo nie
-- PR sa merguje až keď sú všetky komentáre vyriešené
+- `sk.sporixx.service`
+  Service vrstva - biznis logika, pravidla, vypocty, workflow
 
-### Po mergnutí
-- Feature vetva sa zmaže
-- Autor skontroluje že `develop` funguje správne po merge
+- `sk.sporixx.repository`
+  Repository vrstva - JDBC/SQL pristup do DB (CRUD, dotazy)
+
+- `sk.sporixx.model`
+  Model vrstva - datove objekty (napr. Transaction, Budget, Goal, User, Category) bez GUI a bez DB logiky
+
+### Support balicky
+- `sk.sporixx.util`
+  Pomocne utility a spolocne helpery
 
 ---
 
-## Konvencie kódu
+## Uz vytvorene modely
 
-- Jazyk kódu: **angličtina** (názvy tried, metód, premenných)
-- Komentáre: slovenčina alebo angličtina
-- Balíčky: `sk.stuba.fiit.sporixx.nazovvrstvy`
-- Na modelové triedy používať **Lombok** (@Data, @Builder...)
-- Každá vrstva v samostatnom balíčku – GUI nesmie pristupovať priamo na DB
+- `Transaction`
+- `Budget`
+- `Goal`
+- `User`
+- `Category`
+- `RecurringItem`
+- `BudgetTemplate`
+- `EmergencyFund`
+- `MonthlyOverview` (volitelne/DTO)
+- `Money` (volitelne/typ pre amount+currency)
+
+Zatial jednoduche datove objekty, ktore budu neskor rozsirovane o dalsie atributy podla potrieb aplikacie - dohodnutie na meetingu
+
+---
+
+## Vytvorene Service interfacy
+
+- `TransactionService`
+- `BudgetService`
+- `GoalService`
+- `StatisticsService`
+- `LoanCalculatorService`
+- `CategoryService`
+- `RecurringItemService`
+- `CurrencyService`
+- `BalanceService`
+- `BudgetTemplateService`
+- `EmergencyFundService`
+
+Tieto interfacy predstavuju rozhranie biznis vrstvy, ktore bude volat UI vrstva
+
+---
+
+## Aktualne vytvorene Repository interfacy
+
+- `TransactionRepository`
+- `UserRepository`
+- `BudgetRepository`
+- `GoalRepository`
+- `CategoryRepository`
+- `RecurringItemRepository`
+- `BudgetTemplateRepository`
+- `EmergencyFundRepository`
+
+Tieto interfacy predstavuju rozhranie datovej vrstvy, ktore bude volat Service vrstva
+
+---
+
+## Priklad fungovania - pridanie transakcie cez vrstvy
+
+Pouzivatel prida vydavok "Jedlo" 10 EUR.
+
+1) UI (`sk.sporixx.ui`)
+- Pouzivatel vyplni formular a klikne na "Ulozit"
+- UI vytvori objekt `Transaction`
+- UI zavola:
+  `transactionService.addTransaction(transaction)`
+
+2) Service (`sk.sporixx.service`)
+- Skontroluje pravidla (suma > 0 ...)
+- Spracuje logiku operacie
+- Zavola repository:
+  `transactionRepository.save(transaction)`
+
+3) Repository (`sk.sporixx.repository`)
+- Vykona JDBC/SQL operaciu (napr. INSERT)
+- Ulozi transakciu do databazy
+- Vrati vysledok naspat do Service vrstvy
+
+4) Model (`sk.sporixx.model`)
+- `Transaction` je cisty datovy objekt, ktory sa prenasa medzi vrstvami
+
+---
+
+## Mapovanie funkcionalit na modely / service / repository (kostra)
+
+```text
+Funkcionalita | Modely (model) | Service (service) | Repository (repository)
+---------------------------------------------------------------------------
+Pridavanie prijmov a vydavkov | Transaction, Category, User | TransactionService, CategoryService | TransactionRepository, CategoryRepository, UserRepository
+Sledovanie teoretickeho zostatku | Transaction, Money (volitelne) | BalanceService, StatisticsService | TransactionRepository
+Kategorizacia + default kategorie | Category, Transaction | CategoryService, TransactionService | CategoryRepository, TransactionRepository
+Vytvorenie vlastnych kategorii | Category, User | CategoryService | CategoryRepository, UserRepository
+Upcoming payments (bliziace sa platby) | RecurringItem, Transaction | RecurringItemService | RecurringItemRepository, TransactionRepository
+Prehlady mesiac/rok (income vs expense, per-category) | MonthlyOverview (volitelne), Transaction, Category | StatisticsService, BalanceService | TransactionRepository, CategoryRepository
+Budget templates (50/30/20, zero-based...) | BudgetTemplate | BudgetTemplateService | BudgetTemplateRepository (ak sa bude ukladat, inak netreba)
+Opakovane platby (recurring) | RecurringItem | RecurringItemService | RecurringItemRepository
+Sledovanie cashflow | Transaction | BalanceService, StatisticsService | TransactionRepository
+Zmena currency (multi-currency) | Money (volitelne), Transaction, User | CurrencyService | (zatial bez DB, neskor podla potreby)
+Emergency fund tracker | EmergencyFund | EmergencyFundService, BudgetService | EmergencyFundRepository
