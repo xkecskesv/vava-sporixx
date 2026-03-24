@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-/*DOCASNY MAIN - TREBA HO NAHRADIT*/
+/*DOCASNY MAIN - TREBA HO NAHRADIT NESKOR*/
 public class Main extends Application {
 
     @Override
@@ -18,7 +18,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login_basic.fxml"),
-                ResourceBundle.getBundle("i18n/messages", new Locale("sk"))
+                ResourceBundle.getBundle("i18n/messages", new Locale("en")) //toto menime ked chceme zmenit rec, este doladim logiku
         );
         Parent root = loader.load();
 
