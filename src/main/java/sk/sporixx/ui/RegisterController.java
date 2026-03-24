@@ -19,9 +19,10 @@ public class RegisterController {
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
+        String repeatPassword = repeatPasswordField.getText();
 
         //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
-        // TODO: userService.register(name, email, password, repeatPasswordField);
+        // TODO: userService.register(name, email, password, repeatPassword);
         //TODO: potom k tomu napisat toto: errorLabel.setText(Localization.get("error.empty.fields"));
     }
 

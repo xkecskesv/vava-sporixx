@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import sk.sporixx.util.Localization;
 
-import java.util.ResourceBundle;
 
 public class LoginController {
 
@@ -18,9 +18,40 @@ public class LoginController {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
 
-        //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
-        // TODO: authService.login(email, password);
-        //TODO: errorLabel.setText(Localization.get("error.empty.fields")); -- potom k tomu napisat toto
+        try {
+
+            // TODO: authService.login(email, password); ked mergneme a adelka prida service
+            SceneManager.switchTo("dashboard.fxml");
+
+        }catch(Exception e){
+            //service vrstva hodi exception s klucom
+            //kluc prelozime a zobrazime
+
+            String messageKey = e.getMessage();
+
+            if (messageKey != null && isValidKey(messageKey)){
+
+                errorLabel.setText(Localization.get(messageKey));
+
+            } else {
+
+                errorLabel.setText(Localization.get("error.unexpected"));
+
+            }
+
+            errorLabel.setVisible(true);
+        }
+
+    }
+
+    private boolean isValidKey(String key){
+        try{
+            Localization.get(key);
+            return true;
+
+        }catch(Exception e){
+            return false;
+        }
     }
 
     @FXML
@@ -29,7 +60,8 @@ public class LoginController {
         try {
             SceneManager.switchTo("register.fxml");
         } catch (Exception e) {
-            e.printStackTrace();
+            errorLabel.setText(Localization.get("error.unexpected"));
+            errorLabel.setVisible(true);
         }
 
     }
