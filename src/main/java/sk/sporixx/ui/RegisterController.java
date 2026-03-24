@@ -13,7 +13,6 @@ public class RegisterController {
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
-    @FXML private ResourceBundle resources;
 
     @FXML
     private void handleRegister() {
@@ -22,9 +21,8 @@ public class RegisterController {
         String password = passwordField.getText();
 
         //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
-
         // TODO: userService.register(name, email, password);
-        System.out.println("Register: " + email);
+        //TODO: potom k tomu napisat toto: errorLabel.setText(Localization.get("error.empty.fields"));
     }
 
     @FXML

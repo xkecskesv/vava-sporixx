@@ -12,7 +12,6 @@ public class LoginController {
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
-    @FXML private ResourceBundle resources;
 
     @FXML
     private void handleLogin() {
@@ -21,6 +20,7 @@ public class LoginController {
 
         //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
         // TODO: authService.login(email, password);
+        //TODO: errorLabel.setText(Localization.get("error.empty.fields")); -- potom k tomu napisat toto
     }
 
     @FXML

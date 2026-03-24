@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import sk.sporixx.ui.SceneManager;
+import sk.sporixx.util.Localization;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -21,16 +22,11 @@ public class Main extends Application {
 
         loadFonts();
 
-        ResourceBundle bundle = new PropertyResourceBundle(
-                new InputStreamReader(
-                        getClass().getResourceAsStream("/i18n/messages_sk.properties"),
-                        StandardCharsets.UTF_8
-                )
-        );
+        Localization.load("sk");
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login.fxml"),
-                bundle
+                Localization.getBundle()
         );
         Parent root = loader.load();
 
