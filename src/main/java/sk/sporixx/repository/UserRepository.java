@@ -3,18 +3,24 @@ package sk.sporixx.repository;
 import sk.sporixx.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
+/**
+ * Rozhranie pre prístup k dátam používateľov.
+ */
 public interface UserRepository {
 
-    boolean save(User user);
+    Optional<User> findByEmail(String email);
 
-    boolean update(User user);
+    Optional<User> findById(int id);
 
-    boolean deleteById(Long id);
+    User save(User user);
 
-    User findById(Long id);
+    void update(User user);
 
-    User findByUsername(String username);
+    void updatePassword(int userId, String newPasswordHash);
 
     List<User> findAll();
+
+    void deleteById(int id);
 }

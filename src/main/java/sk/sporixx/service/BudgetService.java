@@ -1,20 +1,20 @@
 package sk.sporixx.service;
 
-import sk.sporixx.model.Budget;
+import sk.sporixx.model.UserBudget;
 
 import java.util.List;
 
 public interface BudgetService {
 
-    boolean addBudget(Budget budget);
+    boolean addBudget(UserBudget userBudget);
 
-    boolean updateBudget(Budget budget);
+    boolean updateBudget(UserBudget userBudget);
 
     boolean deleteBudget(Long id);
 
-    Budget getBudgetById(Long id);
+    UserBudget getBudgetById(Long id);
 
-    List<Budget> getBudgetsByUserId(Long userId);
+    List<UserBudget> getBudgetsByUserId(Long userId);
 
-    List<Budget> getBudgetsByMonth(Long userId, String month);
+    List<UserBudget> getBudgetsByMonth(Long userId, String month);
 }

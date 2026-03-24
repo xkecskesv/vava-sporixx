@@ -10,15 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * Datový model pre používateľa.
- *
  * Mapuje sa na DB tabuľku 'users'.
- *
- * Lombok anotácie:
- * @Data             - gettery, settery, toString, equals, hashCode
- * @Builder          - User.builder().email("...").build()
- * @NoArgsConstructor - prázdny konštruktor pre JDBC mapovanie
- * @AllArgsConstructor - konštruktor so všetkými poľami
- *
  * Žiadne public polia - enkapsulácia cez Lombok @Data.
  */
 @Data
@@ -29,10 +21,13 @@ public class User {
 
     private int id;
     private String email;
-    private String nickname;
-    private int roleId;
     private String passwordHash;
-    private String firstName;
-    private String lastName;
+    private String name;
     private LocalDateTime createdAt;
+
+    private Role role;
+
+    public boolean hasRole(Role expectedRole) {
+        return this.role == expectedRole;
+    }
 }

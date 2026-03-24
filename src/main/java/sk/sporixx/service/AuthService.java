@@ -17,23 +17,15 @@ public interface AuthService {
 
     /**
      * Zaregistruje nového používateľa a vytvorí mu defaultný Main Account.
-     * @param user údaje nového používateľa
+     * @param name meno
+     * @param email email
      * @param password heslo
      * @param passwordConfirm potvrdenie hesla
      * @return vytvorený User s ID
      * @throws AuthException pri neúspešnej registrácii
      */
-    User register(User user, String password, String passwordConfirm) throws AuthException;
+    User register(String name, String email, String password, String passwordConfirm) throws AuthException;
 
     /** Odhlási aktuálneho používateľa. */
     void logout();
-
-    /**
-     * Zmení heslo používateľa.
-     * @param userId ID používateľa
-     * @param oldPassword staré heslo (na overenie)
-     * @param newPassword nové heslo
-     * @throws AuthException ak staré heslo nesedí alebo nové je slabé
-     */
-    void changePassword(int userId, String oldPassword, String newPassword) throws AuthException;
 }

@@ -24,7 +24,6 @@ public class Account {
     private String defaultCurrencyCode;
     private double initialBalance;
     private double currentBalance;
-    private boolean isActive;
     private LocalDateTime createdAt;
 
     // Konštanty pre typy účtov
