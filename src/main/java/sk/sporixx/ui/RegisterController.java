@@ -7,19 +7,21 @@ import javafx.scene.control.TextField;
 
 import java.util.ResourceBundle;
 
-public class LoginController {
+public class RegisterController {
 
+    @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private ResourceBundle resources;
 
     @FXML
-    private void handleLogin() {
+    private void handleRegister() {
+        String name = nameField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             errorLabel.setText(resources.getString("error.empty.fields"));
             errorLabel.setVisible(true);
             return;
@@ -31,18 +33,16 @@ public class LoginController {
             return;
         }
 
-        // TODO: userService.login(email, password);
-        System.out.println("Login: " + email);
+        // TODO: userService.register(name, email, password);
+        System.out.println("Register: " + email);
     }
 
     @FXML
-    private void handleNewAccount() {
-
+    private void handleHasAccount() {
         try {
-            SceneManager.switchTo("register.fxml");
+            SceneManager.switchTo("login.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

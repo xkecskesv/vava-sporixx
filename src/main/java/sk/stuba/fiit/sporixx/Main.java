@@ -5,6 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import sk.sporixx.ui.SceneManager;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -17,7 +19,7 @@ public class Main extends Application {
         loadFonts();
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/login_basic.fxml"),
+                getClass().getResource("/fxml/login.fxml"),
                 ResourceBundle.getBundle("i18n/messages", new Locale("en")) //toto menime ked chceme zmenit rec, este doladim logiku
         );
         Parent root = loader.load();
@@ -25,6 +27,7 @@ public class Main extends Application {
         Scene scene = new Scene(root, 1250, 920);
         stage.setTitle("Šporixx");
         stage.setScene(scene);
+        SceneManager.setStage(stage);
         stage.show();
     }
 
