@@ -21,17 +21,7 @@ public class RegisterController {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            errorLabel.setText(resources.getString("error.empty.fields"));
-            errorLabel.setVisible(true);
-            return;
-        }
-
-        if (!email.contains("@")) {
-            errorLabel.setText(resources.getString("error.invalid.email"));
-            errorLabel.setVisible(true);
-            return;
-        }
+        //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
 
         // TODO: userService.register(name, email, password);
         System.out.println("Register: " + email);

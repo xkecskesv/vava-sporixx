@@ -28,7 +28,7 @@ public class Main extends Application {
         stage.setTitle("Šporixx");
         stage.setScene(scene);
         SceneManager.setStage(stage);
-        stage.show();
+        stage.show(); //TODO definovat ako sa bude menit en/sk a spravit to tak, aby sa ukazovali špeciálne znaky
     }
 
     public static void main(String[] args) {

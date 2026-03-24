@@ -19,20 +19,8 @@ public class LoginController {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            errorLabel.setText(resources.getString("error.empty.fields"));
-            errorLabel.setVisible(true);
-            return;
-        }
-
-        if (!email.contains("@")) {
-            errorLabel.setText(resources.getString("error.invalid.email"));
-            errorLabel.setVisible(true);
-            return;
-        }
-
-        // TODO: userService.login(email, password);
-        System.out.println("Login: " + email);
+        //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
+        // TODO: authService.login(email, password);
     }
 
     @FXML
