@@ -5,19 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 /**
- * Datový model pre kategóriu transakcie.
+ * Datový model pre menu.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Currency {
 
     private int id;
-    private int userId;
-    private String name;
-    private LocalDateTime createdAt;
+    private String code;    // "EUR", "USD", "PLN"
+    private String name;    // "Euro", "US Dollar"
+    private String symbol;  // "€", "$"
 }
