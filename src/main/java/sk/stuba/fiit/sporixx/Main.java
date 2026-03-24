@@ -5,6 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /*DOCASNY MAIN - TREBA HO NAHRADIT*/
 public class Main extends Application {
@@ -14,7 +16,12 @@ public class Main extends Application {
 
         loadFonts();
 
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login_basic.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/login_basic.fxml"),
+                ResourceBundle.getBundle("i18n/messages", new Locale("sk"))
+        );
+        Parent root = loader.load();
+
         Scene scene = new Scene(root, 1250, 920);
         stage.setTitle("Šporixx");
         stage.setScene(scene);

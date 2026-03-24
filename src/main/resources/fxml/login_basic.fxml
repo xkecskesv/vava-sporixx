@@ -1,50 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.geometry.Insets?>
 
-
-<?import javafx.scene.image.Image?>
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-           stylesheets="@../css/styles.css"
-           styleClass="root-pane">
+<StackPane styleClass="root-pane" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.LoginController">
    <HBox styleClass="login-card">
       <VBox styleClass="blue-panel">
          <ImageView fitHeight="170" fitWidth="170" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@/assets/logos/log_in_logo.png"/>
+               <Image url="@/assets/logos/log_in_logo.png" />
             </image>
          </ImageView>
-         <Label text="Be smart with&#10;your money." styleClass="blue-panel-title">
+         <Label styleClass="blue-panel-title" text="Be smart with&#10;your money.">
             <VBox.margin>
-               <Insets top="10"/>
+               <Insets top="10" />
             </VBox.margin>
          </Label>
       </VBox>
       <VBox styleClass="form-panel">
-         <Label text="Welcome Back" styleClass="title"/>
-         <Label text="Log in to your account" styleClass="subtitle"/>
-         <Label text="E-mail" styleClass="field-label"/>
-         <TextField promptText="sample@domain.com" styleClass="input-field"/>
-         <Label text="Password" styleClass="field-label"/>
-         <PasswordField promptText="••••••••••••••••••" styleClass="input-field"/>
+         <Label styleClass="title" text="%login.title" />
+         <Label styleClass="subtitle" text="%login.subtitle" />
+         <Label styleClass="field-label" text="%login.email" />
+         <TextField fx:id="emailField" promptText="sample@domain.com" styleClass="input-field" />
+         <Label styleClass="field-label" text="%login.password" />
+         <PasswordField fx:id="passwordField" promptText="••••••••••••••••••" styleClass="input-field" />
+         <Label fx:id="errorLabel" styleClass="error-label" visible="false" />
          <HBox alignment="CENTER">
             <VBox.margin>
-               <Insets top="20"/>
+               <Insets top="20" />
             </VBox.margin>
-            <Button text="Log in" styleClass="btn-primary"/>
+            <Button fx:id="loginButton" onAction="#handleLogin" styleClass="btn-primary" text="%login.button" />
          </HBox>
          <HBox alignment="CENTER">
-            <Label text="Create a " styleClass="text-secondary"/>
-            <Hyperlink text="New Account" styleClass="link"/>
+            <Label styleClass="text-secondary" text="%login.create" />
+            <Hyperlink fx:id="newAccountLink" onAction="#handleNewAccount" styleClass="link" text="%login.newaccount" />
          </HBox>
       </VBox>
    </HBox>
