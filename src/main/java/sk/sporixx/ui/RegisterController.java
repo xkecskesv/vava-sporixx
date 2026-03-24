@@ -5,10 +5,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.util.ResourceBundle;
 
 public class RegisterController {
 
+    @FXML public PasswordField repeatPasswordField;
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
@@ -21,7 +21,7 @@ public class RegisterController {
         String password = passwordField.getText();
 
         //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
-        // TODO: userService.register(name, email, password);
+        // TODO: userService.register(name, email, password, repeatPasswordField);
         //TODO: potom k tomu napisat toto: errorLabel.setText(Localization.get("error.empty.fields"));
     }
 

@@ -29,12 +29,14 @@
       <VBox styleClass="form-panel">
          <Label styleClass="title" text="%register.title" />
          <Label styleClass="subtitle" text="%register.subtitle" />
-         <Label styleClass="field-label" text="%register.name"/>
-         <TextField fx:id="nameField" styleClass="input-field" promptText="%register.name.prompt"/>
+         <Label styleClass="field-label" text="%register.name" />
+         <TextField fx:id="nameField" promptText="%register.name.prompt" styleClass="input-field" />
          <Label styleClass="field-label" text="%login.email" />
          <TextField fx:id="emailField" promptText="sample@domain.com" styleClass="input-field" />
          <Label styleClass="field-label" text="%login.password" />
          <PasswordField fx:id="passwordField" promptText="••••••••••••••••••" styleClass="input-field" />
+         <Label styleClass="field-label" text="%register.password_confirm"/>
+         <PasswordField fx:id="repeatPasswordField" promptText="••••••••••••••••••" styleClass="input-field" />
          <Label fx:id="errorLabel" styleClass="error-label" visible="false" />
          <HBox alignment="CENTER">
             <VBox.margin>
