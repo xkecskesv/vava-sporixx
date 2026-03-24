@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import sk.sporixx.util.Localization;
 
 
 public class RegisterController {
@@ -21,9 +22,37 @@ public class RegisterController {
         String password = passwordField.getText();
         String repeatPassword = repeatPasswordField.getText();
 
-        //TODO: TU bodla toho aky mi pride exception zo service vrstvy vyhodim error label
-        // TODO: userService.register(name, email, password, repeatPassword);
-        //TODO: potom k tomu napisat toto: errorLabel.setText(Localization.get("error.empty.fields"));
+
+        try{
+
+            // TODO: userService.register(name, email, password, repeatPassword); - ked adelka prida service po mergi
+            SceneManager.switchTo("dashboard.fxml");
+
+        }catch(Exception e) {
+
+            String messageKey = e.getMessage();
+
+            if(messageKey != null && isValidKey(messageKey)) {
+                errorLabel.setText(Localization.get(messageKey));
+            } else {
+                errorLabel.setText(Localization.get("error.unexpected"));
+            }
+            errorLabel.setVisible(true);
+
+        }
+    }
+
+
+    private boolean isValidKey(String key){
+
+        try{
+
+            Localization.get(key);
+            return true;
+
+        }catch(Exception e){
+            return false;
+        }
     }
 
     @FXML
@@ -31,7 +60,8 @@ public class RegisterController {
         try {
             SceneManager.switchTo("login.fxml");
         } catch (Exception e) {
-            e.printStackTrace();
+            errorLabel.setText(Localization.get("error.unexpected"));
+            errorLabel.setVisible(true);
         }
     }
 }
