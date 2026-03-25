@@ -10,7 +10,6 @@ public interface AuthService {
      * Prihlási používateľa - overí email + heslo, nastaví session.
      * @param email emailová adresa
      * @param password heslo v čistom texte
-     * @return prihlásený User
      * @throws AuthException pri neúspešnom prihlásení
      */
     void login(String email, String password) throws AuthException;
@@ -21,7 +20,6 @@ public interface AuthService {
      * @param email email
      * @param password heslo
      * @param passwordConfirm potvrdenie hesla
-     * @return vytvorený User s ID
      * @throws AuthException pri neúspešnej registrácii
      */
     void register(String name, String email, String password, String passwordConfirm) throws AuthException;

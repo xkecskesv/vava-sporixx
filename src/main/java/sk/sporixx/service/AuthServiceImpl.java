@@ -25,7 +25,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
 
-    private static final String DEFAULT_ACCOUNT_NAME = "Main Account";
     private static final String DEFAULT_CURRENCY_CODE = "EUR";
     private static final int DEFAULT_REGION_ID = 1;
 
@@ -150,15 +149,24 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("error.unexpected", e);
         }
 
-        logger.info("User registered successfully: id={}, email={}",
-                savedUser.getId(), normalizedEmail);
+        logger.info("User registered successfully: id={}, email={}", savedUser.getId(), normalizedEmail);
 
-        // Vytvorenie defaultného Main Account
+        // Vytvorenie defaultného Main Account a Emergency Fund
         try {
             Account mainAccount = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountName(DEFAULT_ACCOUNT_NAME)
+                    .accountName(Account.MAIN_ACCOUNT)
+                    .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
+                    .initialBalance(0.0)
+                    .currentBalance(0.0)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            Account emergencyFund = Account.builder()
+                    .ownerUserId(savedUser.getId())
+                    .regionId(DEFAULT_REGION_ID)
+                    .accountName(Account.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
@@ -166,9 +174,10 @@ public class AuthServiceImpl implements AuthService {
                     .build();
 
             accountRepository.save(mainAccount);
-            logger.info("Default Main Account created for user: {}", savedUser.getId());
+            accountRepository.save(emergencyFund);
+            logger.info("Default accounts (Main Account, Emergency Fund) created for user: {}", savedUser.getId());
         } catch (Exception e) {
-            logger.error("Failed to create default account for user: {}", savedUser.getId(), e);
+            logger.error("Failed to create default accounts for user: {}", savedUser.getId(), e);
         }
     }
 

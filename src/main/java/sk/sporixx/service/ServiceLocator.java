@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import sk.sporixx.service.testovanie.TestDataInitializer;
 
 /**
- * Centralny pristupovy bod pre service vrstvu.
- * UI vrstva pristupuje k sluzbam VYLUCNE cez tuto triedu.
- * UI nikdy nevytvara service ani repository objekty priamo.
+ * Centrálny prístupový bod pre service vrstvu.
+ * UI vrstva pristupuje k službám VÝLUČNE cez túto triedu.
+ * UI nikdy nevytvára service ani repository objekty priamo.
  * Prepojenie s DB vrstvou:
  *   V metode init() staci zamenit InMemory repozitare za JDBC implementacie.
  *   Zvysok aplikacie (UI, service) sa NEMENI.
