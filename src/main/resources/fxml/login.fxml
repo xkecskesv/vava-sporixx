@@ -36,7 +36,7 @@
          <Label fx:id="errorLabel" styleClass="error-label" visible="false" />
          <HBox alignment="CENTER">
             <VBox.margin>
-               <Insets top="20" />
+               <Insets top="10" />
             </VBox.margin>
             <Button fx:id="loginButton" onAction="#handleLogin" styleClass="btn-primary" text="%login.button" />
          </HBox>
