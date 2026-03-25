@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="sidebar" stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sk.sporixx.ui.SidebarController">
+
+    <top>
+        <VBox styleClass="sidebar-top" BorderPane.alignment="CENTER">
+            <ImageView fitHeight="200" fitWidth="200" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@/assets/logos/sidebar_logo.png" />
+                </image>
+            </ImageView>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="sidebar-menu" VBox.vgrow="ALWAYS">
+            <Label styleClass="sidebar-item-active" text="Overview"/>
+            <Label styleClass="sidebar-item" text="Reports"/>
+            <VBox styleClass="sidebar-submenu">
+                <Label styleClass="sidebar-subitem" text="Income &amp; Expenses"/>
+                <Label styleClass="sidebar-subitem" text="Saving Accounts"/>
+            </VBox>
+            <Label styleClass="sidebar-item" text="Transactions"/>
+            <Label styleClass="sidebar-item" text="Budgeting"/>
+            <Label styleClass="sidebar-item" text="Management"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox styleClass="sidebar-bottom">
+            <Separator styleClass="sidebar-separator"/>
+            <VBox styleClass="sidebar-user">
+                <Label fx:id="userName" styleClass="sidebar-username" text="Marek Moško"/>
+                <Label fx:id="userRole" styleClass="sidebar-userrole" text="Financial Pro"/>
+            </VBox>
+            <Label styleClass="sidebar-item" text="Settings"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

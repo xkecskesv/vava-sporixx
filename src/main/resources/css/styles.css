@@ -99,3 +99,77 @@ Inter 27pt Bold*/
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
+
+/*Sidebar*/
+
+.sidebar {
+    -fx-background-color: #0A0A0A;
+    -fx-pref-width: 220px;
+    -fx-min-width: 220px;
+    -fx-max-width: 220px;
+}
+
+.sidebar-top {
+    -fx-padding: 24px 20px 16px 20px;
+}
+
+.sidebar-menu {
+    -fx-padding: 8px 0;
+    -fx-spacing: 4px;
+}
+
+.sidebar-item {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-text-fill: #8A8A8A;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.sidebar-item-active {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+}
+
+.sidebar-submenu {
+    -fx-padding: 0 0 0 36px;
+    -fx-spacing: 2px;
+}
+
+.sidebar-subitem {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-text-fill: #8A8A8A;
+    -fx-font-size: 13px;
+    -fx-padding: 6px 20px;
+    -fx-cursor: hand;
+}
+
+.sidebar-separator {
+    -fx-background-color: #2A2A2A;
+    -fx-padding: 0 20px;
+}
+
+.sidebar-bottom {
+    -fx-padding: 16px 0 24px 0;
+    -fx-spacing: 8px;
+}
+
+.sidebar-user {
+    -fx-padding: 8px 20px;
+    -fx-spacing: 2px;
+}
+
+.sidebar-username {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+}
+
+.sidebar-userrole {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-text-fill: #3A7DF6;
+    -fx-font-size: 12px;
+}
+

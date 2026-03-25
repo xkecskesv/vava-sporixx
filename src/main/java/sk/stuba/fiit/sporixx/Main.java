@@ -20,7 +20,7 @@ public class Main extends Application {
         Localization.load("sk");
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/login.fxml"),
+                getClass().getResource("/fxml/sidebar.fxml"),
                 Localization.getBundle()
         );
         Parent root = loader.load();
