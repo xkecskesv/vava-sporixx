@@ -18,7 +18,6 @@ public final class ValidationUtil {
      * Musí obsahovať aspoň 2 slová oddelené medzerou.
      * Každé slovo: písmená (aj diakritika).
      * Povolené: medzery, pomlčky, apostrofy.
-     * Celkovo 3-100 znakov.
      * OK:  "Adela Kudláčová", "Anna-Mária Nová", "Ján O'Brien Veľký"
      * ZLE: "Adela", "123 456"
      */
@@ -34,10 +33,6 @@ public final class ValidationUtil {
         return email != null && EMAIL_PATTERN.matcher(email.trim()).matches();
     }
 
-    public static boolean isValidPassword(String password) {
-        return password != null;
-    }
-
     /**
      * Validuje celé meno.
      * Musí obsahovať aspoň 2 slová.
@@ -46,15 +41,17 @@ public final class ValidationUtil {
      * @return true ak je platné
      */
     public static boolean isValidFullName(String fullName) {
-        if (fullName == null) {return false;}
+        if (fullName == null) {
+            return false;
+        }
 
-        String trimmed = fullName.trim();
+        String trimmed = fullName.trim().replaceAll("\\s+", " ");
         int length = trimmed.length();
 
         if (length < 3 || length > 300) {
             return false;
         }
-        return FULL_NAME_PATTERN.matcher(fullName.trim()).matches();
+        return FULL_NAME_PATTERN.matcher(trimmed).matches();
     }
 
     public static boolean isNotBlank(String value) {

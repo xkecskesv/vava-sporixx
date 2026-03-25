@@ -70,11 +70,10 @@ public class AuthServiceImpl implements AuthService {
         User user = userOptional.get();
 
         // Overenie hesla
-        //TODO: dokoncit
-        //if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
-        //    logger.warn("Login failed: wrong password for email: {}", normalizedEmail);
-        //    throw new AuthException("auth.error.invalid_credentials");
-        //}
+        if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
+            logger.warn("Login failed: wrong password for email: {}", normalizedEmail);
+            throw new AuthException("auth.error.invalid_credentials");
+        }
 
         //  Načítanie účtov
         //TODO
@@ -111,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
         validateRegistrationInput(name, email, password, passwordConfirm);
 
         String normalizedEmail = email.trim().toLowerCase();
-        String trimmedName = name.trim();
+        String trimmedName = name.trim().replaceAll("\\s+", " ");
 
         // Kontrola duplicity emailu
         //TODO
@@ -178,8 +177,7 @@ public class AuthServiceImpl implements AuthService {
     public void logout() {
         User currentUser = SessionManager.getInstance().getCurrentUser();
         if (currentUser != null) {
-            logger.info("User logging out: id={}, email={}",
-                    currentUser.getId(), currentUser.getEmail());
+            logger.info("User logging out: id={}, email={}", currentUser.getId(), currentUser.getEmail());
         }
         SessionManager.getInstance().clearSession();
         logger.info("Session cleared - user logged out");
@@ -192,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private void validateRegistrationInput(String name, String email, String password, String passwordConfirm) throws AuthException {
 
-        // Meno (celé meno v jednom poli, napr. "Adela Kudláčová")
+        // Meno (celé meno v jednom poli)
         if (!ValidationUtil.isNotBlank(name)) {
             logger.warn("Registration validation: empty name");
             throw new AuthException("auth.error.name_required");
