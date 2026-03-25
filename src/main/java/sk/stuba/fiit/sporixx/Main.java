@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.ui.SceneManager;
 import sk.sporixx.util.Localization;
 import java.io.InputStreamReader;
@@ -22,7 +23,9 @@ public class Main extends Application {
 
         loadFonts();
 
-        Localization.load("sk");
+        Localization.load("en");
+
+        ServiceLocator.init();
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login.fxml"),

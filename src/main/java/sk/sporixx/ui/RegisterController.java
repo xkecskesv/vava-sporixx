@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
 
 
@@ -25,8 +26,8 @@ public class RegisterController {
 
         try{
 
-            // TODO: userService.register(name, email, password, repeatPassword); - ked adelka prida service po mergi
-            SceneManager.switchTo("dashboard.fxml");
+            ServiceLocator.getAuthService().register(name, email, password, repeatPassword);
+            //SceneManager.switchTo("dashboard.fxml");
 
         }catch(Exception e) {
 

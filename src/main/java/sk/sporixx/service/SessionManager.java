@@ -28,7 +28,6 @@ public class SessionManager {
         return Holder.INSTANCE;
     }
 
-    // private polia - enkapsulácia
     @Getter
     private User currentUser;
     private List<Account> accounts;
@@ -53,7 +52,8 @@ public class SessionManager {
         this.accounts = new ArrayList<>();
     }
 
-    /** Vráti ID prihláseného používateľa, alebo -1 ak nikto nie je prihlásený. */
+    /** Vráti ID prihláseného používateľa, alebo -1 ak nikto nie je prihlásený.
+     */
     public int getCurrentUserId() {
         return currentUser != null ? currentUser.getId() : -1;
     }

@@ -15,12 +15,4 @@ public interface UserRepository {
     Optional<User> findById(int id);
 
     User save(User user);
-
-    void update(User user);
-
-    void updatePassword(int userId, String newPasswordHash);
-
-    List<User> findAll();
-
-    void deleteById(int id);
 }

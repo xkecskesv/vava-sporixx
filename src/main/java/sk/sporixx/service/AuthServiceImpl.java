@@ -36,11 +36,15 @@ public class AuthServiceImpl implements AuthService {
 
     //  LOGIN
     @Override
-    public User login(String email, String password) throws AuthException {
+    public void login(String email, String password) throws AuthException {
 
         logger.info("Login attempt for email: {}", email);
 
         // Validácia vstupov
+        if(!ValidationUtil.isNotBlank(email) && !ValidationUtil.isNotBlank(password)) {
+            logger.warn("Login failed: empty email and password");
+            throw new AuthException("auth.error.invalid_credentials");
+        }
         if (!ValidationUtil.isNotBlank(email)) {
             logger.warn("Login failed: empty email");
             throw new AuthException("auth.error.email_required");
@@ -95,13 +99,11 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("User logged in successfully: id={}, email={}, role={}, accounts={}",
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
-
-        return user;
     }
 
     //  REGISTER
     @Override
-    public User register(String name, String email, String password, String passwordConfirm)
+    public void register(String name, String email, String password, String passwordConfirm)
             throws AuthException {
 
         logger.info("Registration attempt for email: {}", email);
@@ -124,7 +126,7 @@ public class AuthServiceImpl implements AuthService {
             throw e;
         } catch (Exception e) {
             logger.error("Database error during registration: {}", normalizedEmail, e);
-            throw new AuthException("auth.error.db_error", e);
+            throw new AuthException("error.unexpected", e);
         }
 
         // Hashovanie hesla
@@ -145,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
             savedUser = userRepository.save(user);
         } catch (Exception e) {
             logger.error("Failed to save user: {}", normalizedEmail, e);
-            throw new AuthException("auth.error.db_error", e);
+            throw new AuthException("error.unexpected", e);
         }
 
         logger.info("User registered successfully: id={}, email={}",
@@ -168,8 +170,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             logger.error("Failed to create default account for user: {}", savedUser.getId(), e);
         }
-
-        return savedUser;
     }
 
     //  LOGOUT
@@ -183,7 +183,6 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Session cleared - user logged out");
     }
 
-    //  PRIVÁTNA VALIDÁCIA (DRY)
     /**
      * Validuje vstupy pri registrácii.
      * Poradie kontrol zodpovedá poradiu polí vo formulári (meno, email, heslo, potvrdenie).
@@ -195,6 +194,12 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("Registration validation: empty name");
             throw new AuthException("auth.error.name_required");
         }
+
+        if (!name.trim().contains(" ")) {
+            logger.warn("Registration validation: only one name provided: {}", name);
+            throw new AuthException("auth.error.full_name_required");
+        }
+
         if (!ValidationUtil.isValidFullName(name)) {
             logger.warn("Registration validation: invalid name: {}", name);
             throw new AuthException("auth.error.invalid_name");

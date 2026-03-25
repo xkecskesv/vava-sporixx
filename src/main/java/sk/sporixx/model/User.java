@@ -24,7 +24,6 @@ public class User {
     private String passwordHash;
     private String name;
     private LocalDateTime createdAt;
-
     private Role role;
 
     public boolean hasRole(Role expectedRole) {
