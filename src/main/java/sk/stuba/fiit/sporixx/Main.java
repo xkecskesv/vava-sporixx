@@ -8,11 +8,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import sk.sporixx.ui.SceneManager;
 import sk.sporixx.util.Localization;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 /*DOCASNY MAIN - TREBA HO NAHRADIT NESKOR*/
 public class Main extends Application {
