@@ -10,7 +10,6 @@ public final class ValidationUtil {
 
     /**
      * Email – stredne striktná validácia (bez verifikačného mailu).
-     *
      * Pravidlá:
      *  - lokálna časť: a-z, A-Z, 0-9, znaky . _ % + -  (max 64 znakov)
      *  - žiadne dve bodky za sebou, nezačína ani nekončí bodkou
