@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
 
 
@@ -20,8 +21,8 @@ public class LoginController {
 
         try {
 
-            // TODO: authService.login(email, password); ked mergneme a adelka prida service
-            SceneManager.switchTo("dashboard.fxml");
+            ServiceLocator.getAuthService().login(email, password);
+            //SceneManager.switchTo("dashboard.fxml");
 
         }catch(Exception e){
             //service vrstva hodi exception s klucom
@@ -34,7 +35,6 @@ public class LoginController {
                 errorLabel.setText(Localization.get(messageKey));
 
             } else {
-
                 errorLabel.setText(Localization.get("error.unexpected"));
 
             }

@@ -1,0 +1,41 @@
+package sk.sporixx.service.testovanie;
+
+import sk.sporixx.model.Account;
+import sk.sporixx.repository.AccountRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+/**
+ * In-memory implementácia AccountRepository pre testovanie bez DB.
+ * Dáta sa držia v List-e v pamäti - po reštarte aplikácie sa stratia.
+ * Nahradiť JDBC implementáciou keď bude hotová DB vrstva.
+ */
+public class InMemoryAccountRepository implements AccountRepository {
+
+    private final List<Account> accounts = new ArrayList<>();
+    private final AtomicInteger idGenerator = new AtomicInteger(0);
+
+    public List<Account> findByOwnerUserId(int userId) {
+        return accounts.stream()
+                .filter(a -> a.getOwnerUserId() == userId)
+                .collect(Collectors.toList());
+    }
+
+    public Account save(Account account) {
+        if (account.getId() == 0) {
+            account.setId(idGenerator.incrementAndGet());
+        }
+        accounts.add(account);
+        return account;
+    }
+
+    /**
+     * Pomocná metóda - vráti všetky účty (pre debug/testovanie).
+     */
+    public List<Account> findAll() {
+        return new ArrayList<>(accounts);
+    }
+}

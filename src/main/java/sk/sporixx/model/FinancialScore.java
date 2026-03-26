@@ -5,19 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Datový model pre kategóriu transakcie.
+ * Datový model pre finančné skóre používateľa.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class FinancialScore {
 
     private int id;
     private int userId;
-    private String name;
-    private LocalDateTime createdAt;
+    private double scoreValue;
+    private LocalDateTime calculatedAt;
+    private LocalDate periodStart;
+    private LocalDate periodEnd;
 }

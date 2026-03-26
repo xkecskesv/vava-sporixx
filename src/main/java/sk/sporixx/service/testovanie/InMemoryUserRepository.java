@@ -1,0 +1,47 @@
+package sk.sporixx.service.testovanie;
+
+import sk.sporixx.model.User;
+import sk.sporixx.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * In-memory implementácia UserRepository pre testovanie bez DB.
+ * Dáta sa držia v List-e v pamäti - po reštarte aplikácie sa stratia.
+ * Nahradiť JDBC implementáciou keď bude hotová DB vrstva.
+ */
+public class InMemoryUserRepository implements UserRepository {
+
+    private final List<User> users = new ArrayList<>();
+    private final AtomicInteger idGenerator = new AtomicInteger(0);
+
+    public Optional<User> findByEmail(String email) {
+        return users.stream()
+                .filter(u -> u.getEmail().equalsIgnoreCase(email))
+                .findFirst();
+    }
+
+    public Optional<User> findById(int id) {
+        return users.stream()
+                .filter(u -> u.getId() == id)
+                .findFirst();
+    }
+
+    public User save(User user) {
+        if (user.getId() == 0) {
+            user.setId(idGenerator.incrementAndGet());
+        }
+        users.add(user);
+        return user;
+    }
+
+    /**
+     * Pomocná metóda - vráti všetkých používateľov (pre debug/testovanie).
+     */
+    public List<User> findAll() {
+        return new ArrayList<>(users);
+    }
+}
