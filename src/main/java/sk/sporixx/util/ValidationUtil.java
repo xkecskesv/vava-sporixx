@@ -41,6 +41,13 @@ public final class ValidationUtil {
             "^\\p{L}[\\p{L}'-]*(?:\\s+\\p{L}[\\p{L}'-]*)+$"
     );
 
+    /** Heslo: minimálne 8 znakov */
+    private static final int MIN_PASSWORD_LENGTH = 8;
+
+    public static boolean isValidPassword(String password) {
+        return password != null && password.length() >= MIN_PASSWORD_LENGTH;
+    }
+
     private ValidationUtil() {
         throw new UnsupportedOperationException("Utility class");
     }

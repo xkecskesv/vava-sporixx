@@ -229,6 +229,10 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("Registration validation: empty password");
             throw new AuthException("auth.error.password_required");
         }
+        if (!ValidationUtil.isValidPassword(password)) {
+            logger.warn("Registration validation: password too short");
+            throw new AuthException("auth.error.password_too_short");
+        }
 
         // Zhoda hesiel
         if (!password.equals(passwordConfirm)) {
