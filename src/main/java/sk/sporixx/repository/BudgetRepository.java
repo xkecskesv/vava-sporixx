@@ -1,20 +1,20 @@
 package sk.sporixx.repository;
 
-import sk.sporixx.model.Budget;
+import sk.sporixx.model.UserBudget;
 
 import java.util.List;
 
 public interface BudgetRepository {
 
-    boolean save(Budget budget);
+    boolean save(UserBudget userBudget);
 
-    boolean update(Budget budget);
+    boolean update(UserBudget userBudget);
 
     boolean deleteById(Long id);
 
-    Budget findById(Long id);
+    UserBudget findById(Long id);
 
-    List<Budget> findByUserId(Long userId);
+    List<UserBudget> findByUserId(Long userId);
 
-    List<Budget> findByUserIdAndMonth(Long userId, String month);
+    List<UserBudget> findByUserIdAndMonth(Long userId, String month);
 }
