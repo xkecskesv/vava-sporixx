@@ -38,7 +38,7 @@ public final class ValidationUtil {
      *  - ZLE: "Ján Pavol Peter", "123", ""
      */
     private static final Pattern NAME_PART_PATTERN = Pattern.compile(
-            "^\\p{L}[\\p{L}'-]*(?:\\s\\p{L}[\\p{L}'-]*)?$"
+            "^\\p{L}[\\p{L}']*(?:[-\\s]\\p{L}[\\p{L}']*)?$"
     );
 
     /**
@@ -47,7 +47,9 @@ public final class ValidationUtil {
      */
     public static String normalizeName(String name) {
         if (name == null) return "";
-        return name.trim().replaceAll("\\s+", " ");
+        return name.trim()
+                .replaceAll("\\s*-+\\s*", "-")   // viaceré pomlčky + okolité medzery - jedna pomlčka
+                .replaceAll("\\s+", " ");          // viaceré medzery - jedna
     }
 
     /**
