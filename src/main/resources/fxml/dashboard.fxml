@@ -4,6 +4,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/25"
@@ -19,7 +23,55 @@
     <center>
         <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" hbarPolicy="NEVER">
             <VBox styleClass="dashboard-content" spacing="24">
-                <Label text="Overview" styleClass="dashboard-title"/>
+
+                <!-- Header -->
+                <VBox styleClass="dashboard-header" spacing="4">
+                    <Label text="Overview" styleClass="dashboard-title"/>
+                    <Label text="Total balance" styleClass="dashboard-subtitle"/>
+                    <Label fx:id="totalBalance" text="€124,256.53" styleClass="dashboard-balance"/>
+                </VBox>
+
+                <!-- Account karty -->
+                <HBox styleClass="accounts-container" spacing="16" alignment="CENTER_LEFT">
+
+                    <!-- Aktívna karta -->
+                    <VBox fx:id="cardMain" styleClass="account-card-active" spacing="8" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Main Account" styleClass="account-card-title-active"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                                <image><Image url="@/assets/icons/main_acc_icon.png"/></image>
+                            </ImageView>
+                        </HBox>
+                        <Label text="Everyday account" styleClass="account-card-desc-active"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Label text="€4,101.32" styleClass="account-card-amount-active"/>
+                    </VBox>
+
+                    <!-- Neaktívna karta -->
+                    <VBox fx:id="cardEmergency" styleClass="account-card" spacing="8" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Emergency Fund" styleClass="account-card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                                <image><Image url="@/assets/icons/emergency_fund_icon.png"/></image>
+                            </ImageView>
+                        </HBox>
+                        <Label text="Use in need" styleClass="account-card-desc"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Label text="€31,487.28" styleClass="account-card-amount"/>
+                    </VBox>
+
+                    <!-- Pridať účet -->
+                    <VBox styleClass="account-card-add" alignment="CENTER" HBox.hgrow="ALWAYS">
+                        <Label text="+" styleClass="account-card-plus"/>
+                    </VBox>
+
+                    <!-- Šípka -->
+                    <VBox styleClass="accounts-arrow" alignment="CENTER">
+                        <Label text="›" styleClass="accounts-arrow-icon"/>
+                    </VBox>
+                </HBox>
             </VBox>
         </ScrollPane>
     </center>

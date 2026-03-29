@@ -220,3 +220,139 @@ Inter 27pt Bold*/
     -fx-font-size: 28px;
     -fx-text-fill: #0A0A0A;
 }
+
+.dashboard-subtitle {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #8A8A8A;
+    -fx-padding: 8px 0 0 0;
+}
+
+.dashboard-balance {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 32px;
+    -fx-text-fill: #0A0A0A;
+}
+
+/* Account karty */
+.dashboard-accounts-wrapper {
+    -fx-padding: 0;
+}
+
+.accounts-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.accounts-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.accounts-container {
+    -fx-padding: 4px;
+}
+
+.account-card-active {
+    -fx-background-color: linear-gradient(to bottom left, #3A7DF6, #1A3A8F);
+    -fx-background-radius: 16px;
+    -fx-padding: 20px;
+    -fx-cursor: hand;
+    -fx-min-height: 180;
+    -fx-effect: dropshadow(gaussian, rgba(58,125,246,0.3), 12, 0, 0, 4);
+}
+
+.account-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+    -fx-cursor: hand;
+    -fx-min-height: 180;
+}
+
+.account-card-add {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-border-style: dashed;
+    -fx-padding: 20px;
+    -fx-cursor: hand;
+    -fx-min-height: 180;
+}
+
+.account-card-title-active {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 15px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.account-card-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 15px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.account-card-desc-active {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255,255,255,0.7);
+}
+
+.account-card-desc {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #8A8A8A;
+}
+
+.account-card-amount-active {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 22px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.account-card-amount {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 22px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.account-card-plus {
+    -fx-font-size: 36px;
+    -fx-text-fill: #8A8A8A;
+}
+
+/* Šípka */
+.accounts-arrow {
+    -fx-padding: 0 8px;
+    -fx-cursor: hand;
+}
+
+.accounts-arrow-icon {
+    -fx-font-size: 28px;
+    -fx-text-fill: #8A8A8A;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20px;
+    -fx-padding: 4px 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 20px;
+}
+
+/* Indikátor modra bodka */
+.accounts-indicator {
+    -fx-padding: 8px 0 0 0;
+    -fx-alignment: center;
+}
+
+.indicator-dot-active {
+    -fx-background-color: #3A7DF6;
+    -fx-background-radius: 4px;
+    -fx-pref-width: 8;
+    -fx-pref-height: 8;
+    -fx-min-width: 8;
+    -fx-min-height: 8;
+}
