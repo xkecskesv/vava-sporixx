@@ -110,7 +110,8 @@ Inter 27pt Bold*/
 }
 
 .sidebar-top {
-    -fx-padding: 24px 20px 16px 20px;
+    -fx-padding: 16px 20px 8px 20px;
+    -fx-alignment: center-left;
 }
 
 .sidebar-menu {
@@ -118,23 +119,38 @@ Inter 27pt Bold*/
     -fx-spacing: 4px;
 }
 
-.sidebar-item {
+/* Riadok menu položky (HBox s ikonou + label) */
+.sidebar-item-row {
+    -fx-padding: 10px 20px;
+    -fx-background-color: transparent;
+}
+
+/* Aktívny riadok (HBox) */
+.sidebar-item-active {
+    -fx-padding: 10px 20px;
+}
+
+/* Label texty v menu riadkoch */
+.sidebar-item-label {
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-text-fill: #8A8A8A;
     -fx-font-size: 14px;
-    -fx-padding: 10px 20px;
     -fx-cursor: hand;
 }
 
-.sidebar-item-active {
+.sidebar-item-label:hover {
+    -fx-text-fill: #FFFFFF;
+}
+
+.sidebar-item-label-active {
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
-    -fx-padding: 10px 20px;
 }
 
+/* Submenu */
 .sidebar-submenu {
-    -fx-padding: 0 0 0 36px;
+    -fx-padding: 0 0 0 50px;
     -fx-spacing: 2px;
 }
 
@@ -146,16 +162,23 @@ Inter 27pt Bold*/
     -fx-cursor: hand;
 }
 
+.sidebar-subitem:hover {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Separator */
 .sidebar-separator {
     -fx-background-color: #2A2A2A;
     -fx-padding: 0 20px;
 }
 
+/* Bottom sekcia */
 .sidebar-bottom {
     -fx-padding: 16px 0 24px 0;
     -fx-spacing: 8px;
 }
 
+/* User info s avatarom */
 .sidebar-user {
     -fx-padding: 8px 20px;
     -fx-spacing: 2px;
@@ -173,3 +196,27 @@ Inter 27pt Bold*/
     -fx-font-size: 12px;
 }
 
+
+/*DASHBOARD*/
+
+
+.dashboard-scroll {
+    -fx-background: #FAFCFE;
+    -fx-background-color: #FAFCFE;
+    -fx-border-color: transparent;
+}
+
+.dashboard-scroll .viewport {
+    -fx-background-color: #FAFCFE;
+}
+
+.dashboard-content {
+    -fx-padding: 40px 32px;
+    -fx-background-color: #FAFCFE;
+}
+
+.dashboard-title {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 28px;
+    -fx-text-fill: #0A0A0A;
+}

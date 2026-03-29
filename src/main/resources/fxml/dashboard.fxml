@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+
+<BorderPane stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sk.sporixx.ui.DashboardController">
+
+    <!-- Sidebar -->
+    <left>
+        <fx:include source="sidebar.fxml"/>
+    </left>
+
+    <!-- Hlavný obsah -->
+    <center>
+        <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" hbarPolicy="NEVER">
+            <VBox styleClass="dashboard-content" spacing="24">
+                <Label text="Overview" styleClass="dashboard-title"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
