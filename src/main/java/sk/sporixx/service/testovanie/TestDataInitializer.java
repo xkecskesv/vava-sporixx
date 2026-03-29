@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.sporixx.model.Account;
+import sk.sporixx.model.AccountType;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.service.AuthService;
@@ -95,7 +96,7 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.MAIN_ACCOUNT)
+                .accountTypeId(AccountType.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(3_000.00)
                 .currentBalance(4_101.32)
@@ -107,7 +108,7 @@ public class TestDataInitializer {
         Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.EMERGENCY_FUND)
+                .accountTypeId(AccountType.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(20_000.00)
                 .currentBalance(31_487.28)
@@ -119,7 +120,7 @@ public class TestDataInitializer {
         Account savingAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.SAVING_ACCOUNT)
+                .accountTypeId(AccountType.SAVING_ACCOUNT)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(50_000.00)
                 .currentBalance(88_667.93)
@@ -148,7 +149,7 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedAdmin.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.MAIN_ACCOUNT)
+                .accountTypeId(AccountType.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(0.0)
                 .currentBalance(0.0)
@@ -178,7 +179,7 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.MAIN_ACCOUNT)
+                .accountTypeId(AccountType.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(10_000.00)
                 .currentBalance(12_500.00)
@@ -190,7 +191,7 @@ public class TestDataInitializer {
         Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(Account.EMERGENCY_FUND)
+                .accountTypeId(AccountType.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
                 .initialBalance(5_000.00)
                 .currentBalance(5_000.00)

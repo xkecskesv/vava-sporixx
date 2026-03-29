@@ -29,6 +29,9 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder.Default
+    private boolean isActive = true;
+
+    @Builder.Default
     private Role role = Role.USER;
 
     public boolean hasRole(Role expectedRole) {

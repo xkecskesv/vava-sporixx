@@ -42,6 +42,15 @@ public final class ValidationUtil {
     );
 
     /**
+     * Kontroluje či meno/priezvisko obsahuje len povolené znaky.
+     * Povolené: písmená (vrátane diakritiky), medzery, pomlčky, apostrofy.
+     * ZLE: číslice, špeciálne znaky (@, #, !, atď.)
+     */
+    private static final Pattern NAME_CHARACTERS_PATTERN = Pattern.compile(
+            "^[\\p{L}\\s'\\-]+$"
+    );
+
+    /**
      * Normalizuje časť mena – oreže whitespace, zloží viaceré medzery na jednu.
      * "  Anna  Mária  " → "Anna Mária"
      */
@@ -60,6 +69,11 @@ public final class ValidationUtil {
         String normalized = normalizeName(name);
         if (normalized.isEmpty() || normalized.length() > 100) return false;
         return NAME_PART_PATTERN.matcher(normalized).matches();
+    }
+
+    public static boolean isValidNamePartCharacters(String name) {
+        if (name == null || name.trim().isEmpty()) return false;
+        return NAME_CHARACTERS_PATTERN.matcher(name.trim()).matches();
     }
 
     /** Heslo: minimálne 8 znakov */

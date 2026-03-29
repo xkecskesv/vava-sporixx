@@ -24,15 +24,11 @@ public class Account {
     private String defaultCurrencyCode;
     private double initialBalance;
     private double currentBalance;
+    private String description;
     private boolean isActive;
     private LocalDateTime createdAt;
 
-    // Konštanty pre typy účtov
-    public static final int MAIN_ACCOUNT = 1;
-    public static final int EMERGENCY_FUND = 2;
-    public static final int SAVING_ACCOUNT = 3;
-
-    public boolean isMainAccount()     { return this.accountTypeId == MAIN_ACCOUNT; }
-    public boolean isEmergencyFund()   { return this.accountTypeId == EMERGENCY_FUND; }
-    public boolean isSavingAccount()   { return this.accountTypeId == SAVING_ACCOUNT; }
+    public boolean isMainAccount()     { return this.accountTypeId == AccountType.MAIN_ACCOUNT; }
+    public boolean isEmergencyFund()   { return this.accountTypeId == AccountType.EMERGENCY_FUND; }
+    public boolean isSavingAccount()   { return this.accountTypeId == AccountType.SAVING_ACCOUNT; }
 }

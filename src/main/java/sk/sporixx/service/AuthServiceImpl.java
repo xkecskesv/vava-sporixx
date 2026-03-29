@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.sporixx.model.Account;
+import sk.sporixx.model.AccountType;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountRepository;
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         String normalizedEmail = email.trim().toLowerCase();
 
         // Nájdenie používateľa v DB
-        //TODO: dokoncit ked bude hotova backend vrstva
+        //TODO: dokoncit ked bude hotova DB vrstva
         Optional<User> userOptional;
         try {
             userOptional = userRepository.findByEmail(normalizedEmail);
@@ -76,6 +77,11 @@ public class AuthServiceImpl implements AuthService {
         if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             logger.warn("Login failed: wrong password for email: {}", normalizedEmail);
             throw new AuthException("auth.error.invalid_credentials");
+        }
+
+        if (!user.isActive()) {
+            logger.warn("Login failed: account inactive for email: {}", normalizedEmail);
+            throw new AuthException("auth.error.account_inactive");
         }
 
         //  Načítanie účtov
@@ -138,6 +144,8 @@ public class AuthServiceImpl implements AuthService {
                 .lastName(normalizedLast)
                 .email(normalizedEmail)
                 .passwordHash(passwordHash)
+                .role(Role.USER)
+                .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -152,12 +160,12 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("User registered successfully: id={}, email={}", savedUser.getId(), normalizedEmail);
 
-        // Vytvorenie defaultného Main Account a Emergency Fund
+        // Vytvorenie defaultného Main Account and Emergency Fund
         try {
             Account mainAccount = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountTypeId(Account.MAIN_ACCOUNT)
+                    .accountTypeId(AccountType.MAIN_ACCOUNT)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
@@ -168,7 +176,7 @@ public class AuthServiceImpl implements AuthService {
             Account emergencyFund = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountTypeId(Account.EMERGENCY_FUND)
+                    .accountTypeId(AccountType.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
@@ -181,6 +189,16 @@ public class AuthServiceImpl implements AuthService {
             logger.info("Default accounts (Main Account, Emergency Fund) created for user: {}", savedUser.getId());
         } catch (Exception e) {
             logger.error("Failed to create default accounts for user: {}", savedUser.getId(), e);
+        }
+
+        // Auto-login po úspešnej registrácii
+        try {
+            List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
+            SessionManager.getInstance().setSession(savedUser, accounts);
+            logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
+        } catch (Exception e) {
+            logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);
+            // Registrácia prebehla úspešne, auto-login zlyhal – nevadí, používateľ sa prihlási manuálne
         }
     }
 
@@ -206,9 +224,13 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("Registration validation: empty firstName");
             throw new AuthException("auth.error.first_name_required");
         }
-        if (!ValidationUtil.isValidNamePart(firstName)) {
-            logger.warn("Registration validation: invalid firstName: {}", firstName);
+        if (!ValidationUtil.isValidNamePartCharacters(firstName)) {
+            logger.warn("Registration validation: invalid characters in firstName: {}", firstName);
             throw new AuthException("auth.error.invalid_first_name");
+        }
+        if (!ValidationUtil.isValidNamePart(firstName)) {
+            logger.warn("Registration validation: firstName too many parts: {}", firstName);
+            throw new AuthException("auth.error.first_name_too_long");
         }
 
         // lastName
@@ -216,9 +238,13 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("Registration validation: empty lastName");
             throw new AuthException("auth.error.last_name_required");
         }
-        if (!ValidationUtil.isValidNamePart(lastName)) {
-            logger.warn("Registration validation: invalid lastName: {}", lastName);
+        if (!ValidationUtil.isValidNamePartCharacters(lastName)) {
+            logger.warn("Registration validation: invalid characters in lastName: {}", lastName);
             throw new AuthException("auth.error.invalid_last_name");
+        }
+        if (!ValidationUtil.isValidNamePart(lastName)) {
+            logger.warn("Registration validation: lastName too many parts: {}", lastName);
+            throw new AuthException("auth.error.last_name_too_long");
         }
 
         // Email
