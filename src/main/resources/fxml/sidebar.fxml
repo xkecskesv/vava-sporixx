@@ -6,6 +6,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane styleClass="sidebar" stylesheets="@../css/styles.css"
@@ -15,7 +17,7 @@
 
     <top>
         <VBox styleClass="sidebar-top" BorderPane.alignment="CENTER">
-            <ImageView fitHeight="200" fitWidth="200" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="60" fitWidth="150" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@/assets/logos/sidebar_logo.png" />
                 </image>
@@ -25,26 +27,82 @@
 
     <center>
         <VBox styleClass="sidebar-menu" VBox.vgrow="ALWAYS">
-            <Label styleClass="sidebar-item-active" text="Overview"/>
-            <Label styleClass="sidebar-item" text="Reports"/>
-            <VBox styleClass="sidebar-submenu">
+
+            <!-- Overview -->
+            <HBox styleClass="sidebar-item-active" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/overview_icon.png" /></image>
+                </ImageView>
+                <Label text="Overview" styleClass="sidebar-item-label-active"/>
+            </HBox>
+
+            <!-- Reports (s chevron šípkou) -->
+            <HBox fx:id="reportsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/reports_icon.png" /></image>
+                </ImageView>
+                <Label text="Reports" styleClass="sidebar-item-label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ImageView fx:id="reportsChevron" fitWidth="12" fitHeight="12" preserveRatio="true">
+                    <image><Image url="@/assets/icons/icon_chevron_right.png" /></image>
+                </ImageView>
+            </HBox>
+
+            <!-- Reports submenu (skrytý defaultne) -->
+            <VBox fx:id="reportsSubmenu" styleClass="sidebar-submenu" managed="false" visible="false">
                 <Label styleClass="sidebar-subitem" text="Income &amp; Expenses"/>
                 <Label styleClass="sidebar-subitem" text="Saving Accounts"/>
             </VBox>
-            <Label styleClass="sidebar-item" text="Transactions"/>
-            <Label styleClass="sidebar-item" text="Budgeting"/>
-            <Label styleClass="sidebar-item" text="Management"/>
+
+            <!-- Transactions -->
+            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/transaction_icon.png" /></image>
+                </ImageView>
+                <Label text="Transactions" styleClass="sidebar-item-label"/>
+            </HBox>
+
+            <!-- Budgeting -->
+            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/budgeting_icon.png" /></image>
+                </ImageView>
+                <Label text="Budgeting" styleClass="sidebar-item-label"/>
+            </HBox>
+
+            <!-- Management -->
+            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/management_icon.png" /></image>
+                </ImageView>
+                <Label text="Management" styleClass="sidebar-item-label"/>
+            </HBox>
+
         </VBox>
     </center>
 
     <bottom>
         <VBox styleClass="sidebar-bottom">
             <Separator styleClass="sidebar-separator"/>
-            <VBox styleClass="sidebar-user">
-                <Label fx:id="userName" styleClass="sidebar-username" text="Marek Moško"/>
-                <Label fx:id="userRole" styleClass="sidebar-userrole" text="Financial Pro"/>
-            </VBox>
-            <Label styleClass="sidebar-item" text="Settings"/>
+
+            <!-- User s avatarom -->
+            <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
+                <ImageView fitWidth="32" fitHeight="32" preserveRatio="true" styleClass="sidebar-avatar">
+                    <image><Image url="@/assets/icons/placeholder_photo.png" /></image>
+                </ImageView>
+                <VBox spacing="1">
+                    <Label fx:id="userName" styleClass="sidebar-username" text="Marek Moško"/>
+                    <Label fx:id="userRole" styleClass="sidebar-userrole" text="Financial Pro"/>
+                </VBox>
+            </HBox>
+
+            <!-- Settings s ikonou -->
+            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+                <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
+                    <image><Image url="@/assets/icons/settings_icon.png" /></image>
+                </ImageView>
+                <Label text="Settings" styleClass="sidebar-item-label"/>
+            </HBox>
         </VBox>
     </bottom>
 
