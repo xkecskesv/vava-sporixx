@@ -20,14 +20,19 @@ public class Account {
     private int id;
     private int ownerUserId;
     private int regionId;
-    private String accountName;
+    private int accountTypeId;
     private String defaultCurrencyCode;
     private double initialBalance;
     private double currentBalance;
+    private boolean isActive;
     private LocalDateTime createdAt;
 
     // Konštanty pre typy účtov
-    public static final String MAIN_ACCOUNT = "Main Account";
-    public static final String EMERGENCY_FUND = "Emergency Fund";
-    public static final String SAVING_ACCOUNT = "Saving Account";
+    public static final int MAIN_ACCOUNT = 1;
+    public static final int EMERGENCY_FUND = 2;
+    public static final int SAVING_ACCOUNT = 3;
+
+    public boolean isMainAccount()     { return this.accountTypeId == MAIN_ACCOUNT; }
+    public boolean isEmergencyFund()   { return this.accountTypeId == EMERGENCY_FUND; }
+    public boolean isSavingAccount()   { return this.accountTypeId == SAVING_ACCOUNT; }
 }

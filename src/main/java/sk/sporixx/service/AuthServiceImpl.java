@@ -102,16 +102,17 @@ public class AuthServiceImpl implements AuthService {
 
     //  REGISTER
     @Override
-    public void register(String name, String email, String password, String passwordConfirm)
+    public void register(String firstName, String lastName, String email, String password, String passwordConfirm)
             throws AuthException {
 
         logger.info("Registration attempt for email: {}", email);
 
         // Validácia vstupov
-        validateRegistrationInput(name, email, password, passwordConfirm);
+        validateRegistrationInput(firstName, lastName, email, password, passwordConfirm);
 
         String normalizedEmail = email.trim().toLowerCase();
-        String trimmedName = name.trim().replaceAll("\\s+", " ");
+        String normalizedFirst = ValidationUtil.normalizeName(firstName);
+        String normalizedLast = ValidationUtil.normalizeName(lastName);
 
         // Kontrola duplicity emailu
         //TODO
@@ -133,10 +134,10 @@ public class AuthServiceImpl implements AuthService {
 
         // Vytvorenie a uloženie používateľa
         User user = User.builder()
-                .name(trimmedName)
+                .firstName(normalizedFirst)
+                .lastName(normalizedLast)
                 .email(normalizedEmail)
                 .passwordHash(passwordHash)
-                .role(Role.USER)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -156,20 +157,22 @@ public class AuthServiceImpl implements AuthService {
             Account mainAccount = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountName(Account.MAIN_ACCOUNT)
+                    .accountTypeId(Account.MAIN_ACCOUNT)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
+                    .isActive(true)
                     .createdAt(LocalDateTime.now())
                     .build();
 
             Account emergencyFund = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountName(Account.EMERGENCY_FUND)
+                    .accountTypeId(Account.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
+                    .isActive(true)
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -194,24 +197,28 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * Validuje vstupy pri registrácii.
-     * Poradie kontrol zodpovedá poradiu polí vo formulári (meno, email, heslo, potvrdenie).
+     * Poradie kontrol zodpovedá poradiu polí vo formulári (firstName, lastName, email, heslo, potvrdenie).
      */
-    private void validateRegistrationInput(String name, String email, String password, String passwordConfirm) throws AuthException {
+    private void validateRegistrationInput(String firstName, String lastName, String email, String password, String passwordConfirm) throws AuthException {
 
-        // Meno (celé meno v jednom poli)
-        if (!ValidationUtil.isNotBlank(name)) {
-            logger.warn("Registration validation: empty name");
-            throw new AuthException("auth.error.name_required");
+        // firstName
+        if (!ValidationUtil.isNotBlank(firstName)) {
+            logger.warn("Registration validation: empty firstName");
+            throw new AuthException("auth.error.first_name_required");
+        }
+        if (!ValidationUtil.isValidNamePart(firstName)) {
+            logger.warn("Registration validation: invalid firstName: {}", firstName);
+            throw new AuthException("auth.error.invalid_first_name");
         }
 
-        if (!name.trim().contains(" ")) {
-            logger.warn("Registration validation: only one name provided: {}", name);
-            throw new AuthException("auth.error.full_name_required");
+        // lastName
+        if (!ValidationUtil.isNotBlank(lastName)) {
+            logger.warn("Registration validation: empty lastName");
+            throw new AuthException("auth.error.last_name_required");
         }
-
-        if (!ValidationUtil.isValidFullName(name)) {
-            logger.warn("Registration validation: invalid name: {}", name);
-            throw new AuthException("auth.error.invalid_name");
+        if (!ValidationUtil.isValidNamePart(lastName)) {
+            logger.warn("Registration validation: invalid lastName: {}", lastName);
+            throw new AuthException("auth.error.invalid_last_name");
         }
 
         // Email
