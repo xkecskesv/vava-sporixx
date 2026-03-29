@@ -18,12 +18,12 @@ public class Main extends Application {
 
         loadFonts();
 
-        Localization.load("en");
+        Localization.load("sk");
 
         ServiceLocator.init();
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/sidebar.fxml"),
+                getClass().getResource("/fxml/login.fxml"),
                 Localization.getBundle()
         );
         Parent root = loader.load();
