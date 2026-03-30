@@ -495,3 +495,23 @@ Inter 27pt Bold*/
     -fx-shape: "";
     -fx-padding: 0;
 }
+
+.analytics-badge {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 8px;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.analytics-badge .list-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.analytics-badge .arrow-button {
+    -fx-padding: 0 4px 0 4px;
+}

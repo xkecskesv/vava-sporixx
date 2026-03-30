@@ -47,7 +47,7 @@ public final class ServiceLocator {
         // ============================================================
         TestDataInitializer testData = new TestDataInitializer();
         authService = testData.getAuthService();
-        //overviewService = testData.getOverviewService();
+        overviewService = testData.getOverviewService();
 
         // TODO: inicializovat dalsie sluzby ked budu implementovane
         // transactionService = ...
