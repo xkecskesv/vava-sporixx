@@ -33,15 +33,6 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .findFirst();
     }
 
-    @Override
-    public double sumBalanceByOwnerUserId(int userId) {
-        return accounts.stream()
-                .filter(a -> a.getOwnerUserId() == userId)
-                .filter(Account::isActive)
-                .mapToDouble(Account::getCurrentBalance)
-                .sum();
-    }
-
     public Account save(Account account) {
         if (account.getId() == 0) {
             account.setId(idGenerator.incrementAndGet());

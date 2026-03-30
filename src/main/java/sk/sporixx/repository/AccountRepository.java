@@ -25,11 +25,6 @@ public interface AccountRepository {
     Optional<Account> findById(int accountId);
 
     /**
-     * Vráti súčet zostatkov všetkých aktívnych účtov používateľa.
-     */
-    double sumBalanceByOwnerUserId(int userId);
-
-    /**
      * Uloží nový účet do DB.
      * DOLEZITE: Po inserte nastaviť vygenerovane ID na Account objekt.
      *

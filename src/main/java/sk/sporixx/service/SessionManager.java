@@ -65,6 +65,43 @@ public class SessionManager {
         return Collections.unmodifiableList(accounts);
     }
 
+    /**
+     * Vráti zoznam ID všetkých účtov aktuálneho používateľa.
+     */
+    public List<Integer> getAccountIds() {
+        return this.accounts.stream()
+                .map(Account::getId)
+                .toList();
+    }
+
+    /**
+     * Pridá nový účet do aktuálnej session.
+     * Volá sa typicky po úspešnom vytvorení účtu v databáze.
+     */
+    public void addAccount(Account newAccount) {
+        if (newAccount != null) {
+            this.accounts.add(newAccount);
+        }
+    }
+
+    /**
+     * Vyhľadá a vráti konkrétny účet podľa jeho ID.
+     * (napr. po vytvorení transakcie pre úpravu jeho zostatku).
+     */
+    public Account getAccountById(int accountId) {
+        return this.accounts.stream()
+                .filter(account -> account.getId() == accountId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Odstráni účet zo session podľa jeho ID.
+     */
+    public void removeAccount(int accountId) {
+        this.accounts.removeIf(account -> account.getId() == accountId);
+    }
+
     public boolean isLoggedIn() {
         return currentUser != null;
     }
