@@ -88,23 +88,16 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     @Override
-    public AnalyticsData loadAnalytics(ChartPeriod chartPeriod) {
-        List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
-        logger.info("Loading analytics for period={}, accounts={}", chartPeriod, accountIds.size());
+    public AnalyticsData loadAnalytics(ChartPeriod chartPeriod, int accountId) {
+        logger.info("Loading analytics for period={}, accountId={}", chartPeriod, accountId);
 
         try {
-            if (accountIds.isEmpty()) {
-                return AnalyticsData.builder()
-                        .chartPeriod(chartPeriod)
-                        .chartData(Collections.emptyMap())
-                        .build();
-            }
-
             LocalDateTime from = chartPeriod.calculateStartDate().atStartOfDay();
 
+            // Repozitár voláme iba pre JEDEN účet
             Map<String, Double> chartData = chartPeriod.isGroupByDay()
-                    ? transactionRepository.sumByTypeAndDay(accountIds, Transaction.TYPE_INCOME, from)
-                    : transactionRepository.sumByTypeAndMonth(accountIds, Transaction.TYPE_INCOME, from);
+                    ? transactionRepository.sumByTypeAndDay(accountId, Transaction.TYPE_INCOME, from)
+                    : transactionRepository.sumByTypeAndMonth(accountId, Transaction.TYPE_INCOME, from);
 
             return AnalyticsData.builder()
                     .chartPeriod(chartPeriod)
@@ -118,26 +111,18 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     @Override
-    public ActivitiesData loadActivities() {
-        List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
-        logger.info("Loading activities for accounts={}", accountIds.size());
+    public ActivitiesData loadActivities(int accountId) {
+        logger.info("Loading activities for accountId={}", accountId);
 
         try {
-            if (accountIds.isEmpty()) {
-                return ActivitiesData.builder()
-                        .upcomingPayments(Collections.emptyList())
-                        .recentTransactions(Collections.emptyList())
-                        .build();
-            }
-
-            // Upcoming payments (najbližšie 3)
+            // Upcoming payments (najbližšie 3 pre tento jeden účet)
             LocalDateTime now = LocalDateTime.now();
-            List<RecurringRule> upcoming = recurringRuleRepository.findUpcomingByAccountIds(accountIds, now, 3);
+            List<RecurringRule> upcoming = recurringRuleRepository.findUpcomingByAccountId(accountId, now, 3);
 
-            // Nedávne transakcie (posledné 2 týždne)
+            // Nedávne transakcie (posledné 2 týždne pre tento jeden účet)
             LocalDateTime twoWeeksAgo = LocalDate.now().minusWeeks(2).atStartOfDay();
-            List<Transaction> recent = transactionRepository.findByAccountIdsAndDateRange(
-                    accountIds, twoWeeksAgo, now);
+            List<Transaction> recent = transactionRepository.findByAccountIdAndDateRange(
+                    accountId, twoWeeksAgo, now);
 
             return ActivitiesData.builder()
                     .upcomingPayments(upcoming)

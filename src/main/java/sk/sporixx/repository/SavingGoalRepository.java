@@ -14,7 +14,7 @@ public interface SavingGoalRepository {
      * Nájde aktívny sporiacy cieľ pre jeden konkrétny účet.
      * V SQL filtruje podľa 'account_id' a 'is_active' = 1.
      */
-    Optional<SavingGoal> findActiveByAccountId(int accountId);
+    List<SavingGoal> findActiveByAccountId(int accountId);
 
     /**
      * Nájde všetky aktívne sporiace ciele pre zoznam účtov.

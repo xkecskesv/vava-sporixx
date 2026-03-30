@@ -20,10 +20,10 @@ public interface OverviewService {
      * Načíta dáta pre Analytics graf podľa zvoleného obdobia.
      * @param chartPeriod obdobie (1 Week, 1 Month, 6 Months, 12 Months)
      */
-    AnalyticsData loadAnalytics(ChartPeriod chartPeriod);
+    AnalyticsData loadAnalytics(ChartPeriod chartPeriod, int accountId);
 
     /**
      * Načíta aktivity: upcoming payments a nedávne transakcie.
      */
-    ActivitiesData loadActivities();
+    ActivitiesData loadActivities(int accountId);
 }
