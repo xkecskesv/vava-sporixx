@@ -1,7 +1,9 @@
 package sk.sporixx.service;
 
-import sk.sporixx.dto.ChartPeriod;
-import sk.sporixx.dto.OverviewData;
+import sk.sporixx.dto.*;
+import sk.sporixx.model.Account;
+
+import java.util.List;
 
 /**
  * Service rozhranie pre Overview obrazovku.
@@ -10,12 +12,18 @@ import sk.sporixx.dto.OverviewData;
 public interface OverviewService {
 
     /**
-     * Načíta kompletné dáta pre Overview obrazovku.
-     *
-     * @param userId ID prihláseného používateľa
-     * @param chartPeriod obdobie pre Analytics graf (1 Week, 1 Month, 6 Months, 12 Months)
-     * @param daysForRecent počet dní pre nedávne transakcie (typicky 2 = dnes + včera)
-     * @return kompletný OverviewData objekt
+     * Načíta sumár účtov: total balance, zoznam účtov, saving goals.
      */
-    OverviewData loadOverviewData(int userId, ChartPeriod chartPeriod, int daysForRecent);
+    AccountsSummaryData loadAccountsSummary();
+
+    /**
+     * Načíta dáta pre Analytics graf podľa zvoleného obdobia.
+     * @param chartPeriod obdobie (1 Week, 1 Month, 6 Months, 12 Months)
+     */
+    AnalyticsData loadAnalytics(ChartPeriod chartPeriod);
+
+    /**
+     * Načíta aktivity: upcoming payments a nedávne transakcie.
+     */
+    ActivitiesData loadActivities();
 }

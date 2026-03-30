@@ -37,7 +37,6 @@ import java.time.LocalDateTime;
  *     Email:    admin@sporixx.sk
  *     Heslo:    Admin123!
  *     Meno:     Admin Sporixx
- *     Účty:     Main Account (0.00 EUR)
  *   RODIČ (FAMILY MANAGER):
  *     Email:    jana.mrkvickova@stuba.sk
  *     Heslo:    Rodic123!
@@ -152,20 +151,6 @@ public class TestDataInitializer {
 
         User savedAdmin = userRepository.save(admin);
         logger.info("Vytvorený testovací ADMIN: id={}, email={}", savedAdmin.getId(), savedAdmin.getEmail());
-
-        Account mainAccount = accountRepository.save(Account.builder()
-                .ownerUserId(savedAdmin.getId())
-                .regionId(REGION_SK)
-                .accountTypeId(Account.MAIN_ACCOUNT)
-                .defaultCurrencyCode("EUR")
-                .description(DEFAULT_MAIN_DESCRIPTION)
-                .initialBalance(0.0)
-                .currentBalance(0.0)
-                .isActive(true)
-                .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
-                .build());
-
-        logger.info("  -> 1 účet vytvorený pre admina: {}", savedAdmin.getEmail());
     }
 
     // ---- Rodič / Family Manager ----

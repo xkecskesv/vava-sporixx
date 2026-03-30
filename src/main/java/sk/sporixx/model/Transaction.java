@@ -19,7 +19,7 @@ public class Transaction {
 
     private int id;
     private int accountId;
-    private int targetAccountId;    // nullable - len pre prevody medzi účtami
+    private Integer targetAccountId;    // nullable - len pre prevody medzi účtami
     private int categoryId;
     private int transactionTypeId;
     private int transactionStatusId;
@@ -36,16 +36,18 @@ public class Transaction {
     public static final int TYPE_SAVING = 3;
     public static final int TYPE_SAVING_EXPENSE = 4;
     public static final int TYPE_INVESTMENT = 5;
+    public static final int TYPE_FOR_EMERGENCY = 6;
 
     public boolean isIncome()        { return this.transactionTypeId == TYPE_INCOME; }
     public boolean isExpense()       { return this.transactionTypeId == TYPE_EXPENSE; }
     public boolean isSaving()        { return this.transactionTypeId == TYPE_SAVING; }
     public boolean isSavingExpense() { return this.transactionTypeId == TYPE_SAVING_EXPENSE; }
     public boolean isInvestment()    { return this.transactionTypeId == TYPE_INVESTMENT; }
+    public boolean isForEmergency()  { return this.transactionTypeId == TYPE_FOR_EMERGENCY; }
 
     /** Transakcia medzi účtami (Saving, Saving Expense) */
     public boolean isTransferBetweenAccounts() {
-        return isSaving() || isSavingExpense();
+        return isSaving() || isSavingExpense() || isForEmergency();
     }
 
     // ── Spending Classification (DB tabuľka spending_classification) ──
