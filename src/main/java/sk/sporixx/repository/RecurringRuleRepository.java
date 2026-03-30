@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Repository rozhranie pre prístup k opakovaným platbám.
+ * Optimalizované pre dopytovanie podľa jedného konkrétneho účtu.
  */
 public interface RecurringRuleRepository {
 
@@ -17,14 +18,10 @@ public interface RecurringRuleRepository {
     List<RecurringRule> findActiveByAccountId(int accountId);
 
     /**
-     * Nájde všetky aktívne opakované platby pre zoznam účtov.
+     * Nájde blížiace sa platby pre daný účet (pre Activities panel).
+     * Zoradené podľa next_due_date vzostupne.
      */
-    List<RecurringRule> findActiveByAccountIds(List<Integer> accountIds);
-
-    /**
-     * Nájde blížiace sa platby pre dané účty.
-     */
-    List<RecurringRule> findUpcomingByAccountIds(List<Integer> accountIds, LocalDateTime now, int limit);
+    List<RecurringRule> findUpcomingByAccountId(int accountId, LocalDateTime now, int limit);
 
     /**
      * Uloží nové pravidlo pre opakovanú platbu alebo aktualizuje existujúce.

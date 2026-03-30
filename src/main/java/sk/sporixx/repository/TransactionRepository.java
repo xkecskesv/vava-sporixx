@@ -9,31 +9,28 @@ import java.util.Optional;
 
 /**
  * Repository rozhranie pre prístup k transakciám.
+ * Optimalizované pre dopytovanie podľa jedného konkrétneho účtu.
  */
 public interface TransactionRepository {
 
     Optional<Transaction> findById(int id);
 
     /**
-     * Nájde transakcie pre daný účet v časovom rozsahu.
+     * Nájde transakcie pre daný účet v časovom rozsahu (pre Activities panel).
      */
     List<Transaction> findByAccountIdAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
 
     /**
-     * Nájde transakcie pre zoznam účtov v časovom rozsahu.
-     */
-    List<Transaction> findByAccountIdsAndDateRange(List<Integer> accountIds, LocalDateTime from, LocalDateTime to);
-
-    /**
      * Sumarizuje sumy podľa mesiacov (pre 6 Months, 12 Months graf).
-     * Za posledných 6/12 mesiacov.
+     * Za posledných 6/12 mesiacov pre jeden konkrétny účet.
      */
-    Map<String, Double> sumByTypeAndMonth(List<Integer> accountIds, int transactionTypeId, LocalDateTime from);
+    Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId, LocalDateTime from);
 
     /**
      * Sumarizuje sumy podľa dní (pre 1 Week, 1 Month graf).
+     * Za posledný týždeň/mesiac pre jeden konkrétny účet.
      */
-    Map<String, Double> sumByTypeAndDay(List<Integer> accountIds, int transactionTypeId, LocalDateTime from);
+    Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId, LocalDateTime from);
 
     Transaction save(Transaction transaction);
 
