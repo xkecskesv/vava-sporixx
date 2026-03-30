@@ -12,8 +12,10 @@ import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Implementácia autentifikačnej služby.
@@ -102,8 +104,13 @@ public class AuthServiceImpl implements AuthService {
             user.setRole(Role.USER);
         }
 
+        // Zoradenie v Jave (podľa accountTypeId)
+        List<Account> sortedAccounts = accounts.stream()
+                .sorted(Comparator.comparingInt(Account::getId))
+                .collect(Collectors.toList());
+
         // Nastavenie session
-        SessionManager.getInstance().setSession(user, accounts);
+        SessionManager.getInstance().setSession(user, sortedAccounts);
 
         logger.info("User logged in successfully: id={}, email={}, role={}, accounts={}",
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
@@ -199,7 +206,12 @@ public class AuthServiceImpl implements AuthService {
         // Auto-login po úspešnej registrácii
         try {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
-            SessionManager.getInstance().setSession(savedUser, accounts);
+
+            List<Account> sortedAccounts = accounts.stream()
+                    .sorted(Comparator.comparingInt(Account::getId))
+                    .toList();
+
+            SessionManager.getInstance().setSession(savedUser, sortedAccounts);
             logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
         } catch (Exception e) {
             logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);

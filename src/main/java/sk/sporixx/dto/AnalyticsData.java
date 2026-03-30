@@ -22,4 +22,6 @@ public class AnalyticsData {
      * - 6 Months / 12 Months: "2026-03" (po mesiacoch)
      */
     private Map<String, Double> chartData;
+
+    private double totalIncome;
 }

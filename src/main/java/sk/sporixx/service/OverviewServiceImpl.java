@@ -99,9 +99,15 @@ public class OverviewServiceImpl implements OverviewService {
                     ? transactionRepository.sumByTypeAndDay(accountId, Transaction.TYPE_INCOME, from)
                     : transactionRepository.sumByTypeAndMonth(accountId, Transaction.TYPE_INCOME, from);
 
+            // Sčítame všetky hodnoty (sumy príjmov) z mapy chartData
+            double totalIncome = chartData.values().stream()
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
+
             return AnalyticsData.builder()
                     .chartPeriod(chartPeriod)
                     .chartData(chartData)
+                    .totalIncome(totalIncome)
                     .build();
 
         } catch (Exception e) {
