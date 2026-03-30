@@ -22,9 +22,17 @@ public class User {
     private int id;
     private String email;
     private String passwordHash;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String photoPath;   // nullable
+    private String gender;
     private LocalDateTime createdAt;
-    private Role role;
+
+    @Builder.Default
+    private boolean isActive = true;
+
+    @Builder.Default
+    private Role role = Role.USER;
 
     public boolean hasRole(Role expectedRole) {
         return this.role == expectedRole;

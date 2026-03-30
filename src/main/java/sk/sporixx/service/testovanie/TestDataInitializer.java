@@ -9,6 +9,7 @@ import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.service.AuthService;
 import sk.sporixx.service.AuthServiceImpl;
+import sk.sporixx.service.OverviewService;
 import sk.sporixx.util.PasswordUtil;
 
 import java.time.LocalDateTime;
@@ -53,6 +54,12 @@ public class TestDataInitializer {
     private final InMemoryAccountRepository accountRepository;
     private final AuthService authService;
 
+    private static final int REGION_SK = 1;
+
+    // Defaultné popisy pre účty vytvorené pri registrácii
+    private static final String DEFAULT_MAIN_DESCRIPTION = "Everyday account";
+    private static final String DEFAULT_EMERGENCY_DESCRIPTION = "Use in need";
+
     public TestDataInitializer() {
         this.userRepository = new InMemoryUserRepository();
         this.accountRepository = new InMemoryAccountRepository();
@@ -78,10 +85,11 @@ public class TestDataInitializer {
     // ---- Bežný používateľ (podľa mockupov - Marek Moško) ----
     private void createRegularUser() {
         User user = User.builder()
-                .name("Marek Moško")
+                .firstName("Marek")
+                .lastName("Moško")
                 .email("marek.mosko@stuba.sk")
                 .passwordHash(PasswordUtil.hashPassword("Heslo123!"))
-                .role(Role.USER)
+                .gender("M")
                 .createdAt(LocalDateTime.of(2026, 1, 15, 10, 0))
                 .build();
 
@@ -89,35 +97,41 @@ public class TestDataInitializer {
         logger.info("Vytvorený testovací USER: id={}, email={}", savedUser.getId(), savedUser.getEmail());
 
         // Main Account
-        accountRepository.save(Account.builder()
+        Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
-                .regionId(1)
-                .accountName(Account.MAIN_ACCOUNT)
+                .regionId(REGION_SK)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
-                .initialBalance(3000.00)
-                .currentBalance(4101.32)
+                .description(DEFAULT_MAIN_DESCRIPTION)
+                .initialBalance(3_000.00)
+                .currentBalance(4_101.32)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 1, 15, 10, 0))
                 .build());
 
         // Emergency Fund
-        accountRepository.save(Account.builder()
+        Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
-                .regionId(1)
-                .accountName(Account.EMERGENCY_FUND)
+                .regionId(REGION_SK)
+                .accountTypeId(Account.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
-                .initialBalance(20000.00)
-                .currentBalance(31487.28)
+                .description(DEFAULT_EMERGENCY_DESCRIPTION)
+                .initialBalance(20_000.00)
+                .currentBalance(31_487.28)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 1, 20, 14, 30))
                 .build());
 
         // Saving Account
-        accountRepository.save(Account.builder()
+        Account savingAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
-                .regionId(1)
-                .accountName("Saving Account")
+                .regionId(REGION_SK)
+                .accountTypeId(Account.SAVING_ACCOUNT)
                 .defaultCurrencyCode("EUR")
-                .initialBalance(50000.00)
-                .currentBalance(88667.93)
+                .description("Need money for Porsche")
+                .initialBalance(50_000.00)
+                .currentBalance(88_667.93)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
                 .build());
 
@@ -127,9 +141,11 @@ public class TestDataInitializer {
     // ---- Admin ----
     private void createAdminUser() {
         User admin = User.builder()
-                .name("Admin Sporixx")
+                .firstName("Admin")
+                .lastName("Sporixx")
                 .email("admin@sporixx.sk")
                 .passwordHash(PasswordUtil.hashPassword("Admin123!"))
+                .gender("M")
                 .role(Role.ADMIN)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build();
@@ -137,13 +153,15 @@ public class TestDataInitializer {
         User savedAdmin = userRepository.save(admin);
         logger.info("Vytvorený testovací ADMIN: id={}, email={}", savedAdmin.getId(), savedAdmin.getEmail());
 
-        accountRepository.save(Account.builder()
+        Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedAdmin.getId())
-                .regionId(1)
-                .accountName(Account.MAIN_ACCOUNT)
+                .regionId(REGION_SK)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_MAIN_DESCRIPTION)
                 .initialBalance(0.0)
                 .currentBalance(0.0)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build());
 
@@ -153,9 +171,11 @@ public class TestDataInitializer {
     // ---- Rodič / Family Manager ----
     private void createParentUser() {
         User parent = User.builder()
-                .name("Jana Mrkvičková")
+                .firstName("Jana")
+                .lastName("Mrkvičková")
                 .email("jana.mrkvickova@stuba.sk")
                 .passwordHash(PasswordUtil.hashPassword("Rodic123!"))
+                .gender("F")
                 .role(Role.FAMILY_MANAGER)
                 .createdAt(LocalDateTime.of(2026, 2, 10, 8, 0))
                 .build();
@@ -164,30 +184,32 @@ public class TestDataInitializer {
         logger.info("Vytvorený testovací PARENT: id={}, email={}", savedParent.getId(), savedParent.getEmail());
 
         // Main Account
-        accountRepository.save(Account.builder()
+        Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
-                .regionId(1)
-                .accountName(Account.MAIN_ACCOUNT)
+                .regionId(REGION_SK)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
-                .initialBalance(10000.00)
-                .currentBalance(12500.00)
+                .description(DEFAULT_MAIN_DESCRIPTION)
+                .initialBalance(10_000.00)
+                .currentBalance(12_500.00)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 2, 10, 8, 0))
                 .build());
 
         // Emergency Fund
-        accountRepository.save(Account.builder()
+        Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
-                .regionId(1)
-                .accountName(Account.EMERGENCY_FUND)
+                .regionId(REGION_SK)
+                .accountTypeId(Account.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
-                .initialBalance(5000.00)
-                .currentBalance(5000.00)
+                .description(DEFAULT_EMERGENCY_DESCRIPTION)
+                .initialBalance(5_000.00)
+                .currentBalance(5_000.00)
+                .isActive(true)
                 .createdAt(LocalDateTime.of(2026, 2, 15, 12, 0))
                 .build());
 
         logger.info("  -> 2 účty vytvorené pre rodiča: {}", savedParent.getEmail());
     }
-
-    // ---- Gettery pre prístup k service a repozitárom ----
 
 }

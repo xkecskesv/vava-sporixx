@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 
 /**
  * Datový model pre kategóriu transakcie.
+ * * Kategória môže byť:
+ *  * - systémová (userId = null) - default kategórie pre všetkých
+ *  * - používateľská (userId = konkrétny user) - vlastné kategórie
  */
 @Data
 @Builder
@@ -17,7 +20,12 @@ import java.time.LocalDateTime;
 public class Category {
 
     private int id;
-    private int userId;
+    private Integer userId;
     private String name;
     private LocalDateTime createdAt;
+
+    /**
+     * @return true ak je kategória systémová (bez vlastníka)
+     */
+    public boolean isSystemCategory() { return this.userId == null; }
 }
