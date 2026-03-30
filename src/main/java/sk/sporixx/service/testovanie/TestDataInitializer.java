@@ -5,11 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.sporixx.model.Account;
-import sk.sporixx.model.AccountType;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.service.AuthService;
 import sk.sporixx.service.AuthServiceImpl;
+import sk.sporixx.service.OverviewService;
 import sk.sporixx.util.PasswordUtil;
 
 import java.time.LocalDateTime;
@@ -56,6 +56,10 @@ public class TestDataInitializer {
 
     private static final int REGION_SK = 1;
 
+    // Defaultné popisy pre účty vytvorené pri registrácii
+    private static final String DEFAULT_MAIN_DESCRIPTION = "Everyday account";
+    private static final String DEFAULT_EMERGENCY_DESCRIPTION = "Use in need";
+
     public TestDataInitializer() {
         this.userRepository = new InMemoryUserRepository();
         this.accountRepository = new InMemoryAccountRepository();
@@ -96,8 +100,9 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.MAIN_ACCOUNT)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_MAIN_DESCRIPTION)
                 .initialBalance(3_000.00)
                 .currentBalance(4_101.32)
                 .isActive(true)
@@ -108,8 +113,9 @@ public class TestDataInitializer {
         Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.EMERGENCY_FUND)
+                .accountTypeId(Account.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_EMERGENCY_DESCRIPTION)
                 .initialBalance(20_000.00)
                 .currentBalance(31_487.28)
                 .isActive(true)
@@ -120,8 +126,9 @@ public class TestDataInitializer {
         Account savingAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.SAVING_ACCOUNT)
+                .accountTypeId(Account.SAVING_ACCOUNT)
                 .defaultCurrencyCode("EUR")
+                .description("Need money for Porsche")
                 .initialBalance(50_000.00)
                 .currentBalance(88_667.93)
                 .isActive(true)
@@ -149,8 +156,9 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedAdmin.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.MAIN_ACCOUNT)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_MAIN_DESCRIPTION)
                 .initialBalance(0.0)
                 .currentBalance(0.0)
                 .isActive(true)
@@ -179,8 +187,9 @@ public class TestDataInitializer {
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.MAIN_ACCOUNT)
+                .accountTypeId(Account.MAIN_ACCOUNT)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_MAIN_DESCRIPTION)
                 .initialBalance(10_000.00)
                 .currentBalance(12_500.00)
                 .isActive(true)
@@ -191,8 +200,9 @@ public class TestDataInitializer {
         Account emergencyAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedParent.getId())
                 .regionId(REGION_SK)
-                .accountTypeId(AccountType.EMERGENCY_FUND)
+                .accountTypeId(Account.EMERGENCY_FUND)
                 .defaultCurrencyCode("EUR")
+                .description(DEFAULT_EMERGENCY_DESCRIPTION)
                 .initialBalance(5_000.00)
                 .currentBalance(5_000.00)
                 .isActive(true)

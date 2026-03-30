@@ -29,7 +29,7 @@ public class RegisterController {
         try{
 
            ServiceLocator.getAuthService().register(firstName, lastName, email, password, repeatPassword);
-            //SceneManager.switchTo("dashboard.fxml");
+           SceneManager.switchTo("dashboard.fxml");
 
         }catch(Exception e) {
 

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.sporixx.model.Account;
-import sk.sporixx.model.AccountType;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountRepository;
@@ -28,6 +27,10 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String DEFAULT_CURRENCY_CODE = "EUR";
     private static final int DEFAULT_REGION_ID = 1;
+
+    // Defaultné popisy pre účty vytvorené pri registrácii
+    private static final String DEFAULT_MAIN_DESCRIPTION = "Everyday account";
+    private static final String DEFAULT_EMERGENCY_DESCRIPTION = "Use in need";
 
     public AuthServiceImpl(UserRepository userRepository, AccountRepository accountRepository) {
         this.userRepository = userRepository;
@@ -165,8 +168,9 @@ public class AuthServiceImpl implements AuthService {
             Account mainAccount = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountTypeId(AccountType.MAIN_ACCOUNT)
+                    .accountTypeId(Account.MAIN_ACCOUNT)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
+                    .description(DEFAULT_MAIN_DESCRIPTION)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)
@@ -176,8 +180,9 @@ public class AuthServiceImpl implements AuthService {
             Account emergencyFund = Account.builder()
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
-                    .accountTypeId(AccountType.EMERGENCY_FUND)
+                    .accountTypeId(Account.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
+                    .description(DEFAULT_EMERGENCY_DESCRIPTION)
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)

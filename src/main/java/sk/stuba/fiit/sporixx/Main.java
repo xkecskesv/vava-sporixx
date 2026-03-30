@@ -23,7 +23,7 @@ public class Main extends Application {
         ServiceLocator.init();
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/dashboard.fxml"),
+                getClass().getResource("/fxml/login.fxml"),
                 Localization.getBundle()
         );
         Parent root = loader.load();

@@ -5,6 +5,7 @@ import sk.sporixx.repository.AccountRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,24 @@ public class InMemoryAccountRepository implements AccountRepository {
     public List<Account> findByOwnerUserId(int userId) {
         return accounts.stream()
                 .filter(a -> a.getOwnerUserId() == userId)
+                .filter(Account::isActive)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Account> findById(int accountId) {
+        return accounts.stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst();
+    }
+
+    @Override
+    public double sumBalanceByOwnerUserId(int userId) {
+        return accounts.stream()
+                .filter(a -> a.getOwnerUserId() == userId)
+                .filter(Account::isActive)
+                .mapToDouble(Account::getCurrentBalance)
+                .sum();
     }
 
     public Account save(Account account) {
@@ -30,6 +48,14 @@ public class InMemoryAccountRepository implements AccountRepository {
         }
         accounts.add(account);
         return account;
+    }
+
+    @Override
+    public void updateBalance(int accountId, double newBalance) {
+        accounts.stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst()
+                .ifPresent(a -> a.setCurrentBalance(newBalance));
     }
 
     /**

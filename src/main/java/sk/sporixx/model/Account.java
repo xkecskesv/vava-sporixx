@@ -28,7 +28,12 @@ public class Account {
     private boolean isActive;
     private LocalDateTime createdAt;
 
-    public boolean isMainAccount()     { return this.accountTypeId == AccountType.MAIN_ACCOUNT; }
-    public boolean isEmergencyFund()   { return this.accountTypeId == AccountType.EMERGENCY_FUND; }
-    public boolean isSavingAccount()   { return this.accountTypeId == AccountType.SAVING_ACCOUNT; }
+    // Konštanty pre typy účtov (zodpovedajú ID v DB tabuľke account_types)
+    public static final int MAIN_ACCOUNT = 1;
+    public static final int EMERGENCY_FUND = 2;
+    public static final int SAVING_ACCOUNT = 3;
+
+    public boolean isMainAccount()   { return this.accountTypeId == MAIN_ACCOUNT; }
+    public boolean isEmergencyFund() { return this.accountTypeId == EMERGENCY_FUND; }
+    public boolean isSavingAccount() { return this.accountTypeId == SAVING_ACCOUNT; }
 }
