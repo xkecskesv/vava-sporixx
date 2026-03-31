@@ -3,18 +3,16 @@ package sk.sporixx.repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.model.User;
-import sk.sporixx.model.Role;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-
 /**
- * SQLite implementácia úložiska pre používateľov.
- * Zabezpečuje komunikáciu s lokálnym súborom sporixx.sqlite.
+ * ukladanie a hladanie usera z db
  */
 public class UserRepositoryImpl implements UserRepository {
+
     private static final Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
     private static final String DB_URL = "jdbc:sqlite:sporixx.sqlite";
 
@@ -22,23 +20,20 @@ public class UserRepositoryImpl implements UserRepository {
         return DriverManager.getConnection(DB_URL);
     }
 
-    // Mapuje dáta z databázy na User objekt
-    // Rieši aj konverziu textu na Enum (Role) a textu na LocalDateTime.
+    // Mapuje dáta z databázy na Java objekt
     private User mapResult(ResultSet result) throws SQLException {
         User user = new User();
         user.setId(result.getInt("id"));
         user.setEmail(result.getString("email"));
         user.setPasswordHash(result.getString("password_hash"));
-        user.setName(result.getString("name"));
-
-        String roleStr = result.getString("role");
-        if (roleStr != null) {
-            user.setRole(Role.valueOf(roleStr));
-        }
+        user.setFirstName(result.getString("first_name"));
+        user.setLastName(result.getString("last_name"));
+        user.setPhotoPath(result.getString("photo_path"));
+        user.setGender(result.getString("gender"));
 
         String createdAtStr = result.getString("created_at");
         if (createdAtStr != null) {
-            user.setCreatedAt(LocalDateTime.parse(createdAtStr));
+            user.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
         }
         return user;
     }
@@ -83,21 +78,24 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        String sql = "INSERT INTO users (email, password_hash, name, created_at, role) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPasswordHash());
-            pstmt.setString(3, user.getName());
+            pstmt.setString(3, user.getFirstName());
+            pstmt.setString(4, user.getLastName());
+            pstmt.setString(5, user.getPhotoPath());
+
+            String gender = user.getGender() != null ? user.getGender() : "ONHSR";
+            pstmt.setString(6, gender);
 
             LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-            pstmt.setString(4, createdAt.toString());
-            pstmt.setString(5, user.getRole() != null ? user.getRole().name() : null);
+            pstmt.setString(7, createdAt.toString().replace("T", " "));
 
             int affectedRows = pstmt.executeUpdate();
-
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
