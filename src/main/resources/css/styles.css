@@ -181,7 +181,7 @@ Inter 27pt Bold*/
 /* User info s avatarom */
 .sidebar-user {
     -fx-padding: 8px 20px;
-    -fx-spacing: 2px;
+    -fx-spacing: 10px;
 }
 
 .sidebar-username {
@@ -194,6 +194,12 @@ Inter 27pt Bold*/
     -fx-font-family: 'Inter 28pt Regular';
     -fx-text-fill: #3A7DF6;
     -fx-font-size: 12px;
+}
+
+.sidebar-avatar {
+    -fx-background-color: #2A2A2A;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 1);
 }
 
 

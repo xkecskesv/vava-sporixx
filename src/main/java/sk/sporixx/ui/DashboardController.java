@@ -237,8 +237,8 @@ public class DashboardController {
     private void loadAnalyticsChart(AnalyticsData data) {
         analyticsChart.getData().clear();
 
-        double totalIncome = data.getChartData().values().stream().mapToDouble(Double::doubleValue).sum();
-        analyticsAmount.setText(formatCurrency(totalIncome));
+       double totalIncome = data.getTotalIncome();
+       analyticsAmount.setText(formatCurrency(totalIncome));
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         DateTimeFormatter inputFormatter;

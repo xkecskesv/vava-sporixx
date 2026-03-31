@@ -87,10 +87,8 @@
 
             <!-- User s avatarom -->
             <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
-                <ImageView fitWidth="32" fitHeight="32" preserveRatio="true" styleClass="sidebar-avatar">
-                    <image><Image url="@/assets/icons/placeholder_photo.png" /></image>
-                </ImageView>
-                <VBox spacing="1">
+                <ImageView fx:id="userAvatar" fitWidth="32" fitHeight="32" preserveRatio="true" styleClass="sidebar-avatar"/>
+                <VBox>
                     <Label fx:id="userName" styleClass="sidebar-username" text="Marek Moško"/>
                     <Label fx:id="userRole" styleClass="sidebar-userrole" text="Financial Pro"/>
                 </VBox>
