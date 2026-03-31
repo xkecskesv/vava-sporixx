@@ -1,6 +1,7 @@
 package sk.sporixx.service;
 
 import lombok.Getter;
+import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
@@ -28,7 +29,7 @@ public class SessionManager {
         return Holder.INSTANCE;
     }
 
-    @Getter
+
     private User currentUser;
     private List<Account> accounts;
 
@@ -56,6 +57,27 @@ public class SessionManager {
      */
     public int getCurrentUserId() {
         return currentUser != null ? currentUser.getId() : -1;
+    }
+
+    public CurrentUser getCurrentUser() {
+        if (currentUser == null) return null;
+        return CurrentUser.builder()
+                .id(currentUser.getId())
+                .name(currentUser.getFirstName())
+                .surname(currentUser.getLastName())
+                .email(currentUser.getEmail())
+                .gender(currentUser.getGender())
+                .photoPath(currentUser.getPhotoPath())
+                .role(currentUser.getRole())
+                .build();
+    }
+
+    /**
+     * Pre service vrstvu — plný User s passwordHash.
+     * Package-private: dostupné len v sk.sporixx.service balíčku.
+     */
+    User getCurrentUserInternal() {
+        return currentUser;
     }
 
     /**
