@@ -3,6 +3,7 @@ package sk.sporixx.ui;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -21,8 +22,11 @@ import sk.sporixx.model.RecurringRule;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,10 +42,11 @@ public class DashboardController {
 
     // FXML - Analytics
     @FXML private Label analyticsTitle;
-    @FXML public ComboBox <String> periodComboBox;
+    @FXML public ComboBox<String> periodComboBox;
     @FXML private Label analyticsAmount;
     @FXML private Label totalIncomeLabel;
     @FXML private LineChart<String, Number> analyticsChart;
+    @FXML private NumberAxis yAxis;
 
     // FXML - Activities
     @FXML private Label activitiesTitle;
@@ -50,9 +55,13 @@ public class DashboardController {
     private VBox selectedCard = null;
     private ChartPeriod currentChartPeriod = ChartPeriod.TWELVE_MONTHS;
 
+    // Accounts scrolling
+    private static final int MAX_VISIBLE_CARDS = 3;
+    private int accountScrollOffset = 0;
+    private List<Account> allAccounts = new ArrayList<>();
+
     @FXML
     public void initialize() {
-        // Lokalizácia statických textov
         dashboardTitle.setText(Localization.get("dashboard.title"));
         totalBalanceLabel.setText(Localization.get("dashboard.total_balance"));
         analyticsTitle.setText(Localization.get("dashboard.analytics"));
@@ -60,7 +69,6 @@ public class DashboardController {
         totalIncomeLabel.setText(Localization.get("dashboard.analytics.total_income"));
         activitiesTitle.setText(Localization.get("dashboard.activities"));
 
-        // Načítanie dát zo service vrstvy
         AccountsSummaryData accountsData = ServiceLocator.getOverviewService().loadAccountsSummary();
         AnalyticsData analyticsData = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, accountsData.getAccounts().get(0).getId());
         ActivitiesData activitiesData = ServiceLocator.getOverviewService().loadActivities(accountsData.getAccounts().get(0).getId());
@@ -82,31 +90,84 @@ public class DashboardController {
     //  ACCOUNTS
     // ============================================================
     private void loadAccounts(AccountsSummaryData data) {
+        allAccounts = new ArrayList<>(data.getAccounts());
+        accountScrollOffset = 0;
+        renderAccounts();
+    }
+
+    private void renderAccounts() {
         accountsContainer.getChildren().clear();
 
-        for (int i = 0; i < data.getAccounts().size(); i++) {
-            VBox card = createAccountCard(data.getAccounts().get(i), i == 0);
+        // Šípka doľava
+        boolean canScrollLeft = accountScrollOffset > 0;
+        VBox leftArrow = new VBox();
+        leftArrow.setPadding(new javafx.geometry.Insets(0, 12, 0, 12));
+        leftArrow.getStyleClass().add("accounts-arrow");
+        leftArrow.setAlignment(Pos.CENTER);
+        try {
+            ImageView arrowLeftIcon = new ImageView(new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/icon_arrow_left.png"))));
+            arrowLeftIcon.setFitWidth(32);
+            arrowLeftIcon.setFitHeight(32);
+            arrowLeftIcon.setPreserveRatio(true);
+            arrowLeftIcon.getStyleClass().add("accounts-arrow-icon");
+            leftArrow.setOnMouseClicked(e -> scrollAccounts(-1));            leftArrow.getChildren().add(arrowLeftIcon);
+        } catch (Exception e) { /* ikona sa nenašla */ }
+        leftArrow.setVisible(canScrollLeft);
+        leftArrow.setManaged(canScrollLeft);
+        accountsContainer.getChildren().add(leftArrow);
+
+        // Karty — max MAX_VISIBLE_CARDS
+        int from = accountScrollOffset;
+        int to = Math.min(accountScrollOffset + MAX_VISIBLE_CARDS, allAccounts.size());
+
+        for (int i = from; i < to; i++) {
+            Account account = allAccounts.get(i);
+            boolean isActive = (selectedCard == null && i == 0)
+                    || (selectedCard != null && selectedCard.getUserData() == account);
+            VBox card = createAccountCard(account, isActive);
             accountsContainer.getChildren().add(card);
         }
 
-        // "+" karta
-        VBox addCard = new VBox();
-        addCard.getStyleClass().add("account-card-add");
-        addCard.setAlignment(Pos.CENTER);
-        HBox.setHgrow(addCard, Priority.ALWAYS);
-        Label plus = new Label("+");
-        plus.getStyleClass().add("account-card-plus");
-        addCard.getChildren().add(plus);
-        accountsContainer.getChildren().add(addCard);
+        // "+" karta — vždy ako posledný slot ak sme na poslednej stránke
+        boolean isLastPage = to >= allAccounts.size();
+        if (isLastPage) {
+            VBox addCard = new VBox();
+            addCard.getStyleClass().add("account-card-add");
+            addCard.setAlignment(Pos.CENTER);
+            HBox.setHgrow(addCard, Priority.ALWAYS);
+            Label plus = new Label("+");
+            plus.getStyleClass().add("account-card-plus");
+            addCard.getChildren().add(plus);
+            accountsContainer.getChildren().add(addCard);
+        }
 
-        // Šípka
-        VBox arrow = new VBox();
-        arrow.getStyleClass().add("accounts-arrow");
-        arrow.setAlignment(Pos.CENTER);
-        Label arrowIcon = new Label("›");
-        arrowIcon.getStyleClass().add("accounts-arrow-icon");
-        arrow.getChildren().add(arrowIcon);
-        accountsContainer.getChildren().add(arrow);
+        // Šípka doprava — viditeľná len ak existujú ďalšie účty za aktuálnou stránkou
+        // Ak sme na poslednej stránke so "+" kartou, šípka sa skryje
+        boolean canScrollRight = (accountScrollOffset + MAX_VISIBLE_CARDS) < allAccounts.size();
+        VBox rightArrow = new VBox();
+        rightArrow.setPadding(new javafx.geometry.Insets(0, 12, 0, 12));
+        rightArrow.getStyleClass().add("accounts-arrow");
+        rightArrow.setAlignment(Pos.CENTER);
+        try {
+            ImageView arrowRightIcon = new ImageView(new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/icon_arrow_right.png"))));
+            arrowRightIcon.setFitWidth(32);
+            arrowRightIcon.setFitHeight(32);
+            arrowRightIcon.setPreserveRatio(true);
+            arrowRightIcon.getStyleClass().add("accounts-arrow-icon");
+            rightArrow.setOnMouseClicked(e -> scrollAccounts(1));            rightArrow.getChildren().add(arrowRightIcon);
+        } catch (Exception e) { /* ikona sa nenašla */ }
+        rightArrow.setVisible(canScrollRight);
+        rightArrow.setManaged(canScrollRight);
+        accountsContainer.getChildren().add(rightArrow);
+    }
+
+    private void scrollAccounts(int direction) {
+        int newOffset = accountScrollOffset + direction;
+        if (newOffset < 0 || newOffset >= allAccounts.size()) return;
+        accountScrollOffset = newOffset;
+        renderAccounts();
     }
 
     private VBox createAccountCard(Account account, boolean active) {
@@ -127,7 +188,8 @@ public class DashboardController {
         header.getChildren().addAll(title, spacer);
 
         try {
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(getAccountIconPath(account, active)))));
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream(getAccountIconPath(account, active)))));
             icon.setFitWidth(20);
             icon.setFitHeight(20);
             icon.setPreserveRatio(true);
@@ -188,7 +250,6 @@ public class DashboardController {
         setCardActive(card, true);
         selectedCard = card;
 
-        // Preloaduj analytics pre vybraný účet
         Account account = (Account) card.getUserData();
         if (account != null) {
             reloadAnalytics(account);
@@ -213,7 +274,8 @@ public class DashboardController {
                         Account account = (Account) card.getUserData();
                         if (account != null) {
                             try {
-                                icon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(getAccountIconPath(account, active)))));
+                                icon.setImage(new Image(Objects.requireNonNull(
+                                        getClass().getResourceAsStream(getAccountIconPath(account, active)))));
                             } catch (Exception e) {
                                 // Ikona sa nenašla
                             }
@@ -235,10 +297,15 @@ public class DashboardController {
     //  ANALYTICS CHART
     // ============================================================
     private void loadAnalyticsChart(AnalyticsData data) {
-        analyticsChart.getData().clear();
 
-       double totalIncome = data.getTotalIncome();
-       analyticsAmount.setText(formatCurrency(totalIncome));
+        analyticsChart.setAnimated(false);
+        analyticsChart.getData().clear();
+        yAxis.setAutoRanging(false);
+        yAxis.setAutoRanging(true);
+        analyticsChart.layout();
+
+        double totalIncome = data.getTotalIncome();
+        analyticsAmount.setText(formatCurrency(totalIncome));
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         DateTimeFormatter inputFormatter;
@@ -258,9 +325,11 @@ public class DashboardController {
                     String displayLabel;
                     try {
                         if (data.getChartPeriod().isGroupByDay()) {
-                            displayLabel = LocalDate.parse(entry.getKey(), inputFormatter).format(displayFormatter);
+                            displayLabel = LocalDate.parse(entry.getKey(), inputFormatter)
+                                    .format(displayFormatter);
                         } else {
-                            displayLabel = LocalDate.parse(entry.getKey() + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(displayFormatter);
+                            displayLabel = LocalDate.parse(entry.getKey() + "-01",
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(displayFormatter);
                         }
                     } catch (Exception e) {
                         displayLabel = entry.getKey();
@@ -277,7 +346,6 @@ public class DashboardController {
     private void loadActivities(ActivitiesData data) {
         activitiesList.getChildren().clear();
 
-        // Upcoming payments
         if (data.getUpcomingPayments() != null && !data.getUpcomingPayments().isEmpty()) {
             activitiesList.getChildren().add(
                     createGroupTitle(Localization.get("dashboard.activities.upcoming")));
@@ -286,7 +354,6 @@ public class DashboardController {
             }
         }
 
-        // Recent transactions zoskupené podľa dňa
         if (data.getRecentTransactions() != null && !data.getRecentTransactions().isEmpty()) {
             LocalDate today = LocalDate.now();
             LocalDate yesterday = today.minusDays(1);
@@ -325,9 +392,12 @@ public class DashboardController {
         row.getStyleClass().add("activity-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
-        String iconPath = trans.isIncome() ? "/assets/icons/income_icon.png" : "/assets/icons/sent_icon.png";
+        String iconPath = trans.isIncome()
+                ? "/assets/icons/income_icon.png"
+                : "/assets/icons/sent_icon.png";
         try {
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream(iconPath))));
             icon.setFitWidth(28);
             icon.setFitHeight(28);
             icon.setPreserveRatio(true);
@@ -367,7 +437,8 @@ public class DashboardController {
         row.setAlignment(Pos.CENTER_LEFT);
 
         try {
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/sent_icon.png"))));
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream("/assets/icons/sent_icon.png"))));
             icon.setFitWidth(28);
             icon.setFitHeight(28);
             icon.setPreserveRatio(true);
@@ -392,6 +463,9 @@ public class DashboardController {
         return row;
     }
 
+    // ============================================================
+    //  PERIOD COMBO BOX
+    // ============================================================
     private void setupPeriodComboBox() {
         periodComboBox.getItems().addAll(
                 Localization.get("dashboard.analytics.period.week"),
@@ -416,7 +490,6 @@ public class DashboardController {
             currentChartPeriod = ChartPeriod.TWELVE_MONTHS;
         }
 
-        // Reload analytics pre aktuálny účet a nové obdobie
         if (selectedCard != null) {
             Account account = (Account) selectedCard.getUserData();
             if (account != null) {

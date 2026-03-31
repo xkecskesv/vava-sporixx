@@ -53,8 +53,7 @@
                                VBox.vgrow="ALWAYS" animated="false" legendVisible="false"
                                createSymbols="false" verticalGridLinesVisible="false">
                         <xAxis><CategoryAxis side="BOTTOM" styleClass="analytics-axis"/></xAxis>
-                        <yAxis><NumberAxis side="LEFT" styleClass="analytics-axis" autoRanging="true"/></yAxis>
-                    </LineChart>
+                        <yAxis><NumberAxis fx:id="yAxis" side="LEFT" styleClass="analytics-axis" autoRanging="true"/></yAxis>                    </LineChart>
                 </VBox>
 
                 <!-- Activities -->

@@ -334,7 +334,7 @@ Inter 27pt Bold*/
 
 /* Šípka */
 .accounts-arrow {
-    -fx-padding: 0 8px;
+    -fx-padding: 0 12px;
     -fx-cursor: hand;
 }
 
