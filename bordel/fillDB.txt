@@ -1,0 +1,97 @@
+INSERT INTO currencies (code, name, symbol) VALUES
+('EUR', 'Euro', '€'),
+('USD', 'US Dollar', '$'),
+('GBP', 'British Pound', '£'),
+('CZK', 'Česká koruna', 'Kč'),
+('PLN', 'Polski Złoty', 'zł');
+
+INSERT INTO regions (locale_code, currency_id, decimal_separator, thousands_separator, date_format, time_format)
+VALUES
+
+('sk_SK', 1, ',', ' ', '%d.%m.%Y', '%H:%M:%S'),
+('en_US', 2, '.', ',', '%m/%d/%Y', '%I:%M:%S %p'),
+('en_GB', 3, '.', ',', '%d/%m/%Y', '%H:%M:%S'),
+('pl_PL', 5, ',', ' ', '%d.%m.%Y', '%H:%M:%S'),
+('de_DE', 1, ',', '.', '%d.%m.%Y', '%H:%M:%S');
+
+
+INSERT INTO exchange_rates (base_currency_code, target_currency_code, rate) VALUES
+('EUR', 'USD', 1.16),
+('EUR', 'GBP', 0.87),
+('EUR', 'CZK', 24.42),
+('EUR', 'PLN', 4.28),
+
+
+('USD', 'EUR', 0.87),
+('USD', 'GBP', 0.75),
+('USD', 'CZK', 21.14),
+('USD', 'PLN', 3.70),
+
+
+('GBP', 'EUR', 1.15),
+('GBP', 'USD', 1.32),
+('GBP', 'CZK', 28.18),
+('GBP', 'PLN', 4.96),
+
+
+('CZK', 'EUR', 0.041),
+('CZK', 'USD', 0.047),
+('CZK', 'GBP', 0.035),
+('CZK', 'PLN', 0.18),
+
+
+('PLN', 'EUR', 0.23),
+('PLN', 'USD', 0.27),
+('PLN', 'GBP', 0.2),
+('PLN', 'CZK', 5.7);
+
+INSERT INTO categories (name) VALUES ('food'), ('car'), ('entertainment'), ('Living');
+INSERT INTO budget_categories (name) VALUES ('food'), ('rent'), ('transport'), ('utilities'),('other');
+
+INSERT INTO transaction_type (name) VALUES ('Income'), ('Expense'), ('Savings'),('Invest'),('Saving Expense'); ----
+INSERT INTO transaction_status (name) VALUES ('Completed'), ('Pending');
+
+
+
+INSERT INTO spending_classification (name) VALUES
+('Needs'),
+('Wants'),
+('Savings');
+
+INSERT INTO milestones (badge_name,rank,xp) VALUES
+('Saving Master','starter',10),
+('Budget Keeper','starter',10),
+('Investor','starter',10),
+('Smart Spender','starter',10),
+
+('Saving Master','bronze',20),
+('Budget Keeper','bronze',20),
+('Investor','bronze',20),
+('Smart Spender','bronze',20),
+
+('Saving Master','silver',30),
+('Budget Keeper','silver',30),
+('Investor','silver',30),
+('Smart Spender','silver',30),
+
+('Saving Master','gold',40),
+('Budget Keeper','gold',40),
+('Investor','gold',40),
+('Smart Spender','gold',40),
+
+('Saving Master','platinum',69),
+('Budget Keeper','platinum',69),
+('Investor','platinum',69),
+('Smart Spender','platinum',69),
+
+('Saving Master','diamond',420),
+('Budget Keeper','diamond',420),
+('Investor','diamond',420),
+('Smart Spender','diamond',420);
+
+INSERT INTO account_types(name,description) VALUES
+('Main Account','Everyday account' ),
+('Emergency Fund','Use in need'),
+('Private Account',''),
+('Saving goal Account','Need money for');
+
