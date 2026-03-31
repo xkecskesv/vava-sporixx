@@ -99,7 +99,7 @@
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
                     <image><Image url="@/assets/icons/settings_icon.png" /></image>
                 </ImageView>
-                <Label fx:id="settingsLabel" text="Settings" styleClass="sidebar-item-label"/>
+                <Label fx:id="settingsLabel" text="%sidebar.settings" styleClass="sidebar-item-label"/>
             </HBox>
         </VBox>
     </bottom>
