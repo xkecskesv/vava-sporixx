@@ -2,19 +2,39 @@ package sk.sporixx.repository;
 
 import sk.sporixx.model.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+/**
+ * Repository rozhranie pre prístup k transakciám.
+ * Optimalizované pre dopytovanie podľa jedného konkrétneho účtu.
+ */
 public interface TransactionRepository {
 
-    boolean save(Transaction transaction);
+    Optional<Transaction> findById(int id);
 
-    boolean update(Transaction transaction);
+    /**
+     * Nájde transakcie pre daný účet v časovom rozsahu (pre Activities panel).
+     */
+    List<Transaction> findByAccountIdAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
 
-    boolean deleteById(Long id);
+    /**
+     * Sumarizuje sumy podľa mesiacov (pre 6 Months, 12 Months graf).
+     * Za posledných 6/12 mesiacov pre jeden konkrétny účet.
+     */
+    Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId, LocalDateTime from);
 
-    Transaction findById(Long id);
+    /**
+     * Sumarizuje sumy podľa dní (pre 1 Week, 1 Month graf).
+     * Za posledný týždeň/mesiac pre jeden konkrétny účet.
+     */
+    Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId, LocalDateTime from);
 
-    List<Transaction> findByUserIdAndMonth(Long userId, String month);
+    Transaction save(Transaction transaction);
 
-    List<Transaction> search(Long userId, String query);
+    void update(Transaction transaction);
+
+    void deleteById(int id);
 }

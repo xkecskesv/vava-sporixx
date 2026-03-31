@@ -3,6 +3,7 @@ package sk.sporixx.repository;
 import sk.sporixx.model.Account;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Rozhranie pre prístup k dátam účtov.
@@ -19,6 +20,11 @@ public interface AccountRepository {
     List<Account> findByOwnerUserId(int ownerUserId);
 
     /**
+     * Nájde účet podľa ID.
+     */
+    Optional<Account> findById(int accountId);
+
+    /**
      * Uloží nový účet do DB.
      * DOLEZITE: Po inserte nastaviť vygenerovane ID na Account objekt.
      *
@@ -26,4 +32,9 @@ public interface AccountRepository {
      * @return Account s nastaveným ID z DB
      */
     Account save(Account account);
+
+    /**
+     * Aktualizuje zostatok na účte.
+     */
+    void updateBalance(int accountId, double newBalance);
 }

@@ -18,6 +18,7 @@ public final class ServiceLocator {
 
     // Service inštancie
     private static AuthService authService;
+    private static OverviewService overviewService;
 
     private static boolean initialized = false;
 
@@ -46,6 +47,7 @@ public final class ServiceLocator {
         // ============================================================
         TestDataInitializer testData = new TestDataInitializer();
         authService = testData.getAuthService();
+        overviewService = testData.getOverviewService();
 
         // TODO: inicializovat dalsie sluzby ked budu implementovane
         // transactionService = ...
@@ -87,6 +89,12 @@ public final class ServiceLocator {
     public static AuthService getAuthService() {
         checkInitialized();
         return authService;
+    }
+
+    /** Overview obrazovka: zostatky, účty, graf, aktivity */
+    public static OverviewService getOverviewService() {
+        checkInitialized();
+        return overviewService;
     }
 
     //  HELPER
