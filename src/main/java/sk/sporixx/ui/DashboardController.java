@@ -19,6 +19,7 @@ import sk.sporixx.dto.AnalyticsData;
 import sk.sporixx.dto.ChartPeriod;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.RecurringRule;
+import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
@@ -54,6 +55,7 @@ public class DashboardController {
 
     private VBox selectedCard = null;
     private ChartPeriod currentChartPeriod = ChartPeriod.TWELVE_MONTHS;
+    private AccountsSummaryData currentAccountsData;
 
     // Accounts scrolling
     private static final int MAX_VISIBLE_CARDS = 3;
@@ -90,6 +92,7 @@ public class DashboardController {
     //  ACCOUNTS
     // ============================================================
     private void loadAccounts(AccountsSummaryData data) {
+        currentAccountsData = data;
         allAccounts = new ArrayList<>(data.getAccounts());
         accountScrollOffset = 0;
         renderAccounts();
@@ -111,8 +114,9 @@ public class DashboardController {
             arrowLeftIcon.setFitHeight(32);
             arrowLeftIcon.setPreserveRatio(true);
             arrowLeftIcon.getStyleClass().add("accounts-arrow-icon");
-            leftArrow.setOnMouseClicked(e -> scrollAccounts(-1));            leftArrow.getChildren().add(arrowLeftIcon);
+            leftArrow.getChildren().add(arrowLeftIcon);
         } catch (Exception e) { /* ikona sa nenašla */ }
+        leftArrow.setOnMouseClicked(e -> scrollAccounts(-1));
         leftArrow.setVisible(canScrollLeft);
         leftArrow.setManaged(canScrollLeft);
         accountsContainer.getChildren().add(leftArrow);
@@ -129,7 +133,7 @@ public class DashboardController {
             accountsContainer.getChildren().add(card);
         }
 
-        // "+" karta — vždy ako posledný slot ak sme na poslednej stránke
+        // "+" karta — len na poslednej stránke
         boolean isLastPage = to >= allAccounts.size();
         if (isLastPage) {
             VBox addCard = new VBox();
@@ -142,8 +146,7 @@ public class DashboardController {
             accountsContainer.getChildren().add(addCard);
         }
 
-        // Šípka doprava — viditeľná len ak existujú ďalšie účty za aktuálnou stránkou
-        // Ak sme na poslednej stránke so "+" kartou, šípka sa skryje
+        // Šípka doprava
         boolean canScrollRight = (accountScrollOffset + MAX_VISIBLE_CARDS) < allAccounts.size();
         VBox rightArrow = new VBox();
         rightArrow.setPadding(new javafx.geometry.Insets(0, 12, 0, 12));
@@ -156,8 +159,9 @@ public class DashboardController {
             arrowRightIcon.setFitHeight(32);
             arrowRightIcon.setPreserveRatio(true);
             arrowRightIcon.getStyleClass().add("accounts-arrow-icon");
-            rightArrow.setOnMouseClicked(e -> scrollAccounts(1));            rightArrow.getChildren().add(arrowRightIcon);
+            rightArrow.getChildren().add(arrowRightIcon);
         } catch (Exception e) { /* ikona sa nenašla */ }
+        rightArrow.setOnMouseClicked(e -> scrollAccounts(1));
         rightArrow.setVisible(canScrollRight);
         rightArrow.setManaged(canScrollRight);
         accountsContainer.getChildren().add(rightArrow);
@@ -206,11 +210,23 @@ public class DashboardController {
         Region vspacer = new Region();
         VBox.setVgrow(vspacer, Priority.ALWAYS);
 
-        // Suma
+        // Spodná časť — suma + voliteľný saving goal
+        VBox bottomSection = new VBox(2);
+        bottomSection.setAlignment(Pos.BOTTOM_RIGHT);
+
         Label amount = new Label(formatCurrency(account.getCurrentBalance()));
         amount.getStyleClass().add(active ? "account-card-amount-active" : "account-card-amount");
+        bottomSection.getChildren().add(amount);
 
-        card.getChildren().addAll(header, desc, vspacer, amount);
+        if (currentAccountsData.getSavingGoalByAccountId() != null) {
+            SavingGoal goal = currentAccountsData.getSavingGoalByAccountId().get(account.getId());
+            if (goal != null) {
+                Label goalLabel = new Label(Localization.get("dashboard.account.saving_goal_from") + " " + formatCurrency(goal.getTargetAmount()));                goalLabel.getStyleClass().add(active ? "account-card-goal-active" : "account-card-goal");
+                bottomSection.getChildren().add(goalLabel);
+            }
+        }
+
+        card.getChildren().addAll(header, desc, vspacer, bottomSection);
         card.setOnMouseClicked(e -> selectCard(card));
 
         if (active) selectedCard = card;
@@ -253,12 +269,18 @@ public class DashboardController {
         Account account = (Account) card.getUserData();
         if (account != null) {
             reloadAnalytics(account);
+            reloadActivities(account);
         }
     }
 
     private void reloadAnalytics(Account account) {
         AnalyticsData data = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, account.getId());
         loadAnalyticsChart(data);
+    }
+
+    private void reloadActivities(Account account) {
+        ActivitiesData data = ServiceLocator.getOverviewService().loadActivities(account.getId());
+        loadActivities(data);
     }
 
     private void setCardActive(VBox card, boolean active) {
@@ -283,11 +305,20 @@ public class DashboardController {
                     }
                 }
             }
+            // Popis (priamy Label v card)
             if (node instanceof Label label) {
-                if (label.getText().startsWith("€")) {
-                    label.getStyleClass().setAll(active ? "account-card-amount-active" : "account-card-amount");
-                } else {
-                    label.getStyleClass().setAll(active ? "account-card-desc-active" : "account-card-desc");
+                label.getStyleClass().setAll(active ? "account-card-desc-active" : "account-card-desc");
+            }
+            // Spodná sekcia (VBox s amount + goal)
+            if (node instanceof VBox vbox) {
+                for (var child : vbox.getChildren()) {
+                    if (child instanceof Label label) {
+                        if (label.getText().startsWith("€")) {
+                            label.getStyleClass().setAll(active ? "account-card-amount-active" : "account-card-amount");
+                        } else if (label.getText().startsWith("From")) {
+                            label.getStyleClass().setAll(active ? "account-card-goal-active" : "account-card-goal");
+                        }
+                    }
                 }
             }
         }
@@ -297,12 +328,8 @@ public class DashboardController {
     //  ANALYTICS CHART
     // ============================================================
     private void loadAnalyticsChart(AnalyticsData data) {
-
         analyticsChart.setAnimated(false);
-        analyticsChart.getData().clear();
-        yAxis.setAutoRanging(false);
-        yAxis.setAutoRanging(true);
-        analyticsChart.layout();
+        analyticsChart.getData().removeAll(new ArrayList<>(analyticsChart.getData()));
 
         double totalIncome = data.getTotalIncome();
         analyticsAmount.setText(formatCurrency(totalIncome));
@@ -319,6 +346,8 @@ public class DashboardController {
             displayFormatter = DateTimeFormatter.ofPattern("MMM");
         }
 
+        List<Double> values = new ArrayList<>();
+
         data.getChartData().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
@@ -334,8 +363,22 @@ public class DashboardController {
                     } catch (Exception e) {
                         displayLabel = entry.getKey();
                     }
+                    values.add(entry.getValue());
                     series.getData().add(new XYChart.Data<>(displayLabel, entry.getValue()));
                 });
+
+        if (!values.isEmpty()) {
+            double minVal = values.stream().mapToDouble(Double::doubleValue).min().orElse(0);
+            double maxVal = values.stream().mapToDouble(Double::doubleValue).max().orElse(1);
+            double padding = (maxVal - minVal) * 0.1;
+
+            yAxis.setAutoRanging(false);
+            yAxis.setLowerBound(Math.max(0, minVal - padding));
+            yAxis.setUpperBound(maxVal + padding);
+            yAxis.setTickUnit((maxVal - minVal) / 5.0);
+        } else {
+            yAxis.setAutoRanging(true);
+        }
 
         analyticsChart.getData().add(series);
     }
