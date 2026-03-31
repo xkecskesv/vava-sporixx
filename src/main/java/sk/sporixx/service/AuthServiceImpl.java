@@ -222,7 +222,7 @@ public class AuthServiceImpl implements AuthService {
     //  LOGOUT
     @Override
     public void logout() {
-        User currentUser = SessionManager.getInstance().getCurrentUser();
+        User currentUser = SessionManager.getInstance().getCurrentUserInternal();
         if (currentUser != null) {
             logger.info("User logging out: id={}, email={}", currentUser.getId(), currentUser.getEmail());
         }

@@ -126,7 +126,7 @@ public class OverviewServiceImpl implements OverviewService {
             List<RecurringRule> upcoming = recurringRuleRepository.findUpcomingByAccountId(accountId, now, 3);
 
             // Nedávne transakcie (posledné 2 týždne pre tento jeden účet)
-            LocalDateTime twoWeeksAgo = LocalDate.now().minusWeeks(2).atStartOfDay();
+            LocalDateTime twoWeeksAgo = now.minusWeeks(2).toLocalDate().atStartOfDay();
             List<Transaction> recent = transactionRepository.findByAccountIdAndDateRange(
                     accountId, twoWeeksAgo, now);
 
