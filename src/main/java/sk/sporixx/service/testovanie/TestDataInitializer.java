@@ -138,7 +138,7 @@ public class TestDataInitializer {
                 .completeDate(today).createdAt(today).build());
 
         transactionRepository.save(Transaction.builder()
-                .accountId(mainAccount.getId())
+                .accountId(savingAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
                 .categoryId(2).amount(89.41).currencyCode("EUR")

@@ -181,7 +181,7 @@ Inter 27pt Bold*/
 /* User info s avatarom */
 .sidebar-user {
     -fx-padding: 8px 20px;
-    -fx-spacing: 2px;
+    -fx-spacing: 10px;
 }
 
 .sidebar-username {
@@ -194,6 +194,12 @@ Inter 27pt Bold*/
     -fx-font-family: 'Inter 28pt Regular';
     -fx-text-fill: #3A7DF6;
     -fx-font-size: 12px;
+}
+
+.sidebar-avatar {
+    -fx-background-color: #2A2A2A;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 1);
 }
 
 
@@ -309,6 +315,18 @@ Inter 27pt Bold*/
     -fx-text-fill: #8A8A8A;
 }
 
+.account-card-goal {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #8A8A8A;
+}
+
+.account-card-goal-active {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255,255,255,0.7);
+}
+
 .account-card-amount-active {
     -fx-font-family: 'Inter 27pt Bold';
     -fx-font-size: 22px;
@@ -328,7 +346,7 @@ Inter 27pt Bold*/
 
 /* Šípka */
 .accounts-arrow {
-    -fx-padding: 0 8px;
+    -fx-padding: 0 12px;
     -fx-cursor: hand;
 }
 
@@ -494,4 +512,24 @@ Inter 27pt Bold*/
 .activities-scroll .scroll-bar:vertical .decrement-arrow {
     -fx-shape: "";
     -fx-padding: 0;
+}
+
+.analytics-badge {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 8px;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.analytics-badge .list-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.analytics-badge .arrow-button {
+    -fx-padding: 0 4px 0 4px;
 }

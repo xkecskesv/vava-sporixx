@@ -11,7 +11,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-
+<?import javafx.scene.control.ComboBox?>
 
 <BorderPane stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/25"
@@ -29,52 +29,13 @@
 
             <!-- Header -->
             <VBox styleClass="dashboard-header" spacing="4">
-                <Label text="Overview" styleClass="dashboard-title"/>
-                <Label text="Total balance" styleClass="dashboard-subtitle"/>
+                <Label fx:id="dashboardTitle" text="Overview" styleClass="dashboard-title"/>
+                <Label fx:id="totalBalanceLabel" text="Total balance" styleClass="dashboard-subtitle"/>
                 <Label fx:id="totalBalance" text="€124,256.53" styleClass="dashboard-balance"/>
             </VBox>
 
-            <!-- Account karty -->
-            <HBox styleClass="accounts-container" spacing="16" alignment="CENTER_LEFT">
-
-                <!-- Aktívna karta -->
-                <VBox fx:id="cardMain" styleClass="account-card-active" spacing="8" HBox.hgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT">
-                        <Label text="Main Account" styleClass="account-card-title-active"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
-                            <image><Image url="@/assets/icons/main_acc_icon.png"/></image>
-                        </ImageView>
-                    </HBox>
-                    <Label text="Everyday account" styleClass="account-card-desc-active"/>
-                    <Region VBox.vgrow="ALWAYS"/>
-                    <Label text="€4,101.32" styleClass="account-card-amount-active"/>
-                </VBox>
-
-                <!-- Neaktívna karta -->
-                <VBox fx:id="cardEmergency" styleClass="account-card" spacing="8" HBox.hgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT">
-                        <Label text="Emergency Fund" styleClass="account-card-title"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
-                            <image><Image url="@/assets/icons/emergency_fund_icon.png"/></image>
-                        </ImageView>
-                    </HBox>
-                    <Label text="Use in need" styleClass="account-card-desc"/>
-                    <Region VBox.vgrow="ALWAYS"/>
-                    <Label text="€31,487.28" styleClass="account-card-amount"/>
-                </VBox>
-
-                <!-- Pridať účet -->
-                <VBox styleClass="account-card-add" alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <Label text="+" styleClass="account-card-plus"/>
-                </VBox>
-
-                <!-- Šípka -->
-                <VBox styleClass="accounts-arrow" alignment="CENTER">
-                    <Label text="›" styleClass="accounts-arrow-icon"/>
-                </VBox>
-            </HBox>
+            <!-- Account karty - generujú sa dynamicky v DashboardController -->
+            <HBox fx:id="accountsContainer" styleClass="accounts-container" spacing="16" alignment="CENTER_LEFT"/>
 
             <!-- Spodná sekcia: Analytics + Activities -->
             <HBox spacing="16" HBox.hgrow="ALWAYS">
@@ -82,95 +43,25 @@
                 <!-- Analytics -->
                 <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
                     <HBox alignment="CENTER_LEFT">
-                        <Label text="Analytics" styleClass="dashboard-card-title"/>
+                        <Label fx:id="analyticsTitle" text="Analytics" styleClass="dashboard-card-title"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <Label text="12 Months" styleClass="analytics-badge"/>
+                        <ComboBox fx:id="periodComboBox" styleClass="analytics-badge"/>
                     </HBox>
                     <Label fx:id="analyticsAmount" text="€194,290.47" styleClass="analytics-amount"/>
-                    <Label text="Total income" styleClass="analytics-subtitle"/>
+                    <Label fx:id="totalIncomeLabel" text="Total income" styleClass="analytics-subtitle"/>
                     <LineChart fx:id="analyticsChart" styleClass="analytics-chart"
                                VBox.vgrow="ALWAYS" animated="false" legendVisible="false"
                                createSymbols="false" verticalGridLinesVisible="false">
                         <xAxis><CategoryAxis side="BOTTOM" styleClass="analytics-axis"/></xAxis>
-                        <yAxis><NumberAxis side="LEFT" styleClass="analytics-axis" autoRanging="true"/></yAxis>
-                    </LineChart>
+                        <yAxis><NumberAxis fx:id="yAxis" side="LEFT" styleClass="analytics-axis" autoRanging="true"/></yAxis>                    </LineChart>
                 </VBox>
 
                 <!-- Activities -->
                 <VBox styleClass="dashboard-card" prefWidth="340" minWidth="300" HBox.hgrow="SOMETIMES">
-                    <Label text="Activities" styleClass="dashboard-card-title"/>
+                    <Label fx:id="activitiesTitle" text="Activities" styleClass="dashboard-card-title"/>
                     <ScrollPane styleClass="activities-scroll" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
-                        <VBox styleClass="activities-list" spacing="16">
-
-                            <!-- Upcoming Payment -->
-                            <Label text="Upcoming Payment" styleClass="activities-group-title"/>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/sent_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="Porsche merch - want" styleClass="activity-name"/>
-                                    <Label text="Sent" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="- €121.04" styleClass="activity-amount-negative"/>
-                            </HBox>
-
-                            <!-- Today -->
-                            <Label text="Today" styleClass="activities-group-title"/>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/sent_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="Porsche merch - want" styleClass="activity-name"/>
-                                    <Label text="Sent" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="- €121.04" styleClass="activity-amount-negative"/>
-                            </HBox>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/sent_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="Groceries - need" styleClass="activity-name"/>
-                                    <Label text="Sent" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="- €89.41" styleClass="activity-amount-negative"/>
-                            </HBox>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/sent_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="Fuel - need" styleClass="activity-name"/>
-                                    <Label text="Sent" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="- €104.72" styleClass="activity-amount-negative"/>
-                            </HBox>
-
-                            <!-- Yesterday -->
-                            <Label text="Yesterday" styleClass="activities-group-title"/>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/income_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="From Adam Aliexpress" styleClass="activity-name"/>
-                                    <Label text="Incoming" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="+ €14.29" styleClass="activity-amount-positive"/>
-                            </HBox>
-                            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="10">
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/sent_icon.png"/></image>
-                                </ImageView>
-                                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                                    <Label text="ChatGPT sub - need" styleClass="activity-name"/>
-                                    <Label text="Sent" styleClass="activity-type"/>
-                                </VBox>
-                                <Label text="- €28.04" styleClass="activity-amount-negative"/>
-                            </HBox>
-
+                        <VBox fx:id="activitiesList" styleClass="activities-list" spacing="16">
+                            <!-- Generuje sa dynamicky v DashboardController -->
                         </VBox>
                     </ScrollPane>
                 </VBox>
