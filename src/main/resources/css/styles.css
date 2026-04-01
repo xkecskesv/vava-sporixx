@@ -20,7 +20,6 @@ Inter 27pt Bold*/
 }
 
 .blue-panel {
-
     -fx-background-color: linear-gradient(to left, #3A7DF6, #1A3A8F);
     -fx-background-radius: 20px 0 0 20px;
     -fx-padding: 40px;
@@ -119,18 +118,15 @@ Inter 27pt Bold*/
     -fx-spacing: 4px;
 }
 
-/* Riadok menu položky (HBox s ikonou + label) */
 .sidebar-item-row {
     -fx-padding: 10px 20px;
     -fx-background-color: transparent;
 }
 
-/* Aktívny riadok (HBox) */
 .sidebar-item-active {
     -fx-padding: 10px 20px;
 }
 
-/* Label texty v menu riadkoch */
 .sidebar-item-label {
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-text-fill: #8A8A8A;
@@ -148,7 +144,6 @@ Inter 27pt Bold*/
     -fx-font-size: 14px;
 }
 
-/* Submenu */
 .sidebar-submenu {
     -fx-padding: 0 0 0 50px;
     -fx-spacing: 2px;
@@ -166,19 +161,16 @@ Inter 27pt Bold*/
     -fx-text-fill: #FFFFFF;
 }
 
-/* Separator */
 .sidebar-separator {
     -fx-background-color: #2A2A2A;
     -fx-padding: 0 20px;
 }
 
-/* Bottom sekcia */
 .sidebar-bottom {
     -fx-padding: 16px 0 24px 0;
     -fx-spacing: 8px;
 }
 
-/* User info s avatarom */
 .sidebar-user {
     -fx-padding: 8px 20px;
     -fx-spacing: 10px;
@@ -202,9 +194,7 @@ Inter 27pt Bold*/
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 1);
 }
 
-
 /*DASHBOARD*/
-
 
 .dashboard-scroll {
     -fx-background: #FAFCFE;
@@ -240,7 +230,6 @@ Inter 27pt Bold*/
     -fx-text-fill: #0A0A0A;
 }
 
-/* Account karty */
 .dashboard-accounts-wrapper {
     -fx-padding: 0;
 }
@@ -344,7 +333,6 @@ Inter 27pt Bold*/
     -fx-text-fill: #8A8A8A;
 }
 
-/* Šípka */
 .accounts-arrow {
     -fx-padding: 0 12px;
     -fx-cursor: hand;
@@ -360,7 +348,6 @@ Inter 27pt Bold*/
     -fx-border-radius: 20px;
 }
 
-/* Indikátor modra bodka */
 .accounts-indicator {
     -fx-padding: 8px 0 0 0;
     -fx-alignment: center;
@@ -391,15 +378,6 @@ Inter 27pt Bold*/
     -fx-text-fill: #0A0A0A;
 }
 
-.analytics-badge {
-    -fx-font-family: 'Inter 28pt Regular';
-    -fx-font-size: 12px;
-    -fx-text-fill: #0A0A0A;
-    -fx-background-color: #F1F5F9;
-    -fx-background-radius: 12px;
-    -fx-padding: 4px 12px;
-}
-
 .analytics-amount {
     -fx-font-family: 'Inter 27pt Bold';
     -fx-font-size: 24px;
@@ -412,7 +390,6 @@ Inter 27pt Bold*/
     -fx-text-fill: #8A8A8A;
 }
 
-/* DASHBOARD ANALYTICS  */
 .analytics-chart {
     -fx-background-color: transparent;
     -fx-padding: 0;
@@ -436,9 +413,8 @@ Inter 27pt Bold*/
     -fx-stroke: #F1F5F9;
 }
 
-/*DASHBOARD_ACTIVITES*/
+/* DASHBOARD ACTIVITIES */
 
-/* Activities */
 .activities-scroll {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -514,6 +490,7 @@ Inter 27pt Bold*/
     -fx-padding: 0;
 }
 
+/* Analytics badge / ComboBox */
 .analytics-badge {
     -fx-font-family: 'Inter 28pt Regular';
     -fx-font-size: 12px;
@@ -532,4 +509,129 @@ Inter 27pt Bold*/
 
 .analytics-badge .arrow-button {
     -fx-padding: 0 4px 0 4px;
+}
+
+/* MODAL */
+.modal-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20px;
+    -fx-padding: 32px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 40, 0, 0, 8);
+}
+
+.modal-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 20px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.modal-field-label {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+/* TextField v modali */
+.modal-input.text-field {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 14px;
+    -fx-pref-height: 44px;
+    -fx-max-width: infinity;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.modal-input.text-field:focused {
+    -fx-border-color: #3A7DF6;
+    -fx-background-color: #FFFFFF;
+}
+
+/* ComboBox v modali */
+.modal-input.combo-box {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-padding: 4px 8px;
+    -fx-pref-height: 44px;
+    -fx-max-width: infinity;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.modal-input.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8px 0 0;
+}
+
+.modal-input.combo-box .arrow {
+    -fx-background-color: #8A8A8A;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
+    -fx-scale-shape: true;
+    -fx-pref-width: 10px;
+    -fx-pref-height: 6px;
+}
+
+.modal-input.combo-box .list-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+    -fx-padding: 6px 12px;
+    -fx-background-color: transparent;
+}
+
+.modal-input.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 16, 0, 0, 4);
+    -fx-padding: 4px;
+}
+
+.modal-input.combo-box-popup .list-view .list-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+    -fx-padding: 10px 14px;
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+}
+
+.modal-input.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.modal-input.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #EEF4FF;
+    -fx-text-fill: #3A7DF6;
+}
+
+/* Ikony confirm/close — rovnaká veľkosť */
+.modal-action-icon {
+    -fx-cursor: hand;
+    -fx-opacity: 0.6;
+}
+
+.modal-action-icon:hover {
+    -fx-opacity: 1.0;
+}
+
+.modal-amount-preview {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 22px;
+    -fx-text-fill: #3A7DF6;
+    -fx-alignment: center-right;
 }

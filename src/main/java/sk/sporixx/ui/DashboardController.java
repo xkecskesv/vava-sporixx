@@ -23,6 +23,8 @@ import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +42,22 @@ public class DashboardController {
 
     // FXML - Accounts
     @FXML private HBox accountsContainer;
+
+    // FXML - Modal
+    @FXML private StackPane modalOverlay;
+    @FXML private Label modalTitle;
+    @FXML private ImageView modalConfirm;
+    @FXML private ImageView modalClose;
+    @FXML private Label modalTypeLabel;
+    @FXML private ComboBox<String> accountTypeComboBox;
+    @FXML private Label modalDescLabel;
+    @FXML private TextField accountDescField;
+    @FXML private Label modalAmountLabel;
+    @FXML private TextField accountAmountField;
+    @FXML private VBox goalSection;
+    @FXML private Label modalGoalLabel;
+    @FXML private TextField accountGoalField;
+    @FXML private Label modalAmountPreview;
 
     // FXML - Analytics
     @FXML private Label analyticsTitle;
@@ -143,6 +161,7 @@ public class DashboardController {
             Label plus = new Label("+");
             plus.getStyleClass().add("account-card-plus");
             addCard.getChildren().add(plus);
+            addCard.setOnMouseClicked(e -> openNewAccountModal());
             accountsContainer.getChildren().add(addCard);
         }
 
@@ -546,5 +565,105 @@ public class DashboardController {
     // ============================================================
     private String formatCurrency(double value) {
         return String.format("€%,.2f", value);
+    }
+
+
+    // ============================================================
+//  MODAL — NOVÝ ÚČET
+// ============================================================
+    private void openNewAccountModal() {
+        // Lokalizácia labelov
+        modalTitle.setText(Localization.get("dashboard.modal.title"));
+        modalTypeLabel.setText(Localization.get("dashboard.modal.type"));
+        modalDescLabel.setText(Localization.get("dashboard.modal.description"));
+        modalAmountLabel.setText(Localization.get("dashboard.modal.amount"));
+        modalGoalLabel.setText(Localization.get("dashboard.modal.goal"));
+
+        // Dropdown typy účtov
+        accountTypeComboBox.getItems().setAll(
+                Localization.get("dashboard.account.saving"),
+                Localization.get("dashboard.account.default")
+        );
+        accountTypeComboBox.setValue(Localization.get("dashboard.account.default"));
+
+        // Goal sekcia — skrytá by default
+        goalSection.setVisible(false);
+        goalSection.setManaged(false);
+        modalAmountPreview.setText("");
+
+        // Vyčisti polia
+        accountDescField.clear();
+        accountAmountField.clear();
+        accountGoalField.clear();
+
+        // Zobraz/skry goal sekciu podľa typu
+        accountTypeComboBox.setOnAction(e -> {
+            boolean isSaving = accountTypeComboBox.getValue()
+                    .equals(Localization.get("dashboard.account.saving"));
+            goalSection.setVisible(isSaving);
+            goalSection.setManaged(isSaving);
+        });
+
+        // Live preview sumy
+        accountAmountField.textProperty().addListener((obs, oldVal, newVal) -> {
+            try {
+                double val = Double.parseDouble(newVal.replace(",", "."));
+                modalAmountPreview.setText(formatCurrency(val));
+            } catch (NumberFormatException e) {
+                modalAmountPreview.setText("");
+            }
+        });
+
+        // Zatvorenie
+        modalClose.setOnMouseClicked(e -> closeModal());
+        modalOverlay.setOnMouseClicked(e -> {
+            if (e.getTarget() == modalOverlay) closeModal();
+        });
+
+        // Potvrdenie
+        modalConfirm.setOnMouseClicked(e -> submitNewAccount());
+
+        // Zobraz overlay
+        modalOverlay.setVisible(true);
+        modalOverlay.setManaged(true);
+    }
+
+    private void closeModal() {
+        modalOverlay.setVisible(false);
+        modalOverlay.setManaged(false);
+    }
+
+    private void submitNewAccount() {
+        String typeValue = accountTypeComboBox.getValue();
+        String desc = accountDescField.getText().trim();
+        String amountText = accountAmountField.getText().trim();
+        String goalText = accountGoalField.getText().trim();
+
+        if (desc.isEmpty() || amountText.isEmpty()) return;
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountText.replace(",", "."));
+        } catch (NumberFormatException e) {
+            return;
+        }
+
+        int accountTypeId = typeValue.equals(Localization.get("dashboard.account.saving"))
+                ? Account.SAVING_ACCOUNT
+                : Account.PRIVATE_ACCOUNT;
+
+        double goalAmount = 0;
+        if (accountTypeId == Account.SAVING_ACCOUNT && !goalText.isEmpty()) {
+            try {
+                goalAmount = Double.parseDouble(goalText.replace(",", "."));
+            } catch (NumberFormatException e) {
+                goalAmount = 0;
+            }
+        }
+
+        // TODO: ServiceLocator.getAccountService().createAccount(accountTypeId, desc, amount, goalAmount);
+        // Po implementácii service: reload accountsData a zavolaj loadAccounts()
+
+        closeModal();
     }
 }
