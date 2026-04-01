@@ -23,7 +23,7 @@ public class Transaction {
     private int categoryId;
     private int transactionTypeId;
     private int transactionStatusId;
-    private int spendingClassificationId;
+    private Integer spendingClassificationId;   // nullable - len pre TYPE_EXPENSE
     private double amount;
     private String currencyCode;
     private String description;
@@ -52,6 +52,10 @@ public class Transaction {
     public static final int CLASSIFICATION_NEED = 1;
     public static final int CLASSIFICATION_WANT = 2;
 
-    public boolean isNeed() { return this.spendingClassificationId == CLASSIFICATION_NEED; }
-    public boolean isWant() { return this.spendingClassificationId == CLASSIFICATION_WANT; }
+    public boolean isNeed() { return spendingClassificationId != null && spendingClassificationId == CLASSIFICATION_NEED; }
+    public boolean isWant() { return spendingClassificationId != null && spendingClassificationId == CLASSIFICATION_WANT; }
+
+    // ── Transaction Status (DB tabuľka transaction_status) ──
+    public static final int STATUS_COMPLETED = 1;
+    public static final int STATUS_PENDING = 2;
 }

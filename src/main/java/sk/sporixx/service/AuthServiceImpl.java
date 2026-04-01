@@ -106,7 +106,9 @@ public class AuthServiceImpl implements AuthService {
 
         // Zoradenie v Jave (podľa accountTypeId)
         List<Account> sortedAccounts = accounts.stream()
-                .sorted(Comparator.comparingInt(Account::getId))
+                .sorted(Comparator
+                        .comparingInt(Account::getAccountTypeId)
+                        .thenComparingInt(Account::getId))
                 .collect(Collectors.toList());
 
         // Nastavenie session
@@ -208,7 +210,9 @@ public class AuthServiceImpl implements AuthService {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
 
             List<Account> sortedAccounts = accounts.stream()
-                    .sorted(Comparator.comparingInt(Account::getId))
+                    .sorted(Comparator
+                            .comparingInt(Account::getAccountTypeId)
+                            .thenComparingInt(Account::getId))
                     .toList();
 
             SessionManager.getInstance().setSession(savedUser, sortedAccounts);
