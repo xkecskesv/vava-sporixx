@@ -8,6 +8,7 @@ import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
+import sk.sporixx.util.Localization;
 import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
@@ -27,10 +28,6 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String DEFAULT_CURRENCY_CODE = "EUR";
     private static final int DEFAULT_REGION_ID = 1;
-
-    // Defaultné popisy pre účty vytvorené pri registrácii
-    private static final String DEFAULT_MAIN_DESCRIPTION = "Everyday account";
-    private static final String DEFAULT_EMERGENCY_DESCRIPTION = "Use in need";
 
     public AuthServiceImpl(UserRepository userRepository, AccountRepository accountRepository) {
         this.userRepository = userRepository;
@@ -166,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.MAIN_ACCOUNT)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
-                    .description(DEFAULT_MAIN_DESCRIPTION)
+                    .description(Localization.get("account.default.main_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)
@@ -178,7 +175,7 @@ public class AuthServiceImpl implements AuthService {
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
-                    .description(DEFAULT_EMERGENCY_DESCRIPTION)
+                    .description(Localization.get("account.default.emergency_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)
