@@ -30,7 +30,7 @@ public class Transaction {
     private LocalDateTime completeDate;
     private LocalDateTime createdAt;
 
-    // ── Transaction Type (DB tabuľka transaction_type) ──
+    // Transaction Type (DB tabuľka transaction_type)
     public static final int TYPE_INCOME = 1;
     public static final int TYPE_EXPENSE = 2;
     public static final int TYPE_SAVING = 3;
@@ -48,14 +48,14 @@ public class Transaction {
         return isSaving() || isSavingExpense();
     }
 
-    // ── Spending Classification (DB tabuľka spending_classification) ──
+    // Spending Classification (DB tabuľka spending_classification)
     public static final int CLASSIFICATION_NEED = 1;
     public static final int CLASSIFICATION_WANT = 2;
 
     public boolean isNeed() { return spendingClassificationId != null && spendingClassificationId == CLASSIFICATION_NEED; }
     public boolean isWant() { return spendingClassificationId != null && spendingClassificationId == CLASSIFICATION_WANT; }
 
-    // ── Transaction Status (DB tabuľka transaction_status) ──
+    // Transaction Status (DB tabuľka transaction_status)
     public static final int STATUS_COMPLETED = 1;
     public static final int STATUS_PENDING = 2;
 }
