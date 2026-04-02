@@ -82,7 +82,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading accounts summary", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -111,7 +111,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading analytics", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -136,7 +136,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading activities", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 }

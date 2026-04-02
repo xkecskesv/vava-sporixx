@@ -4,7 +4,7 @@ import sk.sporixx.model.Goal;
 
 import java.util.List;
 
-public interface GoalService {
+public interface SavingGoalService {
 
     boolean addGoal(Goal goal);
 

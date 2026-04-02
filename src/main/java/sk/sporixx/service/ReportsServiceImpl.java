@@ -98,7 +98,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         } catch (Exception e) {
             logger.error("Error loading income/expense data", e);
-            throw new ReportsException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -132,7 +132,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         } catch (Exception e) {
             logger.error("Error loading category expense data", e);
-            throw new ReportsException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -171,7 +171,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         } catch (Exception e) {
             logger.error("Error loading recurring expense data", e);
-            throw new ReportsException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -211,7 +211,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         } catch (Exception e) {
             logger.error("Error loading want/need data", e);
-            throw new ReportsException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -274,7 +274,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         } catch (Exception e) {
             logger.error("Error loading saving accounts data", e);
-            throw new ReportsException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
