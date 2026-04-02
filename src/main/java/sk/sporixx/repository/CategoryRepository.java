@@ -1,20 +1,35 @@
 package sk.sporixx.repository;
 
 import sk.sporixx.model.Category;
-
 import java.util.List;
+import java.util.Optional;
 
+/**
+ * Repository rozhranie pre prístup ku kategóriám transakcií.
+ */
 public interface CategoryRepository {
 
-    boolean save(Category category);
+    /**
+     * Vráti všetky kategórie dostupné pre používateľa —
+     * systémové (userId = null) + jeho vlastné (userId = dané ID).
+     * Volá sa pri načítaní formulára pre novú transakciu.
+     */
+    List<Category> findByUserIdOrSystem(int userId);
 
-    boolean update(Category category);
+    /**
+     * Nájde kategóriu podľa ID.
+     */
+    Optional<Category> findById(int categoryId);
 
-    boolean deleteById(Long id);
+    /**
+     * Uloží novú kategóriu.
+     * Volá sa keď používateľ vytvorí vlastnú kategóriu v Management screene.
+     */
+    Category save(Category category);
 
-    Category findById(Long id);
-
-    List<Category> findAll();
-
-    List<Category> search(String query);
+    /**
+     * Vymaže kategóriu podľa ID.
+     * service vrstva musí overiť, že nejde o systémovú kategóriu.
+     */
+    void deleteById(int categoryId);
 }

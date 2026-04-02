@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
     public Account createSavingAccount(String description, double initialAmount,
                                        double targetAmount, LocalDate targetDate) {
 
-        // \description sa použije ako goalName
+        // description sa použije ako goalName
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }

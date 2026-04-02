@@ -32,6 +32,6 @@ public class RecurringRule {
     private LocalDateTime endDate;          // nullable
     private Integer maxOccurrences;         // nullable
     private int generatedCount;
-    private int isActive;
+    private boolean isActive;
     private LocalDateTime createdAt;
 }

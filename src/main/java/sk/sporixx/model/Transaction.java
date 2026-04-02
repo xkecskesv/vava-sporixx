@@ -33,20 +33,9 @@ public class Transaction {
     // Transaction Type (DB tabuľka transaction_type)
     public static final int TYPE_INCOME = 1;
     public static final int TYPE_EXPENSE = 2;
-    public static final int TYPE_SAVING = 3;
-    public static final int TYPE_INVESTMENT = 4;
-    public static final int TYPE_SAVING_EXPENSE = 5;
 
     public boolean isIncome()        { return this.transactionTypeId == TYPE_INCOME; }
     public boolean isExpense()       { return this.transactionTypeId == TYPE_EXPENSE; }
-    public boolean isSaving()        { return this.transactionTypeId == TYPE_SAVING; }
-    public boolean isSavingExpense() { return this.transactionTypeId == TYPE_SAVING_EXPENSE; }
-    public boolean isInvestment()    { return this.transactionTypeId == TYPE_INVESTMENT; }
-
-    /** Transakcia medzi účtami (Saving, Saving Expense) */
-    public boolean isTransferBetweenAccounts() {
-        return isSaving() || isSavingExpense();
-    }
 
     // Spending Classification (DB tabuľka spending_classification)
     public static final int CLASSIFICATION_NEED = 1;

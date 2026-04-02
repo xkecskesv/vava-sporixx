@@ -184,7 +184,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .nextDueDate(today.plusDays(3))
-                .isActive(1).generatedCount(3)
+                .isActive(true).generatedCount(3)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build());
 
@@ -196,7 +196,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 2, 1, 0, 0))
                 .nextDueDate(today.plusDays(12))
-                .isActive(1).generatedCount(2)
+                .isActive(true).generatedCount(2)
                 .createdAt(LocalDateTime.of(2026, 2, 1, 0, 0))
                 .build());
 
@@ -208,7 +208,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .nextDueDate(today.plusDays(18))
-                .isActive(1).generatedCount(3)
+                .isActive(true).generatedCount(3)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build());
 

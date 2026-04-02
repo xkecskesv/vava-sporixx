@@ -1,5 +1,8 @@
 package sk.sporixx.service;
 
+import lombok.Getter;
+
+@Getter
 public class AccountException extends RuntimeException {
 
     private final String messageKey;
@@ -9,7 +12,4 @@ public class AccountException extends RuntimeException {
         this.messageKey = messageKey;
     }
 
-    public String getMessageKey() {
-        return messageKey;
-    }
 }
