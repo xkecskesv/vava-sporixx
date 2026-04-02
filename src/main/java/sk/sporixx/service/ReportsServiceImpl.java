@@ -264,6 +264,7 @@ public class ReportsServiceImpl implements ReportsService {
                         .savedUp(savedUp)
                         .needToSave(needToSave)
                         .targetAmount(targetAmount)
+                        .targetDate(goal.getTargetDate())
                         .expectedProgress(calculateExpectedProgress(goal, totalDays, grouping))
                         .actualProgress(calculateActualProgress(account.getId(), goal, grouping))
                         .progressGrouping(grouping)

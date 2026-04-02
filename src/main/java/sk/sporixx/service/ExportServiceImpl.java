@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * Implementácia ExportService.
  * Používa javax.xml DOM API pre generovanie XML.
- * Dáta načítava cez ReportsService (žiadny priamy prístup k DB).
  */
 public class ExportServiceImpl implements ExportService {
 
@@ -123,6 +122,10 @@ public class ExportServiceImpl implements ExportService {
                 accountEl.setAttribute("needToSave", String.valueOf(account.getNeedToSave()));
                 accountEl.setAttribute("targetAmount", String.valueOf(account.getTargetAmount()));
                 accountEl.setAttribute("progressGrouping", account.getProgressGrouping());
+                // targetDate — používa sa pri importe na aktualizáciu cieľového dátumu
+                accountEl.setAttribute("targetDate",
+                        account.getTargetDate() != null ?
+                                account.getTargetDate().format(EXPORT_TIMESTAMP) : "");
 
                 // Expected progress
                 Element expectedEl = doc.createElement("ExpectedProgress");
@@ -160,7 +163,7 @@ public class ExportServiceImpl implements ExportService {
 
     /**
      * Vytvorí prázdny DOM Document.
-     * Bezpečnostné nastavenia zabraňujú XXE (XML External Entity) útokom:
+     * Bezpečnostné nastavenia zabraňujú XXE (XML External Entity) útokom.
      */
     private Document createDocument() throws Exception {
         return XmlUtil.createSecureFactory().newDocumentBuilder().newDocument();

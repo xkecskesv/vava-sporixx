@@ -18,7 +18,7 @@ public final class ServiceLocator {
      * Prepínač medzi testovacím a produkčným režimom.
      * TRUE  — in-memory repozitáre (TestDataInitializer), bez DB
      * FALSE — reálne JDBC repozitáre, vyžaduje hotovú DB vrstvu
-     * Po dokončení všetkých JDBC implementácií zmeniť na FALSE.
+     * Po dokončení všetkých JDBC implementácií zmeniť.
      */
     private static final boolean USE_TEST_DATA = true;
 
@@ -91,12 +91,26 @@ public final class ServiceLocator {
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
 
+        // ── Hotové JDBC repozitáre ──
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
 
-        // TODO: inicializovať po dokončení DB vrstvy:
+        // ── Zvyšok stále in-memory
+        TestDataInitializer testData = new TestDataInitializer();
+        overviewService = testData.getOverviewService();
+        accountService = new AccountServiceImpl(
+                accountRepo,
+                testData.getSavingGoalRepository());
+        reportsService = new ReportsServiceImpl(
+                testData.getTransactionRepository(),
+                testData.getRecurringRuleRepository(),
+                testData.getSavingGoalRepository());
+        exportService = new ExportServiceImpl(reportsService);
+        importService = new ImportServiceImpl(testData.getSavingGoalRepository());
+
+        // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // TransactionRepository transactionRepo = new TransactionRepositoryImpl();
         // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
         // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
@@ -117,9 +131,6 @@ public final class ServiceLocator {
         // adminService       = ...
         // familyService      = ...
         // goalService        = ...
-
-        throw new UnsupportedOperationException(
-                "Production mode not fully implemented yet. Set USE_TEST_DATA = true.");
     }
 
     //  GETTERY — UI vrstva volá tieto metódy

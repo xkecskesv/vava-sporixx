@@ -2,6 +2,8 @@ package sk.sporixx.dto;
 
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -17,6 +19,7 @@ public class SavingAccountReportData {
     private double savedUp;          // currentAmount zo SavingGoal
     private double needToSave;       // targetAmount - currentAmount
     private double targetAmount;
+    private LocalDateTime targetDate;
 
     /**
      * Expectation vs Reality graf.

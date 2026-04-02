@@ -11,16 +11,23 @@ import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.util.XmlUtil;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
  * Implementácia ImportService.
  * Parsuje XML súbory vygenerované ExportServiceImpl.
- * Aktualizuje saving goals podľa importovaných dát.
+ * Aktualizuje saving goals podľa importovaných dát:
+ * - currentAmount (savedUp)
+ * - targetAmount
+ * - targetDate
  */
 public class ImportServiceImpl implements ImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportServiceImpl.class);
+    private static final DateTimeFormatter EXPORT_TIMESTAMP =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final SavingGoalRepository savingGoalRepository;
 
@@ -40,12 +47,10 @@ public class ImportServiceImpl implements ImportService {
             Document doc = parseDocument(filePath);
             Element root = doc.getDocumentElement();
 
-            // Validácia formátu XML
             if (!"SavingAccountsReport".equals(root.getTagName())) {
                 throw new ImportException("import.error.invalid_xml_format");
             }
 
-            // Načítame saving účty zo session
             List<Account> savingAccounts = SessionManager.getInstance().getAccounts()
                     .stream()
                     .filter(Account::isSavingAccount)
@@ -55,7 +60,6 @@ public class ImportServiceImpl implements ImportService {
                 throw new ImportException("import.error.no_saving_accounts");
             }
 
-            // Spracuj každý SavingAccount element z XML
             NodeList accountNodes = root.getElementsByTagName("SavingAccount");
             int updatedCount = 0;
 
@@ -63,6 +67,8 @@ public class ImportServiceImpl implements ImportService {
                 Element accountEl = (Element) accountNodes.item(i);
                 String name = accountEl.getAttribute("name");
                 double savedUp = Double.parseDouble(accountEl.getAttribute("savedUp"));
+                double targetAmount = Double.parseDouble(accountEl.getAttribute("targetAmount"));
+                String targetDateStr = accountEl.getAttribute("targetDate");
 
                 // Nájdi zodpovedajúci saving účet podľa name
                 Account matchingAccount = savingAccounts.stream()
@@ -75,7 +81,6 @@ public class ImportServiceImpl implements ImportService {
                     continue;
                 }
 
-                // Načítaj aktívny goal pre tento účet
                 List<SavingGoal> goals = savingGoalRepository
                         .findActiveByAccountId(matchingAccount.getId());
 
@@ -84,10 +89,30 @@ public class ImportServiceImpl implements ImportService {
                     continue;
                 }
 
-                // Aktualizuj currentAmount
                 SavingGoal goal = goals.getFirst();
+
+                // Aktualizuj currentAmount
                 savingGoalRepository.updateCurrentAmount(goal.getId(), savedUp);
-                logger.info("Updated saving goal '{}' currentAmount to {}", name, savedUp);
+
+                // Aktualizuj targetAmount
+                savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
+
+                // Aktualizuj targetDate ak existuje
+                if (!targetDateStr.isEmpty()) {
+                    LocalDateTime targetDate = LocalDateTime.parse(
+                            targetDateStr, EXPORT_TIMESTAMP);
+                    savingGoalRepository.updateTargetDate(goal.getId(), targetDate);
+                }
+
+                // Aktualizuj SessionManager
+                Account sessionAccount = SessionManager.getInstance()
+                        .getAccountById(matchingAccount.getId());
+                if (sessionAccount != null) {
+                    sessionAccount.setCurrentBalance(savedUp);
+                }
+
+                logger.info("Updated saving goal '{}': savedUp={}, targetAmount={}, targetDate={}",
+                        name, savedUp, targetAmount, targetDateStr);
                 updatedCount++;
             }
 
