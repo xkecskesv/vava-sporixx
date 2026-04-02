@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface SavingGoalRepository {
 
     /**
-     * Nájde aktívny sporiacy cieľ pre jeden konkrétny účet.
+     * Nájde aktívny sporiaci cieľ pre jeden konkrétny účet.
      * V SQL filtruje podľa 'account_id' a 'is_active' = 1.
      */
     List<SavingGoal> findActiveByAccountId(int accountId);

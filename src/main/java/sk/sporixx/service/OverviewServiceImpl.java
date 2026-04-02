@@ -15,7 +15,6 @@ import sk.sporixx.repository.RecurringRuleRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

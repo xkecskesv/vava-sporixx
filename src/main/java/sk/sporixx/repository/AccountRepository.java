@@ -39,8 +39,13 @@ public interface AccountRepository {
     void updateBalance(int accountId, double newBalance);
 
     /**
+     * Aktualizuje popis účtu.
+     */
+    void update(Account account);
+
+    /**
      * Soft delete — nastaví is_active = false.
      * Main Account a Emergency Fund sa nedajú mazať (kontroluje service vrstva).
      */
-    //void deactivateById(int accountId);
+    void deactivateById(int accountId);
 }

@@ -20,6 +20,6 @@ public class SavingGoal {
     private double targetAmount;   // V UI: 192,000.00
     private double currentAmount;  // Aktualizuje sa pri transakciách
     private LocalDateTime targetDate;
-    private int isActive;          // V DB je to integer, ale v Jave to môžeš mapovať aj na boolean
+    private boolean isActive;          // V DB je to integer, ale v Jave to mapujeme na boolean
     private LocalDateTime createdAt;
 }

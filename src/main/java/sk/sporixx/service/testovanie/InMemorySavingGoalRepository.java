@@ -17,14 +17,14 @@ public class InMemorySavingGoalRepository implements SavingGoalRepository {
     @Override
     public List<SavingGoal> findActiveByAccountId(int accountId) {
         return goals.stream()
-                .filter(g -> g.getAccountId() == accountId && g.getIsActive() == 1)
+                .filter(g -> g.getAccountId() == accountId && g.isActive())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<SavingGoal> findActiveByAccountIds(List<Integer> accountIds) {
         return goals.stream()
-                .filter(g -> accountIds.contains(g.getAccountId()) && g.getIsActive() == 1)
+                .filter(g -> accountIds.contains(g.getAccountId()) && g.isActive())
                 .collect(Collectors.toList());
     }
 

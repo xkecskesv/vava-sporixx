@@ -2,19 +2,14 @@ package sk.sporixx.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.repository.*;
+import sk.sporixx.service.testovanie.InMemorySavingGoalRepository;
 import sk.sporixx.service.testovanie.TestDataInitializer;
-import sk.sporixx.repository.AccountRepositoryImpl;
-import sk.sporixx.repository.UserRepositoryImpl;
-import sk.sporixx.repository.UserRepository;
-import sk.sporixx.repository.AccountRepository;
 
 /**
  * Centrálny prístupový bod pre service vrstvu.
  * UI vrstva pristupuje k službám VÝLUČNE cez túto triedu.
  * UI nikdy nevytvára service ani repository objekty priamo.
- * Prepojenie s DB vrstvou:
- *   V metode init() staci zamenit InMemory repozitare za JDBC implementacie.
- *   Zvysok aplikacie (UI, service) sa NEMENI.
  */
 public final class ServiceLocator {
 
@@ -23,6 +18,7 @@ public final class ServiceLocator {
     // Service inštancie
     private static AuthService authService;
     private static OverviewService overviewService;
+    private static AccountService accountService;
 
     private static boolean initialized = false;
 
@@ -33,8 +29,6 @@ public final class ServiceLocator {
     /**
      * Inicializuje všetky služby.
      * Volá sa RAZ pri štarte aplikácie - v Main.start().
-     * AKTUALNE: pouziva in-memory repozitare (TestDataInitializer) pre testovanie.
-     * NESKOR: zamenit za JDBC repozitare po dokonceni DB vrstvy.
      */
     public static void init() {
         if (initialized) {
@@ -58,8 +52,11 @@ public final class ServiceLocator {
             AccountRepository accountRepo = new AccountRepositoryImpl();
 
             authService = new AuthServiceImpl(userRepo, accountRepo);
+            // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy
+            // (TransactionRepository, RecurringRuleRepository, SavingGoalRepository)
             TestDataInitializer testData = new TestDataInitializer();
             overviewService = testData.getOverviewService();
+            accountService = new AccountServiceImpl(accountRepo, testData.getSavingGoalRepository());
 
             logger.info("Real DB repositories (User, Account) initialized successfully.");
 
@@ -78,26 +75,11 @@ public final class ServiceLocator {
         // balanceService = ...
         // recurringItemService = ...
         // currencyService = ...
-        // accountService = ...
         // familyService = ...
         // userService = ...
         // adminService = ...
         // settingsService = ...
         // goalService = ...
-
-        // ============================================================
-        //  TODO: PRODUKCNY REZIM (po dokonceni DB vrstvy)
-        //  - Zakomentovat TestDataInitializer vyssie
-        //  - Odkomentovat JDBC repozitare nizsie
-        // ============================================================
-        // Connection conn = DatabaseManager.getConnection();
-        //
-        // // Repository instancie (JDBC)
-        // UserRepository userRepo = new JdbcUserRepository(conn);
-        // AccountRepository accountRepo = new JdbcAccountRepository(conn);
-        //
-        // // Service instancie
-        // authService = new AuthServiceImpl(userRepo, accountRepo);
 
         initialized = true;
         logger.info("ServiceLocator initialized successfully.");
@@ -115,6 +97,11 @@ public final class ServiceLocator {
     public static OverviewService getOverviewService() {
         checkInitialized();
         return overviewService;
+    }
+
+    public static AccountService getAccountService() {
+        checkInitialized();
+        return accountService;
     }
 
     //  HELPER

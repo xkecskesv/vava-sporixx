@@ -123,7 +123,7 @@ public class TestDataInitializer {
                 .accountId(savingAccount.getId()).name("Porsche 911")
                 .targetAmount(182_000.00).currentAmount(88_667.93)
                 .targetDate(LocalDateTime.of(2028, 12, 31, 0, 0))
-                .isActive(1).createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
+                .isActive(true).createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
                 .build());
 
         // ---- Dnešné transakcie (Activities panel - "Today") ----

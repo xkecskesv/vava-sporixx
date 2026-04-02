@@ -12,10 +12,8 @@ import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Implementácia autentifikačnej služby.
@@ -62,7 +60,6 @@ public class AuthServiceImpl implements AuthService {
         String normalizedEmail = email.trim().toLowerCase();
 
         // Nájdenie používateľa v DB
-        //TODO: dokoncit ked bude hotova DB vrstva
         Optional<User> userOptional;
         try {
             userOptional = userRepository.findByEmail(normalizedEmail);
@@ -90,7 +87,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //  Načítanie účtov
-        //TODO
         List<Account> accounts;
         try {
             accounts = accountRepository.findByOwnerUserId(user.getId());
@@ -104,15 +100,8 @@ public class AuthServiceImpl implements AuthService {
             user.setRole(Role.USER);
         }
 
-        // Zoradenie v Jave (podľa accountTypeId)
-        List<Account> sortedAccounts = accounts.stream()
-                .sorted(Comparator
-                        .comparingInt(Account::getAccountTypeId)
-                        .thenComparingInt(Account::getId))
-                .collect(Collectors.toList());
-
         // Nastavenie session
-        SessionManager.getInstance().setSession(user, sortedAccounts);
+        SessionManager.getInstance().setSession(user, accounts);
 
         logger.info("User logged in successfully: id={}, email={}, role={}, accounts={}",
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
@@ -133,7 +122,6 @@ public class AuthServiceImpl implements AuthService {
         String normalizedLast = ValidationUtil.normalizeName(lastName);
 
         // Kontrola duplicity emailu
-        //TODO
         try {
             Optional<User> existing = userRepository.findByEmail(normalizedEmail);
             if (existing.isPresent()) {
@@ -162,7 +150,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User savedUser;
-        //TODO
         try {
             savedUser = userRepository.save(user);
         } catch (Exception e) {
@@ -209,13 +196,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
 
-            List<Account> sortedAccounts = accounts.stream()
-                    .sorted(Comparator
-                            .comparingInt(Account::getAccountTypeId)
-                            .thenComparingInt(Account::getId))
-                    .toList();
-
-            SessionManager.getInstance().setSession(savedUser, sortedAccounts);
+            SessionManager.getInstance().setSession(savedUser, accounts);
             logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
         } catch (Exception e) {
             logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);

@@ -49,6 +49,22 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .ifPresent(a -> a.setCurrentBalance(newBalance));
     }
 
+    @Override
+    public void update(Account account) {
+        accounts.stream()
+                .filter(a -> a.getId() == account.getId())
+                .findFirst()
+                .ifPresent(a -> a.setDescription(account.getDescription()));
+    }
+
+    @Override
+    public void deactivateById(int accountId) {
+        accounts.stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst()
+                .ifPresent(a -> a.setActive(false));
+    }
+
     /**
      * Pomocná metóda - vráti všetky účty (pre debug/testovanie).
      */
