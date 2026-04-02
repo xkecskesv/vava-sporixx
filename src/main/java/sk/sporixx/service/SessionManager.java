@@ -1,6 +1,7 @@
 package sk.sporixx.service;
 
 import lombok.Getter;
+import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
@@ -28,7 +29,7 @@ public class SessionManager {
         return Holder.INSTANCE;
     }
 
-    @Getter
+
     private User currentUser;
     private List<Account> accounts;
 
@@ -58,11 +59,69 @@ public class SessionManager {
         return currentUser != null ? currentUser.getId() : -1;
     }
 
+    public CurrentUser getCurrentUser() {
+        if (currentUser == null) return null;
+        return CurrentUser.builder()
+                .id(currentUser.getId())
+                .name(currentUser.getFirstName())
+                .surname(currentUser.getLastName())
+                .email(currentUser.getEmail())
+                .gender(currentUser.getGender())
+                .photoPath(currentUser.getPhotoPath())
+                .role(currentUser.getRole())
+                .build();
+    }
+
+    /**
+     * Pre service vrstvu — plný User s passwordHash.
+     * Package-private: dostupné len v sk.sporixx.service balíčku.
+     */
+    User getCurrentUserInternal() {
+        return currentUser;
+    }
+
     /**
      * Vracia NEMODIFIKOVATEĽNÝ zoznam účtov.
      */
     public List<Account> getAccounts() {
         return Collections.unmodifiableList(accounts);
+    }
+
+    /**
+     * Vráti zoznam ID všetkých účtov aktuálneho používateľa.
+     */
+    public List<Integer> getAccountIds() {
+        return this.accounts.stream()
+                .map(Account::getId)
+                .toList();
+    }
+
+    /**
+     * Pridá nový účet do aktuálnej session.
+     * Volá sa typicky po úspešnom vytvorení účtu v databáze.
+     */
+    public void addAccount(Account newAccount) {
+        if (newAccount != null) {
+            this.accounts.add(newAccount);
+        }
+    }
+
+    /**
+     * Vyhľadá a vráti konkrétny účet podľa jeho ID.
+     * (napr. po vytvorení transakcie pre úpravu jeho zostatku).
+     */
+    public Account getAccountById(int accountId) {
+        return this.accounts.stream()
+                .filter(account -> account.getId() == accountId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Odstráni účet zo session podľa jeho ID.
+     */
+    public void removeAccount(int accountId) {
+        this.accounts.removeIf(account -> account.getId() == accountId);
     }
 
     public boolean isLoggedIn() {

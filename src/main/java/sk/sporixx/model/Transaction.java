@@ -1,21 +1,57 @@
 package sk.sporixx.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * Reprezentuje finančnú transakciu (príjem, výdavok, investment).
+ * Ak je to transakcia medzi účtami (saving, savaing_expense)
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
-    private Long id;
+    private int id;
+    private int accountId;
+    private Integer targetAccountId;    // nullable - len pre prevody medzi účtami
+    private int categoryId;
+    private int transactionTypeId;
+    private int transactionStatusId;
+    private int spendingClassificationId;
+    private double amount;
+    private String currencyCode;
+    private String description;
+    private LocalDateTime completeDate;
+    private LocalDateTime createdAt;
 
-    public Transaction() {
+    // ── Transaction Type (DB tabuľka transaction_type) ──
+    public static final int TYPE_INCOME = 1;
+    public static final int TYPE_EXPENSE = 2;
+    public static final int TYPE_SAVING = 3;
+    public static final int TYPE_INVESTMENT = 4;
+    public static final int TYPE_SAVING_EXPENSE = 5;
+
+    public boolean isIncome()        { return this.transactionTypeId == TYPE_INCOME; }
+    public boolean isExpense()       { return this.transactionTypeId == TYPE_EXPENSE; }
+    public boolean isSaving()        { return this.transactionTypeId == TYPE_SAVING; }
+    public boolean isSavingExpense() { return this.transactionTypeId == TYPE_SAVING_EXPENSE; }
+    public boolean isInvestment()    { return this.transactionTypeId == TYPE_INVESTMENT; }
+
+    /** Transakcia medzi účtami (Saving, Saving Expense) */
+    public boolean isTransferBetweenAccounts() {
+        return isSaving() || isSavingExpense();
     }
 
-    public Transaction(Long id) {
-        this.id = id;
-    }
+    // ── Spending Classification (DB tabuľka spending_classification) ──
+    public static final int CLASSIFICATION_NEED = 1;
+    public static final int CLASSIFICATION_WANT = 2;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public boolean isNeed() { return this.spendingClassificationId == CLASSIFICATION_NEED; }
+    public boolean isWant() { return this.spendingClassificationId == CLASSIFICATION_WANT; }
 }

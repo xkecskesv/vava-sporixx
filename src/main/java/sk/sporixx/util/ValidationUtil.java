@@ -30,16 +30,51 @@ public final class ValidationUtil {
     );
 
     /**
-     * Celé meno (meno + priezvisko v jednom poli).
-     * Musí obsahovať aspoň 2 slová oddelené medzerou.
-     * Každé slovo: písmená (aj diakritika).
-     * Povolené: medzery, pomlčky, apostrofy.
-     * OK:  "Adela Kudláčová", "Anna-Mária Nová", "Ján O'Brien Veľký"
-     * ZLE: "Adela", "123 456"
+     * Validuje meno alebo priezvisko (samostatné pole).
+     * Pravidlá:
+     *  - 1 až 2 slová oddelené jednou medzerou
+     *  - každé slovo: písmená vrátane diakritiky, pomlčky, apostrofy
+     *  - OK:  "Ján", "Anna-Mária", "Mary Jane"
+     *  - ZLE: "Ján Pavol Peter", "123", ""
      */
-    private static final Pattern FULL_NAME_PATTERN = Pattern.compile(
-            "^\\p{L}[\\p{L}'-]*(?:\\s+\\p{L}[\\p{L}'-]*)+$"
+    private static final Pattern NAME_PART_PATTERN = Pattern.compile(
+            "^\\p{L}[\\p{L}']*(?:[-\\s]\\p{L}[\\p{L}']*)?$"
     );
+
+    /**
+     * Kontroluje či meno/priezvisko obsahuje len povolené znaky.
+     * Povolené: písmená (vrátane diakritiky), medzery, pomlčky, apostrofy.
+     * ZLE: číslice, špeciálne znaky (@, #, !, atď.)
+     */
+    private static final Pattern NAME_CHARACTERS_PATTERN = Pattern.compile(
+            "^[\\p{L}\\s'\\-]+$"
+    );
+
+    /**
+     * Normalizuje časť mena – oreže whitespace, zloží viaceré medzery na jednu.
+     * "  Anna  Mária  " → "Anna Mária"
+     */
+    public static String normalizeName(String name) {
+        if (name == null) return "";
+        return name.trim()
+                .replaceAll("\\s*-+\\s*", "-")   // viaceré pomlčky + okolité medzery - jedna pomlčka
+                .replaceAll("\\s+", " ");          // viaceré medzery - jedna
+    }
+
+    /**
+     * Validuje firstName alebo lastName – max 2 slová.
+     */
+    public static boolean isValidNamePart(String name) {
+        if (name == null) return false;
+        String normalized = normalizeName(name);
+        if (normalized.isEmpty() || normalized.length() > 100) return false;
+        return NAME_PART_PATTERN.matcher(normalized).matches();
+    }
+
+    public static boolean isValidNamePartCharacters(String name) {
+        if (name == null || name.trim().isEmpty()) return false;
+        return NAME_CHARACTERS_PATTERN.matcher(name.trim()).matches();
+    }
 
     /** Heslo: minimálne 8 znakov */
     private static final int MIN_PASSWORD_LENGTH = 8;
@@ -64,27 +99,6 @@ public final class ValidationUtil {
         String trimmed = email.trim();
         if (trimmed.length() > 254) return false;
         return EMAIL_PATTERN.matcher(trimmed).matches();
-    }
-
-    /**
-     * Validuje celé meno.
-     * Musí obsahovať aspoň 2 slová.
-     *
-     * @param fullName celé meno
-     * @return true ak je platné
-     */
-    public static boolean isValidFullName(String fullName) {
-        if (fullName == null) {
-            return false;
-        }
-
-        String trimmed = fullName.trim().replaceAll("\\s+", " ");
-        int length = trimmed.length();
-
-        if (length < 3 || length > 300) {
-            return false;
-        }
-        return FULL_NAME_PATTERN.matcher(trimmed).matches();
     }
 
     public static boolean isNotBlank(String value) {

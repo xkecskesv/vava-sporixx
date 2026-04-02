@@ -3,6 +3,10 @@ package sk.sporixx.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.service.testovanie.TestDataInitializer;
+import sk.sporixx.repository.AccountRepositoryImpl;
+import sk.sporixx.repository.UserRepositoryImpl;
+import sk.sporixx.repository.UserRepository;
+import sk.sporixx.repository.AccountRepository;
 
 /**
  * Centrálny prístupový bod pre service vrstvu.
@@ -18,6 +22,7 @@ public final class ServiceLocator {
 
     // Service inštancie
     private static AuthService authService;
+    private static OverviewService overviewService;
 
     private static boolean initialized = false;
 
@@ -44,8 +49,25 @@ public final class ServiceLocator {
         //  - TestDataInitializer vytvori InMemory repozitare
         //    a naplni ich testovacimi datami
         // ============================================================
-        TestDataInitializer testData = new TestDataInitializer();
-        authService = testData.getAuthService();
+        // TestDataInitializer testData = new TestDataInitializer();
+        //authService = testData.getAuthService();
+        //overviewService = testData.getOverviewService();
+
+        try {
+            UserRepository userRepo = new UserRepositoryImpl();
+            AccountRepository accountRepo = new AccountRepositoryImpl();
+
+            authService = new AuthServiceImpl(userRepo, accountRepo);
+            TestDataInitializer testData = new TestDataInitializer();
+            overviewService = testData.getOverviewService();
+
+            logger.info("Real DB repositories (User, Account) initialized successfully.");
+
+        } catch (Exception e) {
+            logger.error("FAILED to initialize production repositories!", e);
+            throw new RuntimeException("Critical failure in ServiceLocator", e);
+        }
+
 
         // TODO: inicializovat dalsie sluzby ked budu implementovane
         // transactionService = ...
@@ -87,6 +109,12 @@ public final class ServiceLocator {
     public static AuthService getAuthService() {
         checkInitialized();
         return authService;
+    }
+
+    /** Overview obrazovka: zostatky, účty, graf, aktivity */
+    public static OverviewService getOverviewService() {
+        checkInitialized();
+        return overviewService;
     }
 
     //  HELPER

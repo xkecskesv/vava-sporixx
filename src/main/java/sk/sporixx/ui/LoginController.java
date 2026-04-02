@@ -22,7 +22,7 @@ public class LoginController {
         try {
 
             ServiceLocator.getAuthService().login(email, password);
-            //SceneManager.switchTo("dashboard.fxml");
+            SceneManager.switchTo("dashboard.fxml");
 
         }catch(Exception e){
             //service vrstva hodi exception s klucom
