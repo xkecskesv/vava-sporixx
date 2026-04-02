@@ -3,7 +3,6 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE users (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
     email             TEXT NOT NULL UNIQUE,
-    nickname          TEXT NOT NULL UNIQUE,
     password_hash     TEXT NOT NULL,
     first_name        TEXT NOT NULL,
     last_name         TEXT NOT NULL,
@@ -75,6 +74,7 @@ CREATE TABLE accounts (
     id                          INTEGER PRIMARY KEY AUTOINCREMENT,
     owner_user_id               INTEGER NOT NULL,
     region_id                   INTEGER NOT NULL,
+    currency_id                   INTEGER NOT NULL,
     account_type_id             TEXT NOT NULL,
     default_currency_code       TEXT NOT NULL,
     initial_balance             REAL NOT NULL DEFAULT 0.0,
@@ -86,10 +86,17 @@ CREATE TABLE accounts (
 
     FOREIGN KEY (owner_user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (region_id) REFERENCES regions(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    FOREIGN KEY (currency_id) REFERENCES currencies(code) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (default_currency_code) REFERENCES currencies(code) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (account_type_id) REFERENCES account_types(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE account_types(
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL,
+    description     TEXT,
+    created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE account_types(
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     name            TEXT NOT NULL,
@@ -121,11 +128,6 @@ CREATE TABLE categories ( --jedlo, auto, zábava, subscriptions, oblečenie, uti
   FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE budget_categories ( --food,rent, transport,utilities,other
-  id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-  name                  TEXT NOT NULL,
-  created_at            DATETIME DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE transaction_status (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
