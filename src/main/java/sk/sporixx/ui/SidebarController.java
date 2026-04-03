@@ -10,7 +10,6 @@ import sk.sporixx.service.SessionManager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Objects;
-
 import javafx.scene.image.Image;
 
 public class SidebarController {
@@ -21,13 +20,34 @@ public class SidebarController {
     @FXML private ImageView userAvatar;
     @FXML private Label userName;
     @FXML private Label userRole;
+    @FXML private HBox overviewItem;
+    @FXML private HBox transactionsItem;
+    @FXML private HBox budgetingItem;
+    @FXML private HBox managementItem;
+    @FXML private HBox userBox;
+    @FXML private Label incomeLabel;
+    @FXML private Label savingsLabel;
 
     private boolean reportsExpanded = false;
 
     @FXML
     public void initialize() {
         reportsItem.setOnMouseClicked(event -> toggleReports());
+
+        overviewItem.setOnMouseClicked(e -> navigate("dashboard.fxml"));
+        incomeLabel.setOnMouseClicked(e -> navigate("reports_income.fxml"));
+        savingsLabel.setOnMouseClicked(e -> navigate("reports_savings.fxml"));
+        userBox.setOnMouseClicked(e -> navigate("profile.fxml"));
+
         loadUserInfo();
+    }
+
+    private void navigate(String fxml) {
+        try {
+            SceneManager.switchTo(fxml);
+        } catch (Exception e) {
+            // screen este neexistuje
+        }
     }
 
     private void loadUserInfo() {
@@ -49,8 +69,8 @@ public class SidebarController {
     }
 
     private void loadFallbackAvatar() {
-        userAvatar.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))
-        ));
+        userAvatar.setImage(new Image(Objects.requireNonNull(
+                getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
     }
 
     private void toggleReports() {
@@ -61,8 +81,7 @@ public class SidebarController {
         String chevronPath = reportsExpanded
                 ? "/assets/icons/icon_chevron_down.png"
                 : "/assets/icons/icon_chevron_right.png";
-        reportsChevron.setImage(new javafx.scene.image.Image(
-                getClass().getResourceAsStream(chevronPath)
-        ));
+        reportsChevron.setImage(new Image(
+                getClass().getResourceAsStream(chevronPath)));
     }
 }
