@@ -15,7 +15,6 @@ import sk.sporixx.repository.RecurringRuleRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +82,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading accounts summary", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -112,7 +111,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading analytics", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 
@@ -137,7 +136,7 @@ public class OverviewServiceImpl implements OverviewService {
 
         } catch (Exception e) {
             logger.error("Error loading activities", e);
-            throw new OverviewException("error.db_error", e);
+            throw new ServiceException("error.db_error", e);
         }
     }
 }

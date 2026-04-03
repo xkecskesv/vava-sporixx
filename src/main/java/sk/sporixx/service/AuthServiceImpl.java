@@ -8,14 +8,13 @@ import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
+import sk.sporixx.util.Localization;
 import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Implementácia autentifikačnej služby.
@@ -29,10 +28,6 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String DEFAULT_CURRENCY_CODE = "EUR";
     private static final int DEFAULT_REGION_ID = 1;
-
-    // Defaultné popisy pre účty vytvorené pri registrácii
-    private static final String DEFAULT_MAIN_DESCRIPTION = "Everyday account";
-    private static final String DEFAULT_EMERGENCY_DESCRIPTION = "Use in need";
 
     public AuthServiceImpl(UserRepository userRepository, AccountRepository accountRepository) {
         this.userRepository = userRepository;
@@ -62,7 +57,6 @@ public class AuthServiceImpl implements AuthService {
         String normalizedEmail = email.trim().toLowerCase();
 
         // Nájdenie používateľa v DB
-        //TODO: dokoncit ked bude hotova DB vrstva
         Optional<User> userOptional;
         try {
             userOptional = userRepository.findByEmail(normalizedEmail);
@@ -90,7 +84,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //  Načítanie účtov
-        //TODO
         List<Account> accounts;
         try {
             accounts = accountRepository.findByOwnerUserId(user.getId());
@@ -104,13 +97,8 @@ public class AuthServiceImpl implements AuthService {
             user.setRole(Role.USER);
         }
 
-        // Zoradenie v Jave (podľa accountTypeId)
-        List<Account> sortedAccounts = accounts.stream()
-                .sorted(Comparator.comparingInt(Account::getId))
-                .collect(Collectors.toList());
-
         // Nastavenie session
-        SessionManager.getInstance().setSession(user, sortedAccounts);
+        SessionManager.getInstance().setSession(user, accounts);
 
         logger.info("User logged in successfully: id={}, email={}, role={}, accounts={}",
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
@@ -131,7 +119,6 @@ public class AuthServiceImpl implements AuthService {
         String normalizedLast = ValidationUtil.normalizeName(lastName);
 
         // Kontrola duplicity emailu
-        //TODO
         try {
             Optional<User> existing = userRepository.findByEmail(normalizedEmail);
             if (existing.isPresent()) {
@@ -160,7 +147,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User savedUser;
-        //TODO
         try {
             savedUser = userRepository.save(user);
         } catch (Exception e) {
@@ -177,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.MAIN_ACCOUNT)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
-                    .description(DEFAULT_MAIN_DESCRIPTION)
+                    .description(Localization.get("account.default.main_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)
@@ -189,7 +175,7 @@ public class AuthServiceImpl implements AuthService {
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.EMERGENCY_FUND)
                     .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
-                    .description(DEFAULT_EMERGENCY_DESCRIPTION)
+                    .description(Localization.get("account.default.emergency_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
                     .isActive(true)
@@ -207,11 +193,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
 
-            List<Account> sortedAccounts = accounts.stream()
-                    .sorted(Comparator.comparingInt(Account::getId))
-                    .toList();
-
-            SessionManager.getInstance().setSession(savedUser, sortedAccounts);
+            SessionManager.getInstance().setSession(savedUser, accounts);
             logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
         } catch (Exception e) {
             logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);

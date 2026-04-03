@@ -3,6 +3,7 @@ package sk.sporixx.service.testovanie;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.repository.SavingGoalRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +18,14 @@ public class InMemorySavingGoalRepository implements SavingGoalRepository {
     @Override
     public List<SavingGoal> findActiveByAccountId(int accountId) {
         return goals.stream()
-                .filter(g -> g.getAccountId() == accountId && g.getIsActive() == 1)
+                .filter(g -> g.getAccountId() == accountId && g.isActive())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<SavingGoal> findActiveByAccountIds(List<Integer> accountIds) {
         return goals.stream()
-                .filter(g -> accountIds.contains(g.getAccountId()) && g.getIsActive() == 1)
+                .filter(g -> accountIds.contains(g.getAccountId()) && g.isActive())
                 .collect(Collectors.toList());
     }
 
@@ -44,6 +45,18 @@ public class InMemorySavingGoalRepository implements SavingGoalRepository {
     public void updateCurrentAmount(int goalId, double currentAmount) {
         goals.stream().filter(g -> g.getId() == goalId).findFirst()
                 .ifPresent(g -> g.setCurrentAmount(currentAmount));
+    }
+
+    @Override
+    public void updateTargetAmount(int goalId, double targetAmount) {
+        goals.stream().filter(g -> g.getId() == goalId).findFirst()
+                .ifPresent(g -> g.setTargetAmount(targetAmount));
+    }
+
+    @Override
+    public void updateTargetDate(int goalId, LocalDateTime targetDate) {
+        goals.stream().filter(g -> g.getId() == goalId).findFirst()
+                .ifPresent(g -> g.setTargetDate(targetDate));
     }
 
     public List<SavingGoal> findAll() { return new ArrayList<>(goals); }

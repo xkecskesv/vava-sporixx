@@ -8,6 +8,7 @@ import sk.sporixx.model.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -44,7 +45,14 @@ public class SessionManager {
             throw new IllegalArgumentException("User cannot be null when setting session");
         }
         this.currentUser = user;
-        this.accounts = (accounts != null) ? new ArrayList<>(accounts) : new ArrayList<>();
+        if (accounts != null) {
+            this.accounts = new ArrayList<>(accounts);
+            this.accounts.sort(Comparator
+                    .comparingInt(Account::getAccountTypeId)
+                    .thenComparingInt(Account::getId));
+        } else {
+            this.accounts = new ArrayList<>();
+        }
     }
 
     /** Vyčistí session pri odhlásení. */
@@ -103,6 +111,9 @@ public class SessionManager {
     public void addAccount(Account newAccount) {
         if (newAccount != null) {
             this.accounts.add(newAccount);
+            this.accounts.sort(Comparator
+                    .comparingInt(Account::getAccountTypeId)
+                    .thenComparingInt(Account::getId));
         }
     }
 

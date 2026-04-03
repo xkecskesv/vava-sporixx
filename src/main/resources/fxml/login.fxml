@@ -40,7 +40,10 @@
             </VBox.margin>
             <Button fx:id="loginButton" defaultButton="true" onAction="#handleLogin" styleClass="btn-primary" text="%login.button" />
          </HBox>
-         <HBox alignment="CENTER">
+         <HBox alignment="CENTER" spacing="4">
+            <VBox.margin>
+               <Insets top="8" />
+            </VBox.margin>
             <Label styleClass="text-secondary" text="%login.create" />
             <Hyperlink fx:id="newAccountLink" onAction="#handleNewAccount" styleClass="link" text="%login.newaccount" />
          </HBox>

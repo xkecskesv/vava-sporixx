@@ -123,7 +123,7 @@ public class TestDataInitializer {
                 .accountId(savingAccount.getId()).name("Porsche 911")
                 .targetAmount(182_000.00).currentAmount(88_667.93)
                 .targetDate(LocalDateTime.of(2028, 12, 31, 0, 0))
-                .isActive(1).createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
+                .isActive(true).createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
                 .build());
 
         // ---- Dnešné transakcie (Activities panel - "Today") ----
@@ -138,7 +138,7 @@ public class TestDataInitializer {
                 .completeDate(today).createdAt(today).build());
 
         transactionRepository.save(Transaction.builder()
-                .accountId(mainAccount.getId())
+                .accountId(savingAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
                 .categoryId(2).amount(89.41).currencyCode("EUR")
@@ -184,7 +184,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .nextDueDate(today.plusDays(3))
-                .isActive(1).generatedCount(3)
+                .isActive(true).generatedCount(3)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build());
 
@@ -196,7 +196,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 2, 1, 0, 0))
                 .nextDueDate(today.plusDays(12))
-                .isActive(1).generatedCount(2)
+                .isActive(true).generatedCount(2)
                 .createdAt(LocalDateTime.of(2026, 2, 1, 0, 0))
                 .build());
 
@@ -208,7 +208,7 @@ public class TestDataInitializer {
                 .frequencyType("MONTHLY").frequencyInterval(1)
                 .startDate(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .nextDueDate(today.plusDays(18))
-                .isActive(1).generatedCount(3)
+                .isActive(true).generatedCount(3)
                 .createdAt(LocalDateTime.of(2026, 1, 1, 0, 0))
                 .build());
 

@@ -75,5 +75,46 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     @Override
     public void deleteById(int id) { transactions.removeIf(t -> t.getId() == id); }
 
+    @Override
+    public Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from, LocalDateTime to) {
+        // V in-memory nemáme JOIN na categories — vrátime categoryId ako kľúč
+        // DB kolega implementuje správny JOIN s názvom kategórie
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
+                .collect(Collectors.groupingBy(
+                        t -> "Category_" + t.getCategoryId(), // placeholder — DB kolega vráti názov
+                        LinkedHashMap::new,
+                        Collectors.summingDouble(Transaction::getAmount)));
+    }
+
+    @Override
+    public Map<String, Double> sumByClassificationAndDateRange(int accountId, LocalDateTime from, LocalDateTime to) {
+        Map<String, Double> result = new LinkedHashMap<>();
+
+        double wantSum = transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
+                .filter(t -> t.getSpendingClassificationId() != null &&
+                        t.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        double needSum = transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
+                .filter(t -> t.getSpendingClassificationId() != null &&
+                        t.getSpendingClassificationId() == Transaction.CLASSIFICATION_NEED)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        result.put("WANT", wantSum);
+        result.put("NEED", needSum);
+        return result;
+    }
+
     public List<Transaction> findAll() { return new ArrayList<>(transactions); }
 }

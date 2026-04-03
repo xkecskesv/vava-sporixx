@@ -32,6 +32,20 @@ public interface TransactionRepository {
      */
     Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId, LocalDateTime from);
 
+    /**
+     * Sumarizuje výdavky podľa kategórie za dané obdobie.
+     * Kľúč: názov kategórie, hodnota: celková suma.
+     * Používa sa pre Expenses by Category report.
+     */
+    Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
+
+    /**
+     * Sumarizuje výdavky podľa spending classification (WANT/NEED) za dané obdobie.
+     * Kľúč: "WANT" alebo "NEED", hodnota: celková suma.
+     * Používa sa pre Want vs Need report.
+     */
+    Map<String, Double> sumByClassificationAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
+
     Transaction save(Transaction transaction);
 
     void update(Transaction transaction);

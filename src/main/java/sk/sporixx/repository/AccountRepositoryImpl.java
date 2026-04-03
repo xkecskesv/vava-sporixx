@@ -137,4 +137,16 @@ public class AccountRepositoryImpl implements AccountRepository {
             throw new RuntimeException("Error updating balance in database", e);
         }
     }
+
+    @Override
+    public void update(Account account) {
+        // TODO: implementovať
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void deactivateById(int accountId) {
+        // TODO: implementovať
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

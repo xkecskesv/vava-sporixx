@@ -17,7 +17,7 @@ public class InMemoryRecurringRuleRepository implements RecurringRuleRepository 
     @Override
     public List<RecurringRule> findActiveByAccountId(int accountId) {
         return rules.stream()
-                .filter(r -> r.getAccountId() == accountId && r.getIsActive() == 1)
+                .filter(r -> r.getAccountId() == accountId && r.isActive())
                 .sorted((a, b) -> a.getNextDueDate().compareTo(b.getNextDueDate()))
                 .collect(Collectors.toList());
     }
@@ -25,7 +25,7 @@ public class InMemoryRecurringRuleRepository implements RecurringRuleRepository 
     @Override
     public List<RecurringRule> findUpcomingByAccountId(int accountId, LocalDateTime from, int limit) {
         return rules.stream()
-                .filter(r -> r.getAccountId() == accountId && r.getIsActive() == 1) // Len 1 účet
+                .filter(r -> r.getAccountId() == accountId && r.isActive()) // Len 1 účet
                 .filter(r -> !r.getNextDueDate().isBefore(from))
                 .sorted((a, b) -> a.getNextDueDate().compareTo(b.getNextDueDate()))
                 .limit(limit)
