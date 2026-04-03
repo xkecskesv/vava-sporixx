@@ -91,6 +91,24 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public void updateProfilePhoto(String photoPath) {
+        User currentUser = requireLoggedUser();
+
+        if (!ValidationUtil.isNotBlank(photoPath)) {
+            throw new ProfileException("error.unexpected");
+        }
+
+        currentUser.setPhotoPath(photoPath.trim());
+
+        try {
+            userRepository.update(currentUser);
+        } catch (Exception e) {
+            logger.error("Failed to update photo for user id={}", currentUser.getId(), e);
+            throw new ProfileException("error.unexpected", e);
+        }
+    }
+
+    @Override
     public String toDisplayGender(String rawGender) {
         return userService.toDisplayGender(rawGender);
     }

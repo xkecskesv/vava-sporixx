@@ -11,6 +11,9 @@ public interface ProfileService {
     /** Changes password for current user after validating old password. */
     void changePassword(String oldPassword, String newPassword);
 
+    /** Persists profile photo path for the currently logged-in user. */
+    void updateProfilePhoto(String photoPath);
+
     /** Converts raw/canonical gender value to localized UI value with fallback. */
     String toDisplayGender(String rawGender);
 }

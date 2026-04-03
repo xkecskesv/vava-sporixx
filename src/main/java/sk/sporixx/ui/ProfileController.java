@@ -187,10 +187,9 @@ public class ProfileController {
             clip.setArcHeight(30);
             profileImage.setClip(clip);
 
-            CurrentUser user = SessionManager.getInstance().getCurrentUser();
-            if (user != null) {
-                user.setPhotoPath(file.getAbsolutePath());
-            }
+            ServiceLocator.getProfileService().updateProfilePhoto(file.getAbsolutePath());
+        } catch (ProfileException ignored) {
+            // Image preview stays visible; persistence is retried on next upload.
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
