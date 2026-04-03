@@ -258,6 +258,7 @@ public class ProfileController {
     /**
      * Registers debounced and focus-loss triggers for autosaving profile fields.
      */
+    // TODO duplicated code fragment
     private void setupAutosaveHandlers() {
         autosaveTimer.setOnFinished(event -> {
             if (event != null) {
@@ -416,7 +417,7 @@ public class ProfileController {
         autosaveFeedbackLabel.setVisible(true);
         autosaveFeedbackLabel.setManaged(true);
     }
-    
+
     /**
      * Returns editable value for input controls without forcing visual placeholders as real data.
      */
