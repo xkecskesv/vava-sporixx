@@ -76,17 +76,22 @@
         <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="500">
 
             <!-- Header -->
+            <!-- Header -->
             <HBox alignment="CENTER_LEFT" spacing="12">
                 <Label fx:id="modalTitle" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ImageView fx:id="modalConfirm" fitWidth="18" fitHeight="18"
-                           preserveRatio="true" styleClass="modal-action-icon">
-                    <image><Image url="@/assets/icons/icon_confirm.png"/></image>
-                </ImageView>
-                <ImageView fx:id="modalClose" fitWidth="18" fitHeight="18"
-                           preserveRatio="true" styleClass="modal-action-icon">
-                    <image><Image url="@/assets/icons/icon_close.png"/></image>
-                </ImageView>
+                <StackPane onMouseClicked="#onModalConfirm" styleClass="modal-action-btn">
+                    <ImageView fx:id="modalConfirm" fitWidth="13" fitHeight="13"
+                               preserveRatio="true">
+                        <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                    </ImageView>
+                </StackPane>
+                <StackPane onMouseClicked="#onModalClose" styleClass="modal-action-btn">
+                    <ImageView fx:id="modalClose" fitWidth="16" fitHeight="16"
+                               preserveRatio="true">
+                        <image><Image url="@/assets/icons/icon_close.png"/></image>
+                    </ImageView>
+                </StackPane>
             </HBox>
 
             <!-- Type of account -->

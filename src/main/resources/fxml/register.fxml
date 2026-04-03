@@ -52,7 +52,10 @@
             </VBox.margin>
             <Button fx:id="registerButton" defaultButton="true" onAction="#handleRegister" styleClass="btn-primary" text="%register.button" />
          </HBox>
-         <HBox alignment="CENTER">
+         <HBox alignment="CENTER" spacing="4">
+            <VBox.margin>
+               <Insets top="8" />
+            </VBox.margin>
             <Label styleClass="text-secondary" text="%register.hasaccount" />
             <Hyperlink fx:id="hasAccountLink" onAction="#handleHasAccount" styleClass="link" text="%register.login" />
          </HBox>

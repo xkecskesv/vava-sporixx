@@ -396,7 +396,11 @@ public class DashboardController {
             yAxis.setUpperBound(maxVal + padding);
             yAxis.setTickUnit((maxVal - minVal) / 5.0);
         } else {
-            yAxis.setAutoRanging(true);
+
+            yAxis.setAutoRanging(false);
+            yAxis.setLowerBound(0);
+            yAxis.setUpperBound(100);
+            yAxis.setTickUnit(20);
         }
 
         analyticsChart.getData().add(series);
@@ -571,6 +575,17 @@ public class DashboardController {
     // ============================================================
 //  MODAL — NOVÝ ÚČET
 // ============================================================
+
+    @FXML
+    private void onModalConfirm() {
+        submitNewAccount();
+    }
+
+    @FXML
+    private void onModalClose() {
+        closeModal();
+    }
+
     private void openNewAccountModal() {
         // Lokalizácia labelov
         modalTitle.setText(Localization.get("dashboard.modal.title"));
@@ -614,14 +629,18 @@ public class DashboardController {
             }
         });
 
-        // Zatvorenie
-        modalClose.setOnMouseClicked(e -> closeModal());
-        modalOverlay.setOnMouseClicked(e -> {
-            if (e.getTarget() == modalOverlay) closeModal();
+        //Zatvorenie
+        final boolean[] pressedOnOverlay = {false};
+
+        modalOverlay.setOnMousePressed(e -> {
+            pressedOnOverlay[0] = e.getTarget() == modalOverlay;
         });
 
-        // Potvrdenie
-        modalConfirm.setOnMouseClicked(e -> submitNewAccount());
+        modalOverlay.setOnMouseReleased(e -> {
+            if (pressedOnOverlay[0] && e.getTarget() == modalOverlay) {
+                closeModal();
+            }
+        });
 
         // Zobraz overlay
         modalOverlay.setVisible(true);
@@ -637,7 +656,6 @@ public class DashboardController {
         String typeValue = accountTypeComboBox.getValue();
         String desc = accountDescField.getText().trim();
         String amountText = accountAmountField.getText().trim();
-        String goalText = accountGoalField.getText().trim();
 
         if (desc.isEmpty() || amountText.isEmpty()) return;
 
@@ -648,22 +666,29 @@ public class DashboardController {
             return;
         }
 
-        int accountTypeId = typeValue.equals(Localization.get("dashboard.account.saving"))
-                ? Account.SAVING_ACCOUNT
-                : Account.PRIVATE_ACCOUNT;
+        boolean isSaving = typeValue.equals(Localization.get("dashboard.account.saving"));
 
-        double goalAmount = 0;
-        if (accountTypeId == Account.SAVING_ACCOUNT && !goalText.isEmpty()) {
-            try {
-                goalAmount = Double.parseDouble(goalText.replace(",", "."));
-            } catch (NumberFormatException e) {
-                goalAmount = 0;
+        try {
+            if (isSaving) {
+                String goalText = accountGoalField.getText().trim();
+                if (goalText.isEmpty()) return;
+                double goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                ServiceLocator.getAccountService()
+                        .createSavingAccount(desc, amount, goalAmount, LocalDate.now().plusYears(1));
+            } else {
+                ServiceLocator.getAccountService()
+                        .createPrivateAccount(desc, amount);
             }
+
+            // Refresh accountov po pridaní
+            AccountsSummaryData refreshed = ServiceLocator.getOverviewService().loadAccountsSummary();
+            loadAccounts(refreshed);
+            loadTotalBalance(refreshed);
+            closeModal();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // TODO: ServiceLocator.getAccountService().createAccount(accountTypeId, desc, amount, goalAmount);
-        // Po implementácii service: reload accountsData a zavolaj loadAccounts()
-
-        closeModal();
     }
+
 }

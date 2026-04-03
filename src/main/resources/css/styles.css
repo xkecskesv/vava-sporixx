@@ -555,6 +555,22 @@ Inter 27pt Bold*/
     -fx-background-color: #FFFFFF;
 }
 
+.modal-action-btn {
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+    -fx-max-width: 32px;
+    -fx-max-height: 32px;
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-opacity: 0.6;
+}
+
+.modal-action-btn:hover {
+    -fx-background-color: #F1F5F9;
+    -fx-opacity: 1.0;
+}
+
 /* ComboBox v modali */
 .modal-input.combo-box {
     -fx-background-color: #F8FAFC;
@@ -591,7 +607,8 @@ Inter 27pt Bold*/
     -fx-background-color: transparent;
 }
 
-.modal-input.combo-box-popup .list-view {
+/* Popup — renderuje sa mimo scény, preto bez .modal-input prefixu */
+.combo-box-popup .list-view {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -601,7 +618,7 @@ Inter 27pt Bold*/
     -fx-padding: 4px;
 }
 
-.modal-input.combo-box-popup .list-view .list-cell {
+.combo-box-popup .list-view .list-cell {
     -fx-font-family: 'Inter 28pt Regular';
     -fx-font-size: 13px;
     -fx-text-fill: #0A0A0A;
@@ -610,23 +627,19 @@ Inter 27pt Bold*/
     -fx-background-color: transparent;
 }
 
-.modal-input.combo-box-popup .list-view .list-cell:hover {
+.combo-box-popup .list-view .list-cell:filled:hover {
     -fx-background-color: #F1F5F9;
+    -fx-cursor: hand;
 }
 
-.modal-input.combo-box-popup .list-view .list-cell:selected {
+.combo-box-popup .list-view .list-cell:filled:selected {
     -fx-background-color: #EEF4FF;
     -fx-text-fill: #3A7DF6;
 }
 
-/* Ikony confirm/close — rovnaká veľkosť */
-.modal-action-icon {
-    -fx-cursor: hand;
-    -fx-opacity: 0.6;
-}
-
-.modal-action-icon:hover {
-    -fx-opacity: 1.0;
+.combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: #DDEAFF;
+    -fx-text-fill: #3A7DF6;
 }
 
 .modal-amount-preview {
