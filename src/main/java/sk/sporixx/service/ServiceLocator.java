@@ -29,6 +29,8 @@ public final class ServiceLocator {
     private static ReportsService reportsService;
     private static ExportService exportService;
     private static ImportService importService;
+    private static UserService userService;
+    private static ProfileService profileService;
 
     private static boolean initialized = false;
 
@@ -74,6 +76,8 @@ public final class ServiceLocator {
         TestDataInitializer testData = new TestDataInitializer();
 
         authService    = testData.getAuthService();
+        userService = new UserServiceImpl();
+        profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -96,6 +100,8 @@ public final class ServiceLocator {
         AccountRepository accountRepo = new AccountRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
+        userService = new UserServiceImpl();
+        profileService = new ProfileServiceImpl(userRepo, userService);
 
         // ── Zvyšok stále in-memory
         TestDataInitializer testData = new TestDataInitializer();
@@ -168,6 +174,18 @@ public final class ServiceLocator {
     public static ImportService getImportService() {
         checkInitialized();
         return importService;
+    }
+
+    /** User helper service for current-user access and normalization logic. */
+    public static UserService getUserService() {
+        checkInitialized();
+        return userService;
+    }
+
+    /** Profile operations: update profile and change password. */
+    public static ProfileService getProfileService() {
+        checkInitialized();
+        return profileService;
     }
 
     //  HELPER
