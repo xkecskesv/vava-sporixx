@@ -10,7 +10,13 @@ import sk.sporixx.util.ValidationUtil;
 import java.util.Optional;
 
 /**
- * Default implementation for profile updates and password changes.
+ * Service implementation responsible for profile-related operations of the currently
+ * authenticated user.
+ *
+ * <p>This class validates input, applies normalization, and persists changes through
+ * {@link UserRepository}.</p>
+ *
+ * @author Viktória Kecskés
  */
 public class ProfileServiceImpl implements ProfileService {
 
@@ -24,6 +30,15 @@ public class ProfileServiceImpl implements ProfileService {
         this.userService = userService;
     }
 
+    /**
+     * Updates profile identity fields for the authenticated user.
+     *
+     * @param firstName new first name
+     * @param lastName new last name
+     * @param email new e-mail address
+     * @param gender raw gender value from UI
+     * @throws ProfileException when validation fails or persistence cannot be completed
+     */
     @Override
     public void updateProfile(String firstName, String lastName, String email, String gender) {
         User currentUser = requireLoggedUser();
@@ -63,6 +78,14 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    /**
+     * Changes the password for the authenticated user.
+     *
+     * @param oldPassword current plain-text password used for verification
+     * @param newPassword new plain-text password to persist as a hash
+     * @throws ProfileException when old password is invalid, policy checks fail,
+     *                          or persistence cannot be completed
+     */
     @Override
     public void changePassword(String oldPassword, String newPassword) {
         User currentUser = requireLoggedUser();
@@ -90,6 +113,12 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    /**
+     * Updates and persists profile photo path for the authenticated user.
+     *
+     * @param photoPath absolute path to selected profile photo
+     * @throws ProfileException when path is blank or persistence fails
+     */
     @Override
     public void updateProfilePhoto(String photoPath) {
         User currentUser = requireLoggedUser();
@@ -108,11 +137,23 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    /**
+     * Converts a raw or canonical gender value into localized UI text.
+     *
+     * @param rawGender raw persisted value
+     * @return localized label for UI usage, or {@code "-"} fallback
+     */
     @Override
     public String toDisplayGender(String rawGender) {
         return userService.toDisplayGender(rawGender);
     }
 
+    /**
+     * Returns the authenticated session user.
+     *
+     * @return current authenticated {@link User}
+     * @throws ProfileException when no authenticated user exists in session
+     */
     private User requireLoggedUser() {
         User currentUser = SessionManager.getInstance().getCurrentUserInternal();
         if (currentUser == null) {

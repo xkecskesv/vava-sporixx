@@ -2,7 +2,6 @@ package sk.sporixx.ui;
 
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -15,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
@@ -29,7 +30,17 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import javafx.util.Duration;
 
+/**
+ * JavaFX controller for the Profile view.
+ *
+ * <p>Handles profile initialization, autosave for editable profile fields,
+ * password updates, and profile photo upload/persistence integration.</p>
+ *
+ * @author Viktória Kecskés
+ */
 public class ProfileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     private static final Duration AUTOSAVE_DELAY = Duration.millis(800);
 
@@ -54,6 +65,7 @@ public class ProfileController {
     @FXML private Label lastNameLabel;
     @FXML private Label emailLabel;
     @FXML private Label genderLabel;
+    @FXML private Label autosaveFeedbackLabel;
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
@@ -102,14 +114,20 @@ public class ProfileController {
         oldPasswordField.setPromptText("***************");
         newPasswordField.setPromptText("***************");
 
-        oldPasswordField.textProperty().addListener((obs, oldValue, newValue) -> hidePasswordFeedback());
-        newPasswordField.textProperty().addListener((obs, oldValue, newValue) -> hidePasswordFeedback());
+        oldPasswordField.textProperty().addListener(obs -> {
+            if (obs != null) hidePasswordFeedback();
+        });
+        newPasswordField.textProperty().addListener(obs -> {
+            if (obs != null) hidePasswordFeedback();
+        });
 
         profileSubtitle.setText(Localization.get("profile.information.title"));
         firstNameLabel.setText(Localization.get("profile.information.firstName"));
         lastNameLabel.setText(Localization.get("profile.information.lastName"));
         emailLabel.setText(Localization.get("profile.information.email"));
         genderLabel.setText(Localization.get("profile.information.gender"));
+        autosaveFeedbackLabel.setVisible(false);
+        autosaveFeedbackLabel.setManaged(false);
         parentCheckBox.setText("");
         financialLevelLabel.setText(Localization.get("profile.information.financial_level_title"));
         financialLevelValue.setText(Localization.get("profile.information.financial_level"));
@@ -141,18 +159,18 @@ public class ProfileController {
         // Populate inputs from the active session, or show safe defaults.
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
         if (user == null) {
-            firstNameField.setPromptText("-");
-            lastNameField.setPromptText("-");
-            emailField.setPromptText("-");
+            firstNameField.setText("");
+            lastNameField.setText("");
+            emailField.setText("");
             genderComboBox.setValue("-");
             parentCheckBox.setSelected(false);
             loadFallbackAvatar();
             return;
         }
 
-        firstNameField.setText(defaultText(user.getName()));
-        lastNameField.setText(defaultText(user.getSurname()));
-        emailField.setText(defaultText(user.getEmail()));
+        firstNameField.setText(editableText(user.getName()));
+        lastNameField.setText(editableText(user.getSurname()));
+        emailField.setText(editableText(user.getEmail()));
         genderComboBox.setValue(ServiceLocator.getProfileService().toDisplayGender(user.getGender()));
         parentCheckBox.setSelected(user.checkisParent());
 
@@ -162,9 +180,11 @@ public class ProfileController {
         setupAutosaveHandlers();
     }
 
+    /**
+     * Logs out the current user and navigates back to the login view.
+     */
     @FXML
-    // Ends session and routes the user back to the login screen.
-    private void handleLogout(ActionEvent event) {
+    private void handleLogout() {
         try {
             ServiceLocator.getAuthService().logout();
             SceneManager.switchTo("login.fxml");
@@ -173,9 +193,11 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Opens file picker for profile photo, previews it immediately, and persists the photo path.
+     */
     @FXML
-    // Allows selecting a local image and applies rounded clipping for avatar display.
-    private void handleUploadPhoto(ActionEvent event) {
+    private void handleUploadPhoto() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Profile Photo");
         fileChooser.getExtensionFilters().add(
@@ -198,12 +220,15 @@ public class ProfileController {
         } catch (ProfileException ignored) {
             // Image preview stays visible; persistence is retried on next upload.
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.warn("Selected profile image was not found: {}", file.getAbsolutePath(), e);
         }
     }
 
+    /**
+     * Handles password change request and shows inline one-line feedback.
+     */
     @FXML
-    private void handleChangePassword(ActionEvent event) {
+    private void handleChangePassword() {
         String oldPassword = oldPasswordField.getText();
         String newPassword = newPasswordField.getText();
 
@@ -219,6 +244,9 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Captures the last persisted profile values used by autosave diff checks.
+     */
     private void initAutosaveState() {
         lastSavedFirstName = normalized(firstNameField.getText());
         lastSavedLastName = normalized(lastNameField.getText());
@@ -227,6 +255,9 @@ public class ProfileController {
         autosaveEnabled = true;
     }
 
+    /**
+     * Registers debounced and focus-loss triggers for autosaving profile fields.
+     */
     private void setupAutosaveHandlers() {
         autosaveTimer.setOnFinished(event -> {
             if (event != null) {
@@ -234,14 +265,14 @@ public class ProfileController {
             }
         });
 
-        firstNameField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
+        firstNameField.textProperty().addListener(obs -> {
+            if (obs != null) scheduleAutosave();
         });
-        lastNameField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
+        lastNameField.textProperty().addListener(obs -> {
+            if (obs != null) scheduleAutosave();
         });
-        emailField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
+        emailField.textProperty().addListener(obs -> {
+            if (obs != null) scheduleAutosave();
         });
         genderComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
@@ -261,11 +292,17 @@ public class ProfileController {
         });
     }
 
+    /**
+     * Starts/restarts the autosave debounce timer.
+     */
     private void scheduleAutosave() {
         if (!autosaveEnabled) return;
         autosaveTimer.playFromStart();
     }
 
+    /**
+     * Persists profile fields when values changed and passed basic pre-validation.
+     */
     private void flushAutosave() {
         if (!autosaveEnabled) return;
 
@@ -284,29 +321,53 @@ public class ProfileController {
         if (!ValidationUtil.isNotBlank(firstName)
                 || !ValidationUtil.isNotBlank(lastName)
                 || !ValidationUtil.isValidEmail(email)) {
+            hideAutosaveFeedback();
+            return;
+        }
+
+        if (!ValidationUtil.isValidNamePart(firstName)
+                || !ValidationUtil.isValidNamePartCharacters(firstName)
+                || !ValidationUtil.isValidNamePart(lastName)
+                || !ValidationUtil.isValidNamePartCharacters(lastName)) {
+            hideAutosaveFeedback();
             return;
         }
 
         try {
+            showAutosaveFeedback(Localization.get("profile.autosave.saving"), "profile-feedback-pending");
             ServiceLocator.getProfileService().updateProfile(firstName, lastName, email, gender);
             lastSavedFirstName = firstName;
             lastSavedLastName = lastName;
             lastSavedEmail = email;
             lastSavedGender = gender;
-        } catch (ProfileException ignored) {
+            showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
+        } catch (ProfileException e) {
             // Keep user input as-is; save is retried on next valid change.
+            showAutosaveFeedback(localizeMessage(e.getMessageKey()), "profile-feedback-error");
+        } catch (Exception e) {
+            logger.warn("Autosave failed unexpectedly.", e);
+            showAutosaveFeedback(Localization.get("profile.autosave.failed"), "profile-feedback-error");
         }
     }
 
+    /**
+     * Returns selected gender display value, or fallback dash when not selected.
+     */
     private String selectedGender() {
         String value = genderComboBox.getValue();
         return value == null ? "-" : value;
     }
 
+    /**
+     * Trims input safely and converts null to empty string.
+     */
     private String normalized(String value) {
         return value == null ? "" : value.trim();
     }
 
+    /**
+     * Resolves localized text by key with safe fallback for missing keys.
+     */
     private String localizeMessage(String key) {
         if (key == null || key.isBlank()) {
             return Localization.get("error.unexpected");
@@ -318,6 +379,9 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Shows one-line password feedback under the password action button.
+     */
     private void showPasswordFeedback(String message, boolean success) {
         passwordFeedbackLabel.setText(message);
         passwordFeedbackLabel.getStyleClass().removeAll("profile-feedback-success", "profile-feedback-error");
@@ -326,18 +390,44 @@ public class ProfileController {
         passwordFeedbackLabel.setManaged(true);
     }
 
+    /**
+     * Hides inline password feedback message.
+     */
     private void hidePasswordFeedback() {
         passwordFeedbackLabel.setVisible(false);
         passwordFeedbackLabel.setManaged(false);
     }
 
-
-    // Replaces null/blank values with a neutral placeholder for prompt rendering.
-    private String defaultText(String value) {
-        return (value == null || value.isBlank()) ? "-" : value;
+    /**
+     * Shows one-line autosave status below profile input fields.
+     */
+    private void showAutosaveFeedback(String message, String styleClass) {
+        autosaveFeedbackLabel.setText(message);
+        autosaveFeedbackLabel.getStyleClass().removeAll(
+                "profile-feedback-success", "profile-feedback-error", "profile-feedback-pending");
+        autosaveFeedbackLabel.getStyleClass().add(styleClass);
+        autosaveFeedbackLabel.setVisible(true);
+        autosaveFeedbackLabel.setManaged(true);
     }
 
-    // Loads the user photo when available; otherwise falls back to the default avatar.
+    /**
+     * Hides inline autosave status line.
+     */
+    private void hideAutosaveFeedback() {
+        autosaveFeedbackLabel.setVisible(false);
+        autosaveFeedbackLabel.setManaged(false);
+    }
+
+    /**
+     * Returns editable value for input controls without forcing visual placeholders as real data.
+     */
+    private String editableText(String value) {
+        return (value == null || value.isBlank()) ? "" : value.trim();
+    }
+
+    /**
+     * Loads user photo from persisted path; falls back to default avatar on failure.
+     */
     private void loadUserPhoto(CurrentUser user) {
         if (user.checkhasPhoto()) {
             try {
@@ -350,7 +440,9 @@ public class ProfileController {
         loadFallbackAvatar();
     }
 
-    // Loads application default profile image from bundled assets.
+    /**
+     * Loads bundled default avatar image.
+     */
     private void loadFallbackAvatar() {
         profileImage.setImage(new Image(Objects.requireNonNull(
                 getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));

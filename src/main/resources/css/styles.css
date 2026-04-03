@@ -740,6 +740,10 @@ Inter 27pt Bold*/
     -fx-text-fill: #EF4444;
 }
 
+.profile-feedback-pending {
+    -fx-text-fill: #64748B;
+}
+
 .profile-label {
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-font-size: 13px;
