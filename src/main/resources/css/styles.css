@@ -649,3 +649,33 @@ Inter 27pt Bold*/
     -fx-text-fill: #3A7DF6;
     -fx-alignment: center-right;
 }
+
+/* PROFILE */
+
+.profile-content {
+    -fx-background-color: #FAFCFE;
+}
+
+.profile-title {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 28px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.profile-subtitle {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #8A8A8A;
+}
+
+.profile-label {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748B;
+}
+
+.profile-value {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
