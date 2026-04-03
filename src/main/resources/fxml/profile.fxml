@@ -122,7 +122,6 @@
                                 <ProgressBar fx:id="xpProgressBar" styleClass="profile-progress" progress="1" maxWidth="Infinity" minHeight="12"/>
                             </VBox>
 
-                            <!-- Milestones section -->
                             <Region VBox.vgrow="ALWAYS"/>
                             <Label fx:id="milestonesTitle" styleClass="profile-section-title" text="Milestones"/>
 
@@ -131,6 +130,7 @@
                                     <Label fx:id="milestone1Title" styleClass="milestone-title" text="Savings Master"/>
                                     <ImageView fx:id="milestone1Icon" fitWidth="70" fitHeight="70" preserveRatio="true"
                                                styleClass="milestone-icon">
+                                        <!-- TODO Replace with actual milestone progres icon -->
                                         <Image url="@../assets/icons/milestone_0.png"/>
                                     </ImageView>
                                     <Label fx:id="milestone1Subtitle" styleClass="milestone-subtitle" text="Getting Started"/>
@@ -142,6 +142,7 @@
                                     <Label fx:id="milestone2Title" styleClass="milestone-title" text="Budget Keeper"/>
                                     <ImageView fx:id="milestone2Icon" fitWidth="70" fitHeight="70" preserveRatio="true"
                                                styleClass="milestone-icon">
+                                        <!-- TODO Replace with actual milestone progres icon -->
                                         <Image url="@../assets/icons/milestone_0.png"/>
                                     </ImageView>
                                     <Label fx:id="milestone2Subtitle" styleClass="milestone-subtitle" text="Getting Started"/>
@@ -153,6 +154,7 @@
                                     <Label fx:id="milestone3Title" styleClass="milestone-title" text="Investor"/>
                                     <ImageView fx:id="milestone3Icon" fitWidth="70" fitHeight="70" preserveRatio="true"
                                                styleClass="milestone-icon">
+                                        <!-- TODO Replace with actual milestone progres icon -->
                                         <Image url="@../assets/icons/milestone_0.png"/>
                                     </ImageView>
                                     <Label fx:id="milestone3Subtitle" styleClass="milestone-subtitle" text="Getting Started"/>
@@ -164,6 +166,7 @@
                                     <Label fx:id="milestone4Title" styleClass="milestone-title" text="Smart Spender"/>
                                     <ImageView fx:id="milestone4Icon" fitWidth="70" fitHeight="70" preserveRatio="true"
                                                styleClass="milestone-icon">
+                                        <!-- TODO Replace with actual milestone progres icon -->
                                         <Image url="@../assets/icons/milestone_0.png"/>
                                     </ImageView>
                                     <Label fx:id="milestone4Subtitle" styleClass="milestone-subtitle" text="Getting Started"/>

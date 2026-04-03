@@ -153,7 +153,7 @@ public class ProfileController {
                 "-"
         ));
 
-        // Temporary placeholder until XP data is provided by a dedicated service.
+        // TODO Temporary placeholder until XP data is provided by a dedicated service.
         xpProgressBar.setProgress(1.0);
 
         // Populate inputs from the active session, or show safe defaults.
@@ -416,15 +416,7 @@ public class ProfileController {
         autosaveFeedbackLabel.setVisible(true);
         autosaveFeedbackLabel.setManaged(true);
     }
-
-    /**
-     * Hides inline autosave status line.
-     */
-    private void hideAutosaveFeedback() {
-        autosaveFeedbackLabel.setVisible(false);
-        autosaveFeedbackLabel.setManaged(false);
-    }
-
+    
     /**
      * Returns editable value for input controls without forcing visual placeholders as real data.
      */
