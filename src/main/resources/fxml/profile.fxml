@@ -79,7 +79,10 @@
                                 <Insets top="24" right="24" bottom="24" left="24"/>
                             </padding>
 
-                            <Label fx:id="profileSubtitle" styleClass="profile-section-title" text="Profile Information"/>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label fx:id="profileSubtitle" styleClass="profile-section-title" text="Profile Information"/>
+                                <Label fx:id="autosaveFeedbackLabel" styleClass="profile-feedback-line" wrapText="true" visible="false" managed="false"/>
+                            </HBox>
                             <Region VBox.vgrow="ALWAYS"/>
 
                             <HBox spacing="12" maxWidth="Infinity">
@@ -107,7 +110,7 @@
                             <Region prefHeight="3"/>
 
                             <VBox spacing="5" alignment="CENTER_LEFT">
-                                <Label text="I'm a parent" styleClass="profile-checkbox-label"/>
+                                <Label text="%profile.information.parent_status" styleClass="profile-checkbox-label"/>
                                 <CheckBox fx:id="parentCheckBox" styleClass="profile-checkbox" />
                             </VBox>
 

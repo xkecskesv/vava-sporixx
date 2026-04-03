@@ -265,14 +265,14 @@ public class ProfileController {
             }
         });
 
-        firstNameField.textProperty().addListener(obs -> {
-            if (obs != null) scheduleAutosave();
+        firstNameField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
-        lastNameField.textProperty().addListener(obs -> {
-            if (obs != null) scheduleAutosave();
+        lastNameField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
-        emailField.textProperty().addListener(obs -> {
-            if (obs != null) scheduleAutosave();
+        emailField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
         genderComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
@@ -297,6 +297,7 @@ public class ProfileController {
      */
     private void scheduleAutosave() {
         if (!autosaveEnabled) return;
+        showAutosaveFeedback(Localization.get("profile.autosave.saving"), "profile-feedback-pending");
         autosaveTimer.playFromStart();
     }
 
@@ -317,19 +318,9 @@ public class ProfileController {
                 && gender.equals(lastSavedGender);
         if (unchanged) return;
 
-        // Skip partial states during typing; validation in service still remains authoritative.
-        if (!ValidationUtil.isNotBlank(firstName)
-                || !ValidationUtil.isNotBlank(lastName)
-                || !ValidationUtil.isValidEmail(email)) {
-            hideAutosaveFeedback();
-            return;
-        }
-
-        if (!ValidationUtil.isValidNamePart(firstName)
-                || !ValidationUtil.isValidNamePartCharacters(firstName)
-                || !ValidationUtil.isValidNamePart(lastName)
-                || !ValidationUtil.isValidNamePartCharacters(lastName)) {
-            hideAutosaveFeedback();
+        String validationMessageKey = validateAutosaveInput(firstName, lastName, email);
+        if (validationMessageKey != null) {
+            showAutosaveFeedback(localizeMessage(validationMessageKey), "profile-feedback-error");
             return;
         }
 
@@ -377,6 +368,22 @@ public class ProfileController {
         } catch (MissingResourceException ignored) {
             return Localization.get("error.unexpected");
         }
+    }
+
+    /**
+     * Performs lightweight pre-validation for autosave and returns localization key when invalid.
+     */
+    private String validateAutosaveInput(String firstName, String lastName, String email) {
+        if (!ValidationUtil.isNotBlank(firstName)) return "auth.error.first_name_required";
+        if (!ValidationUtil.isNotBlank(lastName)) return "auth.error.last_name_required";
+        if (!ValidationUtil.isValidEmail(email)) return "auth.error.invalid_email";
+        if (!ValidationUtil.isValidNamePartCharacters(firstName) || !ValidationUtil.isValidNamePart(firstName)) {
+            return "auth.error.invalid_first_name";
+        }
+        if (!ValidationUtil.isValidNamePartCharacters(lastName) || !ValidationUtil.isValidNamePart(lastName)) {
+            return "auth.error.invalid_last_name";
+        }
+        return null;
     }
 
     /**
