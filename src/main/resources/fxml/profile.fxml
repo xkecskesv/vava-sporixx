@@ -66,7 +66,8 @@
                             <Region prefHeight="20"/>
 
                             <VBox alignment="CENTER">
-                                <Button fx:id="changePasswordButton" styleClass="profile-upload-btn" text="Change Password" prefWidth="150" prefHeight="20"/>
+                                <Button fx:id="changePasswordButton" styleClass="profile-upload-btn" text="Change Password" onAction="#handleChangePassword" prefWidth="150" prefHeight="20"/>
+                                <Label fx:id="passwordFeedbackLabel" styleClass="profile-feedback-line" wrapText="true" visible="false" managed="false"/>
                             </VBox>
                         </VBox>
 

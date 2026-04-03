@@ -25,6 +25,7 @@ import sk.sporixx.util.ValidationUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import javafx.util.Duration;
 
@@ -46,6 +47,7 @@ public class ProfileController {
     @FXML private Label newPasswordLabel;
     @FXML private PasswordField newPasswordField;
     @FXML private Button changePasswordButton;
+    @FXML private Label passwordFeedbackLabel;
 
     // Profile information section
     @FXML private Label firstNameLabel;
@@ -95,8 +97,13 @@ public class ProfileController {
         oldPasswordLabel.setText(Localization.get("profile.management.old_password"));
         newPasswordLabel.setText(Localization.get("profile.management.new_password"));
         changePasswordButton.setText(Localization.get("profile.management.change_password"));
+        passwordFeedbackLabel.setVisible(false);
+        passwordFeedbackLabel.setManaged(false);
         oldPasswordField.setPromptText("***************");
         newPasswordField.setPromptText("***************");
+
+        oldPasswordField.textProperty().addListener((obs, oldValue, newValue) -> hidePasswordFeedback());
+        newPasswordField.textProperty().addListener((obs, oldValue, newValue) -> hidePasswordFeedback());
 
         profileSubtitle.setText(Localization.get("profile.information.title"));
         firstNameLabel.setText(Localization.get("profile.information.firstName"));
@@ -195,6 +202,23 @@ public class ProfileController {
         }
     }
 
+    @FXML
+    private void handleChangePassword(ActionEvent event) {
+        String oldPassword = oldPasswordField.getText();
+        String newPassword = newPasswordField.getText();
+
+        try {
+            ServiceLocator.getProfileService().changePassword(oldPassword, newPassword);
+            oldPasswordField.clear();
+            newPasswordField.clear();
+            showPasswordFeedback(Localization.get("profile.management.password_changed"), true);
+        } catch (ProfileException e) {
+            showPasswordFeedback(localizeMessage(e.getMessageKey()), false);
+        } catch (Exception ignored) {
+            showPasswordFeedback(Localization.get("profile.management.password_change_failed"), false);
+        }
+    }
+
     private void initAutosaveState() {
         lastSavedFirstName = normalized(firstNameField.getText());
         lastSavedLastName = normalized(lastNameField.getText());
@@ -281,6 +305,30 @@ public class ProfileController {
 
     private String normalized(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private String localizeMessage(String key) {
+        if (key == null || key.isBlank()) {
+            return Localization.get("error.unexpected");
+        }
+        try {
+            return Localization.get(key);
+        } catch (MissingResourceException ignored) {
+            return Localization.get("error.unexpected");
+        }
+    }
+
+    private void showPasswordFeedback(String message, boolean success) {
+        passwordFeedbackLabel.setText(message);
+        passwordFeedbackLabel.getStyleClass().removeAll("profile-feedback-success", "profile-feedback-error");
+        passwordFeedbackLabel.getStyleClass().add(success ? "profile-feedback-success" : "profile-feedback-error");
+        passwordFeedbackLabel.setVisible(true);
+        passwordFeedbackLabel.setManaged(true);
+    }
+
+    private void hidePasswordFeedback() {
+        passwordFeedbackLabel.setVisible(false);
+        passwordFeedbackLabel.setManaged(false);
     }
 
 

@@ -726,6 +726,20 @@ Inter 27pt Bold*/
     -fx-cursor: hand;
 }
 
+.profile-feedback-line {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 11px;
+    -fx-padding: 6px 0 0 0;
+}
+
+.profile-feedback-success {
+    -fx-text-fill: #22C55E;
+}
+
+.profile-feedback-error {
+    -fx-text-fill: #EF4444;
+}
+
 .profile-label {
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-font-size: 13px;
