@@ -133,7 +133,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
-                .categoryId(1).amount(121.04).currencyCode("EUR")
+                .categoryId(1).amount(15932.04).currencyCode("EUR")
                 .description("Porsche merch")
                 .completeDate(today).createdAt(today).build());
 
