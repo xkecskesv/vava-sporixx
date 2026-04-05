@@ -728,3 +728,24 @@ Inter 27pt Bold*/
     -fx-background-color: #EF4444;
 }
 
+/* RECURRING graf */
+.analytics-chart .default-color0.chart-bar { -fx-bar-fill: #EF4444; }
+.analytics-chart .default-color1.chart-bar { -fx-bar-fill: #3A7DF6; }
+
+.analytics-chart .default-color0.chart-legend-item-symbol { -fx-background-color: #EF4444; }
+.analytics-chart .default-color1.chart-legend-item-symbol { -fx-background-color: #3A7DF6; }
+
+.bar-value-label {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.analytics-chart .axis:bottom {
+    -fx-tick-label-rotation: 0;
+}
+
+.analytics-chart .chart-bar {
+    -fx-bar-gap: 2px;
+}
+

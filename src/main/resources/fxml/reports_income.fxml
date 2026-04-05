@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -77,29 +78,54 @@
                 <!-- Recurring expenses stĺpcový graf -->
                 <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
                     <Label text="%reports.income.recurring_title" styleClass="dashboard-card-title"/>
-                    <BarChart fx:id="recurringBarChart" animated="false"
-                              legendVisible="true" verticalGridLinesVisible="false"
-                              styleClass="analytics-chart" VBox.vgrow="ALWAYS">
-                        <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
-                        <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
-                    </BarChart>
+                    <HBox VBox.vgrow="ALWAYS">
+                        <BarChart fx:id="recurringBarChart" animated="false"
+                                  legendVisible="false"
+                                  verticalGridLinesVisible="false"
+                                  styleClass="analytics-chart" HBox.hgrow="ALWAYS"
+                                  VBox.vgrow="ALWAYS">
+                            <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
+                            <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                        </BarChart>
+                        <VBox spacing="8" alignment="TOP_LEFT" minWidth="120"
+                              style="-fx-padding: 8px 0 0 8px;">
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Region prefWidth="12" prefHeight="12"
+                                        style="-fx-background-color: #EF4444; -fx-background-radius: 3px;"/>
+                                <Label text="%reports.income.want" styleClass="analytics-subtitle"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Region prefWidth="12" prefHeight="12"
+                                        style="-fx-background-color: #3A7DF6; -fx-background-radius: 3px;"/>
+                                <Label text="%reports.income.need" styleClass="analytics-subtitle"/>
+                            </HBox>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <VBox spacing="2">
+                                <VBox.margin>
+                                    <Insets bottom="20"/>
+                                </VBox.margin>
+                                <Label text="Total" styleClass="analytics-subtitle"/>
+                                <Label fx:id="recurringTotalLabel" styleClass="recurring-total"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
                 </VBox>
 
                 <!-- Want vs Need -->
                 <VBox styleClass="dashboard-card" spacing="8" prefWidth="340" minWidth="300">
                     <Label text="%reports.income.wantneed_title" styleClass="dashboard-card-title"/>
                     <BarChart fx:id="wantNeedChart" animated="false"
-                              legendVisible="true" verticalGridLinesVisible="false"
+                              legendVisible="false" verticalGridLinesVisible="false"
                               styleClass="analytics-chart" VBox.vgrow="ALWAYS">
                         <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
                         <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
                     </BarChart>
-                    <HBox spacing="24" alignment="CENTER">
-                        <VBox alignment="CENTER" spacing="4">
+                    <HBox spacing="0" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="2" HBox.hgrow="ALWAYS">
                             <Label fx:id="needPercentLabel" styleClass="wantneed-percent"/>
                             <Label text="%reports.income.need" styleClass="analytics-subtitle"/>
                         </VBox>
-                        <VBox alignment="CENTER" spacing="4">
+                        <VBox alignment="CENTER" spacing="2" HBox.hgrow="ALWAYS">
                             <Label fx:id="wantPercentLabel" styleClass="wantneed-percent"/>
                             <Label text="%reports.income.want" styleClass="analytics-subtitle"/>
                         </VBox>

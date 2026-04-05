@@ -28,6 +28,7 @@ public class ReportsIncomeController {
     @FXML private BarChart<String, Number> wantNeedChart;
     @FXML private Label needPercentLabel;
     @FXML private Label wantPercentLabel;
+    @FXML private Label recurringTotalLabel;
 
     private int currentMonths = 12;
 
@@ -138,24 +139,58 @@ public class ReportsIncomeController {
 
         recurringBarChart.setAnimated(false);
         recurringBarChart.getData().clear();
+        recurringBarChart.setCategoryGap(30);
+        recurringBarChart.setBarGap(2);
 
-        XYChart.Series<String, Number> wantSeries = new XYChart.Series<>();
-        wantSeries.setName(Localization.get("reports.income.legend.want"));
-
-        XYChart.Series<String, Number> needSeries = new XYChart.Series<>();
-        needSeries.setName(Localization.get("reports.income.legend.need"));
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
 
         for (RecurringRule rule : data.getItems()) {
-            if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT) {
-                wantSeries.getData().add(
-                        new XYChart.Data<>(rule.getDescription(), rule.getAmount()));
-            } else {
-                needSeries.getData().add(
-                        new XYChart.Data<>(rule.getDescription(), rule.getAmount()));
-            }
+            XYChart.Data<String, Number> dataPoint =
+                    new XYChart.Data<>(rule.getDescription(), rule.getAmount());
+
+            boolean isWant = rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT;
+
+            dataPoint.nodeProperty().addListener((obs, oldNode, newNode) -> {
+                if (newNode != null) {
+                    newNode.setStyle("-fx-bar-fill: " + (isWant ? "#EF4444" : "#3A7DF6") + ";");
+                }
+            });
+
+            series.getData().add(dataPoint);
         }
 
-        recurringBarChart.getData().addAll(wantSeries, needSeries);
+        recurringBarChart.getData().add(series);
+        recurringBarChart.setLegendVisible(false);
+
+        javafx.application.Platform.runLater(() -> {
+            recurringBarChart.layout();
+            addBarLabels(recurringBarChart);
+        });
+
+        recurringTotalLabel.setText(formatCurrency(data.getTotal()));
+    }
+
+    private void addBarLabels(BarChart<String, Number> chart) {
+        for (XYChart.Series<String, Number> series : chart.getData()) {
+            for (XYChart.Data<String, Number> item : series.getData()) {
+                javafx.application.Platform.runLater(() -> {
+                    if (item.getNode() != null) {
+                        double value = item.getYValue().doubleValue();
+                        if (value <= 0) return;
+
+                        String labelText = String.valueOf((int) value);
+                        Label label = new Label(labelText);
+                        label.getStyleClass().add("bar-value-label");
+
+                        javafx.scene.layout.StackPane bar =
+                                (javafx.scene.layout.StackPane) item.getNode();
+                        bar.getChildren().add(label);
+                        bar.setAlignment(label, javafx.geometry.Pos.TOP_CENTER);
+                        label.setTranslateY(-18);
+                    }
+                });
+            }
+        }
     }
 
     // ============================================================
@@ -167,18 +202,24 @@ public class ReportsIncomeController {
 
         wantNeedChart.setAnimated(false);
         wantNeedChart.getData().clear();
+        wantNeedChart.setLegendVisible(false);
 
-        XYChart.Series<String, Number> needSeries = new XYChart.Series<>();
-        needSeries.setName(Localization.get("reports.income.need"));
-        needSeries.getData().add(new XYChart.Data<>(
-                Localization.get("reports.income.need"), data.getTotalNeed()));
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-        XYChart.Series<String, Number> wantSeries = new XYChart.Series<>();
-        wantSeries.setName(Localization.get("reports.income.want"));
-        wantSeries.getData().add(new XYChart.Data<>(
-                Localization.get("reports.income.want"), data.getTotalWant()));
+        XYChart.Data<String, Number> needData = new XYChart.Data<>(
+                Localization.get("reports.income.need"), data.getTotalNeed());
+        XYChart.Data<String, Number> wantData = new XYChart.Data<>(
+                Localization.get("reports.income.want"), data.getTotalWant());
 
-        wantNeedChart.getData().addAll(needSeries, wantSeries);
+        needData.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #3A7DF6;");
+        });
+        wantData.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #EF4444;");
+        });
+
+        series.getData().addAll(needData, wantData);
+        wantNeedChart.getData().add(series);
 
         needPercentLabel.setText(String.format("%.1f%%", data.getNeedPercentage()));
         wantPercentLabel.setText(String.format("%.1f%%", data.getWantPercentage()));
