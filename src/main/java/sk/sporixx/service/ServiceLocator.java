@@ -94,24 +94,30 @@ public final class ServiceLocator {
         // ── Hotové JDBC repozitáre ──
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
+        TransactionRepository transactionRepo = new TransactionRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
-
-        // ── Zvyšok stále in-memory
         TestDataInitializer testData = new TestDataInitializer();
-        overviewService = testData.getOverviewService();
+
+        overviewService = new OverviewServiceImpl(
+                transactionRepo,
+                testData.getRecurringRuleRepository(),
+                testData.getSavingGoalRepository()
+        );
+
         accountService = new AccountServiceImpl(
                 accountRepo,
                 testData.getSavingGoalRepository());
+
         reportsService = new ReportsServiceImpl(
-                testData.getTransactionRepository(),
+                transactionRepo,
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
+
         exportService = new ExportServiceImpl(reportsService);
         importService = new ImportServiceImpl(testData.getSavingGoalRepository());
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // TransactionRepository transactionRepo = new TransactionRepositoryImpl();
         // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
         // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
         // CategoryRepository categoryRepo        = new CategoryRepositoryImpl();
