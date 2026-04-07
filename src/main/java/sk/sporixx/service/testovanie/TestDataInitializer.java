@@ -64,6 +64,7 @@ public class TestDataInitializer {
     private static final int CAT_ENTERTAINMENT = 7;
     private static final int CAT_SPORT         = 8;
     private static final int CAT_UTILITIES     = 9;
+    private static final int CAT_OTHER    = 10;
 
     public TestDataInitializer() {
         this.userRepository        = new InMemoryUserRepository();
@@ -175,6 +176,14 @@ public class TestDataInitializer {
                 .description("Fuel")
                 .completeDate(today.withHour(14)).createdAt(today.withHour(14)).build());
 
+        transactionRepository.save(Transaction.builder()
+                .accountId(mainAccount.getId())
+                .transactionTypeId(Transaction.TYPE_INCOME)
+                .spendingClassificationId(null)
+                .categoryId(CAT_OTHER).amount(50.00).currencyCode("EUR")
+                .description("Od babky")
+                .completeDate(today.withHour(9)).createdAt(today.withHour(9)).build());
+
         // ---- Včerajšie transakcie ----
         LocalDateTime yesterday = today.minusDays(1);
 
@@ -193,6 +202,15 @@ public class TestDataInitializer {
                 .categoryId(CAT_SUBSCRIPTION).amount(28.04).currencyCode("EUR")
                 .description("ChatGPT sub")
                 .completeDate(yesterday.withHour(15)).createdAt(yesterday.withHour(15)).build());
+
+        // ---- Ďalšie ----
+        transactionRepository.save(Transaction.builder()
+                .accountId(mainAccount.getId())
+                .transactionTypeId(Transaction.TYPE_INCOME)
+                .spendingClassificationId(null)
+                .categoryId(CAT_PAYCHECK).amount(100).currencyCode("EUR")
+                .description("Len tak")
+                .completeDate(yesterday.withHour(9)).createdAt(yesterday.withHour(9)).build());
 
         // ---- Historické transakcie za 12 mesiacov ----
         createMonthlyData(mainAccount.getId());
