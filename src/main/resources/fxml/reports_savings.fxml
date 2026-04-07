@@ -23,10 +23,8 @@
                 <Label text="%reports.savings.subtitle" styleClass="dashboard-subtitle"/>
                 <HBox spacing="12" alignment="CENTER_LEFT">
                     <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button fx:id="prevButton" text="‹" styleClass="savings-nav-btn"
-                                onAction="#handlePrev"/>
-                        <Button fx:id="nextButton" text="›" styleClass="savings-nav-btn"
-                                onAction="#handleNext"/>
+                        <Button fx:id="prevButton" styleClass="savings-nav-btn" onAction="#handlePrev"/>
+                        <Button fx:id="nextButton" styleClass="savings-nav-btn" onAction="#handleNext"/>
                     </HBox>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="importButton" text="%reports.import" styleClass="btn-secondary"

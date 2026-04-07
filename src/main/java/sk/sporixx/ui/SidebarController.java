@@ -29,6 +29,7 @@ public class SidebarController {
     @FXML private Label savingsLabel;
     @FXML private Label overviewLabel;
     @FXML private Label reportsLabel;
+    @FXML private Label transactionsLabel;
 
     private boolean reportsExpanded = false;
 
@@ -41,6 +42,7 @@ public class SidebarController {
         overviewItem.setOnMouseClicked(e -> navigate("dashboard.fxml"));
         incomeLabel.setOnMouseClicked(e -> navigate("reports_income.fxml"));
         savingsLabel.setOnMouseClicked(e -> navigate("reports_savings.fxml"));
+        transactionsItem.setOnMouseClicked(e -> navigate("transactions.fxml"));
         userBox.setOnMouseClicked(e -> navigate("profile.fxml"));
         userBox.getChildren().forEach(child -> child.setMouseTransparent(true));
 
@@ -55,6 +57,7 @@ public class SidebarController {
 
         switch (activePage) {
             case "dashboard.fxml" -> setItemActive(overviewItem, overviewLabel, true);
+            case "transactions.fxml" -> setItemActive(transactionsItem, transactionsLabel, true);
             case "reports_income.fxml", "reports_savings.fxml" -> {
                 setItemActive(reportsItem, reportsLabel, true);
                 reportsExpanded = true;

@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ReportsSavingsController {
 
@@ -32,6 +35,10 @@ public class ReportsSavingsController {
 
     @FXML
     public void initialize() {
+        // Šípky — ikony namiesto textu
+        setupNavButton(prevButton, "/assets/icons/icon_arrow_left.png");
+        setupNavButton(nextButton, "/assets/icons/icon_arrow_right.png");
+
         accounts = ServiceLocator.getReportsService().loadSavingAccountsData();
 
         if (accounts == null || accounts.isEmpty()) {
@@ -43,6 +50,20 @@ public class ReportsSavingsController {
         }
 
         renderCards();
+    }
+
+    private void setupNavButton(Button button, String iconPath) {
+        try {
+            ImageView icon = new ImageView(new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
+            icon.setFitWidth(20);
+            icon.setFitHeight(20);
+            icon.setPreserveRatio(true);
+            button.setText("");
+            button.setGraphic(icon);
+        } catch (Exception e) {
+            // fallback — ponechá text
+        }
     }
 
     @FXML
@@ -88,19 +109,17 @@ public class ReportsSavingsController {
 
         PieChart pieChart = new PieChart();
         pieChart.setAnimated(false);
-        pieChart.setLegendVisible(true);
-        pieChart.setLegendSide(javafx.geometry.Side.BOTTOM);
+        pieChart.setLegendVisible(false);
         pieChart.setLabelsVisible(true);
         pieChart.getStyleClass().add("reports-pie-chart");
-        pieChart.setPrefHeight(300);
+        pieChart.setPrefHeight(280);
         VBox.setVgrow(pieChart, Priority.ALWAYS);
 
+        // Len suma — bez textu
         PieChart.Data savedUpData = new PieChart.Data(
-                Localization.get("reports.savings.saved_up") + " " +
-                        formatCurrency(data.getSavedUp()), data.getSavedUp());
+                formatCurrency(data.getSavedUp()), data.getSavedUp());
         PieChart.Data needToSaveData = new PieChart.Data(
-                Localization.get("reports.savings.need_to_save") + " " +
-                        formatCurrency(data.getNeedToSave()), data.getNeedToSave());
+                formatCurrency(data.getNeedToSave()), data.getNeedToSave());
 
         pieChart.getData().addAll(savedUpData, needToSaveData);
 
@@ -110,6 +129,30 @@ public class ReportsSavingsController {
             if (needToSaveData.getNode() != null)
                 needToSaveData.getNode().setStyle("-fx-pie-color: #1A3A8F;");
         });
+
+        // Vlastná legenda pod sebou
+        VBox legend = new VBox(6);
+        legend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        HBox savedLegend = new HBox(8);
+        savedLegend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        javafx.scene.layout.Region savedDot = new javafx.scene.layout.Region();
+        savedDot.setPrefSize(12, 12);
+        savedDot.setStyle("-fx-background-color: #3A7DF6; -fx-background-radius: 3px;");
+        Label savedLabel = new Label(Localization.get("reports.savings.saved_up"));
+        savedLabel.getStyleClass().add("analytics-subtitle");
+        savedLegend.getChildren().addAll(savedDot, savedLabel);
+
+        HBox needLegend = new HBox(8);
+        needLegend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        javafx.scene.layout.Region needDot = new javafx.scene.layout.Region();
+        needDot.setPrefSize(12, 12);
+        needDot.setStyle("-fx-background-color: #1A3A8F; -fx-background-radius: 3px;");
+        Label needLabel = new Label(Localization.get("reports.savings.need_to_save"));
+        needLabel.getStyleClass().add("analytics-subtitle");
+        needLegend.getChildren().addAll(needDot, needLabel);
+
+        legend.getChildren().addAll(savedLegend, needLegend);
 
         HBox totalRow = new HBox(8);
         totalRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -121,7 +164,7 @@ public class ReportsSavingsController {
         totalAmount.getStyleClass().add("recurring-total");
         totalRow.getChildren().addAll(totalLabel, spacer, totalAmount);
 
-        card.getChildren().addAll(nameLabel, pieChart, totalRow);
+        card.getChildren().addAll(nameLabel, pieChart, legend, totalRow);
         return card;
     }
 
@@ -155,20 +198,17 @@ public class ReportsSavingsController {
         XYChart.Series<String, Number> expectedSeries = new XYChart.Series<>();
         XYChart.Series<String, Number> actualSeries = new XYChart.Series<>();
 
-        DateTimeFormatter inputFormatter = getInputFormatter(data.getProgressGrouping());
         DateTimeFormatter displayFormatter = getDisplayFormatter(data.getProgressGrouping());
 
         data.getExpectedProgress().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(e -> expectedSeries.getData().add(
-                        new XYChart.Data<>(formatLabel(e.getKey(), displayFormatter),
-                                e.getValue())));
+                        new XYChart.Data<>(formatLabel(e.getKey(), displayFormatter), e.getValue())));
 
         data.getActualProgress().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(e -> actualSeries.getData().add(
-                        new XYChart.Data<>(formatLabel(e.getKey(), displayFormatter),
-                                e.getValue())));
+                        new XYChart.Data<>(formatLabel(e.getKey(), displayFormatter), e.getValue())));
 
         chart.getData().addAll(expectedSeries, actualSeries);
 
@@ -185,11 +225,11 @@ public class ReportsSavingsController {
             }
         });
 
-        // Legenda
-        HBox legend = new HBox(16);
-        legend.setAlignment(javafx.geometry.Pos.CENTER);
+        // Legenda pod sebou
+        VBox legend = new VBox(6);
+        legend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        HBox expectedLegend = new HBox(6);
+        HBox expectedLegend = new HBox(8);
         expectedLegend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         javafx.scene.layout.Region expectedDot = new javafx.scene.layout.Region();
         expectedDot.setPrefSize(12, 3);
@@ -198,7 +238,7 @@ public class ReportsSavingsController {
         expectedLabel.getStyleClass().add("analytics-subtitle");
         expectedLegend.getChildren().addAll(expectedDot, expectedLabel);
 
-        HBox actualLegend = new HBox(6);
+        HBox actualLegend = new HBox(8);
         actualLegend.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         javafx.scene.layout.Region actualDot = new javafx.scene.layout.Region();
         actualDot.setPrefSize(12, 3);
@@ -211,14 +251,6 @@ public class ReportsSavingsController {
 
         card.getChildren().addAll(title, chart, legend);
         return card;
-    }
-
-    private DateTimeFormatter getInputFormatter(String grouping) {
-        return switch (grouping) {
-            case "DAY" -> DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            case "MONTH" -> DateTimeFormatter.ofPattern("yyyy-MM");
-            default -> DateTimeFormatter.ofPattern("yyyy");
-        };
     }
 
     private DateTimeFormatter getDisplayFormatter(String grouping) {
