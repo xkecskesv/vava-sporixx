@@ -38,6 +38,17 @@ public class InMemoryUserRepository implements UserRepository {
         return user;
     }
 
+    @Override
+    public User update(User user) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == user.getId()) {
+                users.set(i, user);
+                return user;
+            }
+        }
+        throw new RuntimeException("User not found for update: id=" + user.getId());
+    }
+
     /**
      * Pomocná metóda - vráti všetkých používateľov (pre debug/testovanie).
      */

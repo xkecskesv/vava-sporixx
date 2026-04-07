@@ -34,4 +34,12 @@ public interface UserRepository {
      * @return User s nastavenym ID z DB
      */
     User save(User user);
+
+    /**
+     * Aktualizuje existujúceho používateľa.
+     *
+     * @param user objekt s nastaveným id a novými hodnotami
+     * @return aktualizovaný používateľ
+     */
+    User update(User user);
 }

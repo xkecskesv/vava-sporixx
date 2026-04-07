@@ -654,3 +654,204 @@ Inter 27pt Bold*/
     -fx-text-fill: #3A7DF6;
     -fx-alignment: center-right;
 }
+
+/* PROFILE */
+
+.profile-content {
+    -fx-background-color: #eff1f3;
+}
+
+.profile-scroll {
+    -fx-background-color: #eff1f3;
+    -fx-border-color: transparent;
+}
+
+.profile-scroll .viewport {
+    -fx-background-color: #eff1f3;
+}
+
+.profile-title {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 28px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.profile-logout-btn {
+    -fx-background-color: #3777eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 12px;
+    -fx-padding: 8px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.profile-main-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16px;
+    -fx-border-color: #e3e3e3;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+}
+
+.profile-management-column {
+    -fx-pref-width: 280px;
+    -fx-min-width: 220px;
+}
+
+.profile-information-column {
+    -fx-pref-width: 800px;
+    -fx-min-width: 380px;
+}
+
+.profile-divider {
+    -fx-background-color: #e3e3e3;
+    -fx-pref-width: 1px;
+    -fx-min-width: 1px;
+    -fx-max-width: 1px;
+}
+
+.profile-section-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 16px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.profile-avatar-large {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 2);
+}
+
+.profile-upload-btn {
+    -fx-background-color: #bdbdbd;
+    -fx-text-fill: #646464;
+    -fx-font-family: 'Inter 28pt';
+    -fx-font-size: 12px;
+    -fx-background-radius: 10px;
+    -fx-padding: 8px 12px;
+    -fx-cursor: hand;
+}
+
+.profile-feedback-line {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 11px;
+    -fx-padding: 6px 0 0 0;
+}
+
+.profile-feedback-success {
+    -fx-text-fill: #22C55E;
+}
+
+.profile-feedback-error {
+    -fx-text-fill: #EF4444;
+}
+
+.profile-feedback-pending {
+    -fx-text-fill: #64748B;
+}
+
+.profile-label {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748B;
+}
+
+.profile-input.text-field,
+.profile-input.password-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10px;
+    -fx-border-color: #e8e8e8;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 9px 12px;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.profile-input.text-field:focused,
+.profile-input.password-field:focused {
+    -fx-border-color: #3A7DF6;
+}
+
+.profile-input.combo-box {
+    -fx-background-color: #f3f3f3;
+    -fx-background-radius: 10px;
+    -fx-border-color: #e8e8e8;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+}
+
+.profile-input.combo-box .list-cell {
+    -fx-text-fill: #0A0A0A;
+    -fx-background-color: #ffffff;
+}
+
+.profile-checkbox-label {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 10pt;
+    -fx-text-fill: #2a2a2a;
+}
+
+.profile-checkbox {
+    -fx-background-color: white;
+}
+
+.profile-financial-level {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 10px;
+    -fx-text-fill: #637998;
+}
+
+.profile-progress {
+    -fx-background-radius: 12px;
+}
+
+.profile-progress .track {
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 12px;
+}
+
+.profile-progress .bar {
+    -fx-background-color: linear-gradient(to right, #152b59, #588cef);
+    -fx-background-radius: 12px;
+}
+
+.milestone-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px;
+    -fx-pref-width: 200px;
+}
+
+.milestone-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.milestone-subtitle {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748B;
+}
+
+.milestone-icon {
+    -fx-opacity: 0.9;
+}
+
+.milestone-desc {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748B;
+}
+
+.milestone-footer {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #8A8A8A;
+}
