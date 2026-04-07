@@ -400,8 +400,13 @@ Inter 27pt Bold*/
     -fx-background-color: transparent;
 }
 
-.analytics-chart .chart-series-line {
+.analytics-chart .default-color0.chart-series-line {
     -fx-stroke: #3A7DF6;
+    -fx-stroke-width: 2px;
+}
+
+.analytics-chart .default-color1.chart-series-line {
+    -fx-stroke: #EF4444;
     -fx-stroke-width: 2px;
 }
 
@@ -849,4 +854,104 @@ Inter 27pt Bold*/
     -fx-font-family: 'Inter 28pt Regular';
     -fx-font-size: 12px;
     -fx-text-fill: #8A8A8A;
+}
+
+
+/*------------------ REPORTS - INCOME AND EXPENSES -----------------------*/
+.btn-export {
+    -fx-background-color: #0A0A0A;
+    -fx-background-radius: 10px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-pref-height: 36px;
+    -fx-padding: 0 20px;
+    -fx-cursor: hand;
+}
+
+.btn-export:hover {
+    -fx-background-color: #2A2A2A;
+}
+
+.wantneed-percent {
+    -fx-font-family: 'Inter 27pt Bold';
+    -fx-font-size: 20px;
+    -fx-text-fill: #0A0A0A;
+}
+
+/*Kolacoidny graf*/
+.reports-pie-chart {
+    -fx-padding: 0;
+    -fx-pref-height: 280px;
+    -fx-min-height: 280px;
+}
+
+.reports-pie-chart .chart-pie-label {
+    -fx-font-size: 0px;
+    -fx-text-fill: transparent;
+}
+
+.reports-pie-chart .chart-pie-label-line {
+    -fx-stroke: transparent;
+}
+
+.reports-pie-chart .chart-legend {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+}
+
+.reports-pie-chart .data0.chart-pie { -fx-pie-color: #1A3A8F; }
+.reports-pie-chart .data1.chart-pie { -fx-pie-color: #EF4444; }
+.reports-pie-chart .data2.chart-pie { -fx-pie-color: #F59E0B; }
+.reports-pie-chart .data3.chart-pie { -fx-pie-color: #3A7DF6; }
+.reports-pie-chart .data4.chart-pie { -fx-pie-color: #8B5CF6; }
+.reports-pie-chart .data5.chart-pie { -fx-pie-color: #22C55E; }
+.reports-pie-chart .data6.chart-pie { -fx-pie-color: #14B8A6; }
+.reports-pie-chart .data7.chart-pie { -fx-pie-color: #F97316; }
+
+
+/* Income vs expenses graf */
+.analytics-chart .default-color0.chart-series-line {
+    -fx-stroke: #3A7DF6;
+    -fx-stroke-width: 2px;
+}
+
+.analytics-chart .default-color1.chart-series-line {
+    -fx-stroke: #EF4444;
+    -fx-stroke-width: 2px;
+}
+
+.analytics-chart .default-color0.chart-legend-item-symbol {
+    -fx-background-color: #3A7DF6;
+}
+
+.analytics-chart .default-color1.chart-legend-item-symbol {
+    -fx-background-color: #EF4444;
+}
+
+.analytics-chart .chart-legend {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* RECURRING graf */
+.analytics-chart .default-color0.chart-bar { -fx-bar-fill: #EF4444; }
+.analytics-chart .default-color1.chart-bar { -fx-bar-fill: #3A7DF6; }
+
+.analytics-chart .default-color0.chart-legend-item-symbol { -fx-background-color: #EF4444; }
+.analytics-chart .default-color1.chart-legend-item-symbol { -fx-background-color: #3A7DF6; }
+
+.bar-value-label {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.analytics-chart .axis:bottom {
+    -fx-tick-label-rotation: 0;
+}
+
+.analytics-chart .chart-bar {
+    -fx-bar-gap: 2px;
 }
