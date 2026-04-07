@@ -15,6 +15,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 
+<?import javafx.scene.control.DatePicker?>
 <StackPane stylesheets="@../css/styles.css"
            xmlns="http://javafx.com/javafx/25"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -116,6 +117,8 @@
             <VBox fx:id="goalSection" spacing="6" managed="false" visible="false">
                 <Label fx:id="modalGoalLabel" styleClass="modal-field-label"/>
                 <TextField fx:id="accountGoalField" styleClass="modal-input"/>
+                <Label fx:id="modalDateLabel" styleClass="modal-field-label"/>
+                <DatePicker fx:id="accountDatePicker" styleClass="modal-input" maxWidth="Infinity"/>
             </VBox>
 
             <!-- Suma preview -->

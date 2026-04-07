@@ -12,6 +12,7 @@ import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
 
 import java.util.Map;
+import java.util.TreeSet;
 
 public class ReportsIncomeController {
 
@@ -71,18 +72,23 @@ public class ReportsIncomeController {
     //  INCOME VS EXPENSES
     // ============================================================
     private void loadIncomeExpenseChart() {
-
         IncomeExpenseData data = ServiceLocator.getReportsService()
                 .loadIncomeExpenseData(currentPeriod);
-
-        System.out.println("Income entries: " + data.getMonthlyIncome().size());
-        System.out.println("Expense entries: " + data.getMonthlyExpense().size());
-        System.out.println("Expenses: " + data.getMonthlyExpense());
 
         totalIncomeAmount.setText("+ " + formatCurrency(data.getTotalIncome()));
 
         incomeExpenseChart.setAnimated(false);
         incomeExpenseChart.getData().clear();
+
+        // Zozbieraj všetky unikátne kľúče zoradené
+        TreeSet<String> allKeys = new TreeSet<>();
+        allKeys.addAll(data.getMonthlyIncome().keySet());
+        allKeys.addAll(data.getMonthlyExpense().keySet());
+
+        // Nastav kategórie explicitne pred pridaním dát
+        CategoryAxis xAxis = (CategoryAxis) incomeExpenseChart.getXAxis();
+        xAxis.setAutoRanging(false);
+        xAxis.getCategories().setAll(allKeys);
 
         XYChart.Series<String, Number> incomeSeries = new XYChart.Series<>();
         incomeSeries.setName(Localization.get("reports.income.legend.income"));
@@ -90,19 +96,15 @@ public class ReportsIncomeController {
         XYChart.Series<String, Number> expenseSeries = new XYChart.Series<>();
         expenseSeries.setName(Localization.get("reports.income.legend.expenses"));
 
-        data.getMonthlyIncome().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(e -> incomeSeries.getData()
-                        .add(new XYChart.Data<>(e.getKey(), e.getValue())));
-
-        data.getMonthlyExpense().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(e -> expenseSeries.getData()
-                        .add(new XYChart.Data<>(e.getKey(), e.getValue())));
+        allKeys.forEach(key -> {
+            incomeSeries.getData().add(new XYChart.Data<>(key,
+                    data.getMonthlyIncome().getOrDefault(key, 0.0)));
+            expenseSeries.getData().add(new XYChart.Data<>(key,
+                    data.getMonthlyExpense().getOrDefault(key, 0.0)));
+        });
 
         incomeExpenseChart.getData().addAll(incomeSeries, expenseSeries);
 
-        // Manuálne Y bounds
         double max = Math.max(
                 data.getMonthlyIncome().values().stream().mapToDouble(Double::doubleValue).max().orElse(100),
                 data.getMonthlyExpense().values().stream().mapToDouble(Double::doubleValue).max().orElse(100)
@@ -243,6 +245,7 @@ public class ReportsIncomeController {
             e.printStackTrace();
         }
     }
+
     // ============================================================
     //  HELPER
     // ============================================================

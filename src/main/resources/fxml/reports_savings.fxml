@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sk.sporixx.ui.ReportsSavingsController">
+    <left>
+        <fx:include source="sidebar.fxml"/>
+    </left>
+    <center>
+        <VBox styleClass="dashboard-content" spacing="24">
+
+            <!-- Header -->
+            <VBox spacing="4">
+                <Label text="%reports.title" styleClass="dashboard-title"/>
+                <Label text="%reports.savings.subtitle" styleClass="dashboard-subtitle"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="prevButton" styleClass="savings-nav-btn" onAction="#handlePrev"/>
+                        <Button fx:id="nextButton" styleClass="savings-nav-btn" onAction="#handleNext"/>
+                    </HBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="importButton" text="%reports.import" styleClass="btn-secondary"
+                            onAction="#handleImport"/>
+                    <Button fx:id="exportButton" text="%reports.export" styleClass="btn-export"
+                            onAction="#handleExport"/>
+                </HBox>
+            </VBox>
+
+            <!-- Prázdny stav -->
+            <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="8"
+                  visible="false" managed="false">
+                <Label text="%reports.savings.empty" styleClass="dashboard-subtitle"/>
+            </VBox>
+
+            <!-- Pie chart riadok -->
+            <HBox fx:id="cardsRow" spacing="16"/>
+
+            <!-- Progress chart riadok -->
+            <HBox fx:id="progressRow" spacing="16"/>
+
+        </VBox>
+    </center>
+</BorderPane>
