@@ -655,7 +655,112 @@ Inter 27pt Bold*/
     -fx-alignment: center-right;
 }
 
-/* PROFILE */
+/*MODAL date picker*/
+
+/* DatePicker základný štýl */
+.modal-input.date-picker {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-pref-height: 44px;
+    -fx-max-width: infinity;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+}
+
+.modal-input.date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.modal-input.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8px 0 0;
+}
+
+.modal-input.date-picker .arrow-button .picker-open-button {
+    -fx-background-color: #8A8A8A;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
+    -fx-pref-width: 10px;
+    -fx-pref-height: 6px;
+}
+
+/* Popup kalendár */
+.date-picker-popup {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 16, 0, 0, 4);
+    -fx-padding: 4px;
+}
+
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px 12px 0 0;
+    -fx-padding: 8px;
+}
+
+.date-picker-popup .spinner .button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.date-picker-popup .spinner .label {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.date-picker-popup .day-name-cell {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 11px;
+    -fx-text-fill: #8A8A8A;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #0A0A0A;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-padding: 4px;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.date-picker-popup .selected {
+    -fx-background-color: #3A7DF6;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 8px;
+}
+
+.date-picker-popup .today {
+    -fx-border-color: #3A7DF6;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.date-picker-popup .previous-month,
+.date-picker-popup .next-month {
+    -fx-text-fill: #D1D5DB;
+}
+
+.date-picker-popup .calendar-grid {
+    -fx-padding: 4px;
+}
+
+/* -------------------- PROFILE ------------------------*/
 
 .profile-content {
     -fx-background-color: #eff1f3;
