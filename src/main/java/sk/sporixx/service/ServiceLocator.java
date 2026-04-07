@@ -31,6 +31,7 @@ public final class ServiceLocator {
     private static ImportService importService;
     private static UserService userService;
     private static ProfileService profileService;
+    private static CategoryService categoryService;
 
     private static boolean initialized = false;
 
@@ -87,7 +88,10 @@ public final class ServiceLocator {
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
         exportService  = new ExportServiceImpl(reportsService);
-        importService  = new ImportServiceImpl(testData.getSavingGoalRepository());
+        importService  = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
+                testData.getTransactionRepository(),
+                testData.getAccountRepository());
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -114,7 +118,9 @@ public final class ServiceLocator {
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
         exportService = new ExportServiceImpl(reportsService);
-        importService = new ImportServiceImpl(testData.getSavingGoalRepository());
+        importService = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
+                testData.getTransactionRepository(),
+                testData.getAccountRepository());
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // TransactionRepository transactionRepo = new TransactionRepositoryImpl();
@@ -186,6 +192,11 @@ public final class ServiceLocator {
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
+    }
+
+    public static CategoryService getCategoryService() {
+        checkInitialized();
+        return categoryService;
     }
 
     //  HELPER

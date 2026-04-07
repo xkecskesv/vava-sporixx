@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import sk.sporixx.dto.ChartPeriod;
 import sk.sporixx.dto.IncomeExpenseData;
 import sk.sporixx.dto.SavingAccountReportData;
+import sk.sporixx.model.Transaction;
 import sk.sporixx.util.XmlUtil;
 
 import javax.xml.XMLConstants;
@@ -126,6 +127,11 @@ public class ExportServiceImpl implements ExportService {
                 accountEl.setAttribute("targetDate",
                         account.getTargetDate() != null ?
                                 account.getTargetDate().format(EXPORT_TIMESTAMP) : "");
+                accountEl.setAttribute("initialBalance",
+                        String.valueOf(account.getInitialBalance()));
+                accountEl.setAttribute("createdAt",
+                        account.getCreatedAt() != null ?
+                                account.getCreatedAt().format(EXPORT_TIMESTAMP) : "");
 
                 // Expected progress
                 Element expectedEl = doc.createElement("ExpectedProgress");
@@ -146,6 +152,22 @@ public class ExportServiceImpl implements ExportService {
                     actualEl.appendChild(point);
                 }
                 accountEl.appendChild(actualEl);
+
+                // Transakcie pre úplnú obnovu
+                Element transactionsEl = doc.createElement("Transactions");
+                if (account.getTransactions() != null) {
+                    for (Transaction tx : account.getTransactions()) {
+                        Element txEl = doc.createElement("Transaction");
+                        txEl.setAttribute("date",
+                                tx.getCompleteDate().format(EXPORT_TIMESTAMP));
+                        txEl.setAttribute("amount", String.valueOf(tx.getAmount()));
+                        txEl.setAttribute("description", tx.getDescription());
+                        txEl.setAttribute("categoryId", String.valueOf(tx.getCategoryId()));
+                        txEl.setAttribute("currencyCode", tx.getCurrencyCode());
+                        transactionsEl.appendChild(txEl);
+                    }
+                }
+                accountEl.appendChild(transactionsEl);
 
                 root.appendChild(accountEl);
             }
