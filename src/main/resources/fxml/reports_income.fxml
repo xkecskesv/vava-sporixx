@@ -47,14 +47,25 @@
                     </HBox>
                     <Label text="%reports.income.total_income" styleClass="analytics-subtitle"/>
                     <LineChart fx:id="incomeExpenseChart" animated="false"
-                               legendVisible="true"
-                               legendSide="BOTTOM"
+                               legendVisible="false"
                                createSymbols="false"
                                verticalGridLinesVisible="false"
                                styleClass="analytics-chart" VBox.vgrow="ALWAYS">
                         <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
                         <yAxis><NumberAxis fx:id="lineYAxis" styleClass="analytics-axis" autoRanging="false"/></yAxis>
                     </LineChart>
+                    <HBox spacing="16" alignment="CENTER">
+                        <HBox spacing="6" alignment="CENTER_LEFT">
+                            <Region prefWidth="12" prefHeight="3"
+                                    style="-fx-background-color: #3A7DF6; -fx-background-radius: 2px;"/>
+                            <Label text="%reports.income.legend.income" styleClass="analytics-subtitle"/>
+                        </HBox>
+                        <HBox spacing="6" alignment="CENTER_LEFT">
+                            <Region prefWidth="12" prefHeight="3"
+                                    style="-fx-background-color: #EF4444; -fx-background-radius: 2px;"/>
+                            <Label text="%reports.income.legend.expenses" styleClass="analytics-subtitle"/>
+                        </HBox>
+                    </HBox>
                 </VBox>
 
                 <!-- Expenses by category koláčový graf -->
