@@ -399,14 +399,18 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndDay(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
-        return toCumulative(raw);
+
+        double initialBalance = getInitialBalance(accountId);
+        return toCumulative(raw, initialBalance);
     }
 
     private Map<String, Double> calculateActualByMonth(int accountId, SavingGoal goal) {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndMonth(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
-        return toCumulative(raw);
+
+        double initialBalance = getInitialBalance(accountId);
+        return toCumulative(raw, initialBalance);
     }
 
     private Map<String, Double> calculateActualByYear(int accountId, SavingGoal goal) {
@@ -419,21 +423,39 @@ public class ReportsServiceImpl implements ReportsService {
             yearly.merge(year, sum, Double::sum);
         });
 
-        return toCumulative(yearly);
+        double initialBalance = getInitialBalance(accountId);
+        return toCumulative(yearly, initialBalance);
+    }
+
+    /**
+     * Načíta initialBalance saving účtu zo SessionManager.
+     * Ak účet nie je nájdený, vráti 0.
+     */
+    private double getInitialBalance(int accountId) {
+        Account account = SessionManager.getInstance().getAccountById(accountId);
+        return account != null ? account.getInitialBalance() : 0.0;
     }
 
     /**
      * Prepočíta mapu denných/mesačných súm na kumulatívne hodnoty.
+     * Štartuje od initialBalance saving účtu.
      * Vstup:  { "2026-02": 10000, "2026-03": 5000 }
-     * Výstup: { "2026-02": 10000, "2026-03": 15000 }
+     * Výstup: { "2026-02": 60000, "2026-03": 65000 } (pri initialBalance=50000)
      */
-    private Map<String, Double> toCumulative(Map<String, Double> raw) {
+    private Map<String, Double> toCumulative(Map<String, Double> raw, double initialBalance) {
         Map<String, Double> cumulative = new TreeMap<>();
-        double running = 0;
+        double running = initialBalance;
         for (Map.Entry<String, Double> entry : raw.entrySet()) {
             running += entry.getValue();
             cumulative.put(entry.getKey(), running);
         }
         return cumulative;
+    }
+
+    /**
+     * Prepočíta na kumulatívne hodnoty — štartuje od 0.
+     */
+    private Map<String, Double> toCumulative(Map<String, Double> raw) {
+        return toCumulative(raw, 0.0);
     }
 }

@@ -663,7 +663,7 @@ public class DashboardController {
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
         } catch (NumberFormatException e) {
-            return;
+            amount = 0.0;
         }
 
         boolean isSaving = typeValue.equals(Localization.get("dashboard.account.saving"));
