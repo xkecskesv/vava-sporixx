@@ -955,3 +955,45 @@ Inter 27pt Bold*/
 .analytics-chart .chart-bar {
     -fx-bar-gap: 2px;
 }
+
+
+/*REPORTS - SAVINGS CAST*/
+
+.savings-nav-btn {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-font-size: 18px;
+    -fx-pref-width: 36px;
+    -fx-pref-height: 36px;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.savings-nav-btn:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.savings-nav-btn:disabled {
+    -fx-opacity: 0.4;
+}
+
+.btn-secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #0A0A0A;
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-pref-height: 36px;
+    -fx-padding: 0 20px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #F1F5F9;
+}
