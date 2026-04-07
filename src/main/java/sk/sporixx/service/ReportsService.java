@@ -13,15 +13,15 @@ public interface ReportsService {
 
     /**
      * Načíta dáta pre Income vs Expenses líniový graf.
-     * @param months počet mesiacov dozadu (zvyčajne 12)
+     * @param period počet mesiacov/týždňov dozadu (zvyčajne 12)
      */
-    IncomeExpenseData loadIncomeExpenseData(int months);
+    IncomeExpenseData loadIncomeExpenseData(ChartPeriod period);
 
     /**
      * Načíta dáta pre Expenses by Category koláčový graf.
-     * @param months počet mesiacov dozadu
+     * @param period počet mesiacov/týždňov dozadu
      */
-    CategoryExpenseData loadCategoryExpenseData(int months);
+    CategoryExpenseData loadCategoryExpenseData(ChartPeriod period);
 
     /**
      * Načíta dáta pre Recurring Expenses stĺpcový graf.
@@ -31,9 +31,9 @@ public interface ReportsService {
 
     /**
      * Načíta dáta pre Want vs Need stĺpcový graf.
-     * @param months počet mesiacov dozadu
+     * @param period počet mesiacov/týždňov dozadu
      */
-    WantNeedData loadWantNeedData(int months);
+    WantNeedData loadWantNeedData(ChartPeriod period);
 
     /**
      * Načíta dáta pre Saving Accounts screen.

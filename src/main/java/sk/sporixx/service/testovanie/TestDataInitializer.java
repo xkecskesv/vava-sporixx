@@ -235,7 +235,7 @@ public class TestDataInitializer {
 
             // ── INCOME ──────────────────────────────────────────────
             // Salary
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_INCOME)
                     .spendingClassificationId(null)
@@ -246,7 +246,7 @@ public class TestDataInitializer {
 
             // Freelance (každé 2 mesiace)
             if (i % 2 == 0) {
-                transactionRepository.save(Transaction.builder()
+                saveIfNotFuture(Transaction.builder()
                         .accountId(mainAccountId)
                         .transactionTypeId(Transaction.TYPE_INCOME)
                         .spendingClassificationId(null)
@@ -258,7 +258,7 @@ public class TestDataInitializer {
 
             // ── EXPENSE — NEED ───────────────────────────────────────
             // Groceries
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
@@ -268,7 +268,7 @@ public class TestDataInitializer {
                     .completeDate(base.withDayOfMonth(5)).createdAt(base.withDayOfMonth(5)).build());
 
             // Rent
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
@@ -278,7 +278,7 @@ public class TestDataInitializer {
                     .completeDate(base.withDayOfMonth(1)).createdAt(base.withDayOfMonth(1)).build());
 
             // Transport / Fuel
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
@@ -288,7 +288,7 @@ public class TestDataInitializer {
                     .completeDate(base.withDayOfMonth(10)).createdAt(base.withDayOfMonth(10)).build());
 
             // ChatGPT sub
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
@@ -298,7 +298,7 @@ public class TestDataInitializer {
                     .completeDate(base.withDayOfMonth(18)).createdAt(base.withDayOfMonth(18)).build());
 
             // Utilities
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
@@ -309,7 +309,7 @@ public class TestDataInitializer {
 
             // ── EXPENSE — WANT ───────────────────────────────────────
             // GYM membership
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
@@ -319,7 +319,7 @@ public class TestDataInitializer {
                     .completeDate(base.withDayOfMonth(3)).createdAt(base.withDayOfMonth(3)).build());
 
             // Netflix / Spotify
-            transactionRepository.save(Transaction.builder()
+            saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
@@ -330,7 +330,7 @@ public class TestDataInitializer {
 
             // Clothing (každé 3 mesiace)
             if (i % 3 == 0) {
-                transactionRepository.save(Transaction.builder()
+                saveIfNotFuture(Transaction.builder()
                         .accountId(mainAccountId)
                         .transactionTypeId(Transaction.TYPE_EXPENSE)
                         .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
@@ -342,7 +342,7 @@ public class TestDataInitializer {
 
             // Dining out (každé 2 mesiace)
             if (i % 2 == 1) {
-                transactionRepository.save(Transaction.builder()
+                saveIfNotFuture(Transaction.builder()
                         .accountId(mainAccountId)
                         .transactionTypeId(Transaction.TYPE_EXPENSE)
                         .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
@@ -503,5 +503,15 @@ public class TestDataInitializer {
                 .build());
 
         logger.info("Vytvorený PARENT: {}", savedParent.getEmail());
+    }
+
+    /**
+     * Uloží transakciu len ak jej dátum nie je v budúcnosti.
+     * V reálnej aplikácii používateľ nemôže zadať budúcu transakciu.
+     */
+    private void saveIfNotFuture(Transaction transaction) {
+        if (!transaction.getCompleteDate().isAfter(LocalDateTime.now())) {
+            transactionRepository.save(transaction);
+        }
     }
 }

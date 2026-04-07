@@ -5,10 +5,7 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import sk.sporixx.dto.CategoryExpenseData;
-import sk.sporixx.dto.IncomeExpenseData;
-import sk.sporixx.dto.RecurringExpenseData;
-import sk.sporixx.dto.WantNeedData;
+import sk.sporixx.dto.*;
 import sk.sporixx.model.RecurringRule;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
@@ -30,7 +27,7 @@ public class ReportsIncomeController {
     @FXML private Label wantPercentLabel;
     @FXML private Label recurringTotalLabel;
 
-    private int currentMonths = 12;
+    private ChartPeriod currentPeriod = ChartPeriod.TWELVE_MONTHS;
 
     @FXML
     public void initialize() {
@@ -52,13 +49,13 @@ public class ReportsIncomeController {
     private void onPeriodChanged() {
         String selected = periodComboBox.getValue();
         if (selected.equals(Localization.get("dashboard.analytics.period.week"))) {
-            currentMonths = 0; // špeciálny prípad — 1 týždeň
+            currentPeriod = ChartPeriod.ONE_WEEK;
         } else if (selected.equals(Localization.get("dashboard.analytics.period.month"))) {
-            currentMonths = 1;
+            currentPeriod = ChartPeriod.ONE_MONTH;
         } else if (selected.equals(Localization.get("dashboard.analytics.period.six_months"))) {
-            currentMonths = 6;
+            currentPeriod = ChartPeriod.SIX_MONTHS;
         } else {
-            currentMonths = 12;
+            currentPeriod = ChartPeriod.TWELVE_MONTHS;
         }
         loadAll();
     }
@@ -76,7 +73,7 @@ public class ReportsIncomeController {
     private void loadIncomeExpenseChart() {
 
         IncomeExpenseData data = ServiceLocator.getReportsService()
-                .loadIncomeExpenseData(currentMonths == 0 ? 1 : currentMonths);
+                .loadIncomeExpenseData(currentPeriod);
 
         System.out.println("Income entries: " + data.getMonthlyIncome().size());
         System.out.println("Expense entries: " + data.getMonthlyExpense().size());
@@ -121,7 +118,7 @@ public class ReportsIncomeController {
     // ============================================================
     private void loadCategoryChart() {
         CategoryExpenseData data = ServiceLocator.getReportsService()
-                .loadCategoryExpenseData(currentMonths == 0 ? 1 : currentMonths);
+                .loadCategoryExpenseData(currentPeriod);
 
         categoryPieChart.getData().clear();
 
@@ -198,7 +195,7 @@ public class ReportsIncomeController {
     // ============================================================
     private void loadWantNeedChart() {
         WantNeedData data = ServiceLocator.getReportsService()
-                .loadWantNeedData(currentMonths == 0 ? 1 : currentMonths);
+                .loadWantNeedData(currentPeriod);
 
         wantNeedChart.setAnimated(false);
         wantNeedChart.getData().clear();
@@ -241,7 +238,7 @@ public class ReportsIncomeController {
 
         try {
             ServiceLocator.getExportService()
-                    .exportIncomeExpenseToXml(currentMonths == 0 ? 1 : currentMonths, file.getAbsolutePath());
+                    .exportIncomeExpenseToXml(currentPeriod, file.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
