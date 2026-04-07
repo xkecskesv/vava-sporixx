@@ -27,8 +27,12 @@ public class SidebarController {
     @FXML private HBox userBox;
     @FXML private Label incomeLabel;
     @FXML private Label savingsLabel;
+    @FXML private Label overviewLabel;
+    @FXML private Label reportsLabel;
 
     private boolean reportsExpanded = false;
+
+    private static String activePage = "dashboard.fxml";
 
     @FXML
     public void initialize() {
@@ -38,15 +42,45 @@ public class SidebarController {
         incomeLabel.setOnMouseClicked(e -> navigate("reports_income.fxml"));
         savingsLabel.setOnMouseClicked(e -> navigate("reports_savings.fxml"));
         userBox.setOnMouseClicked(e -> navigate("profile.fxml"));
+        userBox.getChildren().forEach(child -> child.setMouseTransparent(true));
 
+        applyActiveState();
         loadUserInfo();
     }
 
+    private void applyActiveState() {
+        // Reset všetkých
+        setItemActive(overviewItem, overviewLabel, false);
+        setItemActive(reportsItem, reportsLabel, false);
+
+        switch (activePage) {
+            case "dashboard.fxml" -> setItemActive(overviewItem, overviewLabel, true);
+            case "reports_income.fxml", "reports_savings.fxml" -> {
+                setItemActive(reportsItem, reportsLabel, true);
+                reportsExpanded = true;
+                reportsSubmenu.setVisible(true);
+                reportsSubmenu.setManaged(true);
+                reportsChevron.setImage(new Image(
+                        getClass().getResourceAsStream("/assets/icons/icon_chevron_down.png")));
+                incomeLabel.setStyle(activePage.equals("reports_income.fxml")
+                        ? "-fx-text-fill: #FFFFFF;" : "");
+                savingsLabel.setStyle(activePage.equals("reports_savings.fxml")
+                        ? "-fx-text-fill: #FFFFFF;" : "");
+            }
+        }
+    }
+
+    private void setItemActive(HBox item, Label label, boolean active) {
+        item.getStyleClass().setAll(active ? "sidebar-item-active" : "sidebar-item-row");
+        label.getStyleClass().setAll(active ? "sidebar-item-label-active" : "sidebar-item-label");
+    }
+
     private void navigate(String fxml) {
+        activePage = fxml;
         try {
             SceneManager.switchTo(fxml);
         } catch (Exception e) {
-            // screen este neexistuje
+            System.out.println("Navigate error: " + e.getMessage());
         }
     }
 
