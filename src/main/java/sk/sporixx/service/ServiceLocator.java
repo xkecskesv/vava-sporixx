@@ -32,6 +32,7 @@ public final class ServiceLocator {
     private static UserService userService;
     private static ProfileService profileService;
     private static CategoryService categoryService;
+    private static BudgetService budgetService;
 
     private static boolean initialized = false;
 
@@ -92,6 +93,9 @@ public final class ServiceLocator {
                 testData.getTransactionRepository(),
                 testData.getAccountRepository());
         categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                testData.getTransactionRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -197,6 +201,11 @@ public final class ServiceLocator {
     public static CategoryService getCategoryService() {
         checkInitialized();
         return categoryService;
+    }
+
+    public static BudgetService getBudgetService() {
+        checkInitialized();
+        return budgetService;
     }
 
     //  HELPER

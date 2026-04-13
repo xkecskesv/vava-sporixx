@@ -1,20 +1,33 @@
 package sk.sporixx.service;
 
-import sk.sporixx.model.UserBudget;
+import sk.sporixx.dto.BudgetData;
+import sk.sporixx.dto.BudgetWarning;
 
-import java.util.List;
-
+/**
+ * Service pre správu rozpočtu používateľa.
+ * Pokrýva: Budget Setup, Recommended/Custom Allocation, Emergency Fund.
+ */
 public interface BudgetService {
 
-    boolean addBudget(UserBudget userBudget);
+    /**
+     * Načíta všetky budget dáta pre prihláseného používateľa.
+     * Ak nemá budget nastavený, vráti default hodnoty (všetko 0).
+     */
+    BudgetData loadBudgetData();
 
-    boolean updateBudget(UserBudget userBudget);
+    /**
+     * Uloží Budget Setup a prepočíta Recommended Allocation.
+     * @return BudgetWarning.FALLBACK_ALLOCATION_APPLIED ak bol použitý fallback
+     */
+    BudgetWarning saveBudgetSetup(double monthlyIncome, double food, double rent,
+                                  double transport, double utilities, double other);
 
-    boolean deleteBudget(Long id);
-
-    UserBudget getBudgetById(Long id);
-
-    List<UserBudget> getBudgetsByUserId(Long userId);
-
-    List<UserBudget> getBudgetsByMonth(Long userId, String month);
+    /**
+     * Uloží Custom Allocation — používateľ zadá vlastné sumy.
+     * @return BudgetWarning.ESSENTIAL_BELOW_ACTUAL ak essential < skutočné výdavky
+     */
+    BudgetWarning saveCustomAllocation(double essentialExpenses,
+                                       double emergencyFund,
+                                       double savings,
+                                       double toInvest);
 }
