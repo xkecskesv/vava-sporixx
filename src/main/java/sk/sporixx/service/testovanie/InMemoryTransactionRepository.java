@@ -1,5 +1,6 @@
 package sk.sporixx.service.testovanie;
 
+import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.TransactionRepository;
 
@@ -114,6 +115,32 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         result.put("WANT", wantSum);
         result.put("NEED", needSum);
         return result;
+    }
+
+    @Override
+    public List<Transaction> findByFilters(int accountId,
+                                           Integer categoryId,
+                                           LocalDateTime dateFrom,
+                                           LocalDateTime dateTo,
+                                           Double amountFrom,
+                                           Double amountTo,
+                                           Integer transactionTypeId) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> categoryId == null
+                        || t.getCategoryId() == categoryId)
+                .filter(t -> dateFrom == null
+                        || !t.getCompleteDate().isBefore(dateFrom))
+                .filter(t -> dateTo == null
+                        || !t.getCompleteDate().isAfter(dateTo))
+                .filter(t -> amountFrom == null
+                        || t.getAmount() >= amountFrom)
+                .filter(t -> amountTo == null
+                        || t.getAmount() <= amountTo)
+                .filter(t -> transactionTypeId == null
+                        || t.getTransactionTypeId() == transactionTypeId)
+                .sorted((a, b) -> b.getCompleteDate().compareTo(a.getCompleteDate()))
+                .collect(Collectors.toList());
     }
 
     public List<Transaction> findAll() { return new ArrayList<>(transactions); }

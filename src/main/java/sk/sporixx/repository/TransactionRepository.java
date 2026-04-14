@@ -1,5 +1,6 @@
 package sk.sporixx.repository;
 
+import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Transaction;
 
 import java.time.LocalDateTime;
@@ -45,6 +46,18 @@ public interface TransactionRepository {
      * Používa sa pre Want vs Need report.
      */
     Map<String, Double> sumByClassificationAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
+
+    /**
+     * Načíta transakcie podľa filtrovacích kritérií pre daný účet.
+     * SQL dynamicky stavia WHERE klauzuly podľa vyplnených polí v SearchCriteria.
+     */
+    List<Transaction> findByFilters(int accountId,
+                                    Integer categoryId,
+                                    LocalDateTime dateFrom,
+                                    LocalDateTime dateTo,
+                                    Double amountFrom,
+                                    Double amountTo,
+                                    Integer transactionTypeId);
 
     Transaction save(Transaction transaction);
 

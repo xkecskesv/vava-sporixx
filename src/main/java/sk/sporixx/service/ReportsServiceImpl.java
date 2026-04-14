@@ -271,6 +271,16 @@ public class ReportsServiceImpl implements ReportsService {
                         goal.getTargetDate().toLocalDate());
                 String grouping = resolveGrouping(totalDays);
 
+                // Načítaj TYPE_INCOME transakcie pre saving účet od createdAt
+                List<Transaction> transactions = transactionRepository
+                        .findByAccountIdAndDateRange(
+                                account.getId(),
+                                goal.getCreatedAt(),
+                                LocalDateTime.now())
+                        .stream()
+                        .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
+                        .toList();
+
                 result.add(SavingAccountReportData.builder()
                         .accountId(account.getId())
                         .accountName(account.getDescription())
@@ -278,9 +288,12 @@ public class ReportsServiceImpl implements ReportsService {
                         .needToSave(needToSave)
                         .targetAmount(targetAmount)
                         .targetDate(goal.getTargetDate())
+                        .initialBalance(account.getInitialBalance())
+                        .createdAt(goal.getCreatedAt())
                         .expectedProgress(calculateExpectedProgress(goal, totalDays, grouping))
                         .actualProgress(calculateActualProgress(account.getId(), goal, grouping))
                         .progressGrouping(grouping)
+                        .transactions(transactions)
                         .build());
             }
 
@@ -401,6 +414,11 @@ public class ReportsServiceImpl implements ReportsService {
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
 
         double initialBalance = getInitialBalance(accountId);
+
+        if (raw.isEmpty() && initialBalance > 0) {
+            raw.put(goal.getCreatedAt().format(DAY_FORMAT), 0.0);
+        }
+
         return toCumulative(raw, initialBalance);
     }
 
@@ -410,6 +428,11 @@ public class ReportsServiceImpl implements ReportsService {
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
 
         double initialBalance = getInitialBalance(accountId);
+
+        if (raw.isEmpty() && initialBalance > 0) {
+            raw.put(goal.getCreatedAt().format(MONTH_FORMAT), 0.0);
+        }
+
         return toCumulative(raw, initialBalance);
     }
 
@@ -424,6 +447,11 @@ public class ReportsServiceImpl implements ReportsService {
         });
 
         double initialBalance = getInitialBalance(accountId);
+
+        if (yearly.isEmpty() && initialBalance > 0) {
+            yearly.put(goal.getCreatedAt().format(YEAR_FORMAT), 0.0);
+        }
+
         return toCumulative(yearly, initialBalance);
     }
 

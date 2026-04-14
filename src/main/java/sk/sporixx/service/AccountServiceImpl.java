@@ -138,4 +138,40 @@ public class AccountServiceImpl implements AccountService {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    @Override
+    public Account createSavingAccountFromImport(String description, double initialAmount,
+                                                 double targetAmount, LocalDate targetDate,
+                                                 LocalDateTime createdAt) {
+        validateAccountInput(description, initialAmount);
+
+        Account savingAccount = Account.builder()
+                .ownerUserId(SessionManager.getInstance().getCurrentUserId())
+                .accountTypeId(Account.SAVING_ACCOUNT)
+                .description(description)
+                .initialBalance(initialAmount)
+                .currentBalance(initialAmount)
+                .isActive(true)
+                .createdAt(createdAt) // pôvodný dátum
+                .build();
+
+        Account savedAccount = accountRepository.save(savingAccount);
+        SessionManager.getInstance().addAccount(savedAccount);
+
+        SavingGoal goal = SavingGoal.builder()
+                .accountId(savedAccount.getId())
+                .name(description)
+                .targetAmount(targetAmount)
+                .currentAmount(initialAmount)
+                .targetDate(targetDate.atStartOfDay())
+                .isActive(true)
+                .createdAt(createdAt) // pôvodný dátum
+                .build();
+
+        savingGoalRepository.save(goal);
+
+        logger.info("Saving account created from import: {}, createdAt: {}",
+                description, createdAt);
+        return savedAccount;
+    }
 }

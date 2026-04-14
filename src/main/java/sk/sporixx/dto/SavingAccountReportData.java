@@ -2,8 +2,10 @@ package sk.sporixx.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import sk.sporixx.model.Transaction;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +22,14 @@ public class SavingAccountReportData {
     private double needToSave;       // targetAmount - currentAmount
     private double targetAmount;
     private LocalDateTime targetDate;
+    private double initialBalance;
+    private LocalDateTime createdAt;
+
+    /**
+     * Zoznam TYPE_INCOME transakcií na saving účte.
+     * Používa sa pri exporte/importe pre úplnú obnovu histórie sporenia.
+     */
+    private List<Transaction> transactions;
 
     /**
      * Expectation vs Reality graf.
