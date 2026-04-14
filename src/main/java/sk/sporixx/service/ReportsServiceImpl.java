@@ -334,9 +334,18 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> expected = new TreeMap<>();
         if (totalDays <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalDays;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
+
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(DAY_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        double step = remainingToSave / totalDays;
         LocalDateTime current = goal.getCreatedAt();
-        double cumulative = 0;
+        double cumulative = initialBalance;
 
         while (!current.isAfter(goal.getTargetDate())) {
             cumulative += step;
@@ -355,9 +364,18 @@ public class ReportsServiceImpl implements ReportsService {
                 goal.getTargetDate().toLocalDate().withDayOfMonth(1));
         if (totalMonths <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalMonths;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
+
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(MONTH_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        double step = remainingToSave / totalMonths;
         LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
-        double cumulative = 0;
+        double cumulative = initialBalance;
 
         while (!current.isAfter(goal.getTargetDate())) {
             cumulative += step;
@@ -376,9 +394,18 @@ public class ReportsServiceImpl implements ReportsService {
                 goal.getTargetDate().toLocalDate());
         if (totalYears <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalYears;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
+
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(YEAR_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        double step = remainingToSave / totalYears;
         LocalDateTime current = goal.getCreatedAt();
-        double cumulative = 0;
+        double cumulative = initialBalance;
 
         while (!current.isAfter(goal.getTargetDate())) {
             cumulative += step;

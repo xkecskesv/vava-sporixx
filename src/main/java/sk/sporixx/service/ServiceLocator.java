@@ -31,6 +31,7 @@ public final class ServiceLocator {
     private static ImportService importService;
     private static UserService userService;
     private static ProfileService profileService;
+    private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
 
@@ -92,6 +93,10 @@ public final class ServiceLocator {
         importService  = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
                 testData.getTransactionRepository(),
                 testData.getAccountRepository());
+        transactionService = new TransactionServiceImpl(
+                testData.getTransactionRepository(),
+                testData.getAccountRepository(),
+                testData.getCategoryRepository());
         categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
@@ -196,6 +201,11 @@ public final class ServiceLocator {
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
+    }
+
+    public static TransactionService getTransactionService() {
+        checkInitialized();
+        return transactionService;
     }
 
     public static CategoryService getCategoryService() {
