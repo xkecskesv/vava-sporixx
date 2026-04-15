@@ -2,10 +2,15 @@ package sk.sporixx.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.model.GenderCode;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
+import sk.sporixx.util.DatabaseConfig;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,10 +19,14 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
-    private static final String DB_URL = "jdbc:sqlite:sporixx.sqlite";
+    private static final String SELECT_USER_WITH_FLAGS = "SELECT u.*, "
+            + "CASE WHEN EXISTS (SELECT 1 FROM account_access aa WHERE aa.user_id = u.id AND aa.access_level >= 2) THEN 1 ELSE 0 END AS family_manager, "
+            + "CASE WHEN EXISTS (SELECT 1 FROM account_access aa WHERE aa.user_id = u.id AND aa.access_level >= 3) THEN 1 ELSE 0 END AS admin_access, "
+            + "CASE WHEN EXISTS (SELECT 1 FROM accounts a WHERE a.owner_user_id = u.id AND a.is_active = 1) THEN 1 ELSE 0 END AS user_active "
+            + "FROM users u";
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL);
+        return DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
     }
 
     // Mapuje dáta z databázy na Java objekt
@@ -38,9 +47,26 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
+    private void applyDerivedFlags(ResultSet result, User user) throws SQLException {
+        if (result.getInt("admin_access") == 1) {
+            user.setRole(Role.ADMIN);
+        } else if (result.getInt("family_manager") == 1) {
+            user.setRole(Role.FAMILY_MANAGER);
+        } else {
+            user.setRole(Role.USER);
+        }
+        user.setActive(result.getInt("user_active") == 1);
+    }
+
+    private User mapUserWithFlags(ResultSet result) throws SQLException {
+        User user = mapResult(result);
+        applyDerivedFlags(result, user);
+        return user;
+    }
+
     @Override
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = SELECT_USER_WITH_FLAGS + " WHERE u.email = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -48,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(mapResult(rs));
+                return Optional.of(mapUserWithFlags(rs));
             }
         } catch (SQLException e) {
             logger.error("Database error while finding user by email: {}", email, e);
@@ -89,7 +115,7 @@ public class UserRepositoryImpl implements UserRepository {
             pstmt.setString(4, user.getLastName());
             pstmt.setString(5, user.getPhotoPath());
 
-            String gender = user.getGender() != null ? user.getGender() : "ONHSR";
+            String gender = user.getGender() != null ? user.getGender() : GenderCode.UNKNOWN;
             pstmt.setString(6, gender);
 
             LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
@@ -139,6 +165,25 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (SQLException e) {
             logger.error("Database error while updating user with ID: {}", user.getId(), e);
             throw new RuntimeException("Error writing to database (update)", e);
+        }
+    }
+
+    @Override
+    public List<User> findAll() {
+        String sql = SELECT_USER_WITH_FLAGS + " ORDER BY u.created_at DESC";
+
+        List<User> users = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                users.add(mapUserWithFlags(rs));
+            }
+            return users;
+        } catch (SQLException e) {
+            logger.error("Database error while loading all users for admin panel", e);
+            throw new RuntimeException("Error reading from database (findAll)", e);
         }
     }
 }

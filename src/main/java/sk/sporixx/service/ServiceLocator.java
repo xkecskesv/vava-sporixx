@@ -31,6 +31,7 @@ public final class ServiceLocator {
     private static ImportService importService;
     private static UserService userService;
     private static ProfileService profileService;
+    private static AdminService adminService;
 
     private static boolean initialized = false;
 
@@ -78,6 +79,7 @@ public final class ServiceLocator {
         authService    = testData.getAuthService();
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
+        adminService = new AdminServiceImpl(testData.getUserRepository());
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -102,6 +104,7 @@ public final class ServiceLocator {
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
+        adminService = new AdminServiceImpl(userRepo);
 
         // ── Zvyšok stále in-memory
         TestDataInitializer testData = new TestDataInitializer();
@@ -186,6 +189,12 @@ public final class ServiceLocator {
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
+    }
+
+    /** Admin operations for admin panel. */
+    public static AdminService getAdminService() {
+        checkInitialized();
+        return adminService;
     }
 
     //  HELPER

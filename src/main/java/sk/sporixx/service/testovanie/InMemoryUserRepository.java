@@ -52,6 +52,7 @@ public class InMemoryUserRepository implements UserRepository {
     /**
      * Pomocná metóda - vráti všetkých používateľov (pre debug/testovanie).
      */
+    @Override
     public List<User> findAll() {
         return new ArrayList<>(users);
     }

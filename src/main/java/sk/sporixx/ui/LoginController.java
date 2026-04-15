@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.Localization;
 
 
@@ -22,7 +23,11 @@ public class LoginController {
         try {
 
             ServiceLocator.getAuthService().login(email, password);
-            SceneManager.switchTo("dashboard.fxml");
+            if (SessionManager.getInstance().isAdmin()) {
+                SceneManager.switchTo("admin_panel.fxml");
+            } else {
+                SceneManager.switchTo("dashboard.fxml");
+            }
 
         }catch(Exception e){
             //service vrstva hodi exception s klucom

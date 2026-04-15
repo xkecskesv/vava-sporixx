@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.AdminPanelController">
+    <center>
+        <VBox styleClass="admin-content" spacing="20">
+            <padding>
+                <Insets top="30" right="28" bottom="30" left="28"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label fx:id="titleLabel" styleClass="profile-title" text="Admin Panel"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="logoutButton" styleClass="profile-logout-btn" text="Logout" onAction="#handleLogout"/>
+            </HBox>
+
+            <Label fx:id="forcePasswordChangeLabel" styleClass="profile-feedback-error" wrapText="true" visible="false" managed="false"/>
+
+            <GridPane hgap="16" vgap="0" VBox.vgrow="ALWAYS" maxWidth="Infinity">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="66.666"/>
+                    <ColumnConstraints percentWidth="33.334"/>
+                </columnConstraints>
+
+                <VBox styleClass="admin-users-card" spacing="10" GridPane.columnIndex="0" maxWidth="Infinity">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+                    <Label fx:id="usersTitleLabel" styleClass="profile-section-title" text="Users"/>
+                    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="nameColumn" prefWidth="170" text="Name"/>
+                            <TableColumn fx:id="emailColumn" prefWidth="230" text="E-mail"/>
+                            <TableColumn fx:id="familyManagerColumn" prefWidth="130" text="Family Manager"/>
+                            <TableColumn fx:id="activeColumn" prefWidth="110" text="Active"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox styleClass="admin-profile-card" spacing="10" GridPane.columnIndex="1" maxWidth="Infinity">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <Label styleClass="profile-section-title" text="Admin Profile"/>
+                    <VBox alignment="CENTER">
+                        <ImageView fx:id="profileImage" fitWidth="170" fitHeight="170" styleClass="profile-avatar-large"/>
+                        <Region prefHeight="10"/>
+                        <Button fx:id="uploadPhotoButton" styleClass="profile-upload-btn" text="Upload Photo" onAction="#handleUploadPhoto"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <FlowPane hgap="12" vgap="10" prefWrapLength="300">
+                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
+                            <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name"/>
+                            <TextField fx:id="firstNameField" styleClass="profile-input" promptText="John"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
+                            <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name"/>
+                            <TextField fx:id="lastNameField" styleClass="profile-input" promptText="Doe"/>
+                        </VBox>
+                    </FlowPane>
+
+                    <FlowPane hgap="12" vgap="10" prefWrapLength="300">
+                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
+                            <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail"/>
+                            <TextField fx:id="emailField" styleClass="profile-input" promptText="john.doe@email.com"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
+                            <Label fx:id="genderLabel" styleClass="profile-label" text="Gender"/>
+                            <ComboBox fx:id="genderComboBox" styleClass="profile-input" promptText="Male / Female / -"/>
+                        </VBox>
+                    </FlowPane>
+
+                    <Button fx:id="saveProfileButton" styleClass="profile-upload-btn" text="Save" onAction="#handleSaveProfile"/>
+                    <Label fx:id="profileFeedbackLabel" styleClass="profile-feedback-line" visible="false" managed="false"/>
+
+                    <Separator/>
+
+                    <Label fx:id="oldPasswordLabel" styleClass="profile-label" text="Old Password"/>
+                    <PasswordField fx:id="oldPasswordField" styleClass="profile-input" promptText="***************"/>
+
+                    <Label fx:id="newPasswordLabel" styleClass="profile-label" text="New Password"/>
+                    <PasswordField fx:id="newPasswordField" styleClass="profile-input" promptText="***************"/>
+
+                    <Button fx:id="changePasswordButton" styleClass="profile-upload-btn" text="Change Password" onAction="#handleChangePassword"/>
+                    <Label fx:id="passwordFeedbackLabel" styleClass="profile-feedback-line" visible="false" managed="false"/>
+                </VBox>
+            </GridPane>
+        </VBox>
+    </center>
+</BorderPane>
+
+
+
+

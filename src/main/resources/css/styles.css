@@ -850,3 +850,39 @@ Inter 27pt Bold*/
     -fx-font-size: 12px;
     -fx-text-fill: #8A8A8A;
 }
+
+/* ADMIN PANEL */
+
+.admin-content {
+    -fx-background-color: #eff1f3;
+}
+
+.admin-users-card,
+.admin-profile-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16px;
+    -fx-border-color: #e3e3e3;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+}
+
+.admin-value {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e8e8e8;
+    -fx-border-radius: 10px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8fafc;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #f8fafc;
+}

@@ -259,6 +259,11 @@ public class TestDataInitializer {
     //  Admin
     // =========================================================================
     private void createAdminUser() {
+        if (userRepository.findByEmail("admin@sporixx.sk").isPresent()) {
+            logger.info("ADMIN already present in test repository, skipping duplicate seed.");
+            return;
+        }
+
         User savedAdmin = userRepository.save(User.builder()
                 .firstName("Admin").lastName("Sporixx")
                 .email("admin@sporixx.sk")

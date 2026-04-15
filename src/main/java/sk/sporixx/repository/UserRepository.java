@@ -42,4 +42,11 @@ public interface UserRepository {
      * @return aktualizovaný používateľ
      */
     User update(User user);
+
+    /**
+     * Vráti všetkých používateľov pre admin prehľad.
+     *
+     * @return list všetkých používateľov
+     */
+    List<User> findAll();
 }

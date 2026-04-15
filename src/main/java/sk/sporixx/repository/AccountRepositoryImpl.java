@@ -3,6 +3,7 @@ package sk.sporixx.repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.model.Account;
+import sk.sporixx.util.DatabaseConfig;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -16,10 +17,9 @@ import java.util.Optional;
 public class AccountRepositoryImpl implements AccountRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountRepositoryImpl.class);
-    private static final String DB_URL = "jdbc:sqlite:sporixx.sqlite";
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL);
+        return DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
     }
 
     private Account mapResult(ResultSet rs) throws SQLException {
