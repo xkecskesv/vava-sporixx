@@ -92,6 +92,7 @@ public class TestDataInitializer {
         createRegularUser();
         createAdminUser();
         createParentUser();
+        createEmptyUser();
 
         logger.info("=== Testovacie dáta pripravené: {} users, {} accounts, {} transactions, {} recurring rules, {} saving goals ===",
                 userRepository.findAll().size(),
@@ -226,6 +227,33 @@ public class TestDataInitializer {
 
         logger.info("Vytvorený USER: {} ({} transakcií, 5 recurring, 1 saving goal)",
                 savedUser.getEmail(), transactionRepository.findAll().size());
+    }
+
+    private void createEmptyUser() {
+        User savedUser = userRepository.save(User.builder()
+                .firstName("Test").lastName("User")
+                .email("test@sporixx.sk")
+                .passwordHash(PasswordUtil.hashPassword("Test123!"))
+                .gender("M").createdAt(LocalDateTime.now())
+                .build());
+
+        accountRepository.save(Account.builder()
+                .ownerUserId(savedUser.getId()).regionId(REGION_SK)
+                .accountTypeId(Account.MAIN_ACCOUNT).defaultCurrencyCode("EUR")
+                .description("Everyday account")
+                .initialBalance(0.0).currentBalance(0.0)
+                .isActive(true).createdAt(LocalDateTime.now())
+                .build());
+
+        accountRepository.save(Account.builder()
+                .ownerUserId(savedUser.getId()).regionId(REGION_SK)
+                .accountTypeId(Account.EMERGENCY_FUND).defaultCurrencyCode("EUR")
+                .description("Use in need")
+                .initialBalance(0.0).currentBalance(0.0)
+                .isActive(true).createdAt(LocalDateTime.now())
+                .build());
+
+        logger.info("Vytvorený EMPTY USER: test@sporixx.sk / Test123!");
     }
 
     /**

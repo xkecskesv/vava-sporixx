@@ -44,6 +44,11 @@ public class ReportsServiceImpl implements ReportsService {
     private static final DateTimeFormatter YEAR_FORMAT =
             DateTimeFormatter.ofPattern("yyyy");
 
+    private static final List<Integer> TRANSFER_CATEGORY_IDS = List.of(
+            Transaction.CATEGORY_SAVING,
+            Transaction.CATEGORY_SAVING_EXPENSE
+    );
+
     private final TransactionRepository transactionRepository;
     private final RecurringRuleRepository recurringRuleRepository;
     private final SavingGoalRepository savingGoalRepository;
@@ -83,20 +88,24 @@ public class ReportsServiceImpl implements ReportsService {
             for (int accountId : accountIds) {
                 if (period.isGroupByDay()) {
                     transactionRepository.sumByTypeAndDay(
-                                    accountId, Transaction.TYPE_INCOME, from)
+                                    accountId, Transaction.TYPE_INCOME, from,
+                                    TRANSFER_CATEGORY_IDS)
                             .forEach((day, sum) ->
                                     periodIncome.merge(day, sum, Double::sum));
                     transactionRepository.sumByTypeAndDay(
-                                    accountId, Transaction.TYPE_EXPENSE, from)
+                                    accountId, Transaction.TYPE_EXPENSE, from,
+                                    TRANSFER_CATEGORY_IDS)
                             .forEach((day, sum) ->
                                     periodExpense.merge(day, sum, Double::sum));
                 } else {
                     transactionRepository.sumByTypeAndMonth(
-                                    accountId, Transaction.TYPE_INCOME, from)
+                                    accountId, Transaction.TYPE_INCOME, from,
+                                    TRANSFER_CATEGORY_IDS)
                             .forEach((month, sum) ->
                                     periodIncome.merge(month, sum, Double::sum));
                     transactionRepository.sumByTypeAndMonth(
-                                    accountId, Transaction.TYPE_EXPENSE, from)
+                                    accountId, Transaction.TYPE_EXPENSE, from,
+                                    TRANSFER_CATEGORY_IDS)
                             .forEach((month, sum) ->
                                     periodExpense.merge(month, sum, Double::sum));
                 }
@@ -133,7 +142,8 @@ public class ReportsServiceImpl implements ReportsService {
 
             for (int accountId : accountIds) {
                 transactionRepository.sumByCategoryAndDateRange(
-                                accountId, from, LocalDateTime.now())
+                                accountId, from, LocalDateTime.now(),
+                                TRANSFER_CATEGORY_IDS)
                         .forEach((category, sum) ->
                                 expenseByCategory.merge(category, sum, Double::sum));
             }
@@ -439,8 +449,12 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        if (raw.isEmpty() && initialBalance > 0) {
-            raw.put(goal.getCreatedAt().format(DAY_FORMAT), 0.0);
+        // Doplň chýbajúce dni medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt();
+        LocalDateTime until = LocalDateTime.now();
+        while (!current.isAfter(until)) {
+            raw.putIfAbsent(current.format(DAY_FORMAT), 0.0);
+            current = current.plusDays(1);
         }
 
         return toCumulative(raw, initialBalance);
@@ -453,8 +467,12 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        if (raw.isEmpty() && initialBalance > 0) {
-            raw.put(goal.getCreatedAt().format(MONTH_FORMAT), 0.0);
+        // Doplň chýbajúce mesiace medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
+        LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
+        while (!current.isAfter(until)) {
+            raw.putIfAbsent(current.format(MONTH_FORMAT), 0.0);
+            current = current.plusMonths(1);
         }
 
         return toCumulative(raw, initialBalance);
@@ -472,8 +490,12 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        if (yearly.isEmpty() && initialBalance > 0) {
-            yearly.put(goal.getCreatedAt().format(YEAR_FORMAT), 0.0);
+        // Doplň chýbajúce roky medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt();
+        LocalDateTime until = LocalDateTime.now();
+        while (!current.isAfter(until)) {
+            yearly.putIfAbsent(current.format(YEAR_FORMAT), 0.0);
+            current = current.plusYears(1);
         }
 
         return toCumulative(yearly, initialBalance);

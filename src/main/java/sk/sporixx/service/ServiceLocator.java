@@ -96,7 +96,8 @@ public final class ServiceLocator {
         transactionService = new TransactionServiceImpl(
                 testData.getTransactionRepository(),
                 testData.getAccountRepository(),
-                testData.getCategoryRepository());
+                testData.getCategoryRepository(),
+                testData.getSavingGoalRepository());
         categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),

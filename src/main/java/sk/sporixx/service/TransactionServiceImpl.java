@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Account;
+import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.CategoryRepository;
+import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
 
 import java.time.LocalDate;
@@ -33,13 +35,16 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
+    private final SavingGoalRepository savingGoalRepository;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository,
                                   AccountRepository accountRepository,
-                                  CategoryRepository categoryRepository) {
+                                  CategoryRepository categoryRepository,
+                                  SavingGoalRepository savingGoalRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.categoryRepository = categoryRepository;
+        this.savingGoalRepository = savingGoalRepository;
     }
 
     //  NAČÍTANIE
@@ -279,6 +284,13 @@ public class TransactionServiceImpl implements TransactionService {
         updateBalance(fromAccount, fromAccount.getCurrentBalance() - amount);
         updateBalance(toAccount, toAccount.getCurrentBalance() + amount);
 
+        // Aktualizuj currentAmount v SavingGoal ak je zapojený saving účet
+        if (toAccount.isSavingAccount()) {
+            updateSavingGoalAmount(toAccount.getId(), amount);
+        } else if (fromAccount.isSavingAccount()) {
+            updateSavingGoalAmount(fromAccount.getId(), -amount);
+        }
+
         logger.info("Transfer added: from={}, to={}, amount={}",
                 fromAccount.getId(), toAccount.getId(), amount);
         return expense;
@@ -418,5 +430,17 @@ public class TransactionServiceImpl implements TransactionService {
     private void updateBalance(Account account, double newBalance) {
         accountRepository.updateBalance(account.getId(), newBalance);
         account.setCurrentBalance(newBalance);
+    }
+
+    private void updateSavingGoalAmount(int accountId, double delta) {
+        List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
+        if (goals.isEmpty()) return;
+
+        SavingGoal goal = goals.get(0);
+        double newAmount = Math.max(0, goal.getCurrentAmount() + delta);
+        savingGoalRepository.updateCurrentAmount(goal.getId(), newAmount);
+        goal.setCurrentAmount(newAmount);
+        logger.info("SavingGoal updated: accountId={}, newCurrentAmount={}",
+                accountId, newAmount);
     }
 }
