@@ -40,10 +40,10 @@
                         </HBox>
                         <TableView fx:id="usersTable" maxWidth="Infinity" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="nameColumn" prefWidth="170" text="Name" />
-                                <TableColumn fx:id="emailColumn" prefWidth="230" text="E-mail" />
-                                <TableColumn fx:id="familyManagerColumn" prefWidth="130" text="Family Manager" />
-                                <TableColumn fx:id="activeColumn" prefWidth="110" text="Active" />
+                                <TableColumn fx:id="nameColumn" prefWidth="170" text="" />
+                                <TableColumn fx:id="emailColumn" prefWidth="230" text="" />
+                                <TableColumn fx:id="familyManagerColumn" prefWidth="130" text="" />
+                                <TableColumn fx:id="activeColumn" prefWidth="110" text="" />
                             </columns>
                         </TableView>
                     </VBox>

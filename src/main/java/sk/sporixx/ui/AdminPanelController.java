@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -221,11 +222,7 @@ public class AdminPanelController {
         forcePasswordChangeLabel.setText(Localization.get("admin.password_change_required"));
         usersTitleLabel.setText(Localization.get("admin.users.header"));
         usersSearchField.setPromptText(Localization.get("admin.users.search_placeholder"));
-
-        nameColumn.setText(Localization.get("admin.users.name"));
-        emailColumn.setText(Localization.get("admin.users.email"));
-        familyManagerColumn.setText(Localization.get("admin.users.family_manager"));
-        activeColumn.setText(Localization.get("admin.users.active"));
+        // Column headers are intentionally hidden (empty text is configured in admin_panel.fxml).
 
         firstNameLabel.setText(Localization.get("profile.information.firstName"));
         lastNameLabel.setText(Localization.get("profile.information.lastName"));
@@ -253,6 +250,34 @@ public class AdminPanelController {
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         familyManagerColumn.setCellValueFactory(new PropertyValueFactory<>("familyManager"));
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
+
+        familyManagerColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean isFamilyManager, boolean empty) {
+                super.updateItem(isFamilyManager, empty);
+                if (empty || isFamilyManager == null) {
+                    setText(null);
+                    return;
+                }
+                setText(isFamilyManager
+                        ? Localization.get("admin.users.family_manager")
+                        : Localization.get("admin.users.family_user"));
+            }
+        });
+
+        activeColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean isActive, boolean empty) {
+                super.updateItem(isActive, empty);
+                if (empty || isActive == null) {
+                    setText(null);
+                    return;
+                }
+                setText(isActive
+                        ? Localization.get("admin.users.active")
+                        : Localization.get("admin.users.deactivated"));
+            }
+        });
     }
 
     private void initSearch() {
@@ -510,6 +535,4 @@ public class AdminPanelController {
         }
     }
 }
-
-
 
