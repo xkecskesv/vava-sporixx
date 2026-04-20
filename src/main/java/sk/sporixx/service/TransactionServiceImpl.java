@@ -241,15 +241,19 @@ public class TransactionServiceImpl implements TransactionService {
                                     LocalDateTime completeDate) {
         Account toAccount = getAccountOrThrow(targetAccountId);
 
-        boolean toSaving = toAccount.isSavingAccount();
-        int autoCategory = toSaving
-                ? Transaction.CATEGORY_SAVING
-                : Transaction.CATEGORY_SAVING_EXPENSE;
+        // Kategória len pri transferoch kde je zapojený saving účet
+        Integer autoCategory = null;
+        if (toAccount.isSavingAccount()) {
+            autoCategory = Transaction.CATEGORY_SAVING;
+        } else if (fromAccount.isSavingAccount()) {
+            autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
+        }
+        // Inak (napr. main → emergency) kategória ostáva null
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
-                .categoryId(autoCategory)
+                .categoryId(autoCategory)  // môže byť null
                 .spendingClassificationId(null)
                 .description(description)
                 .amount(amount)
@@ -262,7 +266,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction income = Transaction.builder()
                 .accountId(toAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
-                .categoryId(autoCategory)
+                .categoryId(autoCategory)  // môže byť null
                 .spendingClassificationId(null)
                 .description(description)
                 .amount(amount)

@@ -20,7 +20,7 @@ public class Transaction {
     private int id;
     private int accountId;
     private Integer targetAccountId;    // nullable - len pre prevody medzi účtami
-    private int categoryId;
+    private Integer categoryId;
     private int transactionTypeId;
     private int transactionStatusId;
     private Integer spendingClassificationId;   // nullable - len pre TYPE_EXPENSE
