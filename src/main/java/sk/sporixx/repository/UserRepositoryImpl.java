@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ukladanie a hladanie usera z db
+ * JDBC implementácia repozitára používateľov nad SQLite databázou.
  */
 public class UserRepositoryImpl implements UserRepository {
 
@@ -29,7 +29,13 @@ public class UserRepositoryImpl implements UserRepository {
         return DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
     }
 
-    // Mapuje dáta z databázy na Java objekt
+    /**
+     * Namapuje riadok databázy na doménový objekt {@link User}.
+     *
+     * @param result výsledok SQL dotazu
+     * @return namapovaný používateľ bez odvodených príznakov
+     * @throws SQLException keď nastane chyba pri čítaní stĺpcov
+     */
     private User mapResult(ResultSet result) throws SQLException {
         User user = new User();
         user.setId(result.getInt("id"));
@@ -47,6 +53,13 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
+    /**
+     * Aplikuje odvodené príznaky používateľa (rola a aktívny stav).
+     *
+     * @param result výsledok SQL dotazu s vypočítanými stĺpcami
+     * @param user používateľ, do ktorého sa príznaky zapisujú
+     * @throws SQLException keď nastane chyba pri čítaní výsledku
+     */
     private void applyDerivedFlags(ResultSet result, User user) throws SQLException {
         if (result.getInt("admin_access") == 1) {
             user.setRole(Role.ADMIN);
@@ -58,6 +71,13 @@ public class UserRepositoryImpl implements UserRepository {
         user.setActive(result.getInt("user_active") == 1);
     }
 
+    /**
+     * Namapuje používateľa vrátane odvodených príznakov z adminového SELECT-u.
+     *
+     * @param result výsledok SQL dotazu
+     * @return používateľ s nastavenou rolou a aktívnym stavom
+     * @throws SQLException keď nastane chyba pri mapovaní
+     */
     private User mapUserWithFlags(ResultSet result) throws SQLException {
         User user = mapResult(result);
         applyDerivedFlags(result, user);
@@ -227,6 +247,16 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    /**
+     * Uloží stav roly rodinného manažéra úpravou záznamov v {@code account_access}.
+     *
+     * <p>Pri povýšení zabezpečí, že používateľ má aspoň jedno oprávnenie s úrovňou 2.
+     * Pri znížení roly zníži existujúce oprávnenia úrovne 2 na úroveň 1, pričom vyššie
+     * úrovne (napr. admin úroveň 3) ponechá bez zmeny.</p>
+     *
+     * @param userId ID používateľa, ktorému sa má upraviť oprávnenie
+     * @param isFamilyManager požadovaný stav roly rodinného manažéra
+     */
     @Override
     public void updateFamilyManagerStatus(int userId, boolean isFamilyManager) {
         String demoteSql = "UPDATE account_access SET access_level = 1 WHERE user_id = ? AND access_level = 2";

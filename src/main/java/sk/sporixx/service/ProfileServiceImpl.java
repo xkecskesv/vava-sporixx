@@ -10,10 +10,9 @@ import sk.sporixx.util.ValidationUtil;
 import java.util.Optional;
 
 /**
- * Service implementation responsible for profile-related operations of the currently
- * authenticated user.
+ * Implementácia služby zodpovedná za operácie profilu aktuálne prihláseného používateľa.
  *
- * <p>This class validates input, applies normalization, and persists changes through
+ * <p>Trieda validuje vstupy, vykonáva normalizáciu a ukladá zmeny cez
  * {@link UserRepository}.</p>
  *
  * @author Viktória Kecskés
@@ -31,14 +30,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Updates profile identity fields for the authenticated user.
+     * Aktualizuje identifikačné údaje profilu prihláseného používateľa.
      *
-     * @param firstName new first name
-     * @param lastName new last name
-     * @param email new e-mail address
-     * @param gender raw gender value from UI
-     * @param isParent whether profile marks user as family manager
-     * @throws ProfileException when validation fails or persistence cannot be completed
+     * @param firstName nové meno
+     * @param lastName nové priezvisko
+     * @param email nová e-mailová adresa
+     * @param gender surová hodnota pohlavia z UI
+     * @param isParent či profil označuje používateľa ako rodinného manažéra
+     * @throws ProfileException keď validácia zlyhá alebo sa zmena nepodarí uložiť
      */
     @Override
     public void updateProfile(String firstName, String lastName, String email, String gender, boolean isParent) {
@@ -76,12 +75,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Changes the password for the authenticated user.
+     * Zmení heslo prihláseného používateľa.
      *
-     * @param oldPassword current plain-text password used for verification
-     * @param newPassword new plain-text password to persist as a hash
-     * @throws ProfileException when old password is invalid, policy checks fail,
-     *                          or persistence cannot be completed
+     * @param oldPassword aktuálne heslo v otvorenom texte na overenie
+     * @param newPassword nové heslo v otvorenom texte, ktoré sa uloží ako hash
+     * @throws ProfileException keď je pôvodné heslo neplatné, zlyhá kontrola pravidiel
+     *                          alebo sa zmena nepodarí uložiť
      */
     @Override
     public void changePassword(String oldPassword, String newPassword) {
@@ -100,10 +99,10 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     /**
-     * Updates and persists profile photo path for the authenticated user.
+     * Aktualizuje a uloží cestu k profilovej fotografii prihláseného používateľa.
      *
-     * @param photoPath absolute path to selected profile photo
-     * @throws ProfileException when path is blank or persistence fails
+     * @param photoPath absolútna cesta k vybratej fotografii
+     * @throws ProfileException keď je cesta prázdna alebo uloženie zlyhá
      */
     @Override
     public void updateProfilePhoto(String photoPath) {
@@ -124,10 +123,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Converts a raw or canonical gender value into localized UI text.
+     * Prevedie surovú hodnotu pohlavia na lokalizovaný text pre UI.
      *
-     * @param rawGender raw persisted value
-     * @return localized label for UI usage, or {@code "-"} fallback
+     * @param rawGender surová uložená hodnota
+     * @return lokalizovaný text pre UI alebo náhradná hodnota {@code "-"}
      */
     @Override
     public String toDisplayGender(String rawGender) {
@@ -135,10 +134,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Returns the authenticated session user.
+     * Vráti aktuálne prihláseného používateľa zo session.
      *
-     * @return current authenticated {@link User}
-     * @throws ProfileException when no authenticated user exists in session
+     * @return aktuálny prihlásený {@link User}
+     * @throws ProfileException keď v session nie je žiadny prihlásený používateľ
      */
     private User requireLoggedUser() {
         User currentUser = SessionManager.getInstance().getCurrentUserInternal();

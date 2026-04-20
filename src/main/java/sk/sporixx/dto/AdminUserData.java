@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Row DTO for the admin users table.
+ * DTO reprezentujúce jeden riadok tabuľky používateľov v administrátorskom paneli.
  */
 @Data
 @Builder

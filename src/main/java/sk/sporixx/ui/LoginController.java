@@ -9,13 +9,18 @@ import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.Localization;
 
-
+/**
+ * JavaFX kontrolér pre prihlasovaciu obrazovku.
+ */
 public class LoginController {
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
 
+    /**
+     * Spracuje prihlásenie používateľa a presmeruje ho podľa roly.
+     */
     @FXML
     private void handleLogin() {
         String email = emailField.getText().trim();
@@ -55,6 +60,12 @@ public class LoginController {
 
     }
 
+    /**
+     * Overí, či lokalizačný kľúč existuje v aktuálnom resource bundle.
+     *
+     * @param key lokalizačný kľúč
+     * @return {@code true}, ak kľúč existuje, inak {@code false}
+     */
     private boolean isValidKey(String key){
         try{
             Localization.get(key);
@@ -65,6 +76,9 @@ public class LoginController {
         }
     }
 
+    /**
+     * Presmeruje používateľa na registračnú obrazovku.
+     */
     @FXML
     private void handleNewAccount() {
 

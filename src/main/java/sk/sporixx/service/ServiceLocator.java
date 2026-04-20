@@ -179,19 +179,19 @@ public final class ServiceLocator {
         return importService;
     }
 
-    /** User helper service for current-user access and normalization logic. */
+    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi a normalizáciu. */
     public static UserService getUserService() {
         checkInitialized();
         return userService;
     }
 
-    /** Profile operations: update profile and change password. */
+    /** Operácie profilu: úprava údajov a zmena hesla. */
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
     }
 
-    /** Admin operations for admin panel. */
+    /** Administrátorské operácie pre panel správy používateľov. */
     public static AdminService getAdminService() {
         checkInitialized();
         return adminService;

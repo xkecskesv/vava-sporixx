@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ukladanie a hladanie usera z db
+ * JDBC implementácia repozitára účtov nad SQLite databázou.
  */
 public class AccountRepositoryImpl implements AccountRepository {
 
@@ -22,6 +22,13 @@ public class AccountRepositoryImpl implements AccountRepository {
         return DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
     }
 
+    /**
+     * Namapuje riadok výsledku SQL dotazu na objekt {@link Account}.
+     *
+     * @param rs výsledok SQL dotazu
+     * @return namapovaný účet
+     * @throws SQLException keď nastane chyba pri čítaní stĺpcov
+     */
     private Account mapResult(ResultSet rs) throws SQLException {
         Account account = new Account();
         account.setId(rs.getInt("id"));

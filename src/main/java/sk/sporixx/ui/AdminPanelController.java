@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Controller for dedicated admin panel screen.
+ * JavaFX kontrolér pre administrátorský panel správy používateľov.
  */
 public class AdminPanelController {
 
@@ -73,6 +73,9 @@ public class AdminPanelController {
     private ObservableList<AdminUserData> allUsers = FXCollections.observableArrayList();
     private AdminUserData selectedUser;
 
+    /**
+     * Inicializuje obrazovku, naviaže eventy a načíta používateľov.
+     */
     @FXML
     public void initialize() {
         if (!SessionManager.getInstance().isAdmin()) {
@@ -88,6 +91,9 @@ public class AdminPanelController {
         applyForcedPasswordChangeState();
     }
 
+    /**
+     * Odhlási aktuálneho administrátora a presmeruje na prihlasovaciu obrazovku.
+     */
     @FXML
     private void handleLogout() {
         try {
@@ -99,6 +105,9 @@ public class AdminPanelController {
         }
     }
 
+    /**
+     * Uloží zmeny profilu vybraného používateľa vrátane zmeny hesla.
+     */
     @FXML
     private void handleSaveProfile() {
         if (selectedUser == null) {
@@ -146,6 +155,9 @@ public class AdminPanelController {
         }
     }
 
+    /**
+     * Prepne stav vybraného používateľa medzi aktívny/deaktivovaný.
+     */
     @FXML
     private void handleDeactivateUser() {
         if (selectedUser == null) {
@@ -175,6 +187,9 @@ public class AdminPanelController {
         }
     }
 
+    /**
+     * Natrvalo odstráni vybraného používateľa.
+     */
     @FXML
     private void handleDeleteUser() {
         if (selectedUser == null) {
@@ -206,6 +221,9 @@ public class AdminPanelController {
         }
     }
 
+    /**
+     * Zruší rozpracované úpravy a obnoví hodnoty podľa aktuálneho výberu.
+     */
     @FXML
     private void handleCancelEdit() {
         clearFeedback();

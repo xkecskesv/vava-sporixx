@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Default admin service implementation.
+ * Predvolená implementácia administrátorskej služby.
+ *
+ * <p>Zabezpečuje správu používateľov, zmenu stavu ich účtov a validáciu oprávnení
+ * aktuálne prihláseného administrátora.</p>
  */
 public class AdminServiceImpl implements AdminService {
 
@@ -26,12 +29,24 @@ public class AdminServiceImpl implements AdminService {
     private final AccountRepository accountRepository;
     private final UserService userService;
 
+    /**
+     * Vytvorí inštanciu služby s potrebnými repozitármi a pomocnou používateľskou službou.
+     *
+     * @param userRepository repozitár používateľov
+     * @param accountRepository repozitár účtov
+     * @param userService služba pre normalizáciu používateľských údajov
+     */
     public AdminServiceImpl(UserRepository userRepository, AccountRepository accountRepository, UserService userService) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.userService = userService;
     }
 
+    /**
+     * Načíta všetkých používateľov a transformuje ich na DTO pre administrátorskú tabuľku.
+     *
+     * @return zoznam používateľov pripravený pre UI
+     */
     @Override
     public List<AdminUserData> getAllUsers() {
         requireAdmin();
@@ -40,6 +55,12 @@ public class AdminServiceImpl implements AdminService {
                 .toList();
     }
 
+    /**
+     * Aktualizuje identitu a voliteľne heslo vybraného používateľa.
+     *
+     * @param user používateľ s upravenými údajmi
+     * @return aktualizovaný používateľ
+     */
     @Override
     public User updateUser(User user) {
         requireAdmin();
@@ -71,6 +92,12 @@ public class AdminServiceImpl implements AdminService {
         return userRepository.update(existing);
     }
 
+    /**
+     * Deaktivuje všetky účty vybraného používateľa.
+     *
+     * @param user používateľ určený na deaktiváciu
+     * @return používateľ po aplikovaní zmeny
+     */
     @Override
     public User deactivateUser(User user) {
         requireAdmin();
@@ -88,6 +115,12 @@ public class AdminServiceImpl implements AdminService {
         return requireExistingUser(existing.getId());
     }
 
+    /**
+     * Aktivuje všetky účty vybraného používateľa.
+     *
+     * @param user používateľ určený na aktiváciu
+     * @return používateľ po aplikovaní zmeny
+     */
     @Override
     public User activateUser(User user) {
         requireAdmin();
@@ -100,6 +133,11 @@ public class AdminServiceImpl implements AdminService {
         return requireExistingUser(existing.getId());
     }
 
+    /**
+     * Natrvalo odstráni vybraného používateľa.
+     *
+     * @param user používateľ určený na odstránenie
+     */
     @Override
     public void deleteUser(User user) {
         requireAdmin();
@@ -116,6 +154,13 @@ public class AdminServiceImpl implements AdminService {
         userRepository.deleteById(user.getId());
     }
 
+    /**
+     * Zmení heslo aktuálne prihláseného administrátora.
+     *
+     * @param user používateľ, ktorý žiada zmenu hesla
+     * @param oldPassword pôvodné heslo
+     * @param newPassword nové heslo
+     */
     @Override
     public void changeOwnPassword(User user, String oldPassword, String newPassword) {
         requireAdmin();

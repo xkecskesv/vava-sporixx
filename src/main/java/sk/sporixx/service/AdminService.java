@@ -6,54 +6,54 @@ import sk.sporixx.model.User;
 import java.util.List;
 
 /**
- * Admin operations for the dedicated admin panel.
+ * Rozhranie pre administrátorské operácie v paneli správy používateľov.
  */
 public interface AdminService {
 
     /**
-     * Loads all users for admin overview.
+     * Načíta všetkých používateľov pre tabuľku v administrátorskom prehľade.
      *
-     * @return users table data
+     * @return dáta používateľov pre tabuľku
      */
     List<AdminUserData> getAllUsers();
 
     /**
-     * Updates editable user fields for the selected user.
+     * Aktualizuje editovateľné údaje vybraného používateľa.
      *
-     * @param user payload with user id and edited values
-     * @return updated persisted user
+     * @param user objekt s ID používateľa a upravenými hodnotami
+     * @return aktualizovaný používateľ uložený v úložisku
      */
     User updateUser(User user);
 
     /**
-     * Marks selected user account as inactive.
+     * Deaktivuje účty vybraného používateľa.
      *
-     * @param user payload with target user id
-     * @return updated persisted user
+     * @param user objekt s ID cieľového používateľa
+     * @return používateľ po zmene aktívneho stavu
      */
     User deactivateUser(User user);
 
     /**
-     * Re-activates selected user account set.
+     * Znovu aktivuje účty vybraného používateľa.
      *
-     * @param user payload with target user id
-     * @return updated persisted user view
+     * @param user objekt s ID cieľového používateľa
+     * @return používateľ po zmene aktívneho stavu
      */
     User activateUser(User user);
 
     /**
-     * Permanently deletes selected user.
+     * Natrvalo odstráni vybraného používateľa.
      *
-     * @param user payload with target user id
+     * @param user objekt s ID cieľového používateľa
      */
     void deleteUser(User user);
 
     /**
-     * Changes password of currently logged in admin (self-edit).
+     * Zmení heslo aktuálne prihláseného administrátora.
      *
-     * @param user selected user payload; must reference currently logged admin
-     * @param oldPassword current password
-     * @param newPassword new password
+     * @param user objekt používateľa; musí odkazovať na aktuálne prihláseného administrátora
+     * @param oldPassword aktuálne heslo
+     * @param newPassword nové heslo
      */
     void changeOwnPassword(User user, String oldPassword, String newPassword);
 }
