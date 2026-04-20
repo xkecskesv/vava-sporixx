@@ -153,4 +153,10 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             throw new RuntimeException("Error deleting category from database (deleteById)", e);
         }
     }
+
+    @Override
+    public void update(Category category) {
+        // TODO: implementovať — UPDATE categories SET name = ? WHERE id = ?
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

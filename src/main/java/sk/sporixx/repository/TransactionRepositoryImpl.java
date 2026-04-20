@@ -363,4 +363,43 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             throw new RuntimeException("Error deleting transaction from database", e);
         }
     }
+
+    @Override
+    public List<Transaction> findByAccountId(int accountId) {
+        // TODO: implementovať — SELECT * FROM transactions WHERE account_id = ?
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId,
+                                                 LocalDateTime from,
+                                                 List<Integer> excludeCategoryIds) {
+        // TODO: implementovať — sumByTypeAndMonth s WHERE category_id NOT IN (...) OR category_id IS NULL
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId,
+                                               LocalDateTime from,
+                                               List<Integer> excludeCategoryIds) {
+        // TODO: implementovať — sumByTypeAndDay s WHERE category_id NOT IN (...) OR category_id IS NULL
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from,
+                                                         LocalDateTime to,
+                                                         List<Integer> excludeCategoryIds) {
+        // TODO: implementovať — sumByCategoryAndDateRange s WHERE category_id NOT IN (...) OR category_id IS NULL
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public List<Transaction> findByFilters(int accountId, Integer categoryId,
+                                           LocalDateTime dateFrom, LocalDateTime dateTo,
+                                           Double amountFrom, Double amountTo,
+                                           Integer transactionTypeId) {
+        // TODO: implementovať — dynamický SQL filter pre search/filter na Transactions screene
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

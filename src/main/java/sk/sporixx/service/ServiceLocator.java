@@ -109,50 +109,57 @@ public final class ServiceLocator {
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
 
+        // In-memory pre časti ktoré ešte nemajú JDBC implementáciu
+        TestDataInitializer testData = new TestDataInitializer();
+
         // ── Hotové JDBC repozitáre ──
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
+        TransactionRepository transactionRepo = new TransactionRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
 
-        // ── Zvyšok stále in-memory
-        TestDataInitializer testData = new TestDataInitializer();
-        overviewService = testData.getOverviewService();
+        overviewService = new OverviewServiceImpl(
+                transactionRepo,
+                testData.getRecurringRuleRepository(),
+                testData.getSavingGoalRepository());
+
         accountService = new AccountServiceImpl(
                 accountRepo,
                 testData.getSavingGoalRepository());
+
         reportsService = new ReportsServiceImpl(
-                testData.getTransactionRepository(),
+                transactionRepo,
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
+
         exportService = new ExportServiceImpl(reportsService);
-        importService = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
-                testData.getTransactionRepository(),
-                testData.getAccountRepository());
+
+        importService = new ImportServiceImpl(
+                testData.getSavingGoalRepository(),
+                accountService,
+                transactionRepo,
+                accountRepo);
+
+        transactionService = new TransactionServiceImpl(
+                transactionRepo,
+                accountRepo,
+                testData.getCategoryRepository(),
+                testData.getSavingGoalRepository());
+
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                transactionRepo);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // TransactionRepository transactionRepo = new TransactionRepositoryImpl();
-        // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
-        // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
-        // CategoryRepository categoryRepo        = new CategoryRepositoryImpl();
-
-        // overviewService = new OverviewServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // accountService  = new AccountServiceImpl(accountRepo, savingGoalRepo);
-        // reportsService  = new ReportsServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // exportService   = new ExportServiceImpl(reportsService);
-        // importService   = new ImportServiceImpl(savingGoalRepo);
-
-        // TODO: ostatné služby:
-        // transactionService = ...
-        // categoryService    = ...
-        // budgetService      = ...
-        // settingsService    = ...
-        // userService        = ...
-        // adminService       = ...
-        // familyService      = ...
-        // goalService        = ...
+        // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
+        // SavingGoalRepository savingGoalRepo   = new SavingGoalRepositoryImpl();
+        // CategoryRepository categoryRepo       = new CategoryRepositoryImpl();
+        // BudgetRepository budgetRepo           = new BudgetRepositoryImpl();
     }
 
     //  GETTERY — UI vrstva volá tieto metódy
