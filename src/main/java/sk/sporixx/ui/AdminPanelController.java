@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.AdminUserData;
 import sk.sporixx.dto.CurrentUser;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
@@ -284,9 +285,14 @@ public class AdminPanelController {
                     setText(null);
                     return;
                 }
-                setText(isFamilyManager
-                        ? Localization.get("admin.users.family_manager")
-                        : Localization.get("admin.users.family_user"));
+                AdminUserData row = getTableRow() == null ? null : getTableRow().getItem();
+                if (row != null && row.isAdmin()) {
+                    setText(Localization.get("admin.users.admin"));
+                } else {
+                    setText(isFamilyManager
+                            ? Localization.get("admin.users.family_manager")
+                            : Localization.get("admin.users.family_user"));
+                }
             }
         });
 
@@ -540,6 +546,7 @@ public class AdminPanelController {
                 .email(safe(currentUser.getEmail()))
                 .gender(safe(currentUser.getGender()))
                 .photoPath(currentUser.getPhotoPath())
+                .admin(currentUser.getRole() == Role.ADMIN)
                 .active(true)
                 .familyManager(currentUser.checkisParent())
                 .build();
