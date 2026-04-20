@@ -183,6 +183,7 @@ public class AdminServiceImpl implements AdminService {
                 .email(safe(user.getEmail()))
                 .gender(user.getGender() == null ? GenderCode.UNKNOWN : user.getGender())
                 .photoPath(user.getPhotoPath())
+                .admin(user.getRole() == Role.ADMIN)
                 .familyManager(user.getRole() == Role.FAMILY_MANAGER)
                 .active(user.isActive())
                 .build();

@@ -20,7 +20,7 @@ public final class ServiceLocator {
      * FALSE — reálne JDBC repozitáre, vyžaduje hotovú DB vrstvu
      * Po dokončení všetkých JDBC implementácií zmeniť.
      */
-    private static final boolean USE_TEST_DATA = true;
+    private static final boolean USE_TEST_DATA = false;
 
     // Service inštancie
     private static AuthService authService;

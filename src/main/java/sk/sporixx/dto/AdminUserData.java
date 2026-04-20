@@ -20,6 +20,7 @@ public class AdminUserData {
     private String email;
     private String gender;
     private String photoPath;
+    private boolean admin;
     private boolean familyManager;
     private boolean active;
 }

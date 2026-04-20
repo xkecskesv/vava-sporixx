@@ -14,10 +14,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.AdminUserData;
 import sk.sporixx.dto.CurrentUser;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
@@ -83,6 +85,7 @@ public class AdminPanelController {
             return;
         }
 
+        applyRoundedProfileImageClip();
         initTexts();
         initTable();
         initSearch();
@@ -120,8 +123,9 @@ public class AdminPanelController {
         String oldPassword = oldPasswordField.getText();
         String newPassword = newPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
+        boolean passwordChangeRequested = hasAnyPasswordInput(oldPassword, newPassword, confirmPassword);
 
-        if (!validatePasswordInputs(editingSelf, oldPassword, newPassword, confirmPassword)) {
+        if (!validatePasswordInputs(editingSelf, passwordChangeRequested, oldPassword, newPassword, confirmPassword)) {
             return;
         }
 
@@ -134,16 +138,22 @@ public class AdminPanelController {
                 .build();
 
         try {
-            if (editingSelf) {
-                ServiceLocator.getAdminService().changeOwnPassword(editedUser, oldPassword, newPassword);
-                SessionManager.getInstance().setForcePasswordChange(false);
-            } else {
+            // Always persist identity fields; password change is optional.
+            if (!editingSelf && passwordChangeRequested) {
                 editedUser.setPasswordHash(newPassword);
             }
 
             ServiceLocator.getAdminService().updateUser(editedUser);
+
+            if (editingSelf && passwordChangeRequested) {
+                ServiceLocator.getAdminService().changeOwnPassword(editedUser, oldPassword, newPassword);
+                SessionManager.getInstance().setForcePasswordChange(false);
+            }
+
             showProfileFeedback(localizeMessage("admin.user.updated"), true);
-            clearPasswordFields();
+            if (passwordChangeRequested) {
+                clearPasswordFields();
+            }
             refreshAndReselect(editedUser.getId());
             applyForcedPasswordChangeState();
         } catch (ProfileException e) {
@@ -277,9 +287,14 @@ public class AdminPanelController {
                     setText(null);
                     return;
                 }
-                setText(isFamilyManager
-                        ? Localization.get("admin.users.family_manager")
-                        : Localization.get("admin.users.family_user"));
+                AdminUserData row = getTableRow() == null ? null : getTableRow().getItem();
+                if (row != null && row.isAdmin()) {
+                    setText(Localization.get("admin.users.admin"));
+                } else {
+                    setText(isFamilyManager
+                            ? Localization.get("admin.users.family_manager")
+                            : Localization.get("admin.users.family_user"));
+                }
             }
         });
 
@@ -420,7 +435,11 @@ public class AdminPanelController {
         applySelectionState();
     }
 
-    private boolean validatePasswordInputs(boolean editingSelf, String oldPassword, String newPassword, String confirmPassword) {
+    private boolean validatePasswordInputs(boolean editingSelf, boolean passwordChangeRequested,
+                                           String oldPassword, String newPassword, String confirmPassword) {
+        if (!passwordChangeRequested) {
+            return true;
+        }
         if (editingSelf && (oldPassword == null || oldPassword.isBlank())) {
             showPasswordFeedback(localizeMessage("auth.error.old_password_required"), false);
             return false;
@@ -434,6 +453,12 @@ public class AdminPanelController {
             return false;
         }
         return true;
+    }
+
+    private boolean hasAnyPasswordInput(String oldPassword, String newPassword, String confirmPassword) {
+        return (oldPassword != null && !oldPassword.isBlank())
+                || (newPassword != null && !newPassword.isBlank())
+                || (confirmPassword != null && !confirmPassword.isBlank());
     }
 
     private void loadProfileImage(String photoPath) {
@@ -454,6 +479,13 @@ public class AdminPanelController {
     private void loadDefaultProfileImage() {
         profileImage.setImage(new Image(Objects.requireNonNull(
                 getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
+    }
+
+    private void applyRoundedProfileImageClip() {
+        Rectangle clip = new Rectangle(profileImage.getFitWidth(), profileImage.getFitHeight());
+        clip.setArcWidth(30);
+        clip.setArcHeight(30);
+        profileImage.setClip(clip);
     }
 
     private boolean isEditingSelf(AdminUserData user) {
@@ -523,6 +555,7 @@ public class AdminPanelController {
                 .email(safe(currentUser.getEmail()))
                 .gender(safe(currentUser.getGender()))
                 .photoPath(currentUser.getPhotoPath())
+                .admin(currentUser.getRole() == Role.ADMIN)
                 .active(true)
                 .familyManager(currentUser.checkisParent())
                 .build();
