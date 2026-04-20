@@ -307,14 +307,16 @@ public class TransactionServiceImpl implements TransactionService {
         if (updatedTransaction.getCompleteDate().isAfter(LocalDateTime.now())) {
             throw new TransactionException("transaction.error.future_date");
         }
+        if (updatedTransaction.getTransactionTypeId() != original.getTransactionTypeId()) {
+            throw new TransactionException("transaction.error.type_cannot_change");
+        }
 
         // Systémové kategórie (Saving, Saving Expense) sa nedajú manuálne nastaviť pri editácii
-        int newCategoryId = updatedTransaction.getCategoryId();
-        if (newCategoryId == Transaction.CATEGORY_SAVING
-                || newCategoryId == Transaction.CATEGORY_SAVING_EXPENSE) {
-            // Ak to nie je transfer transakcia (teda nemá autoCategory z addTransfer),
-            // nedovolíme nastaviť systémovú kategóriu manuálne
-            if (original.getCategoryId() != newCategoryId) {
+        Integer newCategoryId = updatedTransaction.getCategoryId();
+        if (newCategoryId != null &&
+                (newCategoryId == Transaction.CATEGORY_SAVING
+                        || newCategoryId == Transaction.CATEGORY_SAVING_EXPENSE)) {
+            if (!newCategoryId.equals(original.getCategoryId())) {
                 throw new TransactionException("transaction.error.invalid_category");
             }
         }

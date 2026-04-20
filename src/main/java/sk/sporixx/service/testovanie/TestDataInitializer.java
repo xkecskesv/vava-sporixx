@@ -4,12 +4,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sk.sporixx.model.Account;
-import sk.sporixx.model.RecurringRule;
-import sk.sporixx.model.Role;
-import sk.sporixx.model.SavingGoal;
-import sk.sporixx.model.Transaction;
-import sk.sporixx.model.User;
+import sk.sporixx.model.*;
 import sk.sporixx.service.AuthService;
 import sk.sporixx.service.AuthServiceImpl;
 import sk.sporixx.service.OverviewService;
@@ -57,16 +52,13 @@ public class TestDataInitializer {
     private static final int REGION_SK = 1;
 
     // Kategórie
-    private static final int CAT_CLOTHING      = 1;
-    private static final int CAT_GROCERIES     = 2;
-    private static final int CAT_TRANSPORT     = 3;
-    private static final int CAT_PAYCHECK      = 4;
-    private static final int CAT_SUBSCRIPTION  = 5;
-    private static final int CAT_RENT          = 6;
-    private static final int CAT_ENTERTAINMENT = 7;
-    private static final int CAT_SPORT         = 8;
-    private static final int CAT_UTILITIES     = 9;
-    private static final int CAT_OTHER    = 10;
+    private static final int CAT_FOOD           = 1;
+    private static final int CAT_CLOTHING       = 2;
+    private static final int CAT_ENTERTAINMENT  = 3;
+    private static final int CAT_RENT           = 4;
+    private static final int CAT_TRANSPORT      = 5;
+    private static final int CAT_INVESTMENT     = 8;
+// 6 = Saving, 7 = Saving Expense
 
     public TestDataInitializer() {
         this.userRepository        = new InMemoryUserRepository();
@@ -86,6 +78,16 @@ public class TestDataInitializer {
 
     private void initTestData() {
         logger.info("=== Inicializácia testovacích dát ===");
+
+        // Systémové kategórie — musia byť prvé, ID musia zodpovedať Transaction konštantám
+        categoryRepository.save(Category.builder().userId(null).name("Food").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Clothing").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Entertainment").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Rent").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Transportation").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Saving").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Saving Expense").createdAt(LocalDateTime.now()).build());
+        categoryRepository.save(Category.builder().userId(null).name("Investment").createdAt(LocalDateTime.now()).build());
 
         createRegularUser();
         createAdminUser();
@@ -168,7 +170,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
-                .categoryId(CAT_GROCERIES).amount(89.41).currencyCode("EUR")
+                .categoryId(CAT_FOOD).amount(89.41).currencyCode("EUR")
                 .description("Groceries")
                 .completeDate(today.withHour(11)).createdAt(today.withHour(11)).build());
 
@@ -184,7 +186,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
                 .spendingClassificationId(null)
-                .categoryId(CAT_OTHER).amount(50.00).currencyCode("EUR")
+                .categoryId(CAT_ENTERTAINMENT).amount(50.00).currencyCode("EUR")
                 .description("Od babky")
                 .completeDate(today.withHour(9)).createdAt(today.withHour(9)).build());
 
@@ -195,7 +197,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
                 .spendingClassificationId(null)
-                .categoryId(CAT_PAYCHECK).amount(14.29).currencyCode("EUR")
+                .categoryId(CAT_ENTERTAINMENT).amount(14.29).currencyCode("EUR")
                 .description("From Adam Aliexpress")
                 .completeDate(yesterday.withHour(9)).createdAt(yesterday.withHour(9)).build());
 
@@ -203,7 +205,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
-                .categoryId(CAT_SUBSCRIPTION).amount(28.04).currencyCode("EUR")
+                .categoryId(CAT_TRANSPORT).amount(28.04).currencyCode("EUR")
                 .description("ChatGPT sub")
                 .completeDate(yesterday.withHour(15)).createdAt(yesterday.withHour(15)).build());
 
@@ -212,7 +214,7 @@ public class TestDataInitializer {
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
                 .spendingClassificationId(null)
-                .categoryId(CAT_PAYCHECK).amount(100).currencyCode("EUR")
+                .categoryId(CAT_TRANSPORT).amount(100).currencyCode("EUR")
                 .description("Len tak")
                 .completeDate(yesterday.withHour(9)).createdAt(yesterday.withHour(9)).build());
 
@@ -261,7 +263,7 @@ public class TestDataInitializer {
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_INCOME)
                     .spendingClassificationId(null)
-                    .categoryId(CAT_PAYCHECK)
+                    .categoryId(CAT_RENT)
                     .amount(salaryAmounts[i]).currencyCode("EUR")
                     .description("Salary")
                     .completeDate(base).createdAt(base).build());
@@ -272,7 +274,7 @@ public class TestDataInitializer {
                         .accountId(mainAccountId)
                         .transactionTypeId(Transaction.TYPE_INCOME)
                         .spendingClassificationId(null)
-                        .categoryId(CAT_PAYCHECK)
+                        .categoryId(CAT_RENT)
                         .amount(800.00 + (i * 50)).currencyCode("EUR")
                         .description("Freelance project")
                         .completeDate(base.withDayOfMonth(20)).createdAt(base.withDayOfMonth(20)).build());
@@ -284,7 +286,7 @@ public class TestDataInitializer {
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
-                    .categoryId(CAT_GROCERIES)
+                    .categoryId(CAT_RENT)
                     .amount(320.00 + (i * 5)).currencyCode("EUR")
                     .description("Groceries")
                     .completeDate(base.withDayOfMonth(5)).createdAt(base.withDayOfMonth(5)).build());
@@ -314,7 +316,7 @@ public class TestDataInitializer {
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
-                    .categoryId(CAT_SUBSCRIPTION)
+                    .categoryId(CAT_RENT)
                     .amount(28.04).currencyCode("EUR")
                     .description("ChatGPT sub")
                     .completeDate(base.withDayOfMonth(18)).createdAt(base.withDayOfMonth(18)).build());
@@ -324,7 +326,7 @@ public class TestDataInitializer {
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
-                    .categoryId(CAT_UTILITIES)
+                    .categoryId(CAT_RENT)
                     .amount(55.00 + (i * 2)).currencyCode("EUR")
                     .description("Electricity & Water")
                     .completeDate(base.withDayOfMonth(25)).createdAt(base.withDayOfMonth(25)).build());
@@ -335,7 +337,7 @@ public class TestDataInitializer {
                     .accountId(mainAccountId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
                     .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
-                    .categoryId(CAT_SPORT)
+                    .categoryId(CAT_RENT)
                     .amount(35.00).currencyCode("EUR")
                     .description("GYM membership")
                     .completeDate(base.withDayOfMonth(3)).createdAt(base.withDayOfMonth(3)).build());
@@ -396,7 +398,7 @@ public class TestDataInitializer {
 
         // ChatGPT sub (NEED)
         recurringRuleRepository.save(RecurringRule.builder()
-                .accountId(mainAccountId).categoryId(CAT_SUBSCRIPTION).statusId(1)
+                .accountId(mainAccountId).categoryId(CAT_RENT).statusId(1)
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
                 .amount(28.04).description("ChatGPT sub")
@@ -422,7 +424,7 @@ public class TestDataInitializer {
 
         // GYM membership (WANT)
         recurringRuleRepository.save(RecurringRule.builder()
-                .accountId(mainAccountId).categoryId(CAT_SPORT).statusId(1)
+                .accountId(mainAccountId).categoryId(CAT_RENT).statusId(1)
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_WANT)
                 .amount(35.00).description("GYM membership")
@@ -461,7 +463,7 @@ public class TestDataInitializer {
 
         // Phone bill (NEED)
         recurringRuleRepository.save(RecurringRule.builder()
-                .accountId(mainAccountId).categoryId(CAT_UTILITIES).statusId(1)
+                .accountId(mainAccountId).categoryId(CAT_RENT).statusId(1)
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
                 .spendingClassificationId(Transaction.CLASSIFICATION_NEED)
                 .amount(25.00).description("Phone bill")
