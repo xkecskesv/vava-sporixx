@@ -36,12 +36,18 @@ public interface TransactionRepository {
      */
     Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId, LocalDateTime from);
 
+    Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId, LocalDateTime from, List<Integer> excludeCategoryIds);
+
+    Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId, LocalDateTime from, List<Integer> excludeCategoryIds);
+
     /**
      * Sumarizuje výdavky podľa kategórie za dané obdobie.
      * Kľúč: názov kategórie, hodnota: celková suma.
      * Používa sa pre Expenses by Category report.
      */
     Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
+
+    Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from, LocalDateTime to, List<Integer> excludeCategoryIds);
 
     /**
      * Sumarizuje výdavky podľa spending classification (WANT/NEED) za dané obdobie.

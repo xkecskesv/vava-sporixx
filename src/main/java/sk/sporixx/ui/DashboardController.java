@@ -440,10 +440,15 @@ public class DashboardController {
         VBox info = new VBox(1);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        String classification = trans.isWant()
-                ? Localization.get("dashboard.activities.want")
-                : Localization.get("dashboard.activities.need");
-        Label name = new Label(trans.getDescription() + " - " + classification);
+        String classification;
+        if (trans.isWant()) {
+            classification = Localization.get("dashboard.activities.want");
+        } else if (trans.isNeed()) {
+            classification = Localization.get("dashboard.activities.need");
+        } else {
+            classification = "";
+        }
+        Label name = new Label(trans.getDescription() + (classification.isEmpty() ? "" : " - " + classification));
         name.getStyleClass().add("activity-name");
 
         Label type = new Label(trans.isIncome()

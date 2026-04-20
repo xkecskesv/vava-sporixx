@@ -36,6 +36,22 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     @Override
+    public Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from,
+                                                         LocalDateTime to,
+                                                         List<Integer> excludeCategoryIds) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
+                .filter(t -> t.getCategoryId() == null
+                        || !excludeCategoryIds.contains(t.getCategoryId()))
+                .collect(Collectors.groupingBy(
+                        t -> "Category_" + t.getCategoryId(),
+                        LinkedHashMap::new,
+                        Collectors.summingDouble(Transaction::getAmount)));
+    }
+
+    @Override
     public List<Transaction> findByAccountId(int accountId) {
         return transactions.stream()
                 .filter(t -> t.getAccountId() == accountId)
@@ -60,6 +76,38 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .filter(t -> t.getAccountId() == accountId) // Filtrujeme už len 1 účet
                 .filter(t -> t.getTransactionTypeId() == transactionTypeId)
                 .filter(t -> !t.getCompleteDate().isBefore(from))
+                .collect(Collectors.groupingBy(
+                        t -> t.getCompleteDate().format(DAY_FORMAT),
+                        LinkedHashMap::new,
+                        Collectors.summingDouble(Transaction::getAmount)));
+    }
+
+    @Override
+    public Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId,
+                                                 LocalDateTime from,
+                                                 List<Integer> excludeCategoryIds) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == transactionTypeId)
+                .filter(t -> !t.getCompleteDate().isBefore(from))
+                .filter(t -> t.getCategoryId() == null
+                        || !excludeCategoryIds.contains(t.getCategoryId()))
+                .collect(Collectors.groupingBy(
+                        t -> t.getCompleteDate().format(MONTH_FORMAT),
+                        LinkedHashMap::new,
+                        Collectors.summingDouble(Transaction::getAmount)));
+    }
+
+    @Override
+    public Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId,
+                                               LocalDateTime from,
+                                               List<Integer> excludeCategoryIds) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .filter(t -> t.getTransactionTypeId() == transactionTypeId)
+                .filter(t -> !t.getCompleteDate().isBefore(from))
+                .filter(t -> t.getCategoryId() == null
+                        || !excludeCategoryIds.contains(t.getCategoryId()))
                 .collect(Collectors.groupingBy(
                         t -> t.getCompleteDate().format(DAY_FORMAT),
                         LinkedHashMap::new,
