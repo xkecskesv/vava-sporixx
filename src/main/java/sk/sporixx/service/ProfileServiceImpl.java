@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.UserRepository;
-import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.util.Optional;
@@ -43,21 +42,7 @@ public class ProfileServiceImpl implements ProfileService {
     public void updateProfile(String firstName, String lastName, String email, String gender) {
         User currentUser = requireLoggedUser();
 
-        if (!ValidationUtil.isNotBlank(firstName)) {
-            throw new ProfileException("auth.error.first_name_required");
-        }
-        if (!ValidationUtil.isNotBlank(lastName)) {
-            throw new ProfileException("auth.error.last_name_required");
-        }
-        if (!ValidationUtil.isValidNamePart(firstName) || !ValidationUtil.isValidNamePartCharacters(firstName)) {
-            throw new ProfileException("auth.error.invalid_first_name");
-        }
-        if (!ValidationUtil.isValidNamePart(lastName) || !ValidationUtil.isValidNamePartCharacters(lastName)) {
-            throw new ProfileException("auth.error.invalid_last_name");
-        }
-        if (!ValidationUtil.isValidEmail(email)) {
-            throw new ProfileException("auth.error.invalid_email");
-        }
+        UserValidationSupport.validateIdentity(firstName, lastName, email);
 
         String normalizedEmail = email.trim().toLowerCase();
         Optional<User> existingByEmail = userRepository.findByEmail(normalizedEmail);
@@ -90,20 +75,8 @@ public class ProfileServiceImpl implements ProfileService {
     public void changePassword(String oldPassword, String newPassword) {
         User currentUser = requireLoggedUser();
 
-        if (!ValidationUtil.isNotBlank(oldPassword)) {
-            throw new ProfileException("auth.error.old_password_required");
-        }
-        if (!PasswordUtil.verifyPassword(oldPassword, currentUser.getPasswordHash())) {
-            throw new ProfileException("auth.error.wrong_old_password");
-        }
-        if (!ValidationUtil.isValidPassword(newPassword)) {
-            throw new ProfileException("auth.error.password_too_short");
-        }
-        if (PasswordUtil.verifyPassword(newPassword, currentUser.getPasswordHash())) {
-            throw new ProfileException("auth.error.same_password");
-        }
-
-        currentUser.setPasswordHash(PasswordUtil.hashPassword(newPassword));
+        UserValidationSupport.validatePasswordChange(oldPassword, newPassword, currentUser);
+        UserValidationSupport.applyPasswordChange(newPassword, currentUser);
 
         try {
             userRepository.update(currentUser);
@@ -112,6 +85,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileException("error.unexpected", e);
         }
     }
+
 
     /**
      * Updates and persists profile photo path for the authenticated user.

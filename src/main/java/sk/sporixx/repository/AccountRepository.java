@@ -12,12 +12,17 @@ public interface AccountRepository {
 
     /**
      * Nájde všetky účty používateľa.
-     * SQL: SELECT * FROM accounts WHERE user_id = ?
+     * SQL: SELECT * FROM accounts WHERE owner_user_id = ? AND is_active = 1
      *
      * @param ownerUserId ID vlastníka učtov
-     * @return zoznam všetkých učtov používateľa (Main, Emergency, Saving...)
+     * @return zoznam AKTÍVNYCH učtov používateľa (Main, Emergency, Saving...)
      */
     List<Account> findByOwnerUserId(int ownerUserId);
+
+    /**
+     * Nájde všetky účty používateľa vrátane neaktívnych.
+     */
+    List<Account> findAllByOwnerUserId(int ownerUserId);
 
     /**
      * Nájde účet podľa ID.
@@ -48,4 +53,9 @@ public interface AccountRepository {
      * Main Account a Emergency Fund sa nedajú mazať (kontroluje service vrstva).
      */
     void deactivateById(int accountId);
+
+    /**
+     * Re-activate account by setting is_active = true.
+     */
+    void activateById(int accountId);
 }

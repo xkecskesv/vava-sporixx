@@ -14,8 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AdminUserData {
     private int id;
+    private String firstName;
+    private String lastName;
     private String name;
     private String email;
+    private String gender;
+    private String photoPath;
     private boolean familyManager;
     private boolean active;
 }

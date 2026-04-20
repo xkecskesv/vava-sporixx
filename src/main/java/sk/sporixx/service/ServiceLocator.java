@@ -79,7 +79,7 @@ public final class ServiceLocator {
         authService    = testData.getAuthService();
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
-        adminService = new AdminServiceImpl(testData.getUserRepository());
+        adminService = new AdminServiceImpl(testData.getUserRepository(), testData.getAccountRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -104,7 +104,7 @@ public final class ServiceLocator {
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
-        adminService = new AdminServiceImpl(userRepo);
+        adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         // ── Zvyšok stále in-memory
         TestDataInitializer testData = new TestDataInitializer();

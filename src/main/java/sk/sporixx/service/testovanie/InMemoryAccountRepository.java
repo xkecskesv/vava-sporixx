@@ -27,6 +27,13 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
+    public List<Account> findAllByOwnerUserId(int userId) {
+        return accounts.stream()
+                .filter(a -> a.getOwnerUserId() == userId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<Account> findById(int accountId) {
         return accounts.stream()
                 .filter(a -> a.getId() == accountId)
@@ -63,6 +70,14 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .filter(a -> a.getId() == accountId)
                 .findFirst()
                 .ifPresent(a -> a.setActive(false));
+    }
+
+    @Override
+    public void activateById(int accountId) {
+        accounts.stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst()
+                .ifPresent(a -> a.setActive(true));
     }
 
     /**

@@ -1,114 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.AdminPanelController">
+<BorderPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.AdminPanelController">
     <center>
-        <VBox styleClass="admin-content" spacing="20">
+        <VBox spacing="20" styleClass="admin-content">
             <padding>
-                <Insets top="30" right="28" bottom="30" left="28"/>
+                <Insets bottom="30" left="28" right="28" top="30" />
             </padding>
 
             <HBox alignment="CENTER_LEFT" spacing="12">
-                <Label fx:id="titleLabel" styleClass="profile-title" text="Admin Panel"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="logoutButton" styleClass="profile-logout-btn" text="Logout" onAction="#handleLogout"/>
+                <Label fx:id="titleLabel" styleClass="profile-title" text="Admin Panel" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="logoutButton" onAction="#handleLogout" styleClass="profile-logout-btn" text="Logout" />
             </HBox>
 
-            <Label fx:id="forcePasswordChangeLabel" styleClass="profile-feedback-error" wrapText="true" visible="false" managed="false"/>
+            <Label fx:id="forcePasswordChangeLabel" managed="false" styleClass="profile-feedback-error" visible="false" wrapText="true" />
 
-            <GridPane hgap="16" vgap="0" VBox.vgrow="ALWAYS" maxWidth="Infinity">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="66.666"/>
-                    <ColumnConstraints percentWidth="33.334"/>
-                </columnConstraints>
+            <!-- Main admin card with users list (left) and selected-user editor (right) -->
+            <VBox maxHeight="Infinity" maxWidth="Infinity" styleClass="profile-main-card" VBox.vgrow="ALWAYS">
+                <GridPane hgap="16" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="60" />
+                        <ColumnConstraints percentWidth="40" />
+                    </columnConstraints>
 
-                <VBox styleClass="admin-users-card" spacing="10" GridPane.columnIndex="0" maxWidth="Infinity">
-                    <padding>
-                        <Insets top="16" right="16" bottom="16" left="16"/>
-                    </padding>
-                    <Label fx:id="usersTitleLabel" styleClass="profile-section-title" text="Users"/>
-                    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS" maxWidth="Infinity">
-                        <columns>
-                            <TableColumn fx:id="nameColumn" prefWidth="170" text="Name"/>
-                            <TableColumn fx:id="emailColumn" prefWidth="230" text="E-mail"/>
-                            <TableColumn fx:id="familyManagerColumn" prefWidth="130" text="Family Manager"/>
-                            <TableColumn fx:id="activeColumn" prefWidth="110" text="Active"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-
-                <VBox styleClass="admin-profile-card" spacing="10" GridPane.columnIndex="1" maxWidth="Infinity">
-                    <padding>
-                        <Insets top="16" right="16" bottom="16" left="16"/>
-                    </padding>
-
-                    <Label styleClass="profile-section-title" text="Admin Profile"/>
-                    <VBox alignment="CENTER">
-                        <ImageView fx:id="profileImage" fitWidth="170" fitHeight="170" styleClass="profile-avatar-large"/>
-                        <Region prefHeight="10"/>
-                        <Button fx:id="uploadPhotoButton" styleClass="profile-upload-btn" text="Upload Photo" onAction="#handleUploadPhoto"/>
+                    <!-- Left column: users table with quick search -->
+                    <VBox maxWidth="Infinity" spacing="10" styleClass="admin-users-card" GridPane.columnIndex="0">
+                        <padding>
+                            <Insets bottom="16" left="16" right="16" top="16" />
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label fx:id="usersTitleLabel" styleClass="profile-section-title" text="%admin.users.header" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="usersSearchField" prefHeight="34" prefWidth="220" promptText="%admin.users.search_placeholder" styleClass="profile-input" />
+                        </HBox>
+                        <TableView fx:id="usersTable" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="nameColumn" prefWidth="170" text="Name" />
+                                <TableColumn fx:id="emailColumn" prefWidth="230" text="E-mail" />
+                                <TableColumn fx:id="familyManagerColumn" prefWidth="130" text="Family Manager" />
+                                <TableColumn fx:id="activeColumn" prefWidth="110" text="Active" />
+                            </columns>
+                        </TableView>
                     </VBox>
 
-                    <Separator/>
+                    <Separator orientation="VERTICAL" styleClass="profile-divider" GridPane.columnIndex="0" GridPane.halignment="RIGHT" />
 
-                    <FlowPane hgap="12" vgap="10" prefWrapLength="300">
-                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
-                            <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name"/>
-                            <TextField fx:id="firstNameField" styleClass="profile-input" promptText="John"/>
+                    <!-- Right column: selected user details and actions -->
+                    <VBox styleClass="profile-management-column" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="24" left="30" right="30" top="24" />
+                        </padding>
+
+                        <!-- Header actions for the selected user -->
+                        <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="8">
+                            <Label styleClass="profile-section-title" text="%admin.selected_user.title" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button fx:id="deactivateButton" onAction="#handleDeactivateUser" styleClass="admin-danger-btn" text="%admin.user.deactivate" />
+                            <Button fx:id="clearSelectionButton" onAction="#handleClearSelection" styleClass="admin-icon-btn">
+                                <graphic>
+                                    <ImageView fitHeight="14" fitWidth="14" preserveRatio="true">
+                                        <Image url="@../assets/icons/icon_close.png" />
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                        </HBox>
+
+                        <Region prefHeight="18" />
+
+                        <!-- Profile image preview aligned to the left -->
+                        <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                            <ImageView fx:id="profileImage" fitHeight="150" fitWidth="150" styleClass="profile-avatar-large" />
+                        </HBox>
+
+                        <Region prefHeight="18" />
+
+                        <!-- Editable identity fields -->
+                        <HBox maxWidth="Infinity" spacing="12">
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name" />
+                                <TextField fx:id="firstNameField" maxWidth="Infinity" prefHeight="37.0" prefWidth="151.0" promptText="John" styleClass="profile-input" />
+                            </VBox>
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name" />
+                                <TextField fx:id="lastNameField" maxWidth="Infinity" prefHeight="37.0" prefWidth="169.0" promptText="Doe" styleClass="profile-input" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Email and gender row -->
+                        <HBox alignment="CENTER" maxWidth="Infinity" spacing="12">
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail" />
+                                <TextField fx:id="emailField" maxWidth="Infinity" prefHeight="36" prefWidth="0" promptText="john.doe@email.com" styleClass="profile-input" />
+                            </VBox>
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="genderLabel" styleClass="profile-label" text="Gender" />
+                                <ComboBox fx:id="genderComboBox" maxWidth="Infinity" prefHeight="44.0" prefWidth="0.0" promptText="Male / Female / -" styleClass="profile-input" />
+                            </VBox>
+                        </HBox>
+
+                        <Region prefHeight="8" />
+
+                        <!-- Password reset section -->
+                        <VBox spacing="5">
+                            <Label fx:id="oldPasswordLabel" styleClass="profile-label" text="%profile.management.old_password" />
+                            <PasswordField fx:id="oldPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
+                            <Region prefHeight="15" />
+                            <Label fx:id="newPasswordLabel" styleClass="profile-label" text="%profile.management.new_password" />
+                            <PasswordField fx:id="newPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
+                            <Region prefHeight="15" />
+                            <Label fx:id="confirmPasswordLabel" styleClass="profile-label" text="%register.password_confirm" />
+                            <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
                         </VBox>
-                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
-                            <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name"/>
-                            <TextField fx:id="lastNameField" styleClass="profile-input" promptText="Doe"/>
-                        </VBox>
-                    </FlowPane>
 
-                    <FlowPane hgap="12" vgap="10" prefWrapLength="300">
-                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
-                            <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail"/>
-                            <TextField fx:id="emailField" styleClass="profile-input" promptText="john.doe@email.com"/>
-                        </VBox>
-                        <VBox spacing="6" prefWidth="150" minWidth="130" maxWidth="Infinity">
-                            <Label fx:id="genderLabel" styleClass="profile-label" text="Gender"/>
-                            <ComboBox fx:id="genderComboBox" styleClass="profile-input" promptText="Male / Female / -"/>
-                        </VBox>
-                    </FlowPane>
+                        <Label fx:id="passwordFeedbackLabel" managed="false" styleClass="profile-feedback-line" visible="false" wrapText="true" />
 
-                    <Button fx:id="saveProfileButton" styleClass="profile-upload-btn" text="Save" onAction="#handleSaveProfile"/>
-                    <Label fx:id="profileFeedbackLabel" styleClass="profile-feedback-line" visible="false" managed="false"/>
+                        <Region VBox.vgrow="ALWAYS" />
 
-                    <Separator/>
+                        <!-- Bottom actions -->
+                        <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" spacing="8">
+                            <Button fx:id="cancelButton" onAction="#handleCancelEdit" styleClass="admin-secondary-btn" text="%admin.action.cancel" />
+                            <Button fx:id="saveProfileButton" onAction="#handleSaveProfile" styleClass="profile-logout-btn" text="%admin.action.confirm" />
+                        </HBox>
+                        <Label fx:id="profileFeedbackLabel" managed="false" styleClass="profile-feedback-line" visible="false" />
 
-                    <Label fx:id="oldPasswordLabel" styleClass="profile-label" text="Old Password"/>
-                    <PasswordField fx:id="oldPasswordField" styleClass="profile-input" promptText="***************"/>
-
-                    <Label fx:id="newPasswordLabel" styleClass="profile-label" text="New Password"/>
-                    <PasswordField fx:id="newPasswordField" styleClass="profile-input" promptText="***************"/>
-
-                    <Button fx:id="changePasswordButton" styleClass="profile-upload-btn" text="Change Password" onAction="#handleChangePassword"/>
-                    <Label fx:id="passwordFeedbackLabel" styleClass="profile-feedback-line" visible="false" managed="false"/>
-                </VBox>
-            </GridPane>
+                    </VBox>
+               <rowConstraints>
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+            </VBox>
         </VBox>
     </center>
 </BorderPane>
-
-
-
-

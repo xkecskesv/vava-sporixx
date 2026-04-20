@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import sk.sporixx.service.AuthException;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.Localization;
@@ -29,7 +30,7 @@ public class LoginController {
                 SceneManager.switchTo("dashboard.fxml");
             }
 
-        }catch(Exception e){
+        } catch (AuthException e) {
             //service vrstva hodi exception s klucom
             //kluc prelozime a zobrazime
 
@@ -44,6 +45,11 @@ public class LoginController {
 
             }
 
+            errorLabel.setVisible(true);
+        } catch (Exception e) {
+            // Login was successful but next UI step failed (e.g. FXML/controller init).
+            e.printStackTrace();
+            errorLabel.setText(Localization.get("error.unexpected"));
             errorLabel.setVisible(true);
         }
 
