@@ -88,22 +88,22 @@
                             <HBox spacing="12" maxWidth="Infinity">
                                 <VBox spacing="6" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                                     <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name"/>
-                                    <TextField fx:id="firstNameField" styleClass="profile-input" promptText="John" maxWidth="Infinity" prefHeight="36"/>
+                                    <TextField fx:id="firstNameField" styleClass="profile-input" promptText="John" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0"/>
                                 </VBox>
                                 <VBox spacing="6" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                                     <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name"/>
-                                    <TextField fx:id="lastNameField" styleClass="profile-input" promptText="Doe" maxWidth="Infinity" prefHeight="36"/>
+                                    <TextField fx:id="lastNameField" styleClass="profile-input" promptText="Doe" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0"/>
                                 </VBox>
                             </HBox>
 
                             <HBox spacing="12" alignment="CENTER" maxWidth="Infinity">
                                 <VBox spacing="6" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                                     <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail"/>
-                                    <TextField fx:id="emailField" styleClass="profile-input" promptText="john.doe@email.com" maxWidth="Infinity" prefWidth="0" prefHeight="36"/>
+                                    <TextField fx:id="emailField" styleClass="profile-input" promptText="john.doe@email.com" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0"/>
                                 </VBox>
                                 <VBox spacing="6" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                                     <Label fx:id="genderLabel" styleClass="profile-label" text="Gender"/>
-                                    <ComboBox fx:id="genderComboBox" styleClass="profile-input" promptText="Male / Female / -" prefHeight="36" prefWidth="0" maxWidth="Infinity"/>
+                                    <ComboBox fx:id="genderComboBox" styleClass="profile-input" promptText="Male / Female / -" prefHeight="44.0" prefWidth="50.0" maxWidth="Infinity"/>
                                 </VBox>
                             </HBox>
 
