@@ -28,6 +28,7 @@ public class ReportsSavingsController {
     @FXML private VBox emptyState;
     @FXML private HBox cardsRow;
     @FXML private HBox progressRow;
+    @FXML private Label exportImportErrorLabel;
 
     private List<SavingAccountReportData> accounts;
     private int scrollOffset = 0;
@@ -278,6 +279,8 @@ public class ReportsSavingsController {
 
     @FXML
     private void handleExport() {
+        clearExportImportError();
+
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
         fileChooser.setTitle(Localization.get("reports.export"));
         fileChooser.getExtensionFilters().add(
@@ -291,12 +294,19 @@ public class ReportsSavingsController {
             ServiceLocator.getExportService()
                     .exportSavingAccountsToXml(file.getAbsolutePath());
         } catch (Exception e) {
-            e.printStackTrace();
+            String message = e.getMessage();
+            if (message != null && message.startsWith("export.error.")) {
+                showExportImportError(message);
+            } else {
+                showExportImportError("export.error.failed");
+            }
         }
     }
 
     @FXML
     private void handleImport() {
+        clearExportImportError();
+
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
         fileChooser.setTitle(Localization.get("reports.import"));
         fileChooser.getExtensionFilters().add(
@@ -311,11 +321,30 @@ public class ReportsSavingsController {
             accounts = ServiceLocator.getReportsService().loadSavingAccountsData();
             renderCards();
         } catch (Exception e) {
-            e.printStackTrace();
+            String message = e.getMessage();
+            if (message != null && message.startsWith("import.error.")) {
+                showExportImportError(message);
+            } else {
+                showExportImportError("import.error.failed");
+            }
         }
     }
 
     private String formatCurrency(double value) {
         return String.format("€%,.2f", value);
     }
+
+    private void showExportImportError(String key) {
+        exportImportErrorLabel.setText(Localization.get(key));
+        exportImportErrorLabel.setVisible(true);
+        exportImportErrorLabel.setManaged(true);
+    }
+
+    private void clearExportImportError() {
+        exportImportErrorLabel.setText("");
+        exportImportErrorLabel.setVisible(false);
+        exportImportErrorLabel.setManaged(false);
+    }
+
 }
+
