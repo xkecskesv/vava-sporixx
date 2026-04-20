@@ -120,8 +120,9 @@ public class AdminPanelController {
         String oldPassword = oldPasswordField.getText();
         String newPassword = newPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
+        boolean passwordChangeRequested = hasAnyPasswordInput(oldPassword, newPassword, confirmPassword);
 
-        if (!validatePasswordInputs(editingSelf, oldPassword, newPassword, confirmPassword)) {
+        if (!validatePasswordInputs(editingSelf, passwordChangeRequested, oldPassword, newPassword, confirmPassword)) {
             return;
         }
 
@@ -134,16 +135,22 @@ public class AdminPanelController {
                 .build();
 
         try {
-            if (editingSelf) {
-                ServiceLocator.getAdminService().changeOwnPassword(editedUser, oldPassword, newPassword);
-                SessionManager.getInstance().setForcePasswordChange(false);
-            } else {
+            // Always persist identity fields; password change is optional.
+            if (!editingSelf && passwordChangeRequested) {
                 editedUser.setPasswordHash(newPassword);
             }
 
             ServiceLocator.getAdminService().updateUser(editedUser);
+
+            if (editingSelf && passwordChangeRequested) {
+                ServiceLocator.getAdminService().changeOwnPassword(editedUser, oldPassword, newPassword);
+                SessionManager.getInstance().setForcePasswordChange(false);
+            }
+
             showProfileFeedback(localizeMessage("admin.user.updated"), true);
-            clearPasswordFields();
+            if (passwordChangeRequested) {
+                clearPasswordFields();
+            }
             refreshAndReselect(editedUser.getId());
             applyForcedPasswordChangeState();
         } catch (ProfileException e) {
@@ -420,7 +427,11 @@ public class AdminPanelController {
         applySelectionState();
     }
 
-    private boolean validatePasswordInputs(boolean editingSelf, String oldPassword, String newPassword, String confirmPassword) {
+    private boolean validatePasswordInputs(boolean editingSelf, boolean passwordChangeRequested,
+                                           String oldPassword, String newPassword, String confirmPassword) {
+        if (!passwordChangeRequested) {
+            return true;
+        }
         if (editingSelf && (oldPassword == null || oldPassword.isBlank())) {
             showPasswordFeedback(localizeMessage("auth.error.old_password_required"), false);
             return false;
@@ -434,6 +445,12 @@ public class AdminPanelController {
             return false;
         }
         return true;
+    }
+
+    private boolean hasAnyPasswordInput(String oldPassword, String newPassword, String confirmPassword) {
+        return (oldPassword != null && !oldPassword.isBlank())
+                || (newPassword != null && !newPassword.isBlank())
+                || (confirmPassword != null && !confirmPassword.isBlank());
     }
 
     private void loadProfileImage(String photoPath) {
