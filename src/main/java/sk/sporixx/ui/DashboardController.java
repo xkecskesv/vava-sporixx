@@ -61,6 +61,7 @@ public class DashboardController {
     @FXML private Label modalDateLabel;
     @FXML private DatePicker accountDatePicker;
     @FXML private Label modalAmountPreview;
+    @FXML private Label modalErrorLabel;
 
     // FXML - Analytics
     @FXML private Label analyticsTitle;
@@ -543,12 +544,25 @@ public class DashboardController {
         submitNewAccount();
     }
 
+    private void showModalError(String key) {
+        modalErrorLabel.setText(Localization.get(key));
+        modalErrorLabel.setVisible(true);
+        modalErrorLabel.setManaged(true);
+    }
+
+    private void clearModalError() {
+        modalErrorLabel.setText("");
+        modalErrorLabel.setVisible(false);
+        modalErrorLabel.setManaged(false);
+    }
+
     @FXML
     private void onModalClose() {
         closeModal();
     }
 
     private void openNewAccountModal() {
+        clearModalError();
         modalTitle.setText(Localization.get("dashboard.modal.title"));
         modalTypeLabel.setText(Localization.get("dashboard.modal.type"));
         modalDescLabel.setText(Localization.get("dashboard.modal.description"));
@@ -618,17 +632,31 @@ public class DashboardController {
     }
 
     private void submitNewAccount() {
+        clearModalError();
+
         String typeValue = accountTypeComboBox.getValue();
         String desc = accountDescField.getText().trim();
         String amountText = accountAmountField.getText().trim();
 
-        if (desc.isEmpty() || amountText.isEmpty()) return;
+        if (desc.isEmpty()) {
+            showModalError("account.error.description_required");
+            return;
+        }
+        if (amountText.isEmpty()) {
+            showModalError("account.error.negative_amount");
+            return;
+        }
 
         double amount;
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
+            if (amount < 0) {
+                showModalError("account.error.negative_amount");
+                return;
+            }
         } catch (NumberFormatException e) {
-            amount = 0.0;
+            showModalError("account.error.negative_amount");
+            return;
         }
 
         boolean isSaving = typeValue.equals(Localization.get("dashboard.account.saving"));
@@ -636,9 +664,23 @@ public class DashboardController {
         try {
             if (isSaving) {
                 String goalText = accountGoalField.getText().trim();
-                if (goalText.isEmpty()) return;
-                if (accountDatePicker.getValue() == null) return;
-                double goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                if (goalText.isEmpty()) {
+                    showModalError("account.error.goal_amount_invalid");
+                    return;
+                }
+                if (accountDatePicker.getValue() == null) {
+                    showModalError("account.error.goal_date_invalid");
+                    return;
+                }
+
+                double goalAmount;
+                try {
+                    goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                } catch (NumberFormatException e) {
+                    showModalError("account.error.goal_amount_invalid");
+                    return;
+                }
+
                 LocalDate targetDate = accountDatePicker.getValue();
                 ServiceLocator.getAccountService()
                         .createSavingAccount(desc, amount, goalAmount, targetDate);
@@ -653,7 +695,12 @@ public class DashboardController {
             closeModal();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            String message = e.getMessage();
+            if (message != null && message.startsWith("account.error.")) {
+                showModalError(message);
+            } else {
+                showModalError("account.error.invalid_type");
+            }
         }
     }
 }
