@@ -124,6 +124,8 @@
             <!-- Suma preview -->
             <Label fx:id="modalAmountPreview" styleClass="modal-amount-preview"/>
 
+            <Label fx:id="modalErrorLabel" styleClass="modal-error-label" wrapText="true" managed="false" visible="false" />
+
         </VBox>
     </StackPane>
 

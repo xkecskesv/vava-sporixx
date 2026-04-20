@@ -235,6 +235,12 @@ Inter 27pt Bold*/
     -fx-padding: 0;
 }
 
+.modal-error-label {
+    -fx-text-fill: #E53935;
+    -fx-font-size: 13px;
+    -fx-font-family: "Inter";
+}
+
 .accounts-scroll {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
