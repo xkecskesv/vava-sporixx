@@ -226,4 +226,57 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException("Error deleting user from database", e);
         }
     }
+
+    @Override
+    public void updateFamilyManagerStatus(int userId, boolean isFamilyManager) {
+        String demoteSql = "UPDATE account_access SET access_level = 1 WHERE user_id = ? AND access_level = 2";
+        String alreadyManagerSql = "SELECT 1 FROM account_access WHERE user_id = ? AND access_level >= 2 LIMIT 1";
+        String pickAccountSql = "SELECT id FROM accounts WHERE owner_user_id = ? ORDER BY is_active DESC, id ASC LIMIT 1";
+        String grantManagerSql = "INSERT INTO account_access (user_id, account_id, access_level) VALUES (?, ?, 2) "
+                + "ON CONFLICT(user_id, account_id) DO UPDATE SET access_level = "
+                + "CASE WHEN account_access.access_level < 2 THEN 2 ELSE account_access.access_level END";
+
+        try (Connection conn = getConnection()) {
+            if (!isFamilyManager) {
+                try (PreparedStatement demoteStmt = conn.prepareStatement(demoteSql)) {
+                    demoteStmt.setInt(1, userId);
+                    demoteStmt.executeUpdate();
+                }
+                return;
+            }
+
+            try (PreparedStatement managerCheckStmt = conn.prepareStatement(alreadyManagerSql)) {
+                managerCheckStmt.setInt(1, userId);
+                try (ResultSet managerResult = managerCheckStmt.executeQuery()) {
+                    if (managerResult.next()) {
+                        return;
+                    }
+                }
+            }
+
+            Integer accountId = null;
+            try (PreparedStatement accountStmt = conn.prepareStatement(pickAccountSql)) {
+                accountStmt.setInt(1, userId);
+                try (ResultSet accountResult = accountStmt.executeQuery()) {
+                    if (accountResult.next()) {
+                        accountId = accountResult.getInt("id");
+                    }
+                }
+            }
+
+            if (accountId == null) {
+                logger.warn("Cannot grant family manager role, user {} has no account", userId);
+                return;
+            }
+
+            try (PreparedStatement grantStmt = conn.prepareStatement(grantManagerSql)) {
+                grantStmt.setInt(1, userId);
+                grantStmt.setInt(2, accountId);
+                grantStmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            logger.error("Database error while updating family manager status for user {}", userId, e);
+            throw new RuntimeException("Error updating family manager status", e);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package sk.sporixx.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.UserRepository;
 import sk.sporixx.util.ValidationUtil;
@@ -36,10 +37,11 @@ public class ProfileServiceImpl implements ProfileService {
      * @param lastName new last name
      * @param email new e-mail address
      * @param gender raw gender value from UI
+     * @param isParent whether profile marks user as family manager
      * @throws ProfileException when validation fails or persistence cannot be completed
      */
     @Override
-    public void updateProfile(String firstName, String lastName, String email, String gender) {
+    public void updateProfile(String firstName, String lastName, String email, String gender, boolean isParent) {
         User currentUser = requireLoggedUser();
 
         UserValidationSupport.validateIdentity(firstName, lastName, email);
@@ -55,9 +57,19 @@ public class ProfileServiceImpl implements ProfileService {
         currentUser.setEmail(normalizedEmail);
         currentUser.setGender(userService.normalizeGender(gender));
 
+        Role originalRole = currentUser.getRole();
+        boolean roleMutable = originalRole != Role.ADMIN;
+        if (roleMutable) {
+            currentUser.setRole(isParent ? Role.FAMILY_MANAGER : Role.USER);
+        }
+
         try {
             userRepository.update(currentUser);
+            userRepository.updateFamilyManagerStatus(currentUser.getId(), isParent);
         } catch (Exception e) {
+            if (roleMutable) {
+                currentUser.setRole(originalRole);
+            }
             logger.error("Failed to update profile for user id={}", currentUser.getId(), e);
             throw new ProfileException("error.unexpected", e);
         }
@@ -136,4 +148,3 @@ public class ProfileServiceImpl implements ProfileService {
         return currentUser;
     }
 }
-

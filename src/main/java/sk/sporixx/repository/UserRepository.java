@@ -54,4 +54,9 @@ public interface UserRepository {
      * Permanently deletes user and related records by id.
      */
     void deleteById(int id);
+
+    /**
+     * Updates family-manager access flag in account_access for the given user.
+     */
+    void updateFamilyManagerStatus(int userId, boolean isFamilyManager);
 }

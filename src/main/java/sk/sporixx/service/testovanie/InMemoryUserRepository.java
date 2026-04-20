@@ -61,4 +61,9 @@ public class InMemoryUserRepository implements UserRepository {
     public void deleteById(int id) {
         users.removeIf(user -> user.getId() == id);
     }
+
+    @Override
+    public void updateFamilyManagerStatus(int userId, boolean isFamilyManager) {
+        // In-memory repository has no account_access model; profile tests rely on User.role in session.
+    }
 }

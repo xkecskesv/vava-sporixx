@@ -97,6 +97,7 @@ public class ProfileController {
     private String lastSavedLastName = "";
     private String lastSavedEmail = "";
     private String lastSavedGender = "-";
+    private boolean lastSavedParent;
 
     @FXML
     public void initialize() {
@@ -252,6 +253,7 @@ public class ProfileController {
         lastSavedLastName = normalized(lastNameField.getText());
         lastSavedEmail = normalized(emailField.getText());
         lastSavedGender = selectedGender();
+        lastSavedParent = parentCheckBox.isSelected();
         autosaveEnabled = true;
     }
 
@@ -276,6 +278,9 @@ public class ProfileController {
             if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
         genderComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
+        });
+        parentCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
 
@@ -312,11 +317,13 @@ public class ProfileController {
         String lastName = normalized(lastNameField.getText());
         String email = normalized(emailField.getText());
         String gender = selectedGender();
+        boolean isParent = parentCheckBox.isSelected();
 
         boolean unchanged = firstName.equals(lastSavedFirstName)
                 && lastName.equals(lastSavedLastName)
                 && email.equals(lastSavedEmail)
-                && gender.equals(lastSavedGender);
+                && gender.equals(lastSavedGender)
+                && isParent == lastSavedParent;
         if (unchanged) return;
 
         String validationMessageKey = validateAutosaveInput(firstName, lastName, email);
@@ -327,11 +334,12 @@ public class ProfileController {
 
         try {
             showAutosaveFeedback(Localization.get("profile.autosave.saving"), "profile-feedback-pending");
-            ServiceLocator.getProfileService().updateProfile(firstName, lastName, email, gender);
+            ServiceLocator.getProfileService().updateProfile(firstName, lastName, email, gender, isParent);
             lastSavedFirstName = firstName;
             lastSavedLastName = lastName;
             lastSavedEmail = email;
             lastSavedGender = gender;
+            lastSavedParent = isParent;
             showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
         } catch (ProfileException e) {
             // Keep user input as-is; save is retried on next valid change.

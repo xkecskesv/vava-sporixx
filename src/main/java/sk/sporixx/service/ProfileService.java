@@ -14,8 +14,9 @@ public interface ProfileService {
      * @param lastName new last name
      * @param email new e-mail address
      * @param gender raw gender value from UI
+     * @param isParent whether the user is marked as family manager in profile
      */
-    void updateProfile(String firstName, String lastName, String email, String gender);
+    void updateProfile(String firstName, String lastName, String email, String gender, boolean isParent);
 
     /**
      * Changes password after validating current password and policy.
