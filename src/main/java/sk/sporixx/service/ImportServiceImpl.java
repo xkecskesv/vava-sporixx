@@ -7,13 +7,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.SavingGoal;
+import sk.sporixx.model.Transaction;
+import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.SavingGoalRepository;
+import sk.sporixx.repository.TransactionRepository;
 import sk.sporixx.util.XmlUtil;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementácia ImportService.
@@ -30,9 +35,17 @@ public class ImportServiceImpl implements ImportService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final SavingGoalRepository savingGoalRepository;
+    private final AccountService accountService;
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
-    public ImportServiceImpl(SavingGoalRepository savingGoalRepository) {
+    public ImportServiceImpl(SavingGoalRepository savingGoalRepository, AccountService accountService,
+                             TransactionRepository transactionRepository,
+                             AccountRepository accountRepository) {
         this.savingGoalRepository = savingGoalRepository;
+        this.accountService = accountService;
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Override
@@ -56,67 +69,50 @@ public class ImportServiceImpl implements ImportService {
                     .filter(Account::isSavingAccount)
                     .toList();
 
-            if (savingAccounts.isEmpty()) {
-                throw new ImportException("import.error.no_saving_accounts");
-            }
-
             NodeList accountNodes = root.getElementsByTagName("SavingAccount");
             int updatedCount = 0;
+            int createdCount = 0;
 
             for (int i = 0; i < accountNodes.getLength(); i++) {
                 Element accountEl = (Element) accountNodes.item(i);
+
                 String name = accountEl.getAttribute("name");
                 double savedUp = Double.parseDouble(accountEl.getAttribute("savedUp"));
                 double targetAmount = Double.parseDouble(accountEl.getAttribute("targetAmount"));
+                double initialBalance = parseDouble(accountEl.getAttribute("initialBalance"), savedUp);
                 String targetDateStr = accountEl.getAttribute("targetDate");
+                String createdAtStr = accountEl.getAttribute("createdAt");
 
-                // Nájdi zodpovedajúci saving účet podľa name
+                LocalDate targetDate = parseTargetDate(targetDateStr);
+                LocalDateTime createdAt = parseDateTime(createdAtStr);
+
                 Account matchingAccount = savingAccounts.stream()
                         .filter(a -> a.getDescription().equals(name))
                         .findFirst()
                         .orElse(null);
 
+                int accountId;
                 if (matchingAccount == null) {
-                    logger.warn("No matching saving account found for name: {}", name);
-                    continue;
+                    Account newAccount = accountService.createSavingAccountFromImport(
+                            name, initialBalance, targetAmount, targetDate, createdAt);
+                    accountId = newAccount.getId();
+                    logger.info("Created new saving account from import: {}", name);
+                    createdCount++;
+                } else {
+                    updateExistingSavingAccount(
+                            matchingAccount, savedUp, targetAmount, targetDateStr, targetDate);
+                    accountId = matchingAccount.getId();
+                    updatedCount++;
                 }
 
-                List<SavingGoal> goals = savingGoalRepository
-                        .findActiveByAccountId(matchingAccount.getId());
-
-                if (goals.isEmpty()) {
-                    logger.warn("No active goal for account: {}", name);
-                    continue;
+                // Importuj transakcie
+                NodeList txNodes = accountEl.getElementsByTagName("Transaction");
+                if (txNodes.getLength() > 0) {
+                    importTransactions(accountId, txNodes);
                 }
-
-                SavingGoal goal = goals.getFirst();
-
-                // Aktualizuj currentAmount
-                savingGoalRepository.updateCurrentAmount(goal.getId(), savedUp);
-
-                // Aktualizuj targetAmount
-                savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
-
-                // Aktualizuj targetDate ak existuje
-                if (!targetDateStr.isEmpty()) {
-                    LocalDateTime targetDate = LocalDateTime.parse(
-                            targetDateStr, EXPORT_TIMESTAMP);
-                    savingGoalRepository.updateTargetDate(goal.getId(), targetDate);
-                }
-
-                // Aktualizuj SessionManager
-                Account sessionAccount = SessionManager.getInstance()
-                        .getAccountById(matchingAccount.getId());
-                if (sessionAccount != null) {
-                    sessionAccount.setCurrentBalance(savedUp);
-                }
-
-                logger.info("Updated saving goal '{}': savedUp={}, targetAmount={}, targetDate={}",
-                        name, savedUp, targetAmount, targetDateStr);
-                updatedCount++;
             }
 
-            logger.info("Import completed — {} saving goals updated", updatedCount);
+            logger.info("Import completed — {} updated, {} created", updatedCount, createdCount);
 
         } catch (ImportException e) {
             throw e;
@@ -126,11 +122,134 @@ public class ImportServiceImpl implements ImportService {
         }
     }
 
+    // ── Helper — aktualizuje existujúci saving účet ──
+    private void updateExistingSavingAccount(Account matchingAccount,
+                                             double savedUp,
+                                             double targetAmount,
+                                             String targetDateStr,
+                                             LocalDate targetDate) {
+        List<SavingGoal> goals = savingGoalRepository
+                .findActiveByAccountId(matchingAccount.getId());
+
+        if (goals.isEmpty()) {
+            logger.warn("No active goal for account: {}", matchingAccount.getDescription());
+            return;
+        }
+
+        SavingGoal goal = goals.getFirst();
+        savingGoalRepository.updateCurrentAmount(goal.getId(), savedUp);
+        savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
+
+        if (!targetDateStr.isEmpty()) {
+            savingGoalRepository.updateTargetDate(goal.getId(), targetDate.atStartOfDay());
+        }
+        // Aktualizuj DB
+        accountRepository.updateBalance(matchingAccount.getId(), savedUp);
+
+        // Aktualizuj SessionManager
+        Account sessionAccount = SessionManager.getInstance()
+                .getAccountById(matchingAccount.getId());
+        if (sessionAccount != null) {
+            sessionAccount.setCurrentBalance(savedUp);
+        }
+
+        logger.info("Updated saving account '{}': savedUp={}, targetAmount={}",
+                matchingAccount.getDescription(), savedUp, targetAmount);
+    }
+
+    // ── Helper — parsuje targetDate ──
+    private LocalDate parseTargetDate(String targetDateStr) {
+        if (targetDateStr == null || targetDateStr.isEmpty()) {
+            return LocalDate.now().plusYears(1);
+        }
+        try {
+            return LocalDateTime.parse(targetDateStr, EXPORT_TIMESTAMP).toLocalDate();
+        } catch (Exception e) {
+            logger.warn("Could not parse targetDate '{}', using default", targetDateStr);
+            return LocalDate.now().plusYears(1);
+        }
+    }
+
+    // ── Helper — parsuje LocalDateTime ──
+    private LocalDateTime parseDateTime(String dateTimeStr) {
+        if (dateTimeStr == null || dateTimeStr.isEmpty()) {
+            return LocalDateTime.now();
+        }
+        try {
+            return LocalDateTime.parse(dateTimeStr, EXPORT_TIMESTAMP);
+        } catch (Exception e) {
+            logger.warn("Could not parse dateTime '{}', using now", dateTimeStr);
+            return LocalDateTime.now();
+        }
+    }
+
+    // ── Helper — parsuje double s fallback hodnotou ──
+    private double parseDouble(String value, double fallback) {
+        if (value == null || value.isEmpty()) return fallback;
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
     /**
      * Parsuje XML súbor do DOM Document.
      * Bezpečnostné nastavenia zabraňujú XXE útokom.
      */
     private Document parseDocument(String filePath) throws Exception {
         return XmlUtil.createSecureFactory().newDocumentBuilder().parse(new File(filePath));
+    }
+
+    /**
+     * Importuje transakcie pre saving účet.
+     * Pri importe existujúceho účtu — vymaže staré TYPE_INCOME transakcie
+     * a nahradí ich importovanými.
+     * Pri importe nového účtu — len pridá transakcie.
+     */
+    private void importTransactions(int accountId, NodeList txNodes) {
+        // Vymaž existujúce TYPE_INCOME transakcie na účte
+        List<Transaction> existing = transactionRepository
+                .findByAccountIdAndDateRange(
+                        accountId,
+                        LocalDateTime.of(2000, 1, 1, 0, 0),
+                        LocalDateTime.now())
+                .stream()
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
+                .toList();
+
+        for (Transaction tx : existing) {
+            transactionRepository.deleteById(tx.getId());
+        }
+
+        // Pridaj importované transakcie
+        for (int i = 0; i < txNodes.getLength(); i++) {
+            Element txEl = (Element) txNodes.item(i);
+
+            String dateStr = txEl.getAttribute("date");
+            double amount = parseDouble(txEl.getAttribute("amount"), 0.0);
+            String description = txEl.getAttribute("description");
+            int categoryId = (int) parseDouble(txEl.getAttribute("categoryId"), 0);
+            String currencyCode = txEl.getAttribute("currencyCode");
+
+            if (amount <= 0) continue;
+
+            LocalDateTime date = parseDateTime(dateStr);
+
+            Transaction tx = Transaction.builder()
+                    .accountId(accountId)
+                    .transactionTypeId(Transaction.TYPE_INCOME)
+                    .spendingClassificationId(null)
+                    .categoryId(categoryId)
+                    .amount(amount)
+                    .currencyCode(currencyCode.isEmpty() ? "EUR" : currencyCode)
+                    .description(description)
+                    .completeDate(date)
+                    .createdAt(date)
+                    .build();
+
+            transactionRepository.save(tx);
+            logger.info("Imported transaction: {} {} {}", description, amount, date);
+        }
     }
 }

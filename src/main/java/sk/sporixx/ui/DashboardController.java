@@ -6,6 +6,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -57,7 +58,10 @@ public class DashboardController {
     @FXML private VBox goalSection;
     @FXML private Label modalGoalLabel;
     @FXML private TextField accountGoalField;
+    @FXML private Label modalDateLabel;
+    @FXML private DatePicker accountDatePicker;
     @FXML private Label modalAmountPreview;
+    @FXML private Label modalErrorLabel;
 
     // FXML - Analytics
     @FXML private Label analyticsTitle;
@@ -75,7 +79,6 @@ public class DashboardController {
     private ChartPeriod currentChartPeriod = ChartPeriod.TWELVE_MONTHS;
     private AccountsSummaryData currentAccountsData;
 
-    // Accounts scrolling
     private static final int MAX_VISIBLE_CARDS = 3;
     private int accountScrollOffset = 0;
     private List<Account> allAccounts = new ArrayList<>();
@@ -119,7 +122,6 @@ public class DashboardController {
     private void renderAccounts() {
         accountsContainer.getChildren().clear();
 
-        // Šípka doľava
         boolean canScrollLeft = accountScrollOffset > 0;
         VBox leftArrow = new VBox();
         leftArrow.setPadding(new javafx.geometry.Insets(0, 12, 0, 12));
@@ -139,7 +141,6 @@ public class DashboardController {
         leftArrow.setManaged(canScrollLeft);
         accountsContainer.getChildren().add(leftArrow);
 
-        // Karty — max MAX_VISIBLE_CARDS
         int from = accountScrollOffset;
         int to = Math.min(accountScrollOffset + MAX_VISIBLE_CARDS, allAccounts.size());
 
@@ -151,7 +152,6 @@ public class DashboardController {
             accountsContainer.getChildren().add(card);
         }
 
-        // "+" karta — len na poslednej stránke
         boolean isLastPage = to >= allAccounts.size();
         if (isLastPage) {
             VBox addCard = new VBox();
@@ -165,7 +165,6 @@ public class DashboardController {
             accountsContainer.getChildren().add(addCard);
         }
 
-        // Šípka doprava
         boolean canScrollRight = (accountScrollOffset + MAX_VISIBLE_CARDS) < allAccounts.size();
         VBox rightArrow = new VBox();
         rightArrow.setPadding(new javafx.geometry.Insets(0, 12, 0, 12));
@@ -199,7 +198,6 @@ public class DashboardController {
         card.setUserData(account);
         HBox.setHgrow(card, Priority.ALWAYS);
 
-        // Header (názov + ikona)
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -217,19 +215,14 @@ public class DashboardController {
             icon.setFitHeight(20);
             icon.setPreserveRatio(true);
             header.getChildren().add(icon);
-        } catch (Exception e) {
-            // Ikona sa nenašla
-        }
+        } catch (Exception e) { /* ikona sa nenašla */ }
 
-        // Popis
         Label desc = new Label(account.getDescription());
         desc.getStyleClass().add(active ? "account-card-desc-active" : "account-card-desc");
 
-        // Spacer
         Region vspacer = new Region();
         VBox.setVgrow(vspacer, Priority.ALWAYS);
 
-        // Spodná časť — suma + voliteľný saving goal
         VBox bottomSection = new VBox(2);
         bottomSection.setAlignment(Pos.BOTTOM_RIGHT);
 
@@ -240,7 +233,8 @@ public class DashboardController {
         if (currentAccountsData.getSavingGoalByAccountId() != null) {
             SavingGoal goal = currentAccountsData.getSavingGoalByAccountId().get(account.getId());
             if (goal != null) {
-                Label goalLabel = new Label(Localization.get("dashboard.account.saving_goal_from") + " " + formatCurrency(goal.getTargetAmount()));                goalLabel.getStyleClass().add(active ? "account-card-goal-active" : "account-card-goal");
+                Label goalLabel = new Label(Localization.get("dashboard.account.saving_goal_from") + " " + formatCurrency(goal.getTargetAmount()));
+                goalLabel.getStyleClass().add(active ? "account-card-goal-active" : "account-card-goal");
                 bottomSection.getChildren().add(goalLabel);
             }
         }
@@ -261,15 +255,12 @@ public class DashboardController {
     }
 
     private String getAccountIconPath(Account account, boolean active) {
-        if (account.isMainAccount()) {
+        if (account.isMainAccount())
             return active ? "/assets/icons/main_acc_icon.png" : "/assets/icons/main_acc_icon_dark.png";
-        }
-        if (account.isEmergencyFund()) {
+        if (account.isEmergencyFund())
             return active ? "/assets/icons/emergency_fund_icon_light.png" : "/assets/icons/emergency_fund_icon.png";
-        }
-        if (account.isSavingAccount()) {
+        if (account.isSavingAccount())
             return active ? "/assets/icons/saving_acc_icon_white.png" : "/assets/icons/saving_acc_icon_dark.png";
-        }
         return active ? "/assets/icons/main_acc_icon.png" : "/assets/icons/main_acc_icon_dark.png";
     }
 
@@ -278,10 +269,7 @@ public class DashboardController {
     // ============================================================
     private void selectCard(VBox card) {
         if (selectedCard == card) return;
-
-        if (selectedCard != null) {
-            setCardActive(selectedCard, false);
-        }
+        if (selectedCard != null) setCardActive(selectedCard, false);
         setCardActive(card, true);
         selectedCard = card;
 
@@ -308,35 +296,28 @@ public class DashboardController {
         for (var node : card.getChildren()) {
             if (node instanceof HBox hbox) {
                 for (var child : hbox.getChildren()) {
-                    if (child instanceof Label label) {
+                    if (child instanceof Label label)
                         label.getStyleClass().setAll(active ? "account-card-title-active" : "account-card-title");
-                    }
                     if (child instanceof ImageView icon) {
                         Account account = (Account) card.getUserData();
                         if (account != null) {
                             try {
                                 icon.setImage(new Image(Objects.requireNonNull(
                                         getClass().getResourceAsStream(getAccountIconPath(account, active)))));
-                            } catch (Exception e) {
-                                // Ikona sa nenašla
-                            }
+                            } catch (Exception e) { /* ikona sa nenašla */ }
                         }
                     }
                 }
             }
-            // Popis (priamy Label v card)
-            if (node instanceof Label label) {
+            if (node instanceof Label label)
                 label.getStyleClass().setAll(active ? "account-card-desc-active" : "account-card-desc");
-            }
-            // Spodná sekcia (VBox s amount + goal)
             if (node instanceof VBox vbox) {
                 for (var child : vbox.getChildren()) {
                     if (child instanceof Label label) {
-                        if (label.getText().startsWith("€")) {
+                        if (label.getText().startsWith("€"))
                             label.getStyleClass().setAll(active ? "account-card-amount-active" : "account-card-amount");
-                        } else if (label.getText().startsWith("From")) {
+                        else if (label.getText().startsWith("From"))
                             label.getStyleClass().setAll(active ? "account-card-goal-active" : "account-card-goal");
-                        }
                     }
                 }
             }
@@ -373,8 +354,7 @@ public class DashboardController {
                     String displayLabel;
                     try {
                         if (data.getChartPeriod().isGroupByDay()) {
-                            displayLabel = LocalDate.parse(entry.getKey(), inputFormatter)
-                                    .format(displayFormatter);
+                            displayLabel = LocalDate.parse(entry.getKey(), inputFormatter).format(displayFormatter);
                         } else {
                             displayLabel = LocalDate.parse(entry.getKey() + "-01",
                                     DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(displayFormatter);
@@ -390,13 +370,11 @@ public class DashboardController {
             double minVal = values.stream().mapToDouble(Double::doubleValue).min().orElse(0);
             double maxVal = values.stream().mapToDouble(Double::doubleValue).max().orElse(1);
             double padding = (maxVal - minVal) * 0.1;
-
             yAxis.setAutoRanging(false);
             yAxis.setLowerBound(Math.max(0, minVal - padding));
             yAxis.setUpperBound(maxVal + padding);
             yAxis.setTickUnit((maxVal - minVal) / 5.0);
         } else {
-
             yAxis.setAutoRanging(false);
             yAxis.setLowerBound(0);
             yAxis.setUpperBound(100);
@@ -413,11 +391,9 @@ public class DashboardController {
         activitiesList.getChildren().clear();
 
         if (data.getUpcomingPayments() != null && !data.getUpcomingPayments().isEmpty()) {
-            activitiesList.getChildren().add(
-                    createGroupTitle(Localization.get("dashboard.activities.upcoming")));
-            for (RecurringRule rule : data.getUpcomingPayments()) {
+            activitiesList.getChildren().add(createGroupTitle(Localization.get("dashboard.activities.upcoming")));
+            for (RecurringRule rule : data.getUpcomingPayments())
                 activitiesList.getChildren().add(createRecurringRow(rule));
-            }
         }
 
         if (data.getRecentTransactions() != null && !data.getRecentTransactions().isEmpty()) {
@@ -429,19 +405,14 @@ public class DashboardController {
                 LocalDate txDate = tx.getCompleteDate().toLocalDate();
                 String groupName;
 
-                if (txDate.equals(today)) {
-                    groupName = Localization.get("dashboard.activities.today");
-                } else if (txDate.equals(yesterday)) {
-                    groupName = Localization.get("dashboard.activities.yesterday");
-                } else {
-                    groupName = txDate.format(DateTimeFormatter.ofPattern("dd MMM yy"));
-                }
+                if (txDate.equals(today)) groupName = Localization.get("dashboard.activities.today");
+                else if (txDate.equals(yesterday)) groupName = Localization.get("dashboard.activities.yesterday");
+                else groupName = txDate.format(DateTimeFormatter.ofPattern("dd MMM yy"));
 
                 if (!groupName.equals(currentGroup)) {
                     activitiesList.getChildren().add(createGroupTitle(groupName));
                     currentGroup = groupName;
                 }
-
                 activitiesList.getChildren().add(createTransactionRow(tx));
             }
         }
@@ -458,27 +429,27 @@ public class DashboardController {
         row.getStyleClass().add("activity-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
-        String iconPath = trans.isIncome()
-                ? "/assets/icons/income_icon.png"
-                : "/assets/icons/sent_icon.png";
+        String iconPath = trans.isIncome() ? "/assets/icons/income_icon.png" : "/assets/icons/sent_icon.png";
         try {
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(
-                    getClass().getResourceAsStream(iconPath))));
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
             icon.setFitWidth(28);
             icon.setFitHeight(28);
             icon.setPreserveRatio(true);
             row.getChildren().add(icon);
-        } catch (Exception e) {
-            // Ikona sa nenašla
-        }
+        } catch (Exception e) { /* ikona sa nenašla */ }
 
         VBox info = new VBox(1);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        String classification = trans.isWant()
-                ? Localization.get("dashboard.activities.want")
-                : Localization.get("dashboard.activities.need");
-        Label name = new Label(trans.getDescription() + " - " + classification);
+        String classification;
+        if (trans.isWant()) {
+            classification = Localization.get("dashboard.activities.want");
+        } else if (trans.isNeed()) {
+            classification = Localization.get("dashboard.activities.need");
+        } else {
+            classification = "";
+        }
+        Label name = new Label(trans.getDescription() + (classification.isEmpty() ? "" : " - " + classification));
         name.getStyleClass().add("activity-name");
 
         Label type = new Label(trans.isIncome()
@@ -509,9 +480,7 @@ public class DashboardController {
             icon.setFitHeight(28);
             icon.setPreserveRatio(true);
             row.getChildren().add(icon);
-        } catch (Exception e) {
-            // Ikona sa nenašla
-        }
+        } catch (Exception e) { /* ikona sa nenašla */ }
 
         VBox info = new VBox(1);
         HBox.setHgrow(info, Priority.ALWAYS);
@@ -545,22 +514,18 @@ public class DashboardController {
 
     private void onPeriodChanged() {
         String selected = periodComboBox.getValue();
-
-        if (selected.equals(Localization.get("dashboard.analytics.period.week"))) {
+        if (selected.equals(Localization.get("dashboard.analytics.period.week")))
             currentChartPeriod = ChartPeriod.ONE_WEEK;
-        } else if (selected.equals(Localization.get("dashboard.analytics.period.month"))) {
+        else if (selected.equals(Localization.get("dashboard.analytics.period.month")))
             currentChartPeriod = ChartPeriod.ONE_MONTH;
-        } else if (selected.equals(Localization.get("dashboard.analytics.period.six_months"))) {
+        else if (selected.equals(Localization.get("dashboard.analytics.period.six_months")))
             currentChartPeriod = ChartPeriod.SIX_MONTHS;
-        } else {
+        else
             currentChartPeriod = ChartPeriod.TWELVE_MONTHS;
-        }
 
         if (selectedCard != null) {
             Account account = (Account) selectedCard.getUserData();
-            if (account != null) {
-                reloadAnalytics(account);
-            }
+            if (account != null) reloadAnalytics(account);
         }
     }
 
@@ -571,14 +536,24 @@ public class DashboardController {
         return String.format("€%,.2f", value);
     }
 
-
     // ============================================================
-//  MODAL — NOVÝ ÚČET
-// ============================================================
-
+    //  MODAL — NOVÝ ÚČET
+    // ============================================================
     @FXML
     private void onModalConfirm() {
         submitNewAccount();
+    }
+
+    private void showModalError(String key) {
+        modalErrorLabel.setText(Localization.get(key));
+        modalErrorLabel.setVisible(true);
+        modalErrorLabel.setManaged(true);
+    }
+
+    private void clearModalError() {
+        modalErrorLabel.setText("");
+        modalErrorLabel.setVisible(false);
+        modalErrorLabel.setManaged(false);
     }
 
     @FXML
@@ -587,31 +562,44 @@ public class DashboardController {
     }
 
     private void openNewAccountModal() {
-        // Lokalizácia labelov
+        clearModalError();
         modalTitle.setText(Localization.get("dashboard.modal.title"));
         modalTypeLabel.setText(Localization.get("dashboard.modal.type"));
         modalDescLabel.setText(Localization.get("dashboard.modal.description"));
         modalAmountLabel.setText(Localization.get("dashboard.modal.amount"));
         modalGoalLabel.setText(Localization.get("dashboard.modal.goal"));
+        modalDateLabel.setText(Localization.get("dashboard.modal.date"));
 
-        // Dropdown typy účtov
         accountTypeComboBox.getItems().setAll(
                 Localization.get("dashboard.account.saving"),
                 Localization.get("dashboard.account.default")
         );
         accountTypeComboBox.setValue(Localization.get("dashboard.account.default"));
 
-        // Goal sekcia — skrytá by default
         goalSection.setVisible(false);
         goalSection.setManaged(false);
         modalAmountPreview.setText("");
 
-        // Vyčisti polia
         accountDescField.clear();
         accountAmountField.clear();
         accountGoalField.clear();
+        accountDatePicker.setValue(null);
 
-        // Zobraz/skry goal sekciu podľa typu
+        accountDatePicker.setConverter(new javafx.util.StringConverter<LocalDate>() {
+            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? date.format(formatter) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                return (string != null && !string.isEmpty())
+                        ? LocalDate.parse(string, formatter) : null;
+            }
+        });
+
         accountTypeComboBox.setOnAction(e -> {
             boolean isSaving = accountTypeComboBox.getValue()
                     .equals(Localization.get("dashboard.account.saving"));
@@ -619,7 +607,6 @@ public class DashboardController {
             goalSection.setManaged(isSaving);
         });
 
-        // Live preview sumy
         accountAmountField.textProperty().addListener((obs, oldVal, newVal) -> {
             try {
                 double val = Double.parseDouble(newVal.replace(",", "."));
@@ -629,20 +616,12 @@ public class DashboardController {
             }
         });
 
-        //Zatvorenie
         final boolean[] pressedOnOverlay = {false};
-
-        modalOverlay.setOnMousePressed(e -> {
-            pressedOnOverlay[0] = e.getTarget() == modalOverlay;
-        });
-
+        modalOverlay.setOnMousePressed(e -> pressedOnOverlay[0] = e.getTarget() == modalOverlay);
         modalOverlay.setOnMouseReleased(e -> {
-            if (pressedOnOverlay[0] && e.getTarget() == modalOverlay) {
-                closeModal();
-            }
+            if (pressedOnOverlay[0] && e.getTarget() == modalOverlay) closeModal();
         });
 
-        // Zobraz overlay
         modalOverlay.setVisible(true);
         modalOverlay.setManaged(true);
     }
@@ -653,16 +632,30 @@ public class DashboardController {
     }
 
     private void submitNewAccount() {
+        clearModalError();
+
         String typeValue = accountTypeComboBox.getValue();
         String desc = accountDescField.getText().trim();
         String amountText = accountAmountField.getText().trim();
 
-        if (desc.isEmpty() || amountText.isEmpty()) return;
+        if (desc.isEmpty()) {
+            showModalError("account.error.description_required");
+            return;
+        }
+        if (amountText.isEmpty()) {
+            showModalError("account.error.negative_amount");
+            return;
+        }
 
         double amount;
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
+            if (amount < 0) {
+                showModalError("account.error.negative_amount");
+                return;
+            }
         } catch (NumberFormatException e) {
+            showModalError("account.error.negative_amount");
             return;
         }
 
@@ -671,24 +664,43 @@ public class DashboardController {
         try {
             if (isSaving) {
                 String goalText = accountGoalField.getText().trim();
-                if (goalText.isEmpty()) return;
-                double goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                if (goalText.isEmpty()) {
+                    showModalError("account.error.goal_amount_invalid");
+                    return;
+                }
+                if (accountDatePicker.getValue() == null) {
+                    showModalError("account.error.goal_date_invalid");
+                    return;
+                }
+
+                double goalAmount;
+                try {
+                    goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                } catch (NumberFormatException e) {
+                    showModalError("account.error.goal_amount_invalid");
+                    return;
+                }
+
+                LocalDate targetDate = accountDatePicker.getValue();
                 ServiceLocator.getAccountService()
-                        .createSavingAccount(desc, amount, goalAmount, LocalDate.now().plusYears(1));
+                        .createSavingAccount(desc, amount, goalAmount, targetDate);
             } else {
                 ServiceLocator.getAccountService()
                         .createPrivateAccount(desc, amount);
             }
 
-            // Refresh accountov po pridaní
             AccountsSummaryData refreshed = ServiceLocator.getOverviewService().loadAccountsSummary();
             loadAccounts(refreshed);
             loadTotalBalance(refreshed);
             closeModal();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            String message = e.getMessage();
+            if (message != null && message.startsWith("account.error.")) {
+                showModalError(message);
+            } else {
+                showModalError("account.error.invalid_type");
+            }
         }
     }
-
 }

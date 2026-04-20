@@ -1,5 +1,7 @@
 package sk.sporixx.service;
 
+import sk.sporixx.dto.ChartPeriod;
+
 /**
  * Service pre export reportov do XML súboru.
  * Používa javax.xml pre generovanie XML.
@@ -9,11 +11,11 @@ public interface ExportService {
 
     /**
      * Exportuje Income & Expenses report do XML.
-     * Načíta dáta cez ReportsService a vygeneruje XML súbor.
-     * @param months počet mesiacov dozadu
-     * @param filePath absolútna cesta kam uložiť súbor
+     * Grouping (deň/mesiac) závisí od zvoleného ChartPeriod.
+     * @param period zvolené časové obdobie (ONE_WEEK, ONE_MONTH, SIX_MONTHS, TWELVE_MONTHS)
+     * @param filePath absolútna cesta kam uložiť súbor — používateľ vyberá cez FileChooser v UI
      */
-    void exportIncomeExpenseToXml(int months, String filePath);
+    void exportIncomeExpenseToXml(ChartPeriod period, String filePath);
 
     /**
      * Exportuje Saving Accounts report do XML.
