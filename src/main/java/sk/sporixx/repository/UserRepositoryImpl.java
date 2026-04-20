@@ -84,6 +84,9 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
+    //TODO: vo find nastaviť role usera
+
+
     @Override
     public Optional<User> findByEmail(String email) {
         String sql = SELECT_USER_WITH_FLAGS + " WHERE u.email = ?";

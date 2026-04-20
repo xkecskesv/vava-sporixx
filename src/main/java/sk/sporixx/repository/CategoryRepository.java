@@ -28,6 +28,11 @@ public interface CategoryRepository {
     Category save(Category category);
 
     /**
+     * Aktualizuje existujúcu kategóriu.
+     */
+    void update(Category category);
+
+    /**
      * Vymaže kategóriu podľa ID.
      * service vrstva musí overiť, že nejde o systémovú kategóriu.
      */

@@ -20,7 +20,7 @@ public final class ServiceLocator {
      * FALSE — reálne JDBC repozitáre, vyžaduje hotovú DB vrstvu
      * Po dokončení všetkých JDBC implementácií zmeniť.
      */
-    private static final boolean USE_TEST_DATA = false;
+    private static final boolean USE_TEST_DATA = true;
 
     // Service inštancie
     private static AuthService authService;
@@ -32,6 +32,9 @@ public final class ServiceLocator {
     private static UserService userService;
     private static ProfileService profileService;
     private static AdminService adminService;
+    private static TransactionService transactionService;
+    private static CategoryService categoryService;
+    private static BudgetService budgetService;
 
     private static boolean initialized = false;
 
@@ -89,7 +92,18 @@ public final class ServiceLocator {
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
         exportService  = new ExportServiceImpl(reportsService);
-        importService  = new ImportServiceImpl(testData.getSavingGoalRepository());
+        importService  = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
+                testData.getTransactionRepository(),
+                testData.getAccountRepository());
+        transactionService = new TransactionServiceImpl(
+                testData.getTransactionRepository(),
+                testData.getAccountRepository(),
+                testData.getCategoryRepository(),
+                testData.getSavingGoalRepository());
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                testData.getTransactionRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -97,49 +111,61 @@ public final class ServiceLocator {
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
 
+        // In-memory pre časti ktoré ešte nemajú JDBC implementáciu
+        TestDataInitializer testData = new TestDataInitializer();
+
         // ── Hotové JDBC repozitáre ──
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
+        TransactionRepository transactionRepo = new TransactionRepositoryImpl();
+        RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
+        SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
+        CategoryRepository categoryRepo = new CategoryRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
         adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
-        // ── Zvyšok stále in-memory
-        TestDataInitializer testData = new TestDataInitializer();
-        overviewService = testData.getOverviewService();
+        overviewService = new OverviewServiceImpl(
+                transactionRepo,
+                recurringRuleRepo,
+                savingGoalRepo);
+
         accountService = new AccountServiceImpl(
                 accountRepo,
-                testData.getSavingGoalRepository());
+                savingGoalRepo);
+
         reportsService = new ReportsServiceImpl(
-                testData.getTransactionRepository(),
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository());
+                transactionRepo,
+                recurringRuleRepo,
+                savingGoalRepo);
+
         exportService = new ExportServiceImpl(reportsService);
-        importService = new ImportServiceImpl(testData.getSavingGoalRepository());
+
+        importService = new ImportServiceImpl(
+                savingGoalRepo,
+                accountService,
+                transactionRepo,
+                accountRepo);
+
+        transactionService = new TransactionServiceImpl(
+                transactionRepo,
+                accountRepo,
+                categoryRepo,
+                savingGoalRepo);
+
+        categoryService = new CategoryServiceImpl(categoryRepo);
+
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                transactionRepo);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // TransactionRepository transactionRepo = new TransactionRepositoryImpl();
-        // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
-        // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
-        // CategoryRepository categoryRepo        = new CategoryRepositoryImpl();
-
-        // overviewService = new OverviewServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // accountService  = new AccountServiceImpl(accountRepo, savingGoalRepo);
-        // reportsService  = new ReportsServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // exportService   = new ExportServiceImpl(reportsService);
-        // importService   = new ImportServiceImpl(savingGoalRepo);
-
-        // TODO: ostatné služby:
-        // transactionService = ...
-        // categoryService    = ...
-        // budgetService      = ...
-        // settingsService    = ...
-        // userService        = ...
-        // adminService       = ...
-        // familyService      = ...
-        // goalService        = ...
+        // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
+        // SavingGoalRepository savingGoalRepo   = new SavingGoalRepositoryImpl();
+        // CategoryRepository categoryRepo       = new CategoryRepositoryImpl();
+        // BudgetRepository budgetRepo           = new BudgetRepositoryImpl();
     }
 
     //  GETTERY — UI vrstva volá tieto metódy
@@ -195,6 +221,21 @@ public final class ServiceLocator {
     public static AdminService getAdminService() {
         checkInitialized();
         return adminService;
+    }
+
+    public static TransactionService getTransactionService() {
+        checkInitialized();
+        return transactionService;
+    }
+
+    public static CategoryService getCategoryService() {
+        checkInitialized();
+        return categoryService;
+    }
+
+    public static BudgetService getBudgetService() {
+        checkInitialized();
+        return budgetService;
     }
 
     //  HELPER

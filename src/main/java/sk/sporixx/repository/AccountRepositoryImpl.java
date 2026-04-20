@@ -169,8 +169,25 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public void update(Account account) {
-        // TODO: implementovať
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE accounts SET description = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, account.getDescription());
+            pstmt.setInt(2, account.getId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No account found to update with ID: " + account.getId());
+            }
+
+            logger.info("Account description updated. ID: {}", account.getId());
+
+        } catch (SQLException e) {
+            logger.error("Error updating account description for ID: {}", account.getId(), e);
+            throw new RuntimeException("Error updating account description in database", e);
+        }
     }
 
     @Override
