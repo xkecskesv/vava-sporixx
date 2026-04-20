@@ -967,6 +967,226 @@ Inter 27pt Bold*/
     -fx-text-fill: #8A8A8A;
 }
 
+/* ADMIN PANEL */
+
+.admin-content {
+    -fx-background-color: #f0f2f5;
+}
+
+.admin-users-card,
+.admin-profile-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-color: #e3e8ed;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+}
+
+.admin-value {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.admin-danger-btn {
+    -fx-background-color: #f2e6e5;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #bdbdbd;
+    -fx-text-fill: #e54243;
+    -fx-font-family: 'Inter 27pt';
+    -fx-font-size: 12px;
+    -fx-padding: 0 14 0 14;
+    -fx-cursor: hand;
+}
+
+.admin-danger-btn:hover {
+    -fx-background-color: #efdcdc;
+}
+
+.admin-secondary-btn {
+    -fx-background-color: #e5e7eb;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #4b5563;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.admin-secondary-btn:hover {
+    -fx-background-color: #d1d5db;
+}
+
+.admin-icon-btn {
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+    -fx-background-color: #f2e6e6;
+    -fx-border-color: #bdbdbd;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.admin-icon-btn:hover {
+    -fx-background-color: #efdcdc;
+}
+
+/* TABLE */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.table-view .virtual-flow,
+.table-view .clipped-container {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-size: 36px;
+}
+
+.table-view .column-header .label {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #8a9ab0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #f0f2f5 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 42px;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #eef3ff;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f6f8fa;
+}
+
+.table-view .table-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1a1d23;
+    -fx-border-color: transparent;
+    -fx-padding: 0 8 0 8;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* PROFILE INPUTS */
+.profile-input {
+    -fx-background-color: #f7f8fa;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e3e8ed;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 8 12 8 12;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1a1d23;
+    -fx-prompt-text-fill: #aab4be;
+    -fx-max-width: Infinity;
+}
+
+.profile-input:focused {
+    -fx-border-color: #2563eb;
+    -fx-background-color: #ffffff;
+}
+
+/* UPLOAD / SAVE / CHANGE PASSWORD BUTTON */
+.profile-upload-btn {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-padding: 8 20 8 20;
+    -fx-cursor: hand;
+    -fx-max-width: Infinity;
+}
+
+.profile-upload-btn:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+/* LOGOUT */
+.profile-logout-btn {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-padding: 8 20 8 20;
+    -fx-cursor: hand;
+}
+
+.profile-logout-btn:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+/* TITLE */
+.profile-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 22px;
+    -fx-text-fill: #0a0a0a;
+}
+
+/* SECTION TITLE */
+.profile-section-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 14px;
+    -fx-text-fill: #1a1d23;
+}
+
+/* FIELD LABEL */
+.profile-label {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7280;
+}
+
+/* FEEDBACK */
+.profile-feedback-error {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #c0392b;
+}
+
+.profile-feedback-line {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7280;
+}
+
+/* AVATAR */
+.profile-avatar-large {
+    -fx-background-radius: 12px;
+}
+
+
 
 /*------------------ REPORTS - INCOME AND EXPENSES -----------------------*/
 .btn-export {

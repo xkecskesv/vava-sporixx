@@ -31,6 +31,7 @@ public final class ServiceLocator {
     private static ImportService importService;
     private static UserService userService;
     private static ProfileService profileService;
+    private static AdminService adminService;
     private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
@@ -81,6 +82,7 @@ public final class ServiceLocator {
         authService    = testData.getAuthService();
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
+        adminService = new AdminServiceImpl(testData.getUserRepository(), testData.getAccountRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -123,6 +125,7 @@ public final class ServiceLocator {
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
+        adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         overviewService = new OverviewServiceImpl(
                 transactionRepo,
@@ -202,16 +205,22 @@ public final class ServiceLocator {
         return importService;
     }
 
-    /** User helper service for current-user access and normalization logic. */
+    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi a normalizáciu. */
     public static UserService getUserService() {
         checkInitialized();
         return userService;
     }
 
-    /** Profile operations: update profile and change password. */
+    /** Operácie profilu: úprava údajov a zmena hesla. */
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
+    }
+
+    /** Administrátorské operácie pre panel správy používateľov. */
+    public static AdminService getAdminService() {
+        checkInitialized();
+        return adminService;
     }
 
     public static TransactionService getTransactionService() {

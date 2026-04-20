@@ -19,10 +19,24 @@ public class InMemoryAccountRepository implements AccountRepository {
     private final List<Account> accounts = new ArrayList<>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
 
+    /**
+     * Vráti všetky aktívne účty patriace zadanému používateľovi.
+     *
+     * @param userId identifikátor vlastníka účtov
+     * @return zoznam aktívnych účtov používateľa
+     */
+    @Override
     public List<Account> findByOwnerUserId(int userId) {
         return accounts.stream()
                 .filter(a -> a.getOwnerUserId() == userId)
                 .filter(Account::isActive)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Account> findAllByOwnerUserId(int userId) {
+        return accounts.stream()
+                .filter(a -> a.getOwnerUserId() == userId)
                 .collect(Collectors.toList());
     }
 
@@ -33,6 +47,13 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .findFirst();
     }
 
+    /**
+     * Uloží účet do in-memory kolekcie a podľa potreby priradí nové ID.
+     *
+     * @param account účet na uloženie
+     * @return uložený účet
+     */
+    @Override
     public Account save(Account account) {
         if (account.getId() == 0) {
             account.setId(idGenerator.incrementAndGet());
@@ -63,6 +84,14 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .filter(a -> a.getId() == accountId)
                 .findFirst()
                 .ifPresent(a -> a.setActive(false));
+    }
+
+    @Override
+    public void activateById(int accountId) {
+        accounts.stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst()
+                .ifPresent(a -> a.setActive(true));
     }
 
     /**

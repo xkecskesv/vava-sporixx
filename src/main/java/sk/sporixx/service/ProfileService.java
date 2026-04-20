@@ -1,42 +1,43 @@
 package sk.sporixx.service;
 
 /**
- * Contract for profile operations performed for the currently authenticated user.
+ * Rozhranie pre operácie profilu aktuálne prihláseného používateľa.
  *
  * @author Viktória Kecskés
  */
 public interface ProfileService {
 
     /**
-     * Updates profile identity fields.
+     * Aktualizuje identifikačné údaje profilu.
      *
-     * @param firstName new first name
-     * @param lastName new last name
-     * @param email new e-mail address
-     * @param gender raw gender value from UI
+     * @param firstName nové meno
+     * @param lastName nové priezvisko
+     * @param email nová e-mailová adresa
+     * @param gender surová hodnota pohlavia z UI
+     * @param isParent či je používateľ v profile označený ako rodinný manažér
      */
-    void updateProfile(String firstName, String lastName, String email, String gender);
+    void updateProfile(String firstName, String lastName, String email, String gender, boolean isParent);
 
     /**
-     * Changes password after validating current password and policy.
+     * Zmení heslo po overení aktuálneho hesla a bezpečnostných pravidiel.
      *
-     * @param oldPassword current plain-text password
-     * @param newPassword new plain-text password
+     * @param oldPassword aktuálne heslo v otvorenom texte
+     * @param newPassword nové heslo v otvorenom texte
      */
     void changePassword(String oldPassword, String newPassword);
 
     /**
-     * Persists selected profile photo path.
+     * Uloží cestu k vybranej profilovej fotografii.
      *
-     * @param photoPath absolute photo path
+     * @param photoPath absolútna cesta k fotografii
      */
     void updateProfilePhoto(String photoPath);
 
     /**
-     * Converts raw/canonical gender value into localized UI text.
+     * Prevedie surovú hodnotu pohlavia na lokalizovaný text pre UI.
      *
-     * @param rawGender raw persisted value
-     * @return localized display value, or {@code "-"} fallback
+     * @param rawGender surová uložená hodnota
+     * @return lokalizovaná zobrazovaná hodnota alebo náhradná hodnota {@code "-"}
      */
     String toDisplayGender(String rawGender);
 }

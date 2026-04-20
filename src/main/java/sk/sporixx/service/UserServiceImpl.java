@@ -1,6 +1,7 @@
 package sk.sporixx.service;
 
 import sk.sporixx.dto.CurrentUser;
+import sk.sporixx.model.GenderCode;
 import sk.sporixx.util.Localization;
 
 /**
@@ -11,8 +12,6 @@ import sk.sporixx.util.Localization;
  * @author Viktória Kecskés
  */
 public class UserServiceImpl implements UserService {
-
-    private static final String GENDER_UNKNOWN = "ONHSR";
 
     /**
      * Returns current session user as a DTO visible to the UI layer.
@@ -33,17 +32,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public String normalizeGender(String rawGender) {
         if (rawGender == null || rawGender.isBlank()) {
-            return GENDER_UNKNOWN;
+            return GenderCode.UNKNOWN;
         }
 
         String normalized = rawGender.trim().toLowerCase();
         if (normalized.startsWith("m")) {
-            return "M";
+            return GenderCode.MALE;
         }
         if (normalized.startsWith("f") || normalized.startsWith("z")) {
-            return "F";
+            return GenderCode.FEMALE;
         }
-        return GENDER_UNKNOWN;
+        return GenderCode.UNKNOWN;
     }
 
     /**
@@ -55,10 +54,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String toDisplayGender(String rawGender) {
         String normalized = normalizeGender(rawGender);
-        if ("M".equals(normalized)) {
+        if (GenderCode.MALE.equals(normalized)) {
             return Localization.get("profile.information.gender_male");
         }
-        if ("F".equals(normalized)) {
+        if (GenderCode.FEMALE.equals(normalized)) {
             return Localization.get("profile.information.gender_female");
         }
         return "-";
