@@ -11,6 +11,8 @@ import sk.sporixx.repository.BudgetRepository;
 import sk.sporixx.repository.TransactionRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -348,14 +350,48 @@ public class BudgetServiceImpl implements BudgetService {
 
             if (emergencyAccount == null) return new TreeMap<>();
 
+            int accountId = emergencyAccount.getId();
+
             LocalDateTime from = LocalDateTime.now()
                     .minusMonths(11).withDayOfMonth(1)
                     .withHour(0).withMinute(0).withSecond(0);
 
-            return transactionRepository.sumByTypeAndMonth(
-                    emergencyAccount.getId(),
-                    Transaction.TYPE_INCOME,
-                    from);
+            // Vypočítaj presný balance k dátumu from
+            // = initialBalance + všetky income - všetky expense od vzniku účtu po from
+            List<Transaction> allBeforeFrom = transactionRepository
+                    .findByAccountIdAndDateRange(accountId,
+                            emergencyAccount.getCreatedAt(), from);
+
+            double balanceAtFrom = emergencyAccount.getInitialBalance();
+            for (Transaction tx : allBeforeFrom) {
+                if (tx.isIncome()) balanceAtFrom += tx.getAmount();
+                else balanceAtFrom -= tx.getAmount();
+            }
+
+            // Načítaj income a expense za posledných 12 mesiacov
+            Map<String, Double> incomeByMonth = transactionRepository
+                    .sumByTypeAndMonth(accountId, Transaction.TYPE_INCOME, from);
+            Map<String, Double> expenseByMonth = transactionRepository
+                    .sumByTypeAndMonth(accountId, Transaction.TYPE_EXPENSE, from);
+
+            // Zlúč do net (income - expense)
+            Map<String, Double> netByMonth = new TreeMap<>();
+            incomeByMonth.forEach((month, sum) ->
+                    netByMonth.merge(month, sum, Double::sum));
+            expenseByMonth.forEach((month, sum) ->
+                    netByMonth.merge(month, -sum, Double::sum));
+
+            // Doplň chýbajúce mesiace
+            LocalDateTime current = from;
+            LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
+            while (!current.isAfter(until)) {
+                netByMonth.putIfAbsent(
+                        current.format(DateTimeFormatter.ofPattern("yyyy-MM")), 0.0);
+                current = current.plusMonths(1);
+            }
+
+            // Kumulatívne od presného balance k dátumu from
+            return toCumulative(netByMonth, balanceAtFrom);
 
         } catch (Exception e) {
             logger.warn("Could not load emergency fund history", e);
@@ -379,5 +415,15 @@ public class BudgetServiceImpl implements BudgetService {
                 .optimalEmergencyFund(0)
                 .emergencyFundHistory(new TreeMap<>())
                 .build();
+    }
+
+    private Map<String, Double> toCumulative(Map<String, Double> raw, double initialBalance) {
+        Map<String, Double> cumulative = new TreeMap<>();
+        double running = initialBalance;
+        for (Map.Entry<String, Double> entry : raw.entrySet()) {
+            running += entry.getValue();
+            cumulative.put(entry.getKey(), running);
+        }
+        return cumulative;
     }
 }
