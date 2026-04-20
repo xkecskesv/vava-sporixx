@@ -62,11 +62,13 @@ public class TransactionController {
     private String activeAccountFilter = "ALL";
     private List<Account> userAccounts = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
+    private List<Category> selectableCategories = new ArrayList<>();
 
     @FXML
     public void initialize() {
         userAccounts = SessionManager.getInstance().getAccounts();
         categories = ServiceLocator.getCategoryService().getCategories();
+        selectableCategories = ServiceLocator.getCategoryService().getSelectableCategories();
 
         loadTransactions();
         setupAccountFilters();
@@ -314,15 +316,14 @@ public class TransactionController {
         // Type combo
         typeCombo.getItems().setAll(
                 Localization.get("transactions.type.income"),
-                Localization.get("transactions.type.expense"),
-                Localization.get("transactions.type.investment")
+                Localization.get("transactions.type.expense")
         );
         typeCombo.setValue(Localization.get("transactions.type.expense"));
         typeCombo.setOnAction(e -> onTypeChanged());
 
         // Categories combo
         categoryCombo.getItems().setAll(
-                categories.stream().map(Category::getName).collect(Collectors.toList()));
+                 selectableCategories.stream().map(Category::getName).collect(Collectors.toList()));
         if (!categoryCombo.getItems().isEmpty())
             categoryCombo.setValue(categoryCombo.getItems().get(0));
 
@@ -464,8 +465,7 @@ public class TransactionController {
         } else {
             typeCombo.getItems().setAll(
                     Localization.get("transactions.type.income"),
-                    Localization.get("transactions.type.expense"),
-                    Localization.get("transactions.type.investment")
+                    Localization.get("transactions.type.expense")
             );
             typeCombo.setValue(Localization.get("transactions.type.expense"));
             onTypeChanged();
