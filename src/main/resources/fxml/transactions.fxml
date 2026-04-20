@@ -29,12 +29,11 @@
             <VBox styleClass="dashboard-content" spacing="24">
 
                 <!-- Header -->
+                <!-- Header -->
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <VBox spacing="4" HBox.hgrow="ALWAYS">
                         <Label text="%transactions.title" styleClass="dashboard-title"/>
                     </VBox>
-                    <ImageView fx:id="userAvatar" fitWidth="40" fitHeight="40"
-                               preserveRatio="true" styleClass="sidebar-avatar"/>
                 </HBox>
 
                 <!-- Tabuľka karta -->
@@ -47,7 +46,7 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <Button fx:id="newTransactionBtn" text="%transactions.new"
                                 styleClass="btn-export" onAction="#handleNewTransaction"/>
-                        <Button fx:id="editBtn" styleClass="btn-icon" onAction="#handleEdit">
+                        <Button fx:id="editBtn" styleClass="btn-icon-edit" onAction="#handleEdit">
                             <graphic>
                                 <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                                     <image><Image url="@/assets/icons/icon_edit.png"/></image>
@@ -135,7 +134,8 @@
 
             <!-- From + To account -->
             <HBox spacing="16">
-                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <VBox fx:id="fromAccountSection" spacing="6" HBox.hgrow="ALWAYS"
+                      visible="false" managed="false">
                     <Label fx:id="fromAccountLabel" styleClass="modal-field-label"/>
                     <ComboBox fx:id="fromAccountCombo" styleClass="modal-input"
                               maxWidth="Infinity"/>
@@ -150,10 +150,9 @@
 
             <!-- Type + Name -->
             <HBox spacing="16">
-                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <VBox fx:id="typeSection" spacing="6" HBox.hgrow="ALWAYS">
                     <Label fx:id="typeLabel" styleClass="modal-field-label"/>
-                    <ComboBox fx:id="typeCombo" styleClass="modal-input"
-                              maxWidth="Infinity"/>
+                    <ComboBox fx:id="typeCombo" styleClass="modal-input" maxWidth="Infinity"/>
                 </VBox>
                 <VBox spacing="6" HBox.hgrow="ALWAYS">
                     <Label fx:id="nameLabel" styleClass="modal-field-label"/>
