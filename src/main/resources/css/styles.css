@@ -969,7 +969,7 @@ Inter 27pt Bold*/
     -fx-text-fill: #FFFFFF;
     -fx-font-family: 'Inter 28pt SemiBold';
     -fx-font-size: 13px;
-    -fx-pref-height: 36px;
+    -fx-pref-height: 44px;
     -fx-padding: 0 20px;
     -fx-cursor: hand;
 }
@@ -1224,6 +1224,16 @@ Inter 27pt Bold*/
     -fx-padding: 0;
 }
 
+.btn-icon-edit {
+    -fx-background-color: #3A7DF6;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 44px;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
 .btn-icon:hover {
     -fx-background-color: #E2E8F0;
 }
@@ -1232,8 +1242,8 @@ Inter 27pt Bold*/
     -fx-background-color: #FEF2F2;
     -fx-background-radius: 8px;
     -fx-border-color: transparent;
-    -fx-pref-width: 36px;
-    -fx-pref-height: 36px;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 44px;
     -fx-cursor: hand;
     -fx-padding: 0;
 }
