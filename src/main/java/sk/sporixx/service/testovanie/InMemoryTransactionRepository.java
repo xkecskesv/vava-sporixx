@@ -43,8 +43,8 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .filter(t -> t.getAccountId() == accountId)
                 .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
                 .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
-                .filter(t -> t.getCategoryId() == null
-                        || !excludeCategoryIds.contains(t.getCategoryId()))
+                .filter(t -> t.getCategoryId() != null
+                        && !excludeCategoryIds.contains(t.getCategoryId()))
                 .collect(Collectors.groupingBy(
                         t -> "Category_" + t.getCategoryId(),
                         LinkedHashMap::new,
@@ -90,8 +90,8 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .filter(t -> t.getAccountId() == accountId)
                 .filter(t -> t.getTransactionTypeId() == transactionTypeId)
                 .filter(t -> !t.getCompleteDate().isBefore(from))
-                .filter(t -> t.getCategoryId() == null
-                        || !excludeCategoryIds.contains(t.getCategoryId()))
+                .filter(t -> t.getCategoryId() != null
+                        && !excludeCategoryIds.contains(t.getCategoryId()))
                 .collect(Collectors.groupingBy(
                         t -> t.getCompleteDate().format(MONTH_FORMAT),
                         LinkedHashMap::new,
@@ -106,8 +106,8 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .filter(t -> t.getAccountId() == accountId)
                 .filter(t -> t.getTransactionTypeId() == transactionTypeId)
                 .filter(t -> !t.getCompleteDate().isBefore(from))
-                .filter(t -> t.getCategoryId() == null
-                        || !excludeCategoryIds.contains(t.getCategoryId()))
+                .filter(t -> t.getCategoryId() != null
+                        && !excludeCategoryIds.contains(t.getCategoryId()))
                 .collect(Collectors.groupingBy(
                         t -> t.getCompleteDate().format(DAY_FORMAT),
                         LinkedHashMap::new,
@@ -182,7 +182,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         return transactions.stream()
                 .filter(t -> t.getAccountId() == accountId)
                 .filter(t -> categoryId == null
-                        || t.getCategoryId() == categoryId)
+                        || (t.getCategoryId() != null && t.getCategoryId().equals(categoryId)))
                 .filter(t -> dateFrom == null
                         || !t.getCompleteDate().isBefore(dateFrom))
                 .filter(t -> dateTo == null
