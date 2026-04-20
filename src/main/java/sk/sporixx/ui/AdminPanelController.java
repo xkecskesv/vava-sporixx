@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.AdminUserData;
@@ -84,6 +85,7 @@ public class AdminPanelController {
             return;
         }
 
+        applyRoundedProfileImageClip();
         initTexts();
         initTable();
         initSearch();
@@ -477,6 +479,13 @@ public class AdminPanelController {
     private void loadDefaultProfileImage() {
         profileImage.setImage(new Image(Objects.requireNonNull(
                 getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
+    }
+
+    private void applyRoundedProfileImageClip() {
+        Rectangle clip = new Rectangle(profileImage.getFitWidth(), profileImage.getFitHeight());
+        clip.setArcWidth(30);
+        clip.setArcHeight(30);
+        profileImage.setClip(clip);
     }
 
     private boolean isEditingSelf(AdminUserData user) {
