@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ukladanie a hladanie usera z db
+ * Ukladanie a hladanie usera z db
  */
 public class AccountRepositoryImpl implements AccountRepository {
 
@@ -140,13 +140,46 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public void update(Account account) {
-        // TODO: implementovať
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE accounts SET description = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, account.getDescription());
+            pstmt.setInt(2, account.getId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No account found to update with ID: " + account.getId());
+            }
+
+            logger.info("Account description updated. ID: {}", account.getId());
+
+        } catch (SQLException e) {
+            logger.error("Error updating account description for ID: {}", account.getId(), e);
+            throw new RuntimeException("Error updating account description in database", e);
+        }
     }
 
     @Override
     public void deactivateById(int accountId) {
-        // TODO: implementovať
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE accounts SET is_active = 0 WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, accountId);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No account found to deactivate with ID: " + accountId);
+            }
+
+            logger.info("Account deactivated successfully. ID: {}", accountId);
+
+        } catch (SQLException e) {
+            logger.error("Error deactivating account ID: {}", accountId, e);
+            throw new RuntimeException("Error deactivating account in database", e);
+        }
     }
 }

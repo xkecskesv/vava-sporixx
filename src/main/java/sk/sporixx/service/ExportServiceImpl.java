@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import sk.sporixx.dto.ChartPeriod;
 import sk.sporixx.dto.IncomeExpenseData;
 import sk.sporixx.dto.SavingAccountReportData;
+import sk.sporixx.model.Transaction;
 import sk.sporixx.util.XmlUtil;
 
 import javax.xml.XMLConstants;
@@ -23,6 +25,8 @@ import java.util.Map;
 /**
  * Implementácia ExportService.
  * Používa javax.xml DOM API pre generovanie XML.
+ * Dáta načítava cez ReportsService — žiadny priamy prístup k DB.
+ * Bezpečnostné nastavenia proti XXE útokom sú aplikované cez XmlUtil.
  */
 public class ExportServiceImpl implements ExportService {
 
@@ -37,23 +41,21 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void exportIncomeExpenseToXml(int months, String filePath) {
-        logger.info("Exporting income/expense report for {} months to {}", months, filePath);
+    public void exportIncomeExpenseToXml(ChartPeriod period, String filePath) {
+        logger.info("Exporting income/expense report for period: {} to {}", period, filePath);
 
-        if (months <= 0) {
-            throw new ExportException("export.error.invalid_months");
-        }
         if (filePath == null || filePath.isBlank()) {
             throw new ExportException("export.error.invalid_path");
         }
 
         try {
-            IncomeExpenseData data = reportsService.loadIncomeExpenseData(months);
+            IncomeExpenseData data = reportsService.loadIncomeExpenseData(period);
 
             Document doc = createDocument();
             Element root = doc.createElement("IncomeExpenseReport");
             root.setAttribute("exportedAt", LocalDateTime.now().format(EXPORT_TIMESTAMP));
-            root.setAttribute("months", String.valueOf(months));
+            root.setAttribute("period", period.name());
+            root.setAttribute("groupBy", period.isGroupByDay() ? "DAY" : "MONTH");
             doc.appendChild(root);
 
             // Total sumy
@@ -62,31 +64,31 @@ public class ExportServiceImpl implements ExportService {
             totals.setAttribute("totalExpense", String.valueOf(data.getTotalExpense()));
             root.appendChild(totals);
 
-            // Mesačné príjmy
-            Element incomeEl = doc.createElement("MonthlyIncome");
+            // Period príjmy
+            Element incomeEl = doc.createElement("PeriodIncome");
             for (Map.Entry<String, Double> entry : data.getMonthlyIncome().entrySet()) {
-                Element month = doc.createElement("Month");
-                month.setAttribute("period", entry.getKey());
-                month.setAttribute("amount", String.valueOf(entry.getValue()));
-                incomeEl.appendChild(month);
+                Element e = doc.createElement("Entry");
+                e.setAttribute("period", entry.getKey());
+                e.setAttribute("amount", String.valueOf(entry.getValue()));
+                incomeEl.appendChild(e);
             }
             root.appendChild(incomeEl);
 
-            // Mesačné výdavky
-            Element expenseEl = doc.createElement("MonthlyExpense");
+            // Period výdavky
+            Element expenseEl = doc.createElement("PeriodExpense");
             for (Map.Entry<String, Double> entry : data.getMonthlyExpense().entrySet()) {
-                Element month = doc.createElement("Month");
-                month.setAttribute("period", entry.getKey());
-                month.setAttribute("amount", String.valueOf(entry.getValue()));
-                expenseEl.appendChild(month);
+                Element e = doc.createElement("Entry");
+                e.setAttribute("period", entry.getKey());
+                e.setAttribute("amount", String.valueOf(entry.getValue()));
+                expenseEl.appendChild(e);
             }
             root.appendChild(expenseEl);
 
             saveDocument(doc, filePath);
             logger.info("Income/expense report exported successfully to {}", filePath);
 
-        } catch (ExportException e) {
-            throw e;
+        } catch (ExportException ex) {
+            throw ex;
         } catch (Exception e) {
             logger.error("Failed to export income/expense report", e);
             throw new ExportException("export.error.failed", e);
@@ -122,10 +124,14 @@ public class ExportServiceImpl implements ExportService {
                 accountEl.setAttribute("needToSave", String.valueOf(account.getNeedToSave()));
                 accountEl.setAttribute("targetAmount", String.valueOf(account.getTargetAmount()));
                 accountEl.setAttribute("progressGrouping", account.getProgressGrouping());
-                // targetDate — používa sa pri importe na aktualizáciu cieľového dátumu
                 accountEl.setAttribute("targetDate",
                         account.getTargetDate() != null ?
                                 account.getTargetDate().format(EXPORT_TIMESTAMP) : "");
+                accountEl.setAttribute("initialBalance",
+                        String.valueOf(account.getInitialBalance()));
+                accountEl.setAttribute("createdAt",
+                        account.getCreatedAt() != null ?
+                                account.getCreatedAt().format(EXPORT_TIMESTAMP) : "");
 
                 // Expected progress
                 Element expectedEl = doc.createElement("ExpectedProgress");
@@ -147,6 +153,22 @@ public class ExportServiceImpl implements ExportService {
                 }
                 accountEl.appendChild(actualEl);
 
+                // Transakcie pre úplnú obnovu
+                Element transactionsEl = doc.createElement("Transactions");
+                if (account.getTransactions() != null) {
+                    for (Transaction tx : account.getTransactions()) {
+                        Element txEl = doc.createElement("Transaction");
+                        txEl.setAttribute("date",
+                                tx.getCompleteDate().format(EXPORT_TIMESTAMP));
+                        txEl.setAttribute("amount", String.valueOf(tx.getAmount()));
+                        txEl.setAttribute("description", tx.getDescription());
+                        txEl.setAttribute("categoryId", String.valueOf(tx.getCategoryId()));
+                        txEl.setAttribute("currencyCode", tx.getCurrencyCode());
+                        transactionsEl.appendChild(txEl);
+                    }
+                }
+                accountEl.appendChild(transactionsEl);
+
                 root.appendChild(accountEl);
             }
 
@@ -163,7 +185,7 @@ public class ExportServiceImpl implements ExportService {
 
     /**
      * Vytvorí prázdny DOM Document.
-     * Bezpečnostné nastavenia zabraňujú XXE (XML External Entity) útokom.
+     * Bezpečnostné nastavenia zabraňujú XXE útokom - deleguje na XmlUtil.
      */
     private Document createDocument() throws Exception {
         return XmlUtil.createSecureFactory().newDocumentBuilder().newDocument();
