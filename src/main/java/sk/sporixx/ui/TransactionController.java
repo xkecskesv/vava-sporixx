@@ -68,26 +68,10 @@ public class TransactionController {
         userAccounts = SessionManager.getInstance().getAccounts();
         categories = ServiceLocator.getCategoryService().getCategories();
 
-        loadUserAvatar();
         loadTransactions();
         setupAccountFilters();
         setupSearch();
         setupDatePicker();
-    }
-
-    // ============================================================
-    //  AVATAR
-    // ============================================================
-    private void loadUserAvatar() {
-        try {
-            String photoPath = SessionManager.getInstance().getCurrentUser().getPhotoPath();
-            if (photoPath != null && !photoPath.isBlank()) {
-                userAvatar.setImage(new Image(photoPath));
-            } else {
-                userAvatar.setImage(new Image(Objects.requireNonNull(
-                        getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
-            }
-        } catch (Exception e) { /* fallback */ }
     }
 
     // ============================================================
@@ -160,9 +144,8 @@ public class TransactionController {
 
             if (!activeAccountFilter.equals("ALL")) {
                 int accountId = Integer.parseInt(activeAccountFilter);
-                List<Transaction> result = ServiceLocator.getTransactionService()
+                filteredTransactions = ServiceLocator.getTransactionService()
                         .searchTransactions(builder.build(), accountId);
-                filteredTransactions = result;
             } else {
                 filteredTransactions = ServiceLocator.getTransactionService()
                         .searchTransactions(builder.build());
@@ -203,12 +186,20 @@ public class TransactionController {
         name.getStyleClass().add("table-cell");
         name.setPrefWidth(220);
 
-        // Category — lookup z category listu
-        String categoryName = categories.stream()
-                .filter(c -> c.getId() == tx.getCategoryId())
-                .map(Category::getName)
-                .findFirst()
-                .orElse("-");
+        // Category — null-safe lookup
+        String categoryName = "-";
+        if (tx.getCategoryId() != null) {
+            if (tx.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                    tx.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE) {
+                categoryName = Localization.get("transactions.category.savings");
+            } else {
+                categoryName = categories.stream()
+                        .filter(c -> c.getId() == tx.getCategoryId())
+                        .map(Category::getName)
+                        .findFirst()
+                        .orElse("-");
+            }
+        }
         Label category = new Label(categoryName);
         category.getStyleClass().add("table-cell");
         category.setPrefWidth(140);
@@ -294,11 +285,13 @@ public class TransactionController {
         dateLabel.setText(Localization.get("transactions.modal.date"));
         amountLabel.setText(Localization.get("transactions.modal.amount"));
 
-        // From account sekcia — skrytá by default
+        // Reset viditeľnosti
         fromAccountSection.setVisible(false);
         fromAccountSection.setManaged(false);
+        toAccountSection.setVisible(false);
+        toAccountSection.setManaged(false);
 
-        // From Account
+        // From Account combo
         fromAccountCombo.getItems().setAll(
                 userAccounts.stream()
                         .map(Account::getDescription)
@@ -306,11 +299,10 @@ public class TransactionController {
         if (!fromAccountCombo.getItems().isEmpty())
             fromAccountCombo.setValue(fromAccountCombo.getItems().get(0));
 
-        // Listener na zmenu From Account
         fromAccountCombo.setOnAction(e -> updateToAccountOptions());
         updateToAccountOptions();
 
-        // To Account — všetky okrem main
+        // To Account combo
         toAccountCombo.getItems().setAll(
                 userAccounts.stream()
                         .filter(a -> !a.isMainAccount())
@@ -319,7 +311,7 @@ public class TransactionController {
         if (!toAccountCombo.getItems().isEmpty())
             toAccountCombo.setValue(toAccountCombo.getItems().get(0));
 
-        // Type
+        // Type combo
         typeCombo.getItems().setAll(
                 Localization.get("transactions.type.income"),
                 Localization.get("transactions.type.expense"),
@@ -328,31 +320,26 @@ public class TransactionController {
         typeCombo.setValue(Localization.get("transactions.type.expense"));
         typeCombo.setOnAction(e -> onTypeChanged());
 
-        // Categories
+        // Categories combo
         categoryCombo.getItems().setAll(
                 categories.stream().map(Category::getName).collect(Collectors.toList()));
         if (!categoryCombo.getItems().isEmpty())
             categoryCombo.setValue(categoryCombo.getItems().get(0));
 
-        // Need/Want
+        // Need/Want combo
         needWantCombo.getItems().setAll(
                 Localization.get("dashboard.activities.need"),
                 Localization.get("dashboard.activities.want")
         );
         needWantCombo.setValue(Localization.get("dashboard.activities.need"));
 
-        // Reset
+        // Reset polí
         betweenAccountsCheck.setSelected(false);
-        toAccountSection.setVisible(false);
-        toAccountSection.setManaged(false);
-        categorySection.setVisible(true);
-        categorySection.setManaged(true);
         nameField.clear();
         amountField.clear();
         amountPreview.setText("");
         datePicker.setValue(LocalDate.now());
 
-        // Ak edit — naplň polia
         if (isEdit && selectedTransaction != null) {
             // Skryť polia ktoré sa pri edit nemenia
             betweenAccountsCheck.setVisible(false);
@@ -369,32 +356,41 @@ public class TransactionController {
             amountField.setText(String.valueOf(selectedTransaction.getAmount()));
             datePicker.setValue(selectedTransaction.getCompleteDate().toLocalDate());
 
-            // Category sekcia len ak expense
-            boolean isExpense = !selectedTransaction.isIncome();
-            categorySection.setVisible(isExpense);
-            categorySection.setManaged(isExpense);
+            // Kategória — null-safe
+            if (selectedTransaction.getCategoryId() != null) {
+                String catName = categories.stream()
+                        .filter(c -> c.getId() == selectedTransaction.getCategoryId())
+                        .map(Category::getName)
+                        .findFirst()
+                        .orElse(null);
+                if (catName != null) categoryCombo.setValue(catName);
+            }
 
-            // Nastav kategóriu
-            String catName = categories.stream()
-                    .filter(c -> c.getId() == selectedTransaction.getCategoryId())
-                    .map(Category::getName)
-                    .findFirst().orElse(null);
-            if (catName != null) categoryCombo.setValue(catName);
-
-            // Nastav need/want
+            // Need/Want
             if (selectedTransaction.isWant()) {
                 needWantCombo.setValue(Localization.get("dashboard.activities.want"));
             } else {
                 needWantCombo.setValue(Localization.get("dashboard.activities.need"));
             }
 
-            // Zachovaj pôvodný typ v combe pre submitTransaction()
+            // Zachovaj typ pre submitTransaction()
             if (selectedTransaction.isIncome()) {
                 typeCombo.setValue(Localization.get("transactions.type.income"));
             } else {
                 typeCombo.setValue(Localization.get("transactions.type.expense"));
             }
+
+            // Category vždy viditeľná, need/want len pre expense
+            categorySection.setVisible(true);
+            categorySection.setManaged(true);
+            boolean isExpense = !selectedTransaction.isIncome();
+            needWantCombo.setVisible(isExpense);
+            needWantCombo.setManaged(isExpense);
+            needWantLabel.setVisible(isExpense);
+            needWantLabel.setManaged(isExpense);
+
         } else {
+            // Nová transakcia — reset viditeľnosti
             betweenAccountsCheck.setVisible(true);
             betweenAccountsCheck.setManaged(true);
             typeSection.setVisible(true);
@@ -402,13 +398,13 @@ public class TransactionController {
             onTypeChanged();
         }
 
-        // Amount preview
+        // Amount preview listener
         amountField.textProperty().addListener((obs, old, newVal) -> {
             try {
                 double val = Double.parseDouble(newVal.replace(",", "."));
                 boolean isIncome = typeCombo.getValue()
                         .equals(Localization.get("transactions.type.income"));
-                amountPreview.setText((isIncome ? "+ " : "") + formatCurrency(val));
+                amountPreview.setText((isIncome ? "+ " : "- ") + formatCurrency(val));
             } catch (NumberFormatException e) {
                 amountPreview.setText("");
             }
@@ -435,14 +431,12 @@ public class TransactionController {
         if (fromAccount == null) return;
 
         if (fromAccount.isMainAccount()) {
-            // Main → všetky okrem Main
             toAccountCombo.getItems().setAll(
                     userAccounts.stream()
                             .filter(a -> !a.isMainAccount())
                             .map(Account::getDescription)
                             .collect(Collectors.toList()));
         } else {
-            // Saving / Private / Emergency → len Main
             toAccountCombo.getItems().setAll(
                     userAccounts.stream()
                             .filter(Account::isMainAccount)
@@ -522,7 +516,6 @@ public class TransactionController {
                     .filter(a -> a.getDescription().equals(fromAccountCombo.getValue()))
                     .findFirst().orElse(null);
         } else {
-            // Vždy Main Account
             fromAccount = userAccounts.stream()
                     .filter(Account::isMainAccount)
                     .findFirst().orElse(null);
@@ -534,7 +527,7 @@ public class TransactionController {
         int typeId = typeVal.equals(Localization.get("transactions.type.income"))
                 ? Transaction.TYPE_INCOME : Transaction.TYPE_EXPENSE;
 
-        // Classification
+        // Classification — len pre expense
         Integer classificationId = null;
         if (typeId == Transaction.TYPE_EXPENSE && !betweenAccountsCheck.isSelected()) {
             classificationId = needWantCombo.getValue()
@@ -543,12 +536,15 @@ public class TransactionController {
                     : Transaction.CLASSIFICATION_NEED;
         }
 
-        // Category
-        int categoryId = categories.stream()
-                .filter(c -> c.getName().equals(categoryCombo.getValue()))
-                .map(Category::getId)
-                .findFirst()
-                .orElse(1);
+        // Category — null-safe
+        Integer categoryId = null;
+        if (categoryCombo.getValue() != null) {
+            categoryId = categories.stream()
+                    .filter(c -> c.getName().equals(categoryCombo.getValue()))
+                    .map(Category::getId)
+                    .findFirst()
+                    .orElse(1);
+        }
 
         // Target account pre transfer
         Integer targetAccountId = null;
@@ -561,7 +557,6 @@ public class TransactionController {
 
         try {
             if (selectedTransaction != null) {
-                // Edit — update existujúcej
                 Transaction updated = Transaction.builder()
                         .id(selectedTransaction.getId())
                         .accountId(fromAccount.getId())
@@ -578,7 +573,6 @@ public class TransactionController {
                         .build();
                 ServiceLocator.getTransactionService().updateTransaction(updated);
             } else {
-                // Nová transakcia
                 ServiceLocator.getTransactionService().addTransaction(
                         fromAccount.getId(),
                         typeId,
