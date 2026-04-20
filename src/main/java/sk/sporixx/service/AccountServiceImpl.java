@@ -42,9 +42,14 @@ public class AccountServiceImpl implements AccountService {
     public Account createSavingAccount(String description, double initialAmount,
                                        double targetAmount, LocalDate targetDate) {
 
+        validateAccountInput(description, initialAmount);
+
         // description sa použije ako goalName
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
+        }
+        if (targetAmount <= initialAmount) {
+            throw new AccountException("account.error.target_below_initial");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new AccountException("account.error.goal_date_invalid");
@@ -143,11 +148,29 @@ public class AccountServiceImpl implements AccountService {
     public Account createSavingAccountFromImport(String description, double initialAmount,
                                                  double targetAmount, LocalDate targetDate,
                                                  LocalDateTime createdAt) {
+
         validateAccountInput(description, initialAmount);
+
+        if (targetAmount <= 0) {
+            throw new AccountException("account.error.goal_amount_invalid");
+        }
+        if (targetAmount <= initialAmount) {
+            throw new AccountException("account.error.target_below_initial");
+        }
+        if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
+            throw new AccountException("account.error.goal_date_invalid");
+        }
+
+        Account mainAccount = SessionManager.getInstance().getAccounts().stream()
+                .filter(a -> a.getAccountTypeId() == Account.MAIN_ACCOUNT)
+                .findFirst()
+                .orElseThrow(() -> new AccountException("account.error.no_main_account"));
 
         Account savingAccount = Account.builder()
                 .ownerUserId(SessionManager.getInstance().getCurrentUserId())
+                .regionId(mainAccount.getRegionId())
                 .accountTypeId(Account.SAVING_ACCOUNT)
+                .defaultCurrencyCode(mainAccount.getDefaultCurrencyCode())
                 .description(description)
                 .initialBalance(initialAmount)
                 .currentBalance(initialAmount)

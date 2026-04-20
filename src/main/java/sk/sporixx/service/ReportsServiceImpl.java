@@ -343,15 +343,14 @@ public class ReportsServiceImpl implements ReportsService {
             return expected;
         }
 
-        double step = remainingToSave / totalDays;
         LocalDateTime current = goal.getCreatedAt();
-        double cumulative = initialBalance;
+        long dayIndex = 0;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(DAY_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        while (!current.isAfter(goal.getTargetDate()) && dayIndex <= totalDays) {
+            double value = initialBalance + (remainingToSave * dayIndex / totalDays);
+            expected.put(current.format(DAY_FORMAT), value);
             current = current.plusDays(1);
+            dayIndex++;
         }
         return expected;
     }
@@ -373,15 +372,14 @@ public class ReportsServiceImpl implements ReportsService {
             return expected;
         }
 
-        double step = remainingToSave / totalMonths;
         LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
-        double cumulative = initialBalance;
+        long monthIndex = 0;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(MONTH_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        while (!current.isAfter(goal.getTargetDate()) && monthIndex <= totalMonths) {
+            double value = initialBalance + (remainingToSave * monthIndex / totalMonths);
+            expected.put(current.format(MONTH_FORMAT), value);
             current = current.plusMonths(1);
+            monthIndex++;
         }
         return expected;
     }
@@ -403,15 +401,14 @@ public class ReportsServiceImpl implements ReportsService {
             return expected;
         }
 
-        double step = remainingToSave / totalYears;
         LocalDateTime current = goal.getCreatedAt();
-        double cumulative = initialBalance;
+        long yearIndex = 0;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(YEAR_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        while (!current.isAfter(goal.getTargetDate()) && yearIndex <= totalYears) {
+            double value = initialBalance + (remainingToSave * yearIndex / totalYears);
+            expected.put(current.format(YEAR_FORMAT), value);
             current = current.plusYears(1);
+            yearIndex++;
         }
         return expected;
     }

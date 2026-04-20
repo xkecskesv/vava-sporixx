@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 
 /**
  * Implementácia TransactionService.
+ * Transakcie sú výhradne TYPE_INCOME alebo TYPE_EXPENSE.
+ * Transfer medzi účtami vytvorí dve transakcie s automaticky priradenou
+ * systémovou kategóriou (CATEGORY_SAVING alebo CATEGORY_SAVING_EXPENSE).
  * Pri každej zmene transakcie sa aktualizuje zostatok účtu
  * v DB (AccountRepository) aj v SessionManager.
  */
@@ -43,12 +46,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> getTransactions(int accountId) {
         logger.info("Loading transactions for accountId: {}", accountId);
-
         try {
-            return transactionRepository.findByAccountIdAndDateRange(
-                    accountId,
-                    LocalDateTime.of(2000, 1, 1, 0, 0),
-                    LocalDateTime.now());
+            return transactionRepository.findByAccountId(accountId);
         } catch (Exception e) {
             logger.error("Failed to load transactions for accountId: {}", accountId, e);
             throw new TransactionException("error.db_error", e);
@@ -58,19 +57,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> getAllTransactions() {
         logger.info("Loading all transactions for current user");
-
         try {
             List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
             List<Transaction> all = new ArrayList<>();
 
             for (int accountId : accountIds) {
-                all.addAll(transactionRepository.findByAccountIdAndDateRange(
-                        accountId,
-                        LocalDateTime.of(2000, 1, 1, 0, 0),
-                        LocalDateTime.now()));
+                all.addAll(transactionRepository.findByAccountId(accountId));
             }
 
-            // Zoraď od najnovšej
             all.sort((a, b) -> b.getCompleteDate().compareTo(a.getCompleteDate()));
             return all;
 
@@ -86,7 +80,6 @@ public class TransactionServiceImpl implements TransactionService {
         logger.info("Searching transactions for accountId: {}", accountId);
 
         try {
-            // Repository filtruje podľa kategórie, dátumu, sumy, typu
             List<Transaction> filtered = transactionRepository.findByFilters(
                     accountId,
                     criteria.getCategoryId(),
@@ -96,7 +89,6 @@ public class TransactionServiceImpl implements TransactionService {
                     criteria.getAmountTo(),
                     criteria.getTransactionTypeId());
 
-            // Service aplikuje regex na description
             if (criteria.getSearchText() == null || criteria.getSearchText().isBlank()) {
                 return filtered;
             }
@@ -106,7 +98,6 @@ public class TransactionServiceImpl implements TransactionService {
                 pattern = Pattern.compile(
                         criteria.getSearchText(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
             } catch (PatternSyntaxException e) {
-                // Neplatný regex - plain text search
                 logger.warn("Invalid regex '{}', falling back to plain text",
                         criteria.getSearchText());
                 String lower = criteria.getSearchText().toLowerCase();
@@ -165,7 +156,6 @@ public class TransactionServiceImpl implements TransactionService {
         logger.info("Adding transaction: accountId={}, type={}, amount={}",
                 accountId, transactionTypeId, amount);
 
-        // Validácia
         if (amount <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
         }
@@ -179,11 +169,10 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionException("transaction.error.future_date");
         }
 
-        // Validácia účtu
         Account account = getAccountOrThrow(accountId);
 
-        // Validácia kategórie
-        if (categoryRepository.findById(categoryId).isEmpty()) {
+        // Validácia kategórie — len pre štandardné transakcie, nie pre transfer
+        if (targetAccountId == null && categoryRepository.findById(categoryId).isEmpty()) {
             throw new TransactionException("transaction.error.invalid_category");
         }
 
@@ -193,16 +182,12 @@ public class TransactionServiceImpl implements TransactionService {
                     LocalDateTime.now().getMinute());
 
             if (targetAccountId != null) {
-                // Transfer medzi účtami
-                return addTransfer(account, targetAccountId, categoryId,
-                        spendingClassificationId, description,
+                return addTransfer(account, targetAccountId, description,
                         amount, currencyCode, completeDate);
             }
 
-            // Štandardná transakcia
             return addStandardTransaction(account, transactionTypeId, categoryId,
-                    spendingClassificationId, description,
-                    amount, currencyCode, completeDate);
+                    spendingClassificationId, description, amount, currencyCode, completeDate);
 
         } catch (TransactionException e) {
             throw e;
@@ -235,7 +220,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction saved = transactionRepository.save(transaction);
 
-        // Aktualizuj balance
         double newBalance = calculateNewBalance(
                 account.getCurrentBalance(), transactionTypeId, amount);
         updateBalance(account, newBalance);
@@ -246,22 +230,31 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     // ── Helper — prevod medzi účtami ──
+    // Kategória sa určí automaticky podľa smeru prevodu:
+    //   main → saving = CATEGORY_SAVING
+    //   saving → main = CATEGORY_SAVING_EXPENSE
     private Transaction addTransfer(Account fromAccount,
                                     int targetAccountId,
-                                    int categoryId,
-                                    Integer spendingClassificationId,
                                     String description,
                                     double amount,
                                     String currencyCode,
                                     LocalDateTime completeDate) {
         Account toAccount = getAccountOrThrow(targetAccountId);
 
-        // Expense na zdrojovom účte
+        // Kategória len pri transferoch kde je zapojený saving účet
+        Integer autoCategory = null;
+        if (toAccount.isSavingAccount()) {
+            autoCategory = Transaction.CATEGORY_SAVING;
+        } else if (fromAccount.isSavingAccount()) {
+            autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
+        }
+        // Inak (napr. main → emergency) kategória ostáva null
+
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
-                .categoryId(categoryId)
-                .spendingClassificationId(spendingClassificationId)
+                .categoryId(autoCategory)  // môže byť null
+                .spendingClassificationId(null)
                 .description(description)
                 .amount(amount)
                 .currencyCode(currencyCode)
@@ -270,11 +263,10 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
         transactionRepository.save(expense);
 
-        // Income na cieľovom účte
         Transaction income = Transaction.builder()
                 .accountId(toAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
-                .categoryId(categoryId)
+                .categoryId(autoCategory)  // môže byť null
                 .spendingClassificationId(null)
                 .description(description)
                 .amount(amount)
@@ -284,7 +276,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
         transactionRepository.save(income);
 
-        // Aktualizuj balance oboch účtov
         updateBalance(fromAccount, fromAccount.getCurrentBalance() - amount);
         updateBalance(toAccount, toAccount.getCurrentBalance() + amount);
 
@@ -298,7 +289,6 @@ public class TransactionServiceImpl implements TransactionService {
     public void updateTransaction(Transaction updatedTransaction) {
         logger.info("Updating transaction id={}", updatedTransaction.getId());
 
-        // Načítaj pôvodnú transakciu
         Optional<Transaction> originalOpt = transactionRepository
                 .findById(updatedTransaction.getId());
         if (originalOpt.isEmpty()) {
@@ -307,16 +297,29 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction original = originalOpt.get();
 
-        // Validácia
         if (updatedTransaction.getAmount() <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
+        }
+        if (updatedTransaction.getDescription() == null
+                || updatedTransaction.getDescription().isBlank()) {
+            throw new TransactionException("transaction.error.description_required");
         }
         if (updatedTransaction.getCompleteDate().isAfter(LocalDateTime.now())) {
             throw new TransactionException("transaction.error.future_date");
         }
 
+        // Systémové kategórie (Saving, Saving Expense) sa nedajú manuálne nastaviť pri editácii
+        int newCategoryId = updatedTransaction.getCategoryId();
+        if (newCategoryId == Transaction.CATEGORY_SAVING
+                || newCategoryId == Transaction.CATEGORY_SAVING_EXPENSE) {
+            // Ak to nie je transfer transakcia (teda nemá autoCategory z addTransfer),
+            // nedovolíme nastaviť systémovú kategóriu manuálne
+            if (original.getCategoryId() != newCategoryId) {
+                throw new TransactionException("transaction.error.invalid_category");
+            }
+        }
+
         try {
-            // Vypočítaj rozdiel súm a aktualizuj balance
             Account account = getAccountOrThrow(original.getAccountId());
             double difference = updatedTransaction.getAmount() - original.getAmount();
 
@@ -363,7 +366,6 @@ public class TransactionServiceImpl implements TransactionService {
                 Transaction tx = txOpt.get();
                 Account account = getAccountOrThrow(tx.getAccountId());
 
-                // Revertuj balance
                 double revertedBalance = revertBalance(
                         account.getCurrentBalance(),
                         tx.getTransactionTypeId(),
@@ -399,10 +401,6 @@ public class TransactionServiceImpl implements TransactionService {
         if (transactionTypeId == Transaction.TYPE_INCOME) {
             return currentBalance + amount;
         }
-        if (transactionTypeId == Transaction.TYPE_EXPENSE) {
-            return currentBalance - amount;
-        }
-        logger.warn("Unknown transactionTypeId: {}, treating as expense", transactionTypeId);
         return currentBalance - amount;
     }
 
@@ -412,10 +410,6 @@ public class TransactionServiceImpl implements TransactionService {
         if (transactionTypeId == Transaction.TYPE_INCOME) {
             return currentBalance - amount;
         }
-        if (transactionTypeId == Transaction.TYPE_EXPENSE) {
-            return currentBalance + amount;
-        }
-        logger.warn("Unknown transactionTypeId: {}, treating as expense revert", transactionTypeId);
         return currentBalance + amount;
     }
 

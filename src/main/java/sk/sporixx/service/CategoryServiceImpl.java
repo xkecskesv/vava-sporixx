@@ -3,6 +3,7 @@ package sk.sporixx.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.model.Category;
+import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.CategoryRepository;
 import sk.sporixx.util.ValidationUtil;
 
@@ -14,6 +15,9 @@ import java.util.Optional;
  * Implementácia CategoryService.
  * Spravuje systémové aj používateľské kategórie.
  * Systémové kategórie (userId = null) sa nedajú upravovať ani mazať.
+ * Saving a Saving Expense sú systémové a skryté pred používateľom —
+ * priraďujú sa automaticky pri transferoch medzi účtami.
+ * Investment je systémová ale viditeľná — používateľ si ju môže vybrať.
  */
 public class CategoryServiceImpl implements CategoryService {
 
@@ -25,6 +29,10 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    /**
+     * Všetky kategórie prihláseného používateľa vrátane systémových.
+     * Používa sa napr. pri filtrovaní v Transactions screene.
+     */
     @Override
     public List<Category> getCategories() {
         int userId = SessionManager.getInstance().getCurrentUserId();
@@ -34,6 +42,27 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryRepository.findByUserIdOrSystem(userId);
         } catch (Exception e) {
             logger.error("Failed to load categories for userId: {}", userId, e);
+            throw new CategoryException("error.db_error", e);
+        }
+    }
+
+    /**
+     * Kategórie dostupné používateľovi pri pridávaní/editácii transakcie.
+     * Vylučuje Saving a Saving Expense — tie sa priraďujú automaticky pri transferoch.
+     * Investment je zahrnutý — používateľ si ho môže vybrať manuálne.
+     */
+    @Override
+    public List<Category> getSelectableCategories() {
+        int userId = SessionManager.getInstance().getCurrentUserId();
+        logger.info("Loading selectable categories for userId: {}", userId);
+
+        try {
+            return categoryRepository.findByUserIdOrSystem(userId).stream()
+                    .filter(c -> c.getId() != Transaction.CATEGORY_SAVING
+                            && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE)
+                    .toList();
+        } catch (Exception e) {
+            logger.error("Failed to load selectable categories for userId: {}", userId, e);
             throw new CategoryException("error.db_error", e);
         }
     }
@@ -48,7 +77,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         int userId = SessionManager.getInstance().getCurrentUserId();
 
-        // Kontrola duplicity = case-insensitive
         List<Category> existing = categoryRepository.findByUserIdOrSystem(userId);
         boolean duplicate = existing.stream()
                 .anyMatch(c -> c.getName().equalsIgnoreCase(name.trim()));
@@ -90,13 +118,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryOpt.get();
 
-        // Systémové kategórie sa nedajú upravovať
         if (category.isSystemCategory()) {
             logger.warn("Cannot update system category id={}", categoryId);
             throw new CategoryException("category.error.cannot_modify_system");
         }
 
-        // Kontrola, že kategória patrí prihlásenému používateľovi
         int userId = SessionManager.getInstance().getCurrentUserId();
         if (category.getUserId() != userId) {
             logger.warn("User {} tried to update category {} owned by {}",
@@ -104,7 +130,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new CategoryException("category.error.not_found");
         }
 
-        // Kontrola duplicity
         List<Category> existing = categoryRepository.findByUserIdOrSystem(userId);
         boolean duplicate = existing.stream()
                 .filter(c -> c.getId() != categoryId)
@@ -136,13 +161,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryOpt.get();
 
-        // Systémové kategórie sa nedajú mazať
         if (category.isSystemCategory()) {
             logger.warn("Cannot delete system category id={}", categoryId);
             throw new CategoryException("category.error.cannot_modify_system");
         }
 
-        // Kontrola, že kategória patrí prihlásenému používateľovi
         int userId = SessionManager.getInstance().getCurrentUserId();
         if (category.getUserId() != userId) {
             logger.warn("User {} tried to delete category {} owned by {}",

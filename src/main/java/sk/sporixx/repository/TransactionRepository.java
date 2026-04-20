@@ -21,6 +21,9 @@ public interface TransactionRepository {
      */
     List<Transaction> findByAccountIdAndDateRange(int accountId, LocalDateTime from, LocalDateTime to);
 
+
+    List<Transaction> findByAccountId(int accountId);
+
     /**
      * Sumarizuje sumy podľa mesiacov (pre 6 Months, 12 Months graf).
      * Za posledných 6/12 mesiacov pre jeden konkrétny účet.

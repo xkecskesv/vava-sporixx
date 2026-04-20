@@ -1,6 +1,5 @@
 package sk.sporixx.service.testovanie;
 
-import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.TransactionRepository;
 
@@ -34,6 +33,13 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .filter(t -> !t.getCompleteDate().isBefore(from) && !t.getCompleteDate().isAfter(to))
                 .sorted((a, b) -> b.getCompleteDate().compareTo(a.getCompleteDate()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Transaction> findByAccountId(int accountId) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() == accountId)
+                .toList();
     }
 
     @Override
