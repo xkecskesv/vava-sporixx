@@ -3,6 +3,7 @@ package sk.sporixx.service;
 import org.junit.jupiter.api.*;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.User;
+import sk.sporixx.model.Role;
 import sk.sporixx.service.testovanie.*;
 
 import java.util.List;
@@ -152,7 +153,7 @@ class AuthServiceTest {
     @DisplayName("Registrácia s priezviskom obsahujúcim viac ako 2 slová")
     void register_lastNameTooManyParts_shouldThrow() {
         assertThrows(AuthException.class, () ->
-                authService.register("Ján", "Novák Veľký Třetí", "jan@test.sk", "Heslo123!", "Heslo123!")
+                authService.register("Ján", "Novák Veľký Tretí", "jan@test.sk", "Heslo123!", "Heslo123!")
         );
     }
 
@@ -401,6 +402,70 @@ class AuthServiceTest {
         // Po logout by opätovný login mal fungovať (session je vyčistená)
         assertDoesNotThrow(() ->
                 authService.login("jan@test.sk", "Heslo123!")
+        );
+    }
+
+    // ===== ADMIN ACCOUNT TESTY =====
+
+    @Test
+    @DisplayName("Konštruktor vytvorí admin účet ak neexistuje")
+    void constructor_shouldCreateAdminAccount() {
+        InMemoryUserRepository userRepo = new InMemoryUserRepository();
+        InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
+
+        // Konštruktor volá ensureAdminAccountExists()
+        new AuthServiceImpl(userRepo, accountRepo);
+
+        // Admin by mal existovať
+        Optional<User> admin = userRepo.findByEmail("admin@sporixx.sk");
+        assertTrue(admin.isPresent(), "Admin účet by mal byť vytvorený");
+        assertEquals(Role.ADMIN, admin.get().getRole());
+        assertTrue(admin.get().isActive());
+    }
+
+    @Test
+    @DisplayName("Konštruktor nevytvorí duplicitného admina")
+    void constructor_adminAlreadyExists_shouldNotDuplicate() {
+        InMemoryUserRepository userRepo = new InMemoryUserRepository();
+        InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
+
+        // Prvé volanie vytvorí admina
+        new AuthServiceImpl(userRepo, accountRepo);
+        Optional<User> firstAdmin = userRepo.findByEmail("admin@sporixx.sk");
+
+        // Druhé volanie by nemalo vytvoriť ďalšieho
+        new AuthServiceImpl(userRepo, accountRepo);
+        Optional<User> secondAdmin = userRepo.findByEmail("admin@sporixx.sk");
+
+        assertTrue(firstAdmin.isPresent());
+        assertTrue(secondAdmin.isPresent());
+        assertEquals(firstAdmin.get().getId(), secondAdmin.get().getId());
+    }
+
+    @Test
+    @DisplayName("Admin účet má vytvorený aktívny Main Account")
+    void constructor_shouldCreateActiveAccountForAdmin() {
+        InMemoryUserRepository userRepo = new InMemoryUserRepository();
+        InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
+
+        new AuthServiceImpl(userRepo, accountRepo);
+
+        Optional<User> admin = userRepo.findByEmail("admin@sporixx.sk");
+        assertTrue(admin.isPresent());
+
+        List<Account> accounts = accountRepo.findByOwnerUserId(admin.get().getId());
+        assertFalse(accounts.isEmpty(), "Admin by mal mať aspoň jeden účet");
+        assertTrue(accounts.stream().anyMatch(Account::isActive), "Admin by mal mať aktívny účet");
+    }
+
+    @Test
+    @DisplayName("Konštruktor - DB chyba pri vytváraní admina nehodí výnimku")
+    void constructor_dbError_shouldNotThrow() {
+        assertDoesNotThrow(() ->
+                new AuthServiceImpl(
+                        new FailingFindByEmailUserRepository(),
+                        new InMemoryAccountRepository()
+                )
         );
     }
 }
