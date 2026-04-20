@@ -769,7 +769,7 @@ Inter 27pt Bold*/
 }
 
 .profile-input.combo-box {
-    -fx-background-color: #f3f3f3;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 10px;
     -fx-border-color: #e8e8e8;
     -fx-border-radius: 10px;
@@ -873,17 +873,19 @@ Inter 27pt Bold*/
 }
 
 .admin-danger-btn {
-    -fx-background-color: #ef4444;
+    -fx-background-color: #f2e6e5;
     -fx-background-radius: 8px;
-    -fx-text-fill: #ffffff;
-    -fx-font-family: 'Inter 28pt Regular';
+    -fx-border-radius: 8px;
+    -fx-border-color: #bdbdbd;
+    -fx-text-fill: #e54243;
+    -fx-font-family: 'Inter 27pt';
     -fx-font-size: 12px;
-    -fx-padding: 8 14 8 14;
+    -fx-padding: 0 14 0 14;
     -fx-cursor: hand;
 }
 
 .admin-danger-btn:hover {
-    -fx-background-color: #dc2626;
+    -fx-background-color: #efdcdc;
 }
 
 .admin-secondary-btn {
@@ -905,8 +907,8 @@ Inter 27pt Bold*/
     -fx-min-height: 30px;
     -fx-max-width: 30px;
     -fx-max-height: 30px;
-    -fx-background-color: #ffffff;
-    -fx-border-color: #ef4444;
+    -fx-background-color: #f2e6e6;
+    -fx-border-color: #bdbdbd;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
     -fx-padding: 0;
@@ -914,7 +916,7 @@ Inter 27pt Bold*/
 }
 
 .admin-icon-btn:hover {
-    -fx-background-color: #fef2f2;
+    -fx-background-color: #efdcdc;
 }
 
 /* TABLE */

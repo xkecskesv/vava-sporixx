@@ -60,11 +60,11 @@
                         <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="8">
                             <Label styleClass="profile-section-title" text="%admin.selected_user.title" />
                             <Region HBox.hgrow="ALWAYS" />
-                            <Button fx:id="deactivateButton" onAction="#handleDeactivateUser" styleClass="admin-danger-btn" text="%admin.user.deactivate" />
-                            <Button fx:id="clearSelectionButton" onAction="#handleClearSelection" styleClass="admin-icon-btn">
+                            <Button fx:id="deactivateButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="30" minHeight="30" onAction="#handleDeactivateUser" styleClass="admin-danger-btn" text="%admin.user.deactivate" />
+                            <Button fx:id="deleteUserButton" onAction="#handleDeleteUser" styleClass="admin-icon-btn">
                                 <graphic>
-                                    <ImageView fitHeight="14" fitWidth="14" preserveRatio="true">
-                                        <Image url="@../assets/icons/icon_close.png" />
+                                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                        <Image url="@../assets/icons/icon_trashcan.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>
@@ -83,38 +83,39 @@
                         <HBox maxWidth="Infinity" spacing="12">
                             <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
                                 <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name" />
-                                <TextField fx:id="firstNameField" maxWidth="Infinity" prefHeight="37.0" prefWidth="151.0" promptText="John" styleClass="profile-input" />
+                                <TextField fx:id="firstNameField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="John" styleClass="profile-input" />
                             </VBox>
                             <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
                                 <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name" />
-                                <TextField fx:id="lastNameField" maxWidth="Infinity" prefHeight="37.0" prefWidth="169.0" promptText="Doe" styleClass="profile-input" />
+                                <TextField fx:id="lastNameField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="Doe" styleClass="profile-input" />
                             </VBox>
                         </HBox>
+                        <Region prefHeight="8" />
 
                         <!-- Email and gender row -->
                         <HBox alignment="CENTER" maxWidth="Infinity" spacing="12">
                             <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
                                 <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail" />
-                                <TextField fx:id="emailField" maxWidth="Infinity" prefHeight="36" prefWidth="0" promptText="john.doe@email.com" styleClass="profile-input" />
+                                <TextField fx:id="emailField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="john.doe@email.com" styleClass="profile-input" />
                             </VBox>
                             <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
                                 <Label fx:id="genderLabel" styleClass="profile-label" text="Gender" />
-                                <ComboBox fx:id="genderComboBox" maxWidth="Infinity" prefHeight="44.0" prefWidth="0.0" promptText="Male / Female / -" styleClass="profile-input" />
+                                <ComboBox fx:id="genderComboBox" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="Male / Female / -" styleClass="profile-input" />
                             </VBox>
                         </HBox>
 
-                        <Region prefHeight="8" />
+                        <Region prefHeight="18" />
 
                         <!-- Password reset section -->
                         <VBox spacing="5">
                             <Label fx:id="oldPasswordLabel" styleClass="profile-label" text="%profile.management.old_password" />
-                            <PasswordField fx:id="oldPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
+                            <PasswordField fx:id="oldPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
                             <Region prefHeight="15" />
                             <Label fx:id="newPasswordLabel" styleClass="profile-label" text="%profile.management.new_password" />
-                            <PasswordField fx:id="newPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
+                            <PasswordField fx:id="newPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
                             <Region prefHeight="15" />
                             <Label fx:id="confirmPasswordLabel" styleClass="profile-label" text="%register.password_confirm" />
-                            <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity" promptText="***************" styleClass="profile-input" />
+                            <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
                         </VBox>
 
                         <Label fx:id="passwordFeedbackLabel" managed="false" styleClass="profile-feedback-line" visible="false" wrapText="true" />

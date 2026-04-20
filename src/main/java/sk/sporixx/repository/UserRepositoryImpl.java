@@ -186,4 +186,44 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException("Error reading from database (findAll)", e);
         }
     }
+
+    @Override
+    public void deleteById(int id) {
+        // Keep this order to satisfy FK dependencies: account_access -> accounts -> users.
+        String deleteAccessSql = "DELETE FROM account_access WHERE user_id = ?";
+        String deleteAccountsSql = "DELETE FROM accounts WHERE owner_user_id = ?";
+        String deleteUserSql = "DELETE FROM users WHERE id = ?";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement deleteAccessStmt = conn.prepareStatement(deleteAccessSql);
+                 PreparedStatement deleteAccountsStmt = conn.prepareStatement(deleteAccountsSql);
+                 PreparedStatement deleteUserStmt = conn.prepareStatement(deleteUserSql)) {
+
+                deleteAccessStmt.setInt(1, id);
+                deleteAccessStmt.executeUpdate();
+
+                deleteAccountsStmt.setInt(1, id);
+                deleteAccountsStmt.executeUpdate();
+
+                deleteUserStmt.setInt(1, id);
+                int affectedRows = deleteUserStmt.executeUpdate();
+                if (affectedRows == 0) {
+                    conn.rollback();
+                    throw new RuntimeException(String.format("User with ID %d does not exist", id));
+                }
+
+                conn.commit();
+                logger.info("User successfully deleted from DB with ID: {}", id);
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (Exception e) {
+            logger.error("Database error while deleting user with ID: {}", id, e);
+            throw new RuntimeException("Error deleting user from database", e);
+        }
+    }
 }

@@ -48,7 +48,7 @@ public class AdminPanelController {
 
     @FXML private ImageView profileImage;
     @FXML private Button deactivateButton;
-    @FXML private Button clearSelectionButton;
+    @FXML private Button deleteUserButton;
     @FXML private Label firstNameLabel;
     @FXML private Label lastNameLabel;
     @FXML private Label emailLabel;
@@ -175,12 +175,34 @@ public class AdminPanelController {
     }
 
     @FXML
-    private void handleClearSelection() {
-        usersTable.getSelectionModel().clearSelection();
-        selectedUser = null;
-        clearEditableForm();
-        applySelectionState();
-        clearFeedback();
+    private void handleDeleteUser() {
+        if (selectedUser == null) {
+            showProfileFeedback(localizeMessage("admin.error.select_user"), false);
+            return;
+        }
+        if (isEditingSelf(selectedUser)) {
+            showProfileFeedback(localizeMessage("admin.error.cannot_delete_self"), false);
+            return;
+        }
+
+        try {
+            ServiceLocator.getAdminService().deleteUser(User.builder().id(selectedUser.getId()).build());
+            showProfileFeedback(localizeMessage("admin.user.deleted"), true);
+            loadUsers();
+            if (!allUsers.isEmpty()) {
+                usersTable.getSelectionModel().selectFirst();
+            } else {
+                selectedUser = null;
+                clearEditableForm();
+                applySelectionState();
+            }
+        } catch (ProfileException e) {
+            logger.warn("Failed to delete selected user id={} from admin panel", selectedUser.getId(), e);
+            showProfileFeedback(localizeMessage(e.getMessageKey()), false);
+        } catch (Exception e) {
+            logger.error("Unexpected error while deleting selected user id={}", selectedUser.getId(), e);
+            showProfileFeedback(Localization.get("error.unexpected"), false);
+        }
     }
 
     @FXML
@@ -327,7 +349,7 @@ public class AdminPanelController {
         saveProfileButton.setDisable(!hasSelection);
         cancelButton.setDisable(!hasSelection || forced);
         deactivateButton.setDisable(!hasSelection || forced || editingSelf);
-        clearSelectionButton.setDisable(!hasSelection || forced);
+        deleteUserButton.setDisable(!hasSelection || forced || editingSelf);
 
         if (!hasSelection) {
             deactivateButton.setText(Localization.get("admin.user.deactivate"));
@@ -465,7 +487,7 @@ public class AdminPanelController {
         populateSelectedUser(selectedUser);
         cancelButton.setDisable(true);
         deactivateButton.setDisable(true);
-        clearSelectionButton.setDisable(true);
+        deleteUserButton.setDisable(true);
     }
 
     private String localizeMessage(String key) {

@@ -101,6 +101,22 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public void deleteUser(User user) {
+        requireAdmin();
+        if (user == null || user.getId() <= 0) {
+            throw new ProfileException("error.unexpected");
+        }
+
+        User currentUser = SessionManager.getInstance().getCurrentUserInternal();
+        if (currentUser != null && currentUser.getId() == user.getId()) {
+            throw new ProfileException("admin.error.cannot_delete_self");
+        }
+
+        requireExistingUser(user.getId());
+        userRepository.deleteById(user.getId());
+    }
+
+    @Override
     public void changeOwnPassword(User user, String oldPassword, String newPassword) {
         requireAdmin();
         User currentUser = SessionManager.getInstance().getCurrentUserInternal();

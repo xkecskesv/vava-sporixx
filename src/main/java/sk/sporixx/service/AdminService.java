@@ -42,6 +42,13 @@ public interface AdminService {
     User activateUser(User user);
 
     /**
+     * Permanently deletes selected user.
+     *
+     * @param user payload with target user id
+     */
+    void deleteUser(User user);
+
+    /**
      * Changes password of currently logged in admin (self-edit).
      *
      * @param user selected user payload; must reference currently logged admin

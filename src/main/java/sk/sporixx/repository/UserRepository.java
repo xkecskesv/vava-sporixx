@@ -49,4 +49,9 @@ public interface UserRepository {
      * @return list všetkých používateľov
      */
     List<User> findAll();
+
+    /**
+     * Permanently deletes user and related records by id.
+     */
+    void deleteById(int id);
 }
