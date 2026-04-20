@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sk.sporixx.ui.BudgetingController">
+    <left>
+        <fx:include source="sidebar.fxml"/>
+    </left>
+    <center>
+        <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" hbarPolicy="NEVER">
+            <VBox styleClass="dashboard-content" spacing="24">
+
+                <!-- Header -->
+                <Label text="%budgeting.title" styleClass="dashboard-title"/>
+
+                <!-- Horný riadok: Budget Setup + Budget Allocation -->
+                <HBox spacing="24">
+
+                    <!-- Budget Setup karta -->
+                    <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <Label text="%budgeting.setup.title" styleClass="dashboard-card-title"/>
+
+                        <VBox spacing="6">
+                            <Label text="%budgeting.setup.monthly_income" styleClass="modal-field-label"/>
+                            <TextField fx:id="monthlyIncomeField" styleClass="modal-input" promptText="0.00"/>
+                        </VBox>
+
+                        <Label text="%budgeting.setup.essential_expenses" styleClass="dashboard-card-title"/>
+
+                        <HBox spacing="12">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="%budgeting.setup.food" styleClass="modal-field-label"/>
+                                <TextField fx:id="foodField" styleClass="modal-input" promptText="0.00"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="%budgeting.setup.rent" styleClass="modal-field-label"/>
+                                <TextField fx:id="rentField" styleClass="modal-input" promptText="0.00"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="12">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="%budgeting.setup.transport" styleClass="modal-field-label"/>
+                                <TextField fx:id="transportField" styleClass="modal-input" promptText="0.00"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="%budgeting.setup.utilities" styleClass="modal-field-label"/>
+                                <TextField fx:id="utilitiesField" styleClass="modal-input" promptText="0.00"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="6">
+                            <Label text="%budgeting.setup.other" styleClass="modal-field-label"/>
+                            <TextField fx:id="otherField" styleClass="modal-input" promptText="0.00"/>
+                        </VBox>
+
+                        <Label fx:id="setupErrorLabel" styleClass="profile-feedback-error"
+                               visible="false" managed="false"/>
+                    </VBox>
+
+                    <!-- Budget Allocation karta -->
+                    <VBox fx:id="allocationCard" styleClass="dashboard-card" spacing="16"
+                          HBox.hgrow="ALWAYS">
+
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label fx:id="allocationTitle" text="%budgeting.allocation.title"
+                                   styleClass="dashboard-card-title" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="allocationCancelBtn" styleClass="modal-action-btn"
+                                    onAction="#handleAllocationCancel"
+                                    visible="false" managed="false">
+                                <graphic>
+                                    <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                                        <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="allocationConfirmBtn" styleClass="modal-action-btn"
+                                    onAction="#handleAllocationConfirm"
+                                    visible="false" managed="false">
+                                <graphic>
+                                    <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
+                                        <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="allocationEditBtn" styleClass="btn-icon-edit"
+                                    onAction="#handleAllocationEdit">
+                                <graphic>
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                        </HBox>
+
+                        <HBox spacing="24">
+                            <VBox spacing="12" HBox.hgrow="ALWAYS">
+
+                                <VBox spacing="4">
+                                    <Label text="%budgeting.allocation.essential" styleClass="modal-field-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="essentialAmountField" styleClass="modal-input"
+                                                   promptText="0.00" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <TextField fx:id="essentialPercentField" styleClass="modal-input"
+                                                   promptText="0%" prefWidth="70" editable="false"/>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox spacing="4">
+                                    <Label text="%budgeting.allocation.emergency" styleClass="modal-field-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="emergencyAmountField" styleClass="modal-input"
+                                                   promptText="0.00" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <TextField fx:id="emergencyPercentField" styleClass="modal-input"
+                                                   promptText="0%" prefWidth="70" editable="false"/>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox spacing="4">
+                                    <Label text="%budgeting.allocation.savings" styleClass="modal-field-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="savingsAmountField" styleClass="modal-input"
+                                                   promptText="0.00" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <TextField fx:id="savingsPercentField" styleClass="modal-input"
+                                                   promptText="0%" prefWidth="70" editable="false"/>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox spacing="4">
+                                    <Label text="%budgeting.allocation.to_invest" styleClass="modal-field-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="toInvestAmountField" styleClass="modal-input"
+                                                   promptText="0.00" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <TextField fx:id="toInvestPercentField" styleClass="modal-input"
+                                                   promptText="0%" prefWidth="70" editable="false"/>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox spacing="4">
+                                    <Label text="%budgeting.allocation.fun_money" styleClass="modal-field-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="funMoneyAmountField" styleClass="modal-input"
+                                                   promptText="0.00" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <TextField fx:id="funMoneyPercentField" styleClass="modal-input"
+                                                   promptText="0%" prefWidth="70" editable="false"/>
+                                    </HBox>
+                                </VBox>
+
+                                <Label fx:id="allocationErrorLabel" styleClass="profile-feedback-error"
+                                       visible="false" managed="false"/>
+                            </VBox>
+
+                            <VBox spacing="12" alignment="CENTER" prefWidth="220">
+                                <StackPane fx:id="pieChartContainer" prefWidth="180" prefHeight="180"/>
+                                <VBox fx:id="pieLegend" spacing="6"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- Dolný riadok: Emergency Fund + Saving accounts -->
+                <HBox spacing="24">
+
+                    <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="%budgeting.emergency.title"
+                                   styleClass="dashboard-card-title" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="emergencyBalanceLabel" styleClass="analytics-amount"/>
+                        </HBox>
+                        <Label fx:id="emergencyMinLabel" styleClass="analytics-subtitle"/>
+                        <Label fx:id="emergencyOptLabel" styleClass="analytics-subtitle"/>
+                        <StackPane fx:id="emergencyChartContainer" VBox.vgrow="ALWAYS" prefHeight="180"/>
+                    </VBox>
+
+                    <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="%budgeting.saving_accounts.title"
+                                   styleClass="dashboard-card-title" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="savingPrevBtn" styleClass="savings-nav-btn"
+                                    onAction="#handleSavingPrev"/>
+                            <Button fx:id="savingNextBtn" styleClass="savings-nav-btn"
+                                    onAction="#handleSavingNext"/>
+                        </HBox>
+                        <HBox fx:id="savingCardsRow" spacing="16"/>
+                    </VBox>
+
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

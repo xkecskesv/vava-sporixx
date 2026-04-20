@@ -1251,3 +1251,35 @@ Inter 27pt Bold*/
 .btn-icon-danger:hover {
     -fx-background-color: #FEE2E2;
 }
+
+/*budgeting*/
+
+/* BUDGETING PIE CHART */
+.budgeting-pie-chart {
+    -fx-padding: 0;
+    -fx-pref-height: 180px;
+    -fx-min-height: 180px;
+    -fx-pref-width: 180px;
+    -fx-max-width: 180px;
+}
+
+.budgeting-pie-chart .chart-pie-label {
+    -fx-font-size: 0px;
+    -fx-text-fill: transparent;
+}
+
+.budgeting-pie-chart .chart-pie-label-line {
+    -fx-stroke: transparent;
+}
+
+.budgeting-pie-chart .chart-legend {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+}
+
+.budgeting-pie-chart .data0.chart-pie { -fx-pie-color: #1A3A8F; }
+.budgeting-pie-chart .data1.chart-pie { -fx-pie-color: #3A7DF6; }
+.budgeting-pie-chart .data2.chart-pie { -fx-pie-color: #F59E0B; }
+.budgeting-pie-chart .data3.chart-pie { -fx-pie-color: #EF4444; }
+.budgeting-pie-chart .data4.chart-pie { -fx-pie-color: #8B5CF6; }
