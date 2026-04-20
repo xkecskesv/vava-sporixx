@@ -116,6 +116,9 @@ public final class ServiceLocator {
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
         TransactionRepository transactionRepo = new TransactionRepositoryImpl();
+        RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
+        SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
+        CategoryRepository categoryRepo = new CategoryRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
@@ -123,22 +126,22 @@ public final class ServiceLocator {
 
         overviewService = new OverviewServiceImpl(
                 transactionRepo,
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository());
+                recurringRuleRepo,
+                savingGoalRepo);
 
         accountService = new AccountServiceImpl(
                 accountRepo,
-                testData.getSavingGoalRepository());
+                savingGoalRepo);
 
         reportsService = new ReportsServiceImpl(
                 transactionRepo,
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository());
+                recurringRuleRepo,
+                savingGoalRepo);
 
         exportService = new ExportServiceImpl(reportsService);
 
         importService = new ImportServiceImpl(
-                testData.getSavingGoalRepository(),
+                savingGoalRepo,
                 accountService,
                 transactionRepo,
                 accountRepo);
@@ -146,10 +149,10 @@ public final class ServiceLocator {
         transactionService = new TransactionServiceImpl(
                 transactionRepo,
                 accountRepo,
-                testData.getCategoryRepository(),
-                testData.getSavingGoalRepository());
+                categoryRepo,
+                savingGoalRepo);
 
-        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        categoryService = new CategoryServiceImpl(categoryRepo);
 
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
