@@ -78,6 +78,11 @@
                 <Label fx:id="managementLabel" text="%sidebar.management" styleClass="sidebar-item-label"/>
             </HBox>
 
+            <HBox fx:id="familyManagementItem" styleClass="sidebar-item-row" visible="false" managed="false">
+                <Label fx:id="familyManagementLabel" text="%sidebar.management.family"
+                       styleClass="sidebar-item-label"/>
+            </HBox>
+
         </VBox>
     </center>
 
