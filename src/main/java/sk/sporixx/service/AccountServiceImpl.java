@@ -30,6 +30,12 @@ public class AccountServiceImpl implements AccountService {
 
         validateAccountInput(description, initialAmount);
 
+        boolean duplicate = SessionManager.getInstance().getAccounts().stream()
+                .anyMatch(a -> a.getDescription().equalsIgnoreCase(description.trim()));
+        if (duplicate) {
+            throw new AccountException("account.error.description_already_exists");
+        }
+
         Account saved = accountRepository.save(buildAccount(
                 Account.PRIVATE_ACCOUNT, description, initialAmount));
 
@@ -48,11 +54,17 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
-        if (targetAmount <= initialAmount) {
+        if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new AccountException("account.error.goal_date_invalid");
+        }
+
+        boolean duplicate = SessionManager.getInstance().getAccounts().stream()
+                .anyMatch(a -> a.getDescription().equalsIgnoreCase(description.trim()));
+        if (duplicate) {
+            throw new AccountException("account.error.description_already_exists");
         }
 
         Account saved = accountRepository.save(buildAccount(
@@ -154,7 +166,7 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
-        if (targetAmount <= initialAmount) {
+        if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {

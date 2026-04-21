@@ -1,6 +1,7 @@
 package sk.sporixx.service;
 
 import lombok.Getter;
+import lombok.Setter;
 import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.Role;
@@ -33,6 +34,8 @@ public class SessionManager {
 
     private User currentUser;
     private List<Account> accounts;
+    @Setter
+    @Getter
     private boolean forcePasswordChange;
 
     /**
@@ -61,14 +64,6 @@ public class SessionManager {
         this.currentUser = null;
         this.accounts = new ArrayList<>();
         this.forcePasswordChange = false;
-    }
-
-    public boolean isForcePasswordChange() {
-        return forcePasswordChange;
-    }
-
-    public void setForcePasswordChange(boolean forcePasswordChange) {
-        this.forcePasswordChange = forcePasswordChange;
     }
 
     /** Vráti ID prihláseného používateľa, alebo -1 ak nikto nie je prihlásený.
