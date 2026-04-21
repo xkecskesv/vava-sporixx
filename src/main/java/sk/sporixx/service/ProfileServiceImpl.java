@@ -2,18 +2,17 @@ package sk.sporixx.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.UserRepository;
-import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.util.Optional;
 
 /**
- * Service implementation responsible for profile-related operations of the currently
- * authenticated user.
+ * Implementácia služby zodpovedná za operácie profilu aktuálne prihláseného používateľa.
  *
- * <p>This class validates input, applies normalization, and persists changes through
+ * <p>Trieda validuje vstupy, vykonáva normalizáciu a ukladá zmeny cez
  * {@link UserRepository}.</p>
  *
  * @author Viktória Kecskés
@@ -31,33 +30,20 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Updates profile identity fields for the authenticated user.
+     * Aktualizuje identifikačné údaje profilu prihláseného používateľa.
      *
-     * @param firstName new first name
-     * @param lastName new last name
-     * @param email new e-mail address
-     * @param gender raw gender value from UI
-     * @throws ProfileException when validation fails or persistence cannot be completed
+     * @param firstName nové meno
+     * @param lastName nové priezvisko
+     * @param email nová e-mailová adresa
+     * @param gender surová hodnota pohlavia z UI
+     * @param isParent či profil označuje používateľa ako rodinného manažéra
+     * @throws ProfileException keď validácia zlyhá alebo sa zmena nepodarí uložiť
      */
     @Override
-    public void updateProfile(String firstName, String lastName, String email, String gender) {
+    public void updateProfile(String firstName, String lastName, String email, String gender, boolean isParent) {
         User currentUser = requireLoggedUser();
 
-        if (!ValidationUtil.isNotBlank(firstName)) {
-            throw new ProfileException("auth.error.first_name_required");
-        }
-        if (!ValidationUtil.isNotBlank(lastName)) {
-            throw new ProfileException("auth.error.last_name_required");
-        }
-        if (!ValidationUtil.isValidNamePart(firstName) || !ValidationUtil.isValidNamePartCharacters(firstName)) {
-            throw new ProfileException("auth.error.invalid_first_name");
-        }
-        if (!ValidationUtil.isValidNamePart(lastName) || !ValidationUtil.isValidNamePartCharacters(lastName)) {
-            throw new ProfileException("auth.error.invalid_last_name");
-        }
-        if (!ValidationUtil.isValidEmail(email)) {
-            throw new ProfileException("auth.error.invalid_email");
-        }
+        UserValidationSupport.validateIdentity(firstName, lastName, email);
 
         String normalizedEmail = email.trim().toLowerCase();
         Optional<User> existingByEmail = userRepository.findByEmail(normalizedEmail);
@@ -70,40 +56,38 @@ public class ProfileServiceImpl implements ProfileService {
         currentUser.setEmail(normalizedEmail);
         currentUser.setGender(userService.normalizeGender(gender));
 
+        Role originalRole = currentUser.getRole();
+        boolean roleMutable = originalRole != Role.ADMIN;
+        if (roleMutable) {
+            currentUser.setRole(isParent ? Role.FAMILY_MANAGER : Role.USER);
+        }
+
         try {
             userRepository.update(currentUser);
+            userRepository.updateFamilyManagerStatus(currentUser.getId(), isParent);
         } catch (Exception e) {
+            if (roleMutable) {
+                currentUser.setRole(originalRole);
+            }
             logger.error("Failed to update profile for user id={}", currentUser.getId(), e);
             throw new ProfileException("error.unexpected", e);
         }
     }
 
     /**
-     * Changes the password for the authenticated user.
+     * Zmení heslo prihláseného používateľa.
      *
-     * @param oldPassword current plain-text password used for verification
-     * @param newPassword new plain-text password to persist as a hash
-     * @throws ProfileException when old password is invalid, policy checks fail,
-     *                          or persistence cannot be completed
+     * @param oldPassword aktuálne heslo v otvorenom texte na overenie
+     * @param newPassword nové heslo v otvorenom texte, ktoré sa uloží ako hash
+     * @throws ProfileException keď je pôvodné heslo neplatné, zlyhá kontrola pravidiel
+     *                          alebo sa zmena nepodarí uložiť
      */
     @Override
     public void changePassword(String oldPassword, String newPassword) {
         User currentUser = requireLoggedUser();
 
-        if (!ValidationUtil.isNotBlank(oldPassword)) {
-            throw new ProfileException("auth.error.old_password_required");
-        }
-        if (!PasswordUtil.verifyPassword(oldPassword, currentUser.getPasswordHash())) {
-            throw new ProfileException("auth.error.wrong_old_password");
-        }
-        if (!ValidationUtil.isValidPassword(newPassword)) {
-            throw new ProfileException("auth.error.password_too_short");
-        }
-        if (PasswordUtil.verifyPassword(newPassword, currentUser.getPasswordHash())) {
-            throw new ProfileException("auth.error.same_password");
-        }
-
-        currentUser.setPasswordHash(PasswordUtil.hashPassword(newPassword));
+        UserValidationSupport.validatePasswordChange(oldPassword, newPassword, currentUser);
+        UserValidationSupport.applyPasswordChange(newPassword, currentUser);
 
         try {
             userRepository.update(currentUser);
@@ -113,11 +97,12 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+
     /**
-     * Updates and persists profile photo path for the authenticated user.
+     * Aktualizuje a uloží cestu k profilovej fotografii prihláseného používateľa.
      *
-     * @param photoPath absolute path to selected profile photo
-     * @throws ProfileException when path is blank or persistence fails
+     * @param photoPath absolútna cesta k vybratej fotografii
+     * @throws ProfileException keď je cesta prázdna alebo uloženie zlyhá
      */
     @Override
     public void updateProfilePhoto(String photoPath) {
@@ -138,10 +123,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Converts a raw or canonical gender value into localized UI text.
+     * Prevedie surovú hodnotu pohlavia na lokalizovaný text pre UI.
      *
-     * @param rawGender raw persisted value
-     * @return localized label for UI usage, or {@code "-"} fallback
+     * @param rawGender surová uložená hodnota
+     * @return lokalizovaný text pre UI alebo náhradná hodnota {@code "-"}
      */
     @Override
     public String toDisplayGender(String rawGender) {
@@ -149,10 +134,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * Returns the authenticated session user.
+     * Vráti aktuálne prihláseného používateľa zo session.
      *
-     * @return current authenticated {@link User}
-     * @throws ProfileException when no authenticated user exists in session
+     * @return aktuálny prihlásený {@link User}
+     * @throws ProfileException keď v session nie je žiadny prihlásený používateľ
      */
     private User requireLoggedUser() {
         User currentUser = SessionManager.getInstance().getCurrentUserInternal();
@@ -162,4 +147,3 @@ public class ProfileServiceImpl implements ProfileService {
         return currentUser;
     }
 }
-

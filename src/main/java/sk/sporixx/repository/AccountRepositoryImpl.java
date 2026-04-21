@@ -3,6 +3,7 @@ package sk.sporixx.repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.model.Account;
+import sk.sporixx.util.DatabaseConfig;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -11,17 +12,23 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ukladanie a hladanie usera z db
+ * JDBC implementácia repozitára účtov nad SQLite databázou.
  */
 public class AccountRepositoryImpl implements AccountRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountRepositoryImpl.class);
-    private static final String DB_URL = "jdbc:sqlite:sporixx.sqlite";
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL);
+        return DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
     }
 
+    /**
+     * Namapuje riadok výsledku SQL dotazu na objekt {@link Account}.
+     *
+     * @param rs výsledok SQL dotazu
+     * @return namapovaný účet
+     * @throws SQLException keď nastane chyba pri čítaní stĺpcov
+     */
     private Account mapResult(ResultSet rs) throws SQLException {
         Account account = new Account();
         account.setId(rs.getInt("id"));
@@ -43,6 +50,28 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Account> findByOwnerUserId(int ownerUserId) {
+        String sql = "SELECT * FROM accounts WHERE owner_user_id = ? AND is_active = 1";
+        List<Account> accounts = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, ownerUserId);
+            ResultSet results = pstmt.executeQuery();
+
+            while (results.next()) {
+                accounts.add(mapResult(results));
+            }
+            logger.debug("Found {} active accounts for user ID: {}", accounts.size(), ownerUserId);
+        } catch (SQLException e) {
+            logger.error("Error finding active accounts for user ID: {}", ownerUserId, e);
+            throw new RuntimeException("Error reading accounts from database", e);
+        }
+        return accounts;
+    }
+
+    @Override
+    public List<Account> findAllByOwnerUserId(int ownerUserId) {
         String sql = "SELECT * FROM accounts WHERE owner_user_id = ?";
         List<Account> accounts = new ArrayList<>();
 
@@ -55,9 +84,9 @@ public class AccountRepositoryImpl implements AccountRepository {
             while (results.next()) {
                 accounts.add(mapResult(results));
             }
-            logger.debug("Found {} accounts for user ID: {}", accounts.size(), ownerUserId);
+            logger.debug("Found {} total accounts (active+inactive) for user ID: {}", accounts.size(), ownerUserId);
         } catch (SQLException e) {
-            logger.error("Error finding accounts for user ID: {}", ownerUserId, e);
+            logger.error("Error finding all accounts for user ID: {}", ownerUserId, e);
             throw new RuntimeException("Error reading accounts from database", e);
         }
         return accounts;
@@ -140,13 +169,52 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public void update(Account account) {
-        // TODO: implementovať
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE accounts SET description = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, account.getDescription());
+            pstmt.setInt(2, account.getId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No account found to update with ID: " + account.getId());
+            }
+
+            logger.info("Account description updated. ID: {}", account.getId());
+
+        } catch (SQLException e) {
+            logger.error("Error updating account description for ID: {}", account.getId(), e);
+            throw new RuntimeException("Error updating account description in database", e);
+        }
     }
 
     @Override
     public void deactivateById(int accountId) {
-        // TODO: implementovať
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE accounts SET is_active = 0 WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, accountId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error deactivating account ID: {}", accountId, e);
+            throw new RuntimeException("Error deactivating account in database", e);
+        }
+    }
+
+    @Override
+    public void activateById(int accountId) {
+        String sql = "UPDATE accounts SET is_active = 1 WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, accountId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error activating account ID: {}", accountId, e);
+            throw new RuntimeException("Error activating account in database", e);
+        }
     }
 }
