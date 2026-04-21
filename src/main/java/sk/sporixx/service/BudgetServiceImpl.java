@@ -62,21 +62,20 @@ public class BudgetServiceImpl implements BudgetService {
         logger.info("Loading budget data for userId: {}", userId);
 
         try {
+            // História emergency fondu sa načíta vždy
+            double emergencyFundCurrent = getEmergencyFundBalance();
+            Map<String, Double> emergencyFundHistory = loadEmergencyFundHistory();
+
             Optional<Budget> budgetOpt = budgetRepository.findByUserId(userId);
 
             if (budgetOpt.isEmpty()) {
-                logger.info("No budget found for userId: {}, returning defaults",
-                        userId);
-                return buildDefaultBudgetData();
+                logger.info("No budget found for userId: {}, returning defaults", userId);
+                return buildDefaultBudgetData(emergencyFundCurrent, emergencyFundHistory);
             }
 
             Budget budget = budgetOpt.get();
-            double emergencyFundCurrent = getEmergencyFundBalance();
-            Map<String, Double> emergencyFundHistory =
-                    loadEmergencyFundHistory();
 
             return BudgetData.builder()
-                    // Budget Setup
                     .monthlyIncome(budget.getMonthlyIncome())
                     .food(budget.getFood())
                     .rent(budget.getRent())
@@ -84,29 +83,16 @@ public class BudgetServiceImpl implements BudgetService {
                     .utilities(budget.getUtilities())
                     .other(budget.getOther())
                     .essentialExpensesTotal(calculateEssentialTotal(budget))
-                    // Allocation: sumy
                     .essentialExpenses(budget.getEssentialExpenses())
                     .emergencyFund(budget.getEmergencyFund())
                     .savings(budget.getSavings())
                     .toInvest(budget.getToInvest())
                     .funMoney(budget.getFunMoney())
-                    // Allocation: percentá (vždy dynamicky z monthlyIncome)
-                    .essentialExpensesPercent(
-                            toPercent(budget.getEssentialExpenses(),
-                                    budget.getMonthlyIncome()))
-                    .emergencyFundPercent(
-                            toPercent(budget.getEmergencyFund(),
-                                    budget.getMonthlyIncome()))
-                    .savingsPercent(
-                            toPercent(budget.getSavings(),
-                                    budget.getMonthlyIncome()))
-                    .toInvestPercent(
-                            toPercent(budget.getToInvest(),
-                                    budget.getMonthlyIncome()))
-                    .funMoneyPercent(
-                            toPercent(budget.getFunMoney(),
-                                    budget.getMonthlyIncome()))
-                    // Emergency Fund
+                    .essentialExpensesPercent(toPercent(budget.getEssentialExpenses(), budget.getMonthlyIncome()))
+                    .emergencyFundPercent(toPercent(budget.getEmergencyFund(), budget.getMonthlyIncome()))
+                    .savingsPercent(toPercent(budget.getSavings(), budget.getMonthlyIncome()))
+                    .toInvestPercent(toPercent(budget.getToInvest(), budget.getMonthlyIncome()))
+                    .funMoneyPercent(toPercent(budget.getFunMoney(), budget.getMonthlyIncome()))
                     .emergencyFundCurrent(emergencyFundCurrent)
                     .minimalEmergencyFund(budget.getMinimalEmergencyFund())
                     .optimalEmergencyFund(budget.getOptimalEmergencyFund())
@@ -390,6 +376,9 @@ public class BudgetServiceImpl implements BudgetService {
                 current = current.plusMonths(1);
             }
 
+            logger.info("Emergency fund history size: {}", netByMonth.size());
+            logger.info("balanceAtFrom: {}", balanceAtFrom);
+
             // Kumulatívne od presného balance k dátumu from
             return toCumulative(netByMonth, balanceAtFrom);
 
@@ -399,8 +388,8 @@ public class BudgetServiceImpl implements BudgetService {
         }
     }
 
-    private BudgetData buildDefaultBudgetData() {
-        double emergencyFundCurrent = getEmergencyFundBalance();
+    private BudgetData buildDefaultBudgetData(double emergencyFundCurrent,
+                                              Map<String, Double> emergencyFundHistory) {
         return BudgetData.builder()
                 .monthlyIncome(0).food(0).rent(0)
                 .transport(0).utilities(0).other(0)
@@ -413,7 +402,7 @@ public class BudgetServiceImpl implements BudgetService {
                 .emergencyFundCurrent(emergencyFundCurrent)
                 .minimalEmergencyFund(0)
                 .optimalEmergencyFund(0)
-                .emergencyFundHistory(new TreeMap<>())
+                .emergencyFundHistory(emergencyFundHistory)
                 .build();
     }
 
