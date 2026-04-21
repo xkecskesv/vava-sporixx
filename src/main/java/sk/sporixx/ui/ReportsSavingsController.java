@@ -319,7 +319,17 @@ public class ReportsSavingsController {
             ServiceLocator.getImportService()
                     .importSavingAccountsFromXml(file.getAbsolutePath());
             accounts = ServiceLocator.getReportsService().loadSavingAccountsData();
-            renderCards();
+
+            if (accounts != null && !accounts.isEmpty()) {
+                // Skry empty state
+                emptyState.setVisible(false);
+                emptyState.setManaged(false);
+                // Obnov navigačné tlačidlá
+                scrollOffset = 0;
+                prevButton.setDisable(true);
+                nextButton.setDisable(accounts.size() <= MAX_VISIBLE);
+                renderCards();
+            }
         } catch (Exception e) {
             String message = e.getMessage();
             if (message != null && message.startsWith("import.error.")) {

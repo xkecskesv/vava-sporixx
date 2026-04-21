@@ -219,6 +219,13 @@ public class TransactionServiceImpl implements TransactionService {
                                                double amount,
                                                String currencyCode,
                                                LocalDateTime completeDate) {
+
+        if (transactionTypeId == Transaction.TYPE_EXPENSE) {
+            if (account.getCurrentBalance() - amount < 0) {
+                throw new TransactionException("transaction.error.insufficient_funds");
+            }
+        }
+
         Transaction transaction = Transaction.builder()
                 .accountId(account.getId())
                 .transactionTypeId(transactionTypeId)
@@ -262,6 +269,10 @@ public class TransactionServiceImpl implements TransactionService {
             autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
         }
         // Inak (napr. main → emergency) kategória ostáva null
+
+        if (fromAccount.getCurrentBalance() - amount < 0) {
+            throw new TransactionException("transaction.error.insufficient_funds");
+        }
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
@@ -350,10 +361,19 @@ public class TransactionServiceImpl implements TransactionService {
                 newBalance = account.getCurrentBalance() + difference;
             } else {
                 newBalance = account.getCurrentBalance() - difference;
+                // Kontrola insufficient funds
+                if (newBalance < 0) {
+                    throw new TransactionException("transaction.error.insufficient_funds");
+                }
             }
 
             transactionRepository.update(updatedTransaction);
             updateBalance(account, newBalance);
+
+            if (account.isSavingAccount()) {
+                double goalDelta = original.isIncome() ? difference : -difference;
+                updateSavingGoalAmount(account.getId(), goalDelta);
+            }
 
             logger.info("Transaction updated: id={}, oldAmount={}, newAmount={}",
                     original.getId(), original.getAmount(), updatedTransaction.getAmount());
@@ -393,6 +413,15 @@ public class TransactionServiceImpl implements TransactionService {
                         tx.getTransactionTypeId(),
                         tx.getAmount());
                 updateBalance(account, revertedBalance);
+
+                // Aktualizuj SavingGoal ak je to saving účet
+                if (account.isSavingAccount()) {
+                    if (tx.isIncome()) {
+                        updateSavingGoalAmount(account.getId(), -tx.getAmount());
+                    } else {
+                        updateSavingGoalAmount(account.getId(), tx.getAmount());
+                    }
+                }
 
                 transactionRepository.deleteById(id);
                 logger.info("Transaction deleted: id={}, amount={}", id, tx.getAmount());
