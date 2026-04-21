@@ -40,4 +40,10 @@ public interface AccountService {
      * Aktualizuje popis účtu.
      */
     void updateAccountDescription(int accountId, String description);
+
+    /**
+     * Aktualizuje saving účet a jeho goal.
+     */
+    void updateSavingAccount(int accountId, String description,
+                             double targetAmount, LocalDate targetDate);
 }

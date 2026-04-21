@@ -4,13 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.sporixx.model.Account;
+import sk.sporixx.model.AccountAccess;
+import sk.sporixx.model.Role;
 import sk.sporixx.model.SavingGoal;
+import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AccountServiceImpl implements AccountService {
 
@@ -18,10 +24,12 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final SavingGoalRepository savingGoalRepository;
+    private final AccountAccessRepository accountAccessRepository;
 
-    public AccountServiceImpl(AccountRepository accountRepository, SavingGoalRepository savingGoalRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, SavingGoalRepository savingGoalRepository, AccountAccessRepository accountAccessRepository) {
         this.accountRepository = accountRepository;
         this.savingGoalRepository = savingGoalRepository;
+        this.accountAccessRepository = accountAccessRepository;
     }
 
     @Override
@@ -30,10 +38,18 @@ public class AccountServiceImpl implements AccountService {
 
         validateAccountInput(description, initialAmount);
 
+        boolean duplicate = SessionManager.getInstance().getAccounts().stream()
+                .anyMatch(a -> a.getDescription().equalsIgnoreCase(description.trim()));
+        if (duplicate) {
+            throw new AccountException("account.error.description_already_exists");
+        }
+
         Account saved = accountRepository.save(buildAccount(
                 Account.PRIVATE_ACCOUNT, description, initialAmount));
 
         SessionManager.getInstance().addAccount(saved);
+        grantAccessToParents(saved);
+
         logger.info("Private account created: id={}", saved.getId());
         return saved;
     }
@@ -48,11 +64,17 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
-        if (targetAmount <= initialAmount) {
+        if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new AccountException("account.error.goal_date_invalid");
+        }
+
+        boolean duplicate = SessionManager.getInstance().getAccounts().stream()
+                .anyMatch(a -> a.getDescription().equalsIgnoreCase(description.trim()));
+        if (duplicate) {
+            throw new AccountException("account.error.description_already_exists");
         }
 
         Account saved = accountRepository.save(buildAccount(
@@ -70,6 +92,7 @@ public class AccountServiceImpl implements AccountService {
 
         savingGoalRepository.save(goal);
         SessionManager.getInstance().addAccount(saved);
+        grantAccessToParents(saved);
 
         logger.info("Saving account created: id={}, goal={}", saved.getId(), description);
         return saved;
@@ -91,6 +114,9 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.deactivateById(accountId);
         SessionManager.getInstance().removeAccount(accountId);
 
+        // Zmaž account_access záznamy pre tento účet
+        accountAccessRepository.revokeAllAccessForAccount(accountId);
+
         logger.info("Account deactivated: id={}", accountId);
     }
 
@@ -111,6 +137,59 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.update(account);
 
         logger.info("Account description updated: id={}", accountId);
+    }
+
+    @Override
+    public void updateSavingAccount(int accountId, String description,
+                                    double targetAmount, LocalDate targetDate) {
+        logger.info("Updating saving account id={}", accountId);
+
+        if (!ValidationUtil.isNotBlank(description)) {
+            throw new AccountException("account.error.description_required");
+        }
+        if (targetAmount <= 0) {
+            throw new AccountException("account.error.goal_amount_invalid");
+        }
+        if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
+            throw new AccountException("account.error.goal_date_invalid");
+        }
+
+        Account account = SessionManager.getInstance().getAccountById(accountId);
+        if (account == null) {
+            throw new AccountException("account.error.not_found");
+        }
+        if (!account.isSavingAccount()) {
+            throw new AccountException("account.error.not_saving_account");
+        }
+
+        // Skontroluj že targetAmount > currentAmount
+        if (targetAmount - account.getCurrentBalance() < 0.01) {
+            throw new AccountException("account.error.target_below_initial");
+        }
+
+        try {
+            // Aktualizuj description účtu
+            account.setDescription(description);
+            accountRepository.update(account);
+
+            // Aktualizuj goal
+            List<SavingGoal> goals = savingGoalRepository
+                    .findActiveByAccountId(accountId);
+            if (!goals.isEmpty()) {
+                SavingGoal goal = goals.get(0);
+                savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
+                savingGoalRepository.updateTargetDate(goal.getId(),
+                        targetDate.atStartOfDay());
+            }
+
+            logger.info("Saving account updated: id={}", accountId);
+
+        } catch (AccountException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Failed to update saving account id={}", accountId, e);
+            throw new AccountException("error.db_error", e);
+        }
     }
 
     // Helper metódy
@@ -154,7 +233,7 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
-        if (targetAmount <= initialAmount) {
+        if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
@@ -180,6 +259,7 @@ public class AccountServiceImpl implements AccountService {
 
         Account savedAccount = accountRepository.save(savingAccount);
         SessionManager.getInstance().addAccount(savedAccount);
+        grantAccessToParents(savedAccount);
 
         SavingGoal goal = SavingGoal.builder()
                 .accountId(savedAccount.getId())
@@ -196,5 +276,35 @@ public class AccountServiceImpl implements AccountService {
         logger.info("Saving account created from import: {}, createdAt: {}",
                 description, createdAt);
         return savedAccount;
+    }
+
+    /**
+     * Udelí prístup všetkým rodičom dieťaťa k novému účtu.
+     * Rodičia sú tí, ktorí majú prístup k existujúcim účtom tohto používateľa.
+     */
+    private void grantAccessToParents(Account newAccount) {
+        try {
+            List<Account> ownerAccounts = accountRepository
+                    .findByOwnerUserId(newAccount.getOwnerUserId());
+
+            if (ownerAccounts.isEmpty()) return;
+
+            // Nájdi rodičov cez existujúce účty
+            Set<Integer> parentIds = ownerAccounts.stream()
+                    .flatMap(a -> accountAccessRepository.findByAccountId(a.getId()).stream())
+                    .map(AccountAccess::getUserId)
+                    .collect(Collectors.toSet());
+
+            for (int parentId : parentIds) {
+                accountAccessRepository.grantAccess(
+                        parentId, newAccount.getId(), Role.USER.getAccessLevel());
+                logger.info("Granted access to parentId={} for new accountId={}",
+                        parentId, newAccount.getId());
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to grant parent access for new account id={}",
+                    newAccount.getId(), e);
+            // Nehodíme exception — vytvorenie účtu nesmie zlyhať kvôli tomuto
+        }
     }
 }
