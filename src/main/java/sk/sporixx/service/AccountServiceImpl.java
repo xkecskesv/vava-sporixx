@@ -15,6 +15,7 @@ import sk.sporixx.util.ValidationUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -305,6 +306,18 @@ public class AccountServiceImpl implements AccountService {
             logger.warn("Failed to grant parent access for new account id={}",
                     newAccount.getId(), e);
             // Nehodíme exception — vytvorenie účtu nesmie zlyhať kvôli tomuto
+        }
+    }
+
+    @Override
+    public Optional<SavingGoal> getSavingGoal(int accountId) {
+        logger.info("Loading saving goal for accountId={}", accountId);
+        try {
+            List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
+            return goals.isEmpty() ? Optional.empty() : Optional.of(goals.get(0));
+        } catch (Exception e) {
+            logger.error("Failed to load saving goal for accountId={}", accountId, e);
+            throw new AccountException("error.db_error", e);
         }
     }
 }
