@@ -45,6 +45,8 @@ public class TestDataInitializer {
     private final InMemorySavingGoalRepository savingGoalRepository;
     private final InMemoryCategoryRepository categoryRepository;
     private final InMemoryBudgetRepository budgetRepository;
+    private final InMemoryAccountAccessRepository accountAccessRepository;
+    private final InMemoryFamilyRequestRepository familyRequestRepository;
 
     private final AuthService authService;
     private final OverviewService overviewService;
@@ -72,6 +74,8 @@ public class TestDataInitializer {
                 transactionRepository, recurringRuleRepository, savingGoalRepository);
         this.categoryRepository = new InMemoryCategoryRepository();
         this.budgetRepository = new InMemoryBudgetRepository();
+        this.accountAccessRepository = new InMemoryAccountAccessRepository();
+        this.familyRequestRepository = new InMemoryFamilyRequestRepository();
 
         initTestData();
     }
