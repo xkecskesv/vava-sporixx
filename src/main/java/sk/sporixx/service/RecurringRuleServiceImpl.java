@@ -190,43 +190,52 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                     recurringRuleRepository.findActiveByAccountId(accountId);
 
             for (RecurringRule rule : rules) {
-                if (rule.getNextDueDate() == null ||
-                        rule.getNextDueDate().isAfter(now)) continue;
+                if (rule.getNextDueDate() == null) continue;
 
-                if (rule.getMaxOccurrences() != null &&
-                        rule.getGeneratedCount() >= rule.getMaxOccurrences()) {
-                    recurringRuleRepository.deactivateById(rule.getId());
-                    logger.info("Recurring rule id={} reached max occurrences, deactivated",
-                            rule.getId());
-                    continue;
-                }
+                // Spracuj všetky zmešklané platby v loop
+                while (!rule.getNextDueDate().isAfter(now)) {
 
-                try {
-                    transactionService.addTransaction(
-                            rule.getAccountId(),
-                            rule.getTransactionTypeId(),
-                            null,
-                            rule.getCategoryId(),
-                            rule.getSpendingClassificationId() != 0
-                                    ? rule.getSpendingClassificationId() : null,
-                            rule.getDescription(),
-                            rule.getAmount(),
-                            SessionManager.getInstance()
-                                    .getAccountById(rule.getAccountId())
-                                    .getDefaultCurrencyCode(),
-                            rule.getNextDueDate().toLocalDate());
+                    // Skontroluj maxOccurrences pred vytvorením transakcie
+                    if (rule.getMaxOccurrences() != null &&
+                            rule.getGeneratedCount() >= rule.getMaxOccurrences()) {
+                        recurringRuleRepository.deactivateById(rule.getId());
+                        logger.info("Recurring rule id={} reached max occurrences, deactivated",
+                                rule.getId());
+                        break;
+                    }
 
-                    LocalDateTime nextDueDate = calculateNextDueDate(rule);
-                    int newCount = rule.getGeneratedCount() + 1;
+                    try {
+                        transactionService.addTransaction(
+                                rule.getAccountId(),
+                                rule.getTransactionTypeId(),
+                                null,
+                                rule.getCategoryId(),
+                                rule.getSpendingClassificationId() != 0
+                                        ? rule.getSpendingClassificationId() : null,
+                                rule.getDescription(),
+                                rule.getAmount(),
+                                SessionManager.getInstance()
+                                        .getAccountById(rule.getAccountId())
+                                        .getDefaultCurrencyCode(),
+                                rule.getNextDueDate().toLocalDate());
 
-                    recurringRuleRepository.updateNextDueDate(
-                            rule.getId(), nextDueDate, newCount);
+                        LocalDateTime nextDueDate = calculateNextDueDate(rule);
+                        int newCount = rule.getGeneratedCount() + 1;
 
-                    logger.info("Recurring rule id={} processed, nextDueDate={}",
-                            rule.getId(), nextDueDate);
+                        recurringRuleRepository.updateNextDueDate(
+                                rule.getId(), nextDueDate, newCount);
 
-                } catch (Exception e) {
-                    logger.error("Failed to process recurring rule id={}", rule.getId(), e);
+                        // Aktualizuj lokálny objekt pre ďalší cyklus
+                        rule.setNextDueDate(nextDueDate);
+                        rule.setGeneratedCount(newCount);
+
+                        logger.info("Recurring rule id={} processed, nextDueDate={}",
+                                rule.getId(), nextDueDate);
+
+                    } catch (Exception e) {
+                        logger.error("Failed to process recurring rule id={}", rule.getId(), e);
+                        break; // pri errore zastav loop pre toto pravidlo
+                    }
                 }
             }
         }
