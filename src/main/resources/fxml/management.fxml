@@ -29,46 +29,86 @@
 
                     <Label text="%management.title" styleClass="dashboard-title"/>
 
-                    <!-- Horný riadok: Categories + Account Manager -->
-                    <HBox spacing="24">
+                    <HBox spacing="24" fillHeight="true">
 
-                        <!-- Categories karta -->
-                        <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                            <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
-                                <Label text="%management.categories.title"
-                                       styleClass="dashboard-card-title"
-                                       minWidth="0" maxWidth="Infinity"
-                                       HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="categoryDeleteBtn" styleClass="btn-icon-danger"
-                                        prefWidth="36" minWidth="36" maxWidth="36"
-                                        prefHeight="36" minHeight="36" maxHeight="36"
-                                        onAction="#handleCategoryDelete">
-                                    <graphic>
-                                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                            <image><Image url="@/assets/icons/icon_delete.png"/></image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="categoryEditBtn" styleClass="btn-icon-edit"
-                                        prefWidth="36" minWidth="36" maxWidth="36"
-                                        prefHeight="36" minHeight="36" maxHeight="36"
-                                        onAction="#handleCategoryEdit">
-                                    <graphic>
-                                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                            <image><Image url="@/assets/icons/icon_edit.png"/></image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="categoryAddBtn" styleClass="btn-primary-small"
-                                        text="%management.add" onAction="#handleCategoryAdd"
-                                        minWidth="60"/>
-                            </HBox>
-                            <VBox fx:id="categoriesList" spacing="6"/>
-                            <Label fx:id="categoryErrorLabel" styleClass="modal-error-label"
-                                   visible="false" managed="false"/>
+                        <!-- ĽAVÝ STĹPEC: Categories + Recurring -->
+                        <VBox spacing="24" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+
+                            <!-- Categories karta -->
+                            <VBox styleClass="dashboard-card" spacing="16">
+                                <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
+                                    <Label text="%management.categories.title"
+                                           styleClass="dashboard-card-title"
+                                           minWidth="0" maxWidth="Infinity"
+                                           HBox.hgrow="ALWAYS"/>
+                                    <Button fx:id="categoryDeleteBtn" styleClass="btn-icon-danger"
+                                            prefWidth="36" minWidth="36" maxWidth="36"
+                                            prefHeight="36" minHeight="36" maxHeight="36"
+                                            onAction="#handleCategoryDelete">
+                                        <graphic>
+                                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                                <image><Image url="@/assets/icons/icon_delete.png"/></image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="categoryEditBtn" styleClass="btn-icon-edit"
+                                            prefWidth="36" minWidth="36" maxWidth="36"
+                                            prefHeight="36" minHeight="36" maxHeight="36"
+                                            onAction="#handleCategoryEdit">
+                                        <graphic>
+                                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                                <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="categoryAddBtn" styleClass="btn-primary-small"
+                                            text="%management.add" onAction="#handleCategoryAdd"
+                                            minWidth="60"/>
+                                </HBox>
+                                <VBox fx:id="categoriesList" spacing="6"/>
+                                <Label fx:id="categoryErrorLabel" styleClass="modal-error-label"
+                                       visible="false" managed="false"/>
+                            </VBox>
+
+                            <!-- Recurring Payments karta -->
+                            <VBox styleClass="dashboard-card" spacing="16">
+                                <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
+                                    <Label text="%management.recurring.title"
+                                           styleClass="dashboard-card-title"
+                                           minWidth="0" maxWidth="Infinity"
+                                           HBox.hgrow="ALWAYS"/>
+                                    <Button fx:id="recurringDeleteBtn" styleClass="btn-icon-danger"
+                                            prefWidth="36" minWidth="36" maxWidth="36"
+                                            prefHeight="36" minHeight="36" maxHeight="36"
+                                            onAction="#handleRecurringDelete">
+                                        <graphic>
+                                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                                <image><Image url="@/assets/icons/icon_delete.png"/></image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="recurringEditBtn" styleClass="btn-icon-edit"
+                                            prefWidth="36" minWidth="36" maxWidth="36"
+                                            prefHeight="36" minHeight="36" maxHeight="36"
+                                            onAction="#handleRecurringEdit">
+                                        <graphic>
+                                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                                <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="recurringAddBtn" styleClass="btn-primary-small"
+                                            text="%management.add" onAction="#handleRecurringAdd"
+                                            minWidth="60"/>
+                                </HBox>
+                                <VBox fx:id="recurringList" spacing="6"/>
+                                <Label fx:id="recurringErrorLabel" styleClass="modal-error-label"
+                                       visible="false" managed="false"/>
+                            </VBox>
+
                         </VBox>
 
-                        <!-- Account Manager karta -->
+                        <!-- PRAVÝ STĹPEC: Account Manager -->
                         <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                             <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
                                 <Label text="%management.accounts.title"
@@ -84,53 +124,16 @@
 
                             <Label text="%management.accounts.section_default"
                                    styleClass="activities-group-title"/>
-                            <HBox fx:id="defaultAccountsRow" spacing="16"/>
+                            <HBox fx:id="defaultAccountsRow" spacing="8" alignment="CENTER_LEFT"/>
 
                             <Label text="%management.accounts.section_saving"
                                    styleClass="activities-group-title"/>
-                            <HBox fx:id="savingAccountsRow" spacing="16"/>
+                            <HBox fx:id="savingAccountsRow" spacing="8" alignment="CENTER_LEFT"/>
 
                             <Label fx:id="accountErrorLabel" styleClass="modal-error-label"
                                    visible="false" managed="false"/>
                         </VBox>
-                    </HBox>
 
-                    <!-- Dolný riadok: Recurring -->
-                    <HBox spacing="24">
-                        <VBox styleClass="dashboard-card" spacing="16" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                            <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
-                                <Label text="%management.recurring.title"
-                                       styleClass="dashboard-card-title"
-                                       minWidth="0" maxWidth="Infinity"
-                                       HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="recurringDeleteBtn" styleClass="btn-icon-danger"
-                                        prefWidth="36" minWidth="36" maxWidth="36"
-                                        prefHeight="36" minHeight="36" maxHeight="36"
-                                        onAction="#handleRecurringDelete">
-                                    <graphic>
-                                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                            <image><Image url="@/assets/icons/icon_delete.png"/></image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="recurringEditBtn" styleClass="btn-icon-edit"
-                                        prefWidth="36" minWidth="36" maxWidth="36"
-                                        prefHeight="36" minHeight="36" maxHeight="36"
-                                        onAction="#handleRecurringEdit">
-                                    <graphic>
-                                        <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                            <image><Image url="@/assets/icons/icon_edit.png"/></image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="recurringAddBtn" styleClass="btn-primary-small"
-                                        text="%management.add" onAction="#handleRecurringAdd"
-                                        minWidth="60"/>
-                            </HBox>
-                            <VBox fx:id="recurringList" spacing="6"/>
-                            <Label fx:id="recurringErrorLabel" styleClass="modal-error-label"
-                                   visible="false" managed="false"/>
-                        </VBox>
                     </HBox>
 
                 </VBox>
@@ -160,6 +163,58 @@
                                    promptText="%management.categories.modal.name_placeholder"/>
                     </VBox>
                     <Label fx:id="categoryModalErrorLabel" styleClass="modal-error-label"
+                           visible="false" managed="false"/>
+                </VBox>
+            </StackPane>
+
+            <!-- Account Modal -->
+            <StackPane fx:id="accountModalOverlay" styleClass="modal-overlay"
+                       visible="false" managed="false">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="460">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label fx:id="accountModalTitle" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <StackPane onMouseClicked="#onAccountModalConfirm" styleClass="modal-action-btn">
+                            <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
+                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                            </ImageView>
+                        </StackPane>
+                        <StackPane onMouseClicked="#onAccountModalClose" styleClass="modal-action-btn">
+                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                            </ImageView>
+                        </StackPane>
+                    </HBox>
+
+                    <VBox spacing="6">
+                        <Label text="%dashboard.modal.type" styleClass="modal-field-label"/>
+                        <ComboBox fx:id="accountTypeComboBox" styleClass="modal-input" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="%dashboard.modal.description" styleClass="modal-field-label"/>
+                        <TextField fx:id="accountDescField" styleClass="modal-input"
+                                   promptText="%dashboard.modal.description"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="%dashboard.modal.amount" styleClass="modal-field-label"/>
+                        <TextField fx:id="accountAmountField" styleClass="modal-input" promptText="0.00"/>
+                    </VBox>
+
+                    <!-- Goal sekcia — visible len pre Saving Account -->
+                    <VBox fx:id="accountGoalSection" spacing="16" visible="false" managed="false">
+                        <VBox spacing="6">
+                            <Label text="%dashboard.modal.goal" styleClass="modal-field-label"/>
+                            <TextField fx:id="accountGoalField" styleClass="modal-input" promptText="0.00"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="%dashboard.modal.date" styleClass="modal-field-label"/>
+                            <DatePicker fx:id="accountDatePicker" styleClass="modal-input" maxWidth="Infinity"/>
+                        </VBox>
+                    </VBox>
+
+                    <Label fx:id="accountModalErrorLabel" styleClass="modal-error-label"
                            visible="false" managed="false"/>
                 </VBox>
             </StackPane>
