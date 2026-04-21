@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RecurringRuleRepositoryImpl implements RecurringRuleRepository {
 
@@ -248,5 +249,17 @@ public class RecurringRuleRepositoryImpl implements RecurringRuleRepository {
             logger.error("Error updating next due date for recurring rule ID={}", ruleId, e);
             throw new RuntimeException("Error updating recurring rule next due date", e);
         }
+    }
+
+    @Override
+    public Optional<RecurringRule> findById(int id) {
+        // TODO: SELECT * FROM recurring_rules WHERE id = ?
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void deactivateById(int id) {
+        // TODO: UPDATE recurring_rules SET is_active = 0 WHERE id = ?
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
