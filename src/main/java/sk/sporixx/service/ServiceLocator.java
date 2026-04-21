@@ -35,6 +35,7 @@ public final class ServiceLocator {
     private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
+    private static RecurringRuleService recurringRuleService;
 
     private static boolean initialized = false;
 
@@ -104,6 +105,9 @@ public final class ServiceLocator {
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 testData.getTransactionRepository());
+        recurringRuleService = new RecurringRuleServiceImpl(
+                testData.getRecurringRuleRepository(),
+                transactionService);
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -160,6 +164,10 @@ public final class ServiceLocator {
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 transactionRepo);
+
+        recurringRuleService = new RecurringRuleServiceImpl(
+                recurringRuleRepo,
+                transactionService);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
@@ -238,7 +246,12 @@ public final class ServiceLocator {
         return budgetService;
     }
 
-    //  HELPER
+    public static RecurringRuleService getRecurringRuleService() {
+        checkInitialized();
+        return recurringRuleService;
+    }
+
+    // HELPER
     private static void checkInitialized() {
         if (!initialized) {
             throw new IllegalStateException(

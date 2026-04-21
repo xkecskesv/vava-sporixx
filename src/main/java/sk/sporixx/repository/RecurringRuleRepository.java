@@ -4,6 +4,7 @@ import sk.sporixx.model.RecurringRule;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository rozhranie pre prístup k opakovaným platbám.
@@ -34,4 +35,8 @@ public interface RecurringRuleRepository {
      * vytvorení transakcie z tohto pravidla.
      */
     void updateNextDueDate(int ruleId, LocalDateTime nextDueDate, int generatedCount);
+
+    Optional<RecurringRule> findById(int id);
+
+    void deactivateById(int id);
 }
