@@ -31,10 +31,10 @@ import java.util.Objects;
 import javafx.util.Duration;
 
 /**
- * JavaFX controller for the Profile view.
+ * JavaFX kontrolér pre obrazovku profilu.
  *
- * <p>Handles profile initialization, autosave for editable profile fields,
- * password updates, and profile photo upload/persistence integration.</p>
+ * <p>Spravuje inicializáciu profilu, automatické ukladanie editovateľných polí,
+ * zmenu hesla a nahratie profilovej fotografie vrátane jej uloženia.</p>
  *
  * @author Viktória Kecskés
  */
@@ -97,6 +97,7 @@ public class ProfileController {
     private String lastSavedLastName = "";
     private String lastSavedEmail = "";
     private String lastSavedGender = "-";
+    private boolean lastSavedParent;
 
     @FXML
     public void initialize() {
@@ -181,7 +182,7 @@ public class ProfileController {
     }
 
     /**
-     * Logs out the current user and navigates back to the login view.
+     * Odhlási aktuálneho používateľa a presmeruje ho na prihlasovaciu obrazovku.
      */
     @FXML
     private void handleLogout() {
@@ -194,7 +195,7 @@ public class ProfileController {
     }
 
     /**
-     * Opens file picker for profile photo, previews it immediately, and persists the photo path.
+     * Otvorí výber súboru s profilovou fotkou, zobrazí náhľad a uloží cestu k súboru.
      */
     @FXML
     private void handleUploadPhoto() {
@@ -225,7 +226,7 @@ public class ProfileController {
     }
 
     /**
-     * Handles password change request and shows inline one-line feedback.
+     * Spracuje žiadosť o zmenu hesla a zobrazí spätnú väzbu priamo vo formulári.
      */
     @FXML
     private void handleChangePassword() {
@@ -245,18 +246,19 @@ public class ProfileController {
     }
 
     /**
-     * Captures the last persisted profile values used by autosave diff checks.
+     * Uloží posledné perzistentné hodnoty profilu pre porovnávanie pri autosave.
      */
     private void initAutosaveState() {
         lastSavedFirstName = normalized(firstNameField.getText());
         lastSavedLastName = normalized(lastNameField.getText());
         lastSavedEmail = normalized(emailField.getText());
         lastSavedGender = selectedGender();
+        lastSavedParent = parentCheckBox.isSelected();
         autosaveEnabled = true;
     }
 
     /**
-     * Registers debounced and focus-loss triggers for autosaving profile fields.
+     * Zaregistruje oneskorené a focus-loss spúšťače pre automatické ukladanie.
      */
     // TODO duplicated code fragment
     private void setupAutosaveHandlers() {
@@ -278,6 +280,9 @@ public class ProfileController {
         genderComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
         });
+        parentCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
+        });
 
         firstNameField.focusedProperty().addListener((obs, oldValue, isFocused) -> {
             if (obs != null && oldValue != isFocused && !isFocused) flushAutosave();
@@ -294,7 +299,7 @@ public class ProfileController {
     }
 
     /**
-     * Starts/restarts the autosave debounce timer.
+     * Spustí alebo reštartuje oneskorovací časovač automatického ukladania.
      */
     private void scheduleAutosave() {
         if (!autosaveEnabled) return;
@@ -303,7 +308,7 @@ public class ProfileController {
     }
 
     /**
-     * Persists profile fields when values changed and passed basic pre-validation.
+     * Uloží profilové polia, keď sa zmenili a prešli základnou predvalidáciou.
      */
     private void flushAutosave() {
         if (!autosaveEnabled) return;
@@ -312,11 +317,13 @@ public class ProfileController {
         String lastName = normalized(lastNameField.getText());
         String email = normalized(emailField.getText());
         String gender = selectedGender();
+        boolean isParent = parentCheckBox.isSelected();
 
         boolean unchanged = firstName.equals(lastSavedFirstName)
                 && lastName.equals(lastSavedLastName)
                 && email.equals(lastSavedEmail)
-                && gender.equals(lastSavedGender);
+                && gender.equals(lastSavedGender)
+                && isParent == lastSavedParent;
         if (unchanged) return;
 
         String validationMessageKey = validateAutosaveInput(firstName, lastName, email);
@@ -327,11 +334,12 @@ public class ProfileController {
 
         try {
             showAutosaveFeedback(Localization.get("profile.autosave.saving"), "profile-feedback-pending");
-            ServiceLocator.getProfileService().updateProfile(firstName, lastName, email, gender);
+            ServiceLocator.getProfileService().updateProfile(firstName, lastName, email, gender, isParent);
             lastSavedFirstName = firstName;
             lastSavedLastName = lastName;
             lastSavedEmail = email;
             lastSavedGender = gender;
+            lastSavedParent = isParent;
             showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
         } catch (ProfileException e) {
             // Keep user input as-is; save is retried on next valid change.
@@ -343,7 +351,7 @@ public class ProfileController {
     }
 
     /**
-     * Returns selected gender display value, or fallback dash when not selected.
+     * Vráti zvolenú hodnotu pohlavia alebo náhradnú pomlčku, ak nie je nič vybrané.
      */
     private String selectedGender() {
         String value = genderComboBox.getValue();
@@ -351,14 +359,14 @@ public class ProfileController {
     }
 
     /**
-     * Trims input safely and converts null to empty string.
+     * Bezpečne oreže vstup a hodnotu {@code null} prevedie na prázdny reťazec.
      */
     private String normalized(String value) {
         return value == null ? "" : value.trim();
     }
 
     /**
-     * Resolves localized text by key with safe fallback for missing keys.
+     * Vráti lokalizovaný text podľa kľúča s bezpečným fallbackom pri chýbajúcom kľúči.
      */
     private String localizeMessage(String key) {
         if (key == null || key.isBlank()) {
@@ -372,7 +380,7 @@ public class ProfileController {
     }
 
     /**
-     * Performs lightweight pre-validation for autosave and returns localization key when invalid.
+     * Vykoná základnú predvalidáciu pre autosave a pri chybe vráti lokalizačný kľúč.
      */
     private String validateAutosaveInput(String firstName, String lastName, String email) {
         if (!ValidationUtil.isNotBlank(firstName)) return "auth.error.first_name_required";
@@ -388,7 +396,7 @@ public class ProfileController {
     }
 
     /**
-     * Shows one-line password feedback under the password action button.
+     * Zobrazí jednoradkovú spätnú väzbu pre heslo pod tlačidlom akcie.
      */
     private void showPasswordFeedback(String message, boolean success) {
         passwordFeedbackLabel.setText(message);
@@ -399,7 +407,7 @@ public class ProfileController {
     }
 
     /**
-     * Hides inline password feedback message.
+     * Skryje inline správu spätnej väzby pre heslo.
      */
     private void hidePasswordFeedback() {
         passwordFeedbackLabel.setVisible(false);
@@ -407,7 +415,7 @@ public class ProfileController {
     }
 
     /**
-     * Shows one-line autosave status below profile input fields.
+     * Zobrazí jednoradkový stav autosave pod profilovými vstupmi.
      */
     private void showAutosaveFeedback(String message, String styleClass) {
         autosaveFeedbackLabel.setText(message);
@@ -419,14 +427,14 @@ public class ProfileController {
     }
 
     /**
-     * Returns editable value for input controls without forcing visual placeholders as real data.
+     * Vráti editovateľnú hodnotu pre vstupy bez vynútenia vizuálnych placeholderov.
      */
     private String editableText(String value) {
         return (value == null || value.isBlank()) ? "" : value.trim();
     }
 
     /**
-     * Loads user photo from persisted path; falls back to default avatar on failure.
+     * Načíta používateľskú fotku z uloženej cesty, pri chybe použije predvolený avatar.
      */
     private void loadUserPhoto(CurrentUser user) {
         if (user.checkhasPhoto()) {
@@ -441,7 +449,7 @@ public class ProfileController {
     }
 
     /**
-     * Loads bundled default avatar image.
+     * Načíta pribalený predvolený obrázok avatara.
      */
     private void loadFallbackAvatar() {
         profileImage.setImage(new Image(Objects.requireNonNull(

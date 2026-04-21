@@ -12,12 +12,17 @@ public interface AccountRepository {
 
     /**
      * Nájde všetky účty používateľa.
-     * SQL: SELECT * FROM accounts WHERE user_id = ?
+     * SQL: SELECT * FROM accounts WHERE owner_user_id = ? AND is_active = 1
      *
-     * @param ownerUserId ID vlastníka učtov
-     * @return zoznam všetkých učtov používateľa (Main, Emergency, Saving...)
+     * @param ownerUserId ID vlastníka účtov
+     * @return zoznam AKTÍVNYCH účtov používateľa (Main, Emergency, Saving...)
      */
     List<Account> findByOwnerUserId(int ownerUserId);
+
+    /**
+     * Nájde všetky účty používateľa vrátane neaktívnych.
+     */
+    List<Account> findAllByOwnerUserId(int ownerUserId);
 
     /**
      * Nájde účet podľa ID.
@@ -26,7 +31,7 @@ public interface AccountRepository {
 
     /**
      * Uloží nový účet do DB.
-     * DOLEZITE: Po inserte nastaviť vygenerovane ID na Account objekt.
+     * DÔLEŽITÉ: Po inserte nastaví vygenerované ID na Account objekt.
      *
      * @param account objekt s vyplnenými údajmi (bez id)
      * @return Account s nastaveným ID z DB
@@ -48,4 +53,9 @@ public interface AccountRepository {
      * Main Account a Emergency Fund sa nedajú mazať (kontroluje service vrstva).
      */
     void deactivateById(int accountId);
+
+    /**
+     * Znovu aktivuje účet nastavením {@code is_active = true}.
+     */
+    void activateById(int accountId);
 }

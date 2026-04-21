@@ -33,6 +33,7 @@ public class SessionManager {
 
     private User currentUser;
     private List<Account> accounts;
+    private boolean forcePasswordChange;
 
     /**
      * Nastaví session po úspešnom prihlásení.
@@ -59,6 +60,15 @@ public class SessionManager {
     public void clearSession() {
         this.currentUser = null;
         this.accounts = new ArrayList<>();
+        this.forcePasswordChange = false;
+    }
+
+    public boolean isForcePasswordChange() {
+        return forcePasswordChange;
+    }
+
+    public void setForcePasswordChange(boolean forcePasswordChange) {
+        this.forcePasswordChange = forcePasswordChange;
     }
 
     /** Vráti ID prihláseného používateľa, alebo -1 ak nikto nie je prihlásený.
