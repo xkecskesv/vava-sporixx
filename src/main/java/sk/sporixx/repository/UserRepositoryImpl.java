@@ -115,4 +115,33 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return user;
     }
+
+    @Override
+    public User update(User user) {
+        String sql = "UPDATE users SET email = ?, password_hash = ?, first_name = ?, last_name = ?, photo_path = ?, gender = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getPasswordHash());
+            pstmt.setString(3, user.getFirstName());
+            pstmt.setString(4, user.getLastName());
+            pstmt.setString(5, user.getPhotoPath());
+            pstmt.setString(6, user.getGender());
+            pstmt.setInt(7, user.getId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                logger.warn("No user row updated for ID: {}", user.getId());
+                throw new RuntimeException("User update failed, no rows affected");
+            }
+            logger.info("User successfully updated in DB with ID: {}", user.getId());
+            return user;
+
+        } catch (SQLException e) {
+            logger.error("Database error while updating user with ID: {}", user.getId(), e);
+            throw new RuntimeException("Error writing to database (update)", e);
+        }
+    }
 }

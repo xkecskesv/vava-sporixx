@@ -29,6 +29,8 @@ public final class ServiceLocator {
     private static ReportsService reportsService;
     private static ExportService exportService;
     private static ImportService importService;
+    private static UserService userService;
+    private static ProfileService profileService;
 
     private static boolean initialized = false;
 
@@ -74,6 +76,8 @@ public final class ServiceLocator {
         TestDataInitializer testData = new TestDataInitializer();
 
         authService    = testData.getAuthService();
+        userService = new UserServiceImpl();
+        profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -87,7 +91,6 @@ public final class ServiceLocator {
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
-    //  TODO: doplniť po dokončení DB vrstvy
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
 
@@ -95,8 +98,13 @@ public final class ServiceLocator {
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
         TransactionRepository transactionRepo = new TransactionRepositoryImpl();
+        CategoryRepository categoryRepo = new CategoryRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
+        userService = new UserServiceImpl();
+        profileService = new ProfileServiceImpl(userRepo, userService);
+
+        // ── Zvyšok stále in-memory
         TestDataInitializer testData = new TestDataInitializer();
 
         overviewService = new OverviewServiceImpl(
@@ -120,23 +128,12 @@ public final class ServiceLocator {
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
         // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
-        // CategoryRepository categoryRepo        = new CategoryRepositoryImpl();
 
         // overviewService = new OverviewServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
         // accountService  = new AccountServiceImpl(accountRepo, savingGoalRepo);
         // reportsService  = new ReportsServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
         // exportService   = new ExportServiceImpl(reportsService);
         // importService   = new ImportServiceImpl(savingGoalRepo);
-
-        // TODO: ostatné služby:
-        // transactionService = ...
-        // categoryService    = ...
-        // budgetService      = ...
-        // settingsService    = ...
-        // userService        = ...
-        // adminService       = ...
-        // familyService      = ...
-        // goalService        = ...
     }
 
     //  GETTERY — UI vrstva volá tieto metódy
@@ -174,6 +171,18 @@ public final class ServiceLocator {
     public static ImportService getImportService() {
         checkInitialized();
         return importService;
+    }
+
+    /** User helper service for current-user access and normalization logic. */
+    public static UserService getUserService() {
+        checkInitialized();
+        return userService;
+    }
+
+    /** Profile operations: update profile and change password. */
+    public static ProfileService getProfileService() {
+        checkInitialized();
+        return profileService;
     }
 
     //  HELPER
