@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 
 /**
  * Implementácia ReportsService.
+ * Všetky dáta sú načítavané naprieč všetkými účtami používateľa.
+ * Prevody medzi účtami (TYPE_SAVING, TYPE_SAVING_EXPENSE) sú vynechané
+ * z income/expense/category/want-need reportov.
  */
 public class ReportsServiceImpl implements ReportsService {
 
@@ -24,12 +27,12 @@ public class ReportsServiceImpl implements ReportsService {
 
     /**
      * Hranice pre adaptívne zobrazenie grafu Expectation vs Reality.
-     * Grouping sa určuje podľa celkovej dĺžky goalu (createdAt-targetDate).
+     * Grouping sa určuje podľa celkovej dĺžky goalu (createdAt → targetDate).
      * Rovnaký grouping sa použije pre obe krivky (expected aj actual)
      * aby boli na rovnakej osi X a dali sa porovnať.
-     * DAY: goal kratší ako 3 mesiace (< 90 dní)
-     * MONTH: goal 3 mesiace až 5 rokov (90-1825 dní)
-     * YEAR: goal dlhší ako 5 rokov (> 1825 dní)
+     * DAY   — goal kratší ako 3 mesiace (< 90 dní)
+     * MONTH — goal 3 mesiace až 5 rokov (90 — 1825 dní)
+     * YEAR  — goal dlhší ako 5 rokov (> 1825 dní)
      */
     private static final int DAY_THRESHOLD_DAYS = 90;
     private static final int MONTH_THRESHOLD_DAYS = 1825;
@@ -40,6 +43,11 @@ public class ReportsServiceImpl implements ReportsService {
             DateTimeFormatter.ofPattern("yyyy-MM");
     private static final DateTimeFormatter YEAR_FORMAT =
             DateTimeFormatter.ofPattern("yyyy");
+
+    private static final List<Integer> TRANSFER_CATEGORY_IDS = List.of(
+            Transaction.CATEGORY_SAVING,
+            Transaction.CATEGORY_SAVING_EXPENSE
+    );
 
     private final TransactionRepository transactionRepository;
     private final RecurringRuleRepository recurringRuleRepository;
@@ -53,45 +61,64 @@ public class ReportsServiceImpl implements ReportsService {
         this.savingGoalRepository = savingGoalRepository;
     }
 
-    // Helper — získa všetky accountIds prihláseného používateľa
+    // Helper - získa všetky accountIds prihláseného používateľa
     private List<Integer> getAccountIds() {
         return SessionManager.getInstance().getAccountIds();
     }
 
+    // Helper - vypočíta from datetime podľa ChartPeriod
+    private LocalDateTime calculateFrom(ChartPeriod period) {
+        return period.calculateStartDate().atStartOfDay();
+    }
+
+
     //  INCOME VS EXPENSES
     @Override
-    public IncomeExpenseData loadIncomeExpenseData(int months) {
-        logger.info("Loading income/expense data for {} months", months);
+    public IncomeExpenseData loadIncomeExpenseData(ChartPeriod period) {
+        logger.info("Loading income/expense data for period: {}", period);
 
         try {
-            LocalDateTime from = LocalDateTime.now().minusMonths(months)
-                    .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-
+            LocalDateTime from = calculateFrom(period);
+            logger.info("Calculating from date: {}", from);
             List<Integer> accountIds = getAccountIds();
 
-            Map<String, Double> monthlyIncome = new TreeMap<>();
-            Map<String, Double> monthlyExpense = new TreeMap<>();
+            Map<String, Double> periodIncome = new TreeMap<>();
+            Map<String, Double> periodExpense = new TreeMap<>();
 
             for (int accountId : accountIds) {
-                transactionRepository.sumByTypeAndMonth(
-                                accountId, Transaction.TYPE_INCOME, from)
-                        .forEach((month, sum) ->
-                                monthlyIncome.merge(month, sum, Double::sum));
-
-                transactionRepository.sumByTypeAndMonth(
-                                accountId, Transaction.TYPE_EXPENSE, from)
-                        .forEach((month, sum) ->
-                                monthlyExpense.merge(month, sum, Double::sum));
+                if (period.isGroupByDay()) {
+                    transactionRepository.sumByTypeAndDay(
+                                    accountId, Transaction.TYPE_INCOME, from,
+                                    TRANSFER_CATEGORY_IDS)
+                            .forEach((day, sum) ->
+                                    periodIncome.merge(day, sum, Double::sum));
+                    transactionRepository.sumByTypeAndDay(
+                                    accountId, Transaction.TYPE_EXPENSE, from,
+                                    TRANSFER_CATEGORY_IDS)
+                            .forEach((day, sum) ->
+                                    periodExpense.merge(day, sum, Double::sum));
+                } else {
+                    transactionRepository.sumByTypeAndMonth(
+                                    accountId, Transaction.TYPE_INCOME, from,
+                                    TRANSFER_CATEGORY_IDS)
+                            .forEach((month, sum) ->
+                                    periodIncome.merge(month, sum, Double::sum));
+                    transactionRepository.sumByTypeAndMonth(
+                                    accountId, Transaction.TYPE_EXPENSE, from,
+                                    TRANSFER_CATEGORY_IDS)
+                            .forEach((month, sum) ->
+                                    periodExpense.merge(month, sum, Double::sum));
+                }
             }
 
-            double totalIncome = monthlyIncome.values().stream()
+            double totalIncome = periodIncome.values().stream()
                     .mapToDouble(Double::doubleValue).sum();
-            double totalExpense = monthlyExpense.values().stream()
+            double totalExpense = periodExpense.values().stream()
                     .mapToDouble(Double::doubleValue).sum();
 
             return IncomeExpenseData.builder()
-                    .monthlyIncome(monthlyIncome)
-                    .monthlyExpense(monthlyExpense)
+                    .monthlyIncome(periodIncome)
+                    .monthlyExpense(periodExpense)
                     .totalIncome(totalIncome)
                     .totalExpense(totalExpense)
                     .build();
@@ -104,20 +131,19 @@ public class ReportsServiceImpl implements ReportsService {
 
     //  EXPENSES BY CATEGORY
     @Override
-    public CategoryExpenseData loadCategoryExpenseData(int months) {
-        logger.info("Loading category expense data for {} months", months);
+    public CategoryExpenseData loadCategoryExpenseData(ChartPeriod period) {
+        logger.info("Loading category expense data for period: {}", period);
 
         try {
-            LocalDateTime from = LocalDateTime.now().minusMonths(months)
-                    .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-
+            LocalDateTime from = calculateFrom(period);
             List<Integer> accountIds = getAccountIds();
 
             Map<String, Double> expenseByCategory = new TreeMap<>();
 
             for (int accountId : accountIds) {
                 transactionRepository.sumByCategoryAndDateRange(
-                                accountId, from, LocalDateTime.now())
+                                accountId, from, LocalDateTime.now(),
+                                TRANSFER_CATEGORY_IDS)
                         .forEach((category, sum) ->
                                 expenseByCategory.merge(category, sum, Double::sum));
             }
@@ -177,13 +203,11 @@ public class ReportsServiceImpl implements ReportsService {
 
     //  WANT VS NEED
     @Override
-    public WantNeedData loadWantNeedData(int months) {
-        logger.info("Loading want/need data for {} months", months);
+    public WantNeedData loadWantNeedData(ChartPeriod period) {
+        logger.info("Loading want/need data for period: {}", period);
 
         try {
-            LocalDateTime from = LocalDateTime.now().minusMonths(months)
-                    .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-
+            LocalDateTime from = calculateFrom(period);
             List<Integer> accountIds = getAccountIds();
 
             double totalWant = 0;
@@ -215,7 +239,6 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-//---------------------------------------------------------------------------------------------------------------
     //  SAVING ACCOUNTS
     @Override
     public List<SavingAccountReportData> loadSavingAccountsData() {
@@ -258,6 +281,16 @@ public class ReportsServiceImpl implements ReportsService {
                         goal.getTargetDate().toLocalDate());
                 String grouping = resolveGrouping(totalDays);
 
+                // Načítaj TYPE_INCOME transakcie pre saving účet od createdAt
+                List<Transaction> transactions = transactionRepository
+                        .findByAccountIdAndDateRange(
+                                account.getId(),
+                                goal.getCreatedAt(),
+                                LocalDateTime.now())
+                        .stream()
+                        .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
+                        .toList();
+
                 result.add(SavingAccountReportData.builder()
                         .accountId(account.getId())
                         .accountName(account.getDescription())
@@ -265,9 +298,12 @@ public class ReportsServiceImpl implements ReportsService {
                         .needToSave(needToSave)
                         .targetAmount(targetAmount)
                         .targetDate(goal.getTargetDate())
+                        .initialBalance(account.getInitialBalance())
+                        .createdAt(goal.getCreatedAt())
                         .expectedProgress(calculateExpectedProgress(goal, totalDays, grouping))
                         .actualProgress(calculateActualProgress(account.getId(), goal, grouping))
                         .progressGrouping(grouping)
+                        .transactions(transactions)
                         .build());
             }
 
@@ -308,15 +344,23 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> expected = new TreeMap<>();
         if (totalDays <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalDays;
-        LocalDateTime current = goal.getCreatedAt();
-        double cumulative = 0;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(DAY_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(DAY_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        LocalDateTime current = goal.getCreatedAt();
+        long dayIndex = 0;
+
+        while (!current.isAfter(goal.getTargetDate()) && dayIndex <= totalDays) {
+            double value = initialBalance + (remainingToSave * dayIndex / totalDays);
+            expected.put(current.format(DAY_FORMAT), value);
             current = current.plusDays(1);
+            dayIndex++;
         }
         return expected;
     }
@@ -329,15 +373,23 @@ public class ReportsServiceImpl implements ReportsService {
                 goal.getTargetDate().toLocalDate().withDayOfMonth(1));
         if (totalMonths <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalMonths;
-        LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
-        double cumulative = 0;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(MONTH_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(MONTH_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
+        long monthIndex = 0;
+
+        while (!current.isAfter(goal.getTargetDate()) && monthIndex <= totalMonths) {
+            double value = initialBalance + (remainingToSave * monthIndex / totalMonths);
+            expected.put(current.format(MONTH_FORMAT), value);
             current = current.plusMonths(1);
+            monthIndex++;
         }
         return expected;
     }
@@ -350,24 +402,32 @@ public class ReportsServiceImpl implements ReportsService {
                 goal.getTargetDate().toLocalDate());
         if (totalYears <= 0) return expected;
 
-        double step = goal.getTargetAmount() / totalYears;
-        LocalDateTime current = goal.getCreatedAt();
-        double cumulative = 0;
+        double initialBalance = getInitialBalance(goal.getAccountId());
+        double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        while (!current.isAfter(goal.getTargetDate())) {
-            cumulative += step;
-            expected.put(current.format(YEAR_FORMAT),
-                    Math.min(cumulative, goal.getTargetAmount()));
+        // Goal už splnený
+        if (remainingToSave <= 0) {
+            expected.put(goal.getCreatedAt().format(YEAR_FORMAT), goal.getTargetAmount());
+            return expected;
+        }
+
+        LocalDateTime current = goal.getCreatedAt();
+        long yearIndex = 0;
+
+        while (!current.isAfter(goal.getTargetDate()) && yearIndex <= totalYears) {
+            double value = initialBalance + (remainingToSave * yearIndex / totalYears);
+            expected.put(current.format(YEAR_FORMAT), value);
             current = current.plusYears(1);
+            yearIndex++;
         }
         return expected;
     }
 
     //  HELPERS — ACTUAL PROGRESS
     /**
-     * Vypočíta skutočný kumulatívny progress podľa TYPE_SAVING transakcií.
+     * Vypočíta skutočný kumulatívny progress podľa TYPE_INCOME transakcií.
      * Krivka rastie postupne s pribúdajúcimi transakciami.
-     * Rovnaký grouping ako expected - obe krivky na rovnakej osi X.
+     * Rovnaký grouping ako expected — obe krivky na rovnakej osi X.
      */
     private Map<String, Double> calculateActualProgress(int accountId,
                                                         SavingGoal goal,
@@ -386,42 +446,90 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndDay(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
-        return toCumulative(raw);
+
+        double initialBalance = getInitialBalance(accountId);
+
+        // Doplň chýbajúce dni medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt();
+        LocalDateTime until = LocalDateTime.now();
+        while (!current.isAfter(until)) {
+            raw.putIfAbsent(current.format(DAY_FORMAT), 0.0);
+            current = current.plusDays(1);
+        }
+
+        return toCumulative(raw, initialBalance);
     }
 
     private Map<String, Double> calculateActualByMonth(int accountId, SavingGoal goal) {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndMonth(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
-        return toCumulative(raw);
+
+        double initialBalance = getInitialBalance(accountId);
+
+        // Doplň chýbajúce mesiace medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
+        LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
+        while (!current.isAfter(until)) {
+            raw.putIfAbsent(current.format(MONTH_FORMAT), 0.0);
+            current = current.plusMonths(1);
+        }
+
+        return toCumulative(raw, initialBalance);
     }
 
     private Map<String, Double> calculateActualByYear(int accountId, SavingGoal goal) {
-        // Načítame po mesiacoch a agregujeme do ročných súm
         Map<String, Double> monthly = transactionRepository.sumByTypeAndMonth(
                 accountId, Transaction.TYPE_INCOME, goal.getCreatedAt());
 
         Map<String, Double> yearly = new TreeMap<>();
         monthly.forEach((month, sum) -> {
-            String year = month.substring(0, 4); // "2026-03" → "2026"
+            String year = month.substring(0, 4);
             yearly.merge(year, sum, Double::sum);
         });
 
-        return toCumulative(yearly);
+        double initialBalance = getInitialBalance(accountId);
+
+        // Doplň chýbajúce roky medzi createdAt a dnes
+        LocalDateTime current = goal.getCreatedAt();
+        LocalDateTime until = LocalDateTime.now();
+        while (!current.isAfter(until)) {
+            yearly.putIfAbsent(current.format(YEAR_FORMAT), 0.0);
+            current = current.plusYears(1);
+        }
+
+        return toCumulative(yearly, initialBalance);
     }
 
     /**
-     * Prepočíta mapu mesačných/denných súm na kumulatívne hodnoty.
-     * Vstup: { "2026-02": 10000, "2026-03": 5000 }
-     * Výstup: { "2026-02": 10000, "2026-03": 15000 }
+     * Načíta initialBalance saving účtu zo SessionManager.
+     * Ak účet nie je nájdený, vráti 0.
      */
-    private Map<String, Double> toCumulative(Map<String, Double> raw) {
+    private double getInitialBalance(int accountId) {
+        Account account = SessionManager.getInstance().getAccountById(accountId);
+        return account != null ? account.getInitialBalance() : 0.0;
+    }
+
+    /**
+     * Prepočíta mapu denných/mesačných súm na kumulatívne hodnoty.
+     * Štartuje od initialBalance saving účtu.
+     * Vstup:  { "2026-02": 10000, "2026-03": 5000 }
+     * Výstup: { "2026-02": 60000, "2026-03": 65000 } (pri initialBalance=50000)
+     */
+    private Map<String, Double> toCumulative(Map<String, Double> raw, double initialBalance) {
         Map<String, Double> cumulative = new TreeMap<>();
-        double running = 0;
+        double running = initialBalance;
         for (Map.Entry<String, Double> entry : raw.entrySet()) {
             running += entry.getValue();
             cumulative.put(entry.getKey(), running);
         }
         return cumulative;
+    }
+
+    /**
+     * Prepočíta na kumulatívne hodnoty — štartuje od 0.
+     */
+    private Map<String, Double> toCumulative(Map<String, Double> raw) {
+        return toCumulative(raw, 0.0);
     }
 }

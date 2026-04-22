@@ -20,7 +20,7 @@ public class Transaction {
     private int id;
     private int accountId;
     private Integer targetAccountId;    // nullable - len pre prevody medzi účtami
-    private int categoryId;
+    private Integer categoryId;
     private int transactionTypeId;
     private int transactionStatusId;
     private Integer spendingClassificationId;   // nullable - len pre TYPE_EXPENSE
@@ -47,4 +47,8 @@ public class Transaction {
     // Transaction Status (DB tabuľka transaction_status)
     public static final int STATUS_COMPLETED = 1;
     public static final int STATUS_PENDING = 2;
+
+    // System Category IDs - neprebíjateľné používateľom (user_id = null v DB)
+    public static final int CATEGORY_SAVING         = 6;  // main to saving transfer
+    public static final int CATEGORY_SAVING_EXPENSE = 7;  // saving to main transfer
 }

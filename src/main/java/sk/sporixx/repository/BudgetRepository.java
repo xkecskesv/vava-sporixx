@@ -1,20 +1,29 @@
 package sk.sporixx.repository;
 
-import sk.sporixx.model.UserBudget;
+import sk.sporixx.model.Budget;
+import java.util.Optional;
 
-import java.util.List;
-
+/**
+ * Repository rozhranie pre prístup k budget nastaveniam používateľa.
+ * Každý používateľ má max 1 aktívny budget záznam.
+ */
 public interface BudgetRepository {
 
-    boolean save(UserBudget userBudget);
+    /**
+     * Nájde aktívny budget pre daného používateľa.
+     * Vracia Optional — používateľ nemusí mať budget nastavený.
+     */
+    Optional<Budget> findByUserId(int userId);
 
-    boolean update(UserBudget userBudget);
+    /**
+     * Uloží nový budget záznam.
+     * Volá sa keď používateľ prvýkrát nastaví budget.
+     */
+    Budget save(Budget budget);
 
-    boolean deleteById(Long id);
-
-    UserBudget findById(Long id);
-
-    List<UserBudget> findByUserId(Long userId);
-
-    List<UserBudget> findByUserIdAndMonth(Long userId, String month);
+    /**
+     * Aktualizuje existujúci budget záznam.
+     * Volá sa pri každej zmene Budget Setup alebo Custom Allocation.
+     */
+    void update(Budget budget);
 }

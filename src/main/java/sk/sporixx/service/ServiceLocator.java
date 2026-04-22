@@ -31,6 +31,10 @@ public final class ServiceLocator {
     private static ImportService importService;
     private static UserService userService;
     private static ProfileService profileService;
+    private static AdminService adminService;
+    private static TransactionService transactionService;
+    private static CategoryService categoryService;
+    private static BudgetService budgetService;
 
     private static boolean initialized = false;
 
@@ -78,6 +82,7 @@ public final class ServiceLocator {
         authService    = testData.getAuthService();
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
+        adminService = new AdminServiceImpl(testData.getUserRepository(), testData.getAccountRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
@@ -87,53 +92,80 @@ public final class ServiceLocator {
                 testData.getRecurringRuleRepository(),
                 testData.getSavingGoalRepository());
         exportService  = new ExportServiceImpl(reportsService);
-        importService  = new ImportServiceImpl(testData.getSavingGoalRepository());
+        importService  = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
+                testData.getTransactionRepository(),
+                testData.getAccountRepository());
+        transactionService = new TransactionServiceImpl(
+                testData.getTransactionRepository(),
+                testData.getAccountRepository(),
+                testData.getCategoryRepository(),
+                testData.getSavingGoalRepository());
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                testData.getTransactionRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
+    //  TODO: doplniť po dokončení DB vrstvy
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
+
+        // In-memory pre časti ktoré ešte nemajú JDBC implementáciu
+        TestDataInitializer testData = new TestDataInitializer();
 
         // ── Hotové JDBC repozitáre ──
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
         TransactionRepository transactionRepo = new TransactionRepositoryImpl();
+        RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
+        SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
         CategoryRepository categoryRepo = new CategoryRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
         profileService = new ProfileServiceImpl(userRepo, userService);
-
-        // ── Zvyšok stále in-memory
-        TestDataInitializer testData = new TestDataInitializer();
+        adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         overviewService = new OverviewServiceImpl(
                 transactionRepo,
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository()
-        );
+                recurringRuleRepo,
+                savingGoalRepo);
 
         accountService = new AccountServiceImpl(
                 accountRepo,
-                testData.getSavingGoalRepository());
+                savingGoalRepo);
 
         reportsService = new ReportsServiceImpl(
                 transactionRepo,
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository());
+                recurringRuleRepo,
+                savingGoalRepo);
 
         exportService = new ExportServiceImpl(reportsService);
-        importService = new ImportServiceImpl(testData.getSavingGoalRepository());
+
+        importService = new ImportServiceImpl(
+                savingGoalRepo,
+                accountService,
+                transactionRepo,
+                accountRepo);
+
+        transactionService = new TransactionServiceImpl(
+                transactionRepo,
+                accountRepo,
+                categoryRepo,
+                savingGoalRepo);
+
+        categoryService = new CategoryServiceImpl(categoryRepo);
+
+        budgetService = new BudgetServiceImpl(
+                testData.getBudgetRepository(),
+                transactionRepo);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // RecurringRuleRepository recurringRepo  = new RecurringRuleRepositoryImpl();
-        // SavingGoalRepository savingGoalRepo    = new SavingGoalRepositoryImpl();
-
-        // overviewService = new OverviewServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // accountService  = new AccountServiceImpl(accountRepo, savingGoalRepo);
-        // reportsService  = new ReportsServiceImpl(transactionRepo, recurringRepo, savingGoalRepo);
-        // exportService   = new ExportServiceImpl(reportsService);
-        // importService   = new ImportServiceImpl(savingGoalRepo);
+        // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
+        // SavingGoalRepository savingGoalRepo   = new SavingGoalRepositoryImpl();
+        // CategoryRepository categoryRepo       = new CategoryRepositoryImpl();
+        // BudgetRepository budgetRepo           = new BudgetRepositoryImpl();
     }
 
     //  GETTERY — UI vrstva volá tieto metódy
@@ -173,16 +205,37 @@ public final class ServiceLocator {
         return importService;
     }
 
-    /** User helper service for current-user access and normalization logic. */
+    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi a normalizáciu. */
     public static UserService getUserService() {
         checkInitialized();
         return userService;
     }
 
-    /** Profile operations: update profile and change password. */
+    /** Operácie profilu: úprava údajov a zmena hesla. */
     public static ProfileService getProfileService() {
         checkInitialized();
         return profileService;
+    }
+
+    /** Administrátorské operácie pre panel správy používateľov. */
+    public static AdminService getAdminService() {
+        checkInitialized();
+        return adminService;
+    }
+
+    public static TransactionService getTransactionService() {
+        checkInitialized();
+        return transactionService;
+    }
+
+    public static CategoryService getCategoryService() {
+        checkInitialized();
+        return categoryService;
+    }
+
+    public static BudgetService getBudgetService() {
+        checkInitialized();
+        return budgetService;
     }
 
     //  HELPER
