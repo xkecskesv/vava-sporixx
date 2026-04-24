@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.Category;
 import sk.sporixx.model.RecurringRule;
+import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
@@ -20,26 +21,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ManagementController {
 
     private static final int MAX_VISIBLE_ACCOUNT_CARDS = 2;
 
-    // Categories
+    // ── Categories ───────────────────────────────────────────────
     @FXML private VBox categoriesList;
     @FXML private Button categoryAddBtn;
     @FXML private Button categoryEditBtn;
     @FXML private Button categoryDeleteBtn;
     @FXML private Label categoryErrorLabel;
 
-    // Category modal
     @FXML private StackPane categoryModalOverlay;
     @FXML private Label categoryModalTitle;
     @FXML private TextField categoryNameField;
     @FXML private Label categoryModalErrorLabel;
 
-    // Accounts
+    // ── Accounts ─────────────────────────────────────────────────
     @FXML private Label accountManagerSubtitle;
     @FXML private Label accountManagerCurrency;
     @FXML private HBox defaultAccountsRow;
@@ -47,7 +48,7 @@ public class ManagementController {
     @FXML private Button accountAddBtn;
     @FXML private Label accountErrorLabel;
 
-    // Account modal
+    // New account modal
     @FXML private StackPane accountModalOverlay;
     @FXML private Label accountModalTitle;
     @FXML private ComboBox<String> accountTypeComboBox;
@@ -58,14 +59,22 @@ public class ManagementController {
     @FXML private DatePicker accountDatePicker;
     @FXML private Label accountModalErrorLabel;
 
-    // Recurring list
+    // Edit account modal
+    @FXML private StackPane editAccountModalOverlay;
+    @FXML private Label editAccountModalTitle;
+    @FXML private TextField editAccountDescField;
+    @FXML private VBox editAccountGoalSection;
+    @FXML private TextField editAccountGoalField;
+    @FXML private DatePicker editAccountDatePicker;
+    @FXML private Label editAccountModalErrorLabel;
+
+    // ── Recurring ────────────────────────────────────────────────
     @FXML private VBox recurringList;
     @FXML private Button recurringAddBtn;
     @FXML private Button recurringEditBtn;
     @FXML private Button recurringDeleteBtn;
     @FXML private Label recurringErrorLabel;
 
-    // Recurring modal
     @FXML private StackPane recurringModalOverlay;
     @FXML private Label recurringModalTitle;
     @FXML private TextField recurringNameField;
@@ -79,47 +88,52 @@ public class ManagementController {
     @FXML private TextField recurringMaxOccurrencesField;
     @FXML private Label recurringModalErrorLabel;
 
-    // State — categories
+    // ── State ────────────────────────────────────────────────────
     private List<Category> categories;
     private List<Category> selectableCategories;
     private Category selectedCategory = null;
     private Category editingCategory = null;
 
-    // State — accounts pagination
     private List<Account> allDefaultAccounts = new ArrayList<>();
     private List<Account> allSavingAccounts = new ArrayList<>();
     private int defaultAccountOffset = 0;
     private int savingAccountOffset = 0;
+    private Account editingAccount = null;
 
-    // State — recurring
     private List<RecurringRule> recurringRules;
     private RecurringRule selectedRecurringRule = null;
     private RecurringRule editingRecurringRule = null;
 
+    // ════════════════════════════════════════════════════════════
     @FXML
     public void initialize() {
         fixButtonSize(categoryDeleteBtn);
         fixButtonSize(categoryEditBtn);
         fixButtonSize(recurringDeleteBtn);
         fixButtonSize(recurringEditBtn);
-
         loadCategories();
         loadAccounts();
         loadRecurring();
     }
 
     private void fixButtonSize(Button btn) {
-        btn.setMinWidth(36);
-        btn.setMaxWidth(36);
-        btn.setPrefWidth(36);
-        btn.setMinHeight(36);
-        btn.setMaxHeight(36);
-        btn.setPrefHeight(36);
+        btn.setMinWidth(36); btn.setMaxWidth(36); btn.setPrefWidth(36);
+        btn.setMinHeight(36); btn.setMaxHeight(36); btn.setPrefHeight(36);
     }
 
-    // ============================================================
+    private javafx.util.StringConverter<LocalDate> dateConverter() {
+        return new javafx.util.StringConverter<>() {
+            private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            @Override public String toString(LocalDate d) { return d != null ? d.format(fmt) : ""; }
+            @Override public LocalDate fromString(String s) {
+                return (s != null && !s.isEmpty()) ? LocalDate.parse(s, fmt) : null;
+            }
+        };
+    }
+
+    // ════════════════════════════════════════════════════════════
     //  CATEGORIES
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
     private void loadCategories() {
         try {
             categories = ServiceLocator.getCategoryService().getCategories();
@@ -135,9 +149,8 @@ public class ManagementController {
     private void renderCategories() {
         categoriesList.getChildren().clear();
         selectedCategory = null;
-        for (Category cat : categories) {
+        for (Category cat : categories)
             categoriesList.getChildren().add(createCategoryRow(cat));
-        }
         if (categories.isEmpty()) {
             Label empty = new Label(Localization.get("management.categories.empty"));
             empty.getStyleClass().add("analytics-subtitle");
@@ -159,16 +172,13 @@ public class ManagementController {
     }
 
     private void selectCategoryRow(HBox row, Category cat) {
-        categoriesList.getChildren().forEach(n -> {
-            if (n instanceof HBox r) r.getStyleClass().setAll("table-row");
-        });
+        categoriesList.getChildren().forEach(n -> { if (n instanceof HBox r) r.getStyleClass().setAll("table-row"); });
         if (selectedCategory == cat) { selectedCategory = null; return; }
         selectedCategory = cat;
         row.getStyleClass().setAll("table-row-selected");
     }
 
-    @FXML
-    private void handleCategoryAdd() {
+    @FXML private void handleCategoryAdd() {
         editingCategory = null;
         categoryModalTitle.setText(Localization.get("management.categories.modal.title_add"));
         categoryNameField.clear();
@@ -176,8 +186,7 @@ public class ManagementController {
         openCategoryModal();
     }
 
-    @FXML
-    private void handleCategoryEdit() {
+    @FXML private void handleCategoryEdit() {
         clearCategoryError();
         if (selectedCategory == null) { showCategoryError("management.categories.error.select_first"); return; }
         if (selectedCategory.isSystemCategory()) { showCategoryError("category.error.cannot_modify_system"); return; }
@@ -188,8 +197,7 @@ public class ManagementController {
         openCategoryModal();
     }
 
-    @FXML
-    private void handleCategoryDelete() {
+    @FXML private void handleCategoryDelete() {
         clearCategoryError();
         if (selectedCategory == null) { showCategoryError("management.categories.error.select_first"); return; }
         if (selectedCategory.isSystemCategory()) { showCategoryError("category.error.cannot_modify_system"); return; }
@@ -203,17 +211,13 @@ public class ManagementController {
         }
     }
 
-    @FXML
-    private void onCategoryModalConfirm() {
+    @FXML private void onCategoryModalConfirm() {
         clearCategoryModalError();
         String name = categoryNameField.getText().trim();
         if (name.isEmpty()) { showCategoryModalError("category.error.name_required"); return; }
         try {
-            if (editingCategory == null) {
-                ServiceLocator.getCategoryService().addCategory(name);
-            } else {
-                ServiceLocator.getCategoryService().updateCategory(editingCategory.getId(), name);
-            }
+            if (editingCategory == null) ServiceLocator.getCategoryService().addCategory(name);
+            else ServiceLocator.getCategoryService().updateCategory(editingCategory.getId(), name);
             closeCategoryModal();
             resetCategoryState();
             loadCategories();
@@ -223,87 +227,46 @@ public class ManagementController {
         }
     }
 
-    @FXML
-    private void onCategoryModalClose() {
-        closeCategoryModal();
-        resetCategoryState();
-    }
+    @FXML private void onCategoryModalClose() { closeCategoryModal(); resetCategoryState(); }
 
     private void resetCategoryState() {
-        selectedCategory = null;
-        editingCategory = null;
+        selectedCategory = null; editingCategory = null;
         categoryEditBtn.getStyleClass().remove("btn-icon-active");
-        if (!categoryEditBtn.getStyleClass().contains("btn-icon-edit"))
-            categoryEditBtn.getStyleClass().add("btn-icon-edit");
+        if (!categoryEditBtn.getStyleClass().contains("btn-icon-edit")) categoryEditBtn.getStyleClass().add("btn-icon-edit");
         categoryDeleteBtn.getStyleClass().remove("btn-icon-danger-active");
-        if (!categoryDeleteBtn.getStyleClass().contains("btn-icon-danger"))
-            categoryDeleteBtn.getStyleClass().add("btn-icon-danger");
-        fixButtonSize(categoryEditBtn);
-        fixButtonSize(categoryDeleteBtn);
-        categoriesList.getChildren().forEach(n -> {
-            if (n instanceof HBox r) r.getStyleClass().setAll("table-row");
-        });
+        if (!categoryDeleteBtn.getStyleClass().contains("btn-icon-danger")) categoryDeleteBtn.getStyleClass().add("btn-icon-danger");
+        fixButtonSize(categoryEditBtn); fixButtonSize(categoryDeleteBtn);
+        categoriesList.getChildren().forEach(n -> { if (n instanceof HBox r) r.getStyleClass().setAll("table-row"); });
     }
 
     private void openCategoryModal() {
-        final boolean[] pressedOnOverlay = {false};
-        categoryModalOverlay.setOnMousePressed(e -> pressedOnOverlay[0] = e.getTarget() == categoryModalOverlay);
-        categoryModalOverlay.setOnMouseReleased(e -> {
-            if (pressedOnOverlay[0] && e.getTarget() == categoryModalOverlay) closeCategoryModal();
-        });
-        categoryModalOverlay.setVisible(true);
-        categoryModalOverlay.setManaged(true);
+        final boolean[] p = {false};
+        categoryModalOverlay.setOnMousePressed(e -> p[0] = e.getTarget() == categoryModalOverlay);
+        categoryModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == categoryModalOverlay) closeCategoryModal(); });
+        categoryModalOverlay.setVisible(true); categoryModalOverlay.setManaged(true);
     }
+    private void closeCategoryModal() { categoryModalOverlay.setVisible(false); categoryModalOverlay.setManaged(false); }
+    private void showCategoryError(String key) { categoryErrorLabel.setText(Localization.get(key)); categoryErrorLabel.setVisible(true); categoryErrorLabel.setManaged(true); }
+    private void clearCategoryError() { categoryErrorLabel.setVisible(false); categoryErrorLabel.setManaged(false); }
+    private void showCategoryModalError(String key) { categoryModalErrorLabel.setText(Localization.get(key)); categoryModalErrorLabel.setVisible(true); categoryModalErrorLabel.setManaged(true); }
+    private void clearCategoryModalError() { categoryModalErrorLabel.setVisible(false); categoryModalErrorLabel.setManaged(false); }
 
-    private void closeCategoryModal() {
-        categoryModalOverlay.setVisible(false);
-        categoryModalOverlay.setManaged(false);
-    }
-
-    private void showCategoryError(String key) {
-        categoryErrorLabel.setText(Localization.get(key));
-        categoryErrorLabel.setVisible(true);
-        categoryErrorLabel.setManaged(true);
-    }
-
-    private void clearCategoryError() {
-        categoryErrorLabel.setVisible(false);
-        categoryErrorLabel.setManaged(false);
-    }
-
-    private void showCategoryModalError(String key) {
-        categoryModalErrorLabel.setText(Localization.get(key));
-        categoryModalErrorLabel.setVisible(true);
-        categoryModalErrorLabel.setManaged(true);
-    }
-
-    private void clearCategoryModalError() {
-        categoryModalErrorLabel.setVisible(false);
-        categoryModalErrorLabel.setManaged(false);
-    }
-
-    // ============================================================
-    //  ACCOUNTS
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
+    //  ACCOUNTS — načítanie a rendering
+    // ════════════════════════════════════════════════════════════
     private void loadAccounts() {
         try {
             List<Account> accounts = SessionManager.getInstance().getAccounts();
-            accountManagerSubtitle.setText(
-                    Localization.get("management.accounts.total") + ": " + accounts.size());
-            accountManagerCurrency.setText(
-                    Localization.get("management.accounts.currency") + ": Eur");
-            allDefaultAccounts = accounts.stream()
-                    .filter(a -> !a.isSavingAccount())
-                    .collect(Collectors.toList());
-            allSavingAccounts = accounts.stream()
-                    .filter(Account::isSavingAccount)
-                    .collect(Collectors.toList());
+            accountManagerSubtitle.setText(Localization.get("management.accounts.total") + ": " + accounts.size());
+            accountManagerCurrency.setText(Localization.get("management.accounts.currency") + ": Eur");
+            allDefaultAccounts = accounts.stream().filter(a -> !a.isSavingAccount()).collect(Collectors.toList());
+            allSavingAccounts  = accounts.stream().filter(Account::isSavingAccount).collect(Collectors.toList());
             defaultAccountOffset = 0;
-            savingAccountOffset = 0;
+            savingAccountOffset  = 0;
         } catch (Exception e) {
             showAccountError("error.db_error");
             allDefaultAccounts = List.of();
-            allSavingAccounts = List.of();
+            allSavingAccounts  = List.of();
         }
         renderDefaultAccounts();
         renderSavingAccounts();
@@ -311,27 +274,19 @@ public class ManagementController {
 
     private void renderDefaultAccounts() {
         defaultAccountsRow.getChildren().clear();
-
         boolean canLeft = defaultAccountOffset > 0;
         defaultAccountsRow.getChildren().add(createArrow(true, canLeft, () -> {
             defaultAccountOffset = Math.max(0, defaultAccountOffset - 1);
             renderDefaultAccounts();
         }));
-
         int from = defaultAccountOffset;
         int to = Math.min(from + MAX_VISIBLE_ACCOUNT_CARDS, allDefaultAccounts.size());
-        for (int i = from; i < to; i++) {
+        for (int i = from; i < to; i++)
             defaultAccountsRow.getChildren().add(createAccountCard(allDefaultAccounts.get(i)));
-        }
-
         boolean isLastPage = to >= allDefaultAccounts.size();
-        if (isLastPage) {
-            // + karta — vždy otvára modal fixne na "Account" (private)
+        if (isLastPage)
             defaultAccountsRow.getChildren().add(createAddCard(() -> openAccountModal(false)));
-        }
-
-        boolean canRight = !isLastPage;
-        defaultAccountsRow.getChildren().add(createArrow(false, canRight, () -> {
+        defaultAccountsRow.getChildren().add(createArrow(false, !isLastPage, () -> {
             defaultAccountOffset++;
             renderDefaultAccounts();
         }));
@@ -339,27 +294,19 @@ public class ManagementController {
 
     private void renderSavingAccounts() {
         savingAccountsRow.getChildren().clear();
-
         boolean canLeft = savingAccountOffset > 0;
         savingAccountsRow.getChildren().add(createArrow(true, canLeft, () -> {
             savingAccountOffset = Math.max(0, savingAccountOffset - 1);
             renderSavingAccounts();
         }));
-
         int from = savingAccountOffset;
         int to = Math.min(from + MAX_VISIBLE_ACCOUNT_CARDS, allSavingAccounts.size());
-        for (int i = from; i < to; i++) {
+        for (int i = from; i < to; i++)
             savingAccountsRow.getChildren().add(createAccountCard(allSavingAccounts.get(i)));
-        }
-
         boolean isLastPage = to >= allSavingAccounts.size();
-        if (isLastPage) {
-            // + karta — vždy otvára modal fixne na "Saving Account"
+        if (isLastPage)
             savingAccountsRow.getChildren().add(createAddCard(() -> openAccountModal(true)));
-        }
-
-        boolean canRight = !isLastPage;
-        savingAccountsRow.getChildren().add(createArrow(false, canRight, () -> {
+        savingAccountsRow.getChildren().add(createArrow(false, !isLastPage, () -> {
             savingAccountOffset++;
             renderSavingAccounts();
         }));
@@ -371,20 +318,14 @@ public class ManagementController {
         arrow.getStyleClass().add("accounts-arrow");
         arrow.setAlignment(Pos.CENTER);
         try {
-            String iconPath = isLeft
-                    ? "/assets/icons/icon_arrow_left.png"
-                    : "/assets/icons/icon_arrow_right.png";
-            ImageView icon = new ImageView(new Image(
-                    Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
-            icon.setFitWidth(24);
-            icon.setFitHeight(24);
-            icon.setPreserveRatio(true);
+            String path = isLeft ? "/assets/icons/icon_arrow_left.png" : "/assets/icons/icon_arrow_right.png";
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
+            icon.setFitWidth(24); icon.setFitHeight(24); icon.setPreserveRatio(true);
             icon.getStyleClass().add("accounts-arrow-icon");
             arrow.getChildren().add(icon);
         } catch (Exception ignored) {}
         arrow.setOnMouseClicked(e -> onClick.run());
-        arrow.setVisible(visible);
-        arrow.setManaged(visible);
+        arrow.setVisible(visible); arrow.setManaged(visible);
         return arrow;
     }
 
@@ -418,37 +359,37 @@ public class ManagementController {
         if (canDelete) {
             Button deleteBtn = new Button();
             deleteBtn.getStyleClass().add("btn-icon-danger");
+            fixButtonSize(deleteBtn);
             try {
-                ImageView deleteIcon = new ImageView(new Image(Objects.requireNonNull(
+                ImageView icon = new ImageView(new Image(Objects.requireNonNull(
                         getClass().getResourceAsStream("/assets/icons/icon_delete.png"))));
-                deleteIcon.setFitWidth(14);
-                deleteIcon.setFitHeight(14);
-                deleteIcon.setPreserveRatio(true);
-                deleteBtn.setGraphic(deleteIcon);
+                icon.setFitWidth(14); icon.setFitHeight(14); icon.setPreserveRatio(true);
+                deleteBtn.setGraphic(icon);
             } catch (Exception ignored) {}
             deleteBtn.setOnAction(e -> handleAccountDelete(account));
             header.getChildren().add(deleteBtn);
         }
 
-        Button editBtn = new Button();
-        editBtn.getStyleClass().add("btn-icon");
-        try {
-            ImageView editIcon = new ImageView(new Image(Objects.requireNonNull(
-                    getClass().getResourceAsStream("/assets/icons/icon_edit.png"))));
-            editIcon.setFitWidth(14);
-            editIcon.setFitHeight(14);
-            editIcon.setPreserveRatio(true);
-            editBtn.setGraphic(editIcon);
-        } catch (Exception ignored) {}
-        editBtn.setOnAction(e -> handleAccountEdit(account));
-        header.getChildren().add(editBtn);
+        // Edit button — pre všetkých okrem Main Account
+        if (!account.isMainAccount()) {
+            Button editBtn = new Button();
+            editBtn.getStyleClass().add("btn-icon-edit");
+            fixButtonSize(editBtn);
+            try {
+                ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/assets/icons/icon_edit.png"))));
+                icon.setFitWidth(14); icon.setFitHeight(14); icon.setPreserveRatio(true);
+                editBtn.setGraphic(icon);
+            } catch (Exception ignored) {}
+            editBtn.setOnAction(e -> handleAccountEdit(account));
+            header.getChildren().add(editBtn);
+        }
 
         Label desc = new Label(account.getDescription());
         desc.getStyleClass().add("account-card-desc");
 
         Label created = new Label(Localization.get("management.accounts.created") + ": "
-                + account.getCreatedAt().toLocalDate()
-                .format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+                + account.getCreatedAt().toLocalDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
         created.getStyleClass().add("analytics-subtitle");
 
         Region vspacer = new Region();
@@ -468,17 +409,10 @@ public class ManagementController {
         return card;
     }
 
-    // ============================================================
-    //  ACCOUNT MODAL
-    // ============================================================
-
-    /**
-     * Volaný cez ADD button hore — zobrazí dropdown s oboma typmi.
-     */
-    @FXML
-    private void handleAccountAdd() {
-        openAccountModal(null);
-    }
+    // ════════════════════════════════════════════════════════════
+    //  ACCOUNT — nový účet modal
+    // ════════════════════════════════════════════════════════════
+    @FXML private void handleAccountAdd() { openAccountModal(null); }
 
     /**
      * @param forceSaving null = dropdown (Add button), true = len Saving, false = len Account
@@ -503,46 +437,31 @@ public class ManagementController {
             accountTypeComboBox.setDisable(true);
         }
 
-        updateGoalSectionVisibility();
-        accountTypeComboBox.setOnAction(e -> updateGoalSectionVisibility());
+        updateNewAccountGoalVisibility();
+        accountTypeComboBox.setOnAction(e -> updateNewAccountGoalVisibility());
 
         accountDescField.clear();
         accountAmountField.clear();
         accountGoalField.clear();
         accountDatePicker.setValue(null);
-        accountDatePicker.setConverter(new javafx.util.StringConverter<>() {
-            private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            @Override public String toString(LocalDate d) { return d != null ? d.format(fmt) : ""; }
-            @Override public LocalDate fromString(String s) {
-                return (s != null && !s.isEmpty()) ? LocalDate.parse(s, fmt) : null;
-            }
-        });
+        accountDatePicker.setConverter(dateConverter());
 
-        final boolean[] pressedOnOverlay = {false};
-        accountModalOverlay.setOnMousePressed(e -> pressedOnOverlay[0] = e.getTarget() == accountModalOverlay);
-        accountModalOverlay.setOnMouseReleased(e -> {
-            if (pressedOnOverlay[0] && e.getTarget() == accountModalOverlay) closeAccountModal();
-        });
-
-        accountModalOverlay.setVisible(true);
-        accountModalOverlay.setManaged(true);
+        final boolean[] p = {false};
+        accountModalOverlay.setOnMousePressed(e -> p[0] = e.getTarget() == accountModalOverlay);
+        accountModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == accountModalOverlay) closeAccountModal(); });
+        accountModalOverlay.setVisible(true); accountModalOverlay.setManaged(true);
     }
 
-    private void updateGoalSectionVisibility() {
-        boolean isSaving = Localization.get("dashboard.account.saving")
-                .equals(accountTypeComboBox.getValue());
-        accountGoalSection.setVisible(isSaving);
-        accountGoalSection.setManaged(isSaving);
+    private void updateNewAccountGoalVisibility() {
+        boolean isSaving = Localization.get("dashboard.account.saving").equals(accountTypeComboBox.getValue());
+        accountGoalSection.setVisible(isSaving); accountGoalSection.setManaged(isSaving);
     }
 
-    @FXML
-    private void onAccountModalConfirm() {
+    @FXML private void onAccountModalConfirm() {
         clearAccountModalError();
-
         String desc = accountDescField.getText().trim();
         String amountText = accountAmountField.getText().trim();
-        boolean isSaving = Localization.get("dashboard.account.saving")
-                .equals(accountTypeComboBox.getValue());
+        boolean isSaving = Localization.get("dashboard.account.saving").equals(accountTypeComboBox.getValue());
 
         if (desc.isEmpty()) { showAccountModalError("account.error.description_required"); return; }
         if (amountText.isEmpty()) { showAccountModalError("account.error.negative_amount"); return; }
@@ -551,9 +470,7 @@ public class ManagementController {
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
             if (amount < 0) { showAccountModalError("account.error.negative_amount"); return; }
-        } catch (NumberFormatException e) {
-            showAccountModalError("account.error.negative_amount"); return;
-        }
+        } catch (NumberFormatException e) { showAccountModalError("account.error.negative_amount"); return; }
 
         try {
             if (isSaving) {
@@ -563,11 +480,8 @@ public class ManagementController {
                 double goalAmount;
                 try {
                     goalAmount = Double.parseDouble(goalText.replace(",", "."));
-                } catch (NumberFormatException e) {
-                    showAccountModalError("account.error.goal_amount_invalid"); return;
-                }
-                ServiceLocator.getAccountService()
-                        .createSavingAccount(desc, amount, goalAmount, accountDatePicker.getValue());
+                } catch (NumberFormatException e) { showAccountModalError("account.error.goal_amount_invalid"); return; }
+                ServiceLocator.getAccountService().createSavingAccount(desc, amount, goalAmount, accountDatePicker.getValue());
             } else {
                 ServiceLocator.getAccountService().createPrivateAccount(desc, amount);
             }
@@ -579,18 +493,88 @@ public class ManagementController {
         }
     }
 
-    @FXML
-    private void onAccountModalClose() {
-        closeAccountModal();
-    }
+    @FXML private void onAccountModalClose() { closeAccountModal(); }
+    private void closeAccountModal() { accountModalOverlay.setVisible(false); accountModalOverlay.setManaged(false); }
 
-    private void closeAccountModal() {
-        accountModalOverlay.setVisible(false);
-        accountModalOverlay.setManaged(false);
-    }
-
+    // ════════════════════════════════════════════════════════════
+    //  ACCOUNT — edit modal
+    // ════════════════════════════════════════════════════════════
     private void handleAccountEdit(Account account) {
-        // TODO: keď Adelka dodá AccountService rozhranie pre management
+
+        System.out.println("handleAccountEdit called for: " + account.getDescription());
+        editingAccount = account;
+        clearEditAccountModalError();
+
+        editingAccount = account;
+        clearEditAccountModalError();
+
+        editAccountModalTitle.setText(Localization.get("management.accounts.modal.edit_title"));
+
+        // Description — vždy predvyplnená
+        editAccountDescField.setText(account.getDescription());
+
+        boolean isSaving = account.isSavingAccount();
+        editAccountGoalSection.setVisible(isSaving);
+        editAccountGoalSection.setManaged(isSaving);
+
+        if (isSaving) {
+            editAccountDatePicker.setConverter(dateConverter());
+            // Predvyplň goal hodnoty cez getSavingGoal
+            try {
+                Optional<SavingGoal> goalOpt = ServiceLocator.getAccountService().getSavingGoal(account.getId());
+                if (goalOpt.isPresent()) {
+                    SavingGoal goal = goalOpt.get();
+                    editAccountGoalField.setText(String.format("%.2f", goal.getTargetAmount()));
+                    editAccountDatePicker.setValue(goal.getTargetDate().toLocalDate());
+                } else {
+                    editAccountGoalField.clear();
+                    editAccountDatePicker.setValue(null);
+                }
+            } catch (Exception e) {
+                editAccountGoalField.clear();
+                editAccountDatePicker.setValue(null);
+            }
+        }
+
+        final boolean[] p = {false};
+        editAccountModalOverlay.setOnMousePressed(e -> p[0] = e.getTarget() == editAccountModalOverlay);
+        editAccountModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == editAccountModalOverlay) closeEditAccountModal(); });
+        editAccountModalOverlay.setVisible(true); editAccountModalOverlay.setManaged(true);
+    }
+
+    @FXML private void onEditAccountModalConfirm() {
+        clearEditAccountModalError();
+        if (editingAccount == null) { closeEditAccountModal(); return; }
+
+        String desc = editAccountDescField.getText().trim();
+        if (desc.isEmpty()) { showEditAccountModalError("account.error.description_required"); return; }
+
+        try {
+            if (editingAccount.isSavingAccount()) {
+                String goalText = editAccountGoalField.getText().trim();
+                if (goalText.isEmpty()) { showEditAccountModalError("account.error.goal_amount_invalid"); return; }
+                if (editAccountDatePicker.getValue() == null) { showEditAccountModalError("account.error.goal_date_invalid"); return; }
+                double goalAmount;
+                try {
+                    goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                } catch (NumberFormatException e) { showEditAccountModalError("account.error.goal_amount_invalid"); return; }
+                ServiceLocator.getAccountService().updateSavingAccount(
+                        editingAccount.getId(), desc, goalAmount, editAccountDatePicker.getValue());
+            } else {
+                ServiceLocator.getAccountService().updateAccountDescription(editingAccount.getId(), desc);
+            }
+            closeEditAccountModal();
+            loadAccounts();
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            showEditAccountModalError(msg != null && msg.startsWith("account.error.") ? msg : "error.db_error");
+        }
+    }
+
+    @FXML private void onEditAccountModalClose() { closeEditAccountModal(); }
+    private void closeEditAccountModal() {
+        editingAccount = null;
+        editAccountModalOverlay.setVisible(false); editAccountModalOverlay.setManaged(false);
     }
 
     private void handleAccountDelete(Account account) {
@@ -603,26 +587,15 @@ public class ManagementController {
         }
     }
 
-    private void showAccountError(String key) {
-        accountErrorLabel.setText(Localization.get(key));
-        accountErrorLabel.setVisible(true);
-        accountErrorLabel.setManaged(true);
-    }
+    private void showAccountError(String key) { accountErrorLabel.setText(Localization.get(key)); accountErrorLabel.setVisible(true); accountErrorLabel.setManaged(true); }
+    private void showAccountModalError(String key) { accountModalErrorLabel.setText(Localization.get(key)); accountModalErrorLabel.setVisible(true); accountModalErrorLabel.setManaged(true); }
+    private void clearAccountModalError() { accountModalErrorLabel.setVisible(false); accountModalErrorLabel.setManaged(false); }
+    private void showEditAccountModalError(String key) { editAccountModalErrorLabel.setText(Localization.get(key)); editAccountModalErrorLabel.setVisible(true); editAccountModalErrorLabel.setManaged(true); }
+    private void clearEditAccountModalError() { editAccountModalErrorLabel.setVisible(false); editAccountModalErrorLabel.setManaged(false); }
 
-    private void showAccountModalError(String key) {
-        accountModalErrorLabel.setText(Localization.get(key));
-        accountModalErrorLabel.setVisible(true);
-        accountModalErrorLabel.setManaged(true);
-    }
-
-    private void clearAccountModalError() {
-        accountModalErrorLabel.setVisible(false);
-        accountModalErrorLabel.setManaged(false);
-    }
-
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
     //  RECURRING
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
     private void loadRecurring() {
         try {
             recurringRules = ServiceLocator.getRecurringRuleService().getRecurringRules();
@@ -644,9 +617,8 @@ public class ManagementController {
             recurringList.getChildren().add(empty);
             return;
         }
-        for (RecurringRule rule : recurringRules) {
+        for (RecurringRule rule : recurringRules)
             recurringList.getChildren().add(createRecurringRow(rule));
-        }
     }
 
     private HBox createRecurringRow(RecurringRule rule) {
@@ -684,16 +656,13 @@ public class ManagementController {
     }
 
     private void selectRecurringRow(HBox row, RecurringRule rule) {
-        recurringList.getChildren().forEach(n -> {
-            if (n instanceof HBox r) r.getStyleClass().setAll("table-row");
-        });
+        recurringList.getChildren().forEach(n -> { if (n instanceof HBox r) r.getStyleClass().setAll("table-row"); });
         if (selectedRecurringRule == rule) { selectedRecurringRule = null; return; }
         selectedRecurringRule = rule;
         row.getStyleClass().setAll("table-row-selected");
     }
 
-    @FXML
-    private void handleRecurringAdd() {
+    @FXML private void handleRecurringAdd() {
         clearRecurringError();
         editingRecurringRule = null;
         recurringModalTitle.setText(Localization.get("management.recurring.modal.title_add"));
@@ -701,8 +670,7 @@ public class ManagementController {
         openRecurringModal();
     }
 
-    @FXML
-    private void handleRecurringEdit() {
+    @FXML private void handleRecurringEdit() {
         clearRecurringError();
         if (selectedRecurringRule == null) { showRecurringError("management.recurring.error.select_first"); return; }
         editingRecurringRule = selectedRecurringRule;
@@ -712,8 +680,7 @@ public class ManagementController {
         openRecurringModal();
     }
 
-    @FXML
-    private void handleRecurringDelete() {
+    @FXML private void handleRecurringDelete() {
         clearRecurringError();
         if (selectedRecurringRule == null) { showRecurringError("management.recurring.error.select_first"); return; }
         try {
@@ -726,8 +693,7 @@ public class ManagementController {
         }
     }
 
-    @FXML
-    private void onRecurringModalConfirm() {
+    @FXML private void onRecurringModalConfirm() {
         clearRecurringModalError();
 
         String name = recurringNameField.getText().trim();
@@ -811,32 +777,18 @@ public class ManagementController {
         return "MONTHLY";
     }
 
-    @FXML
-    private void onRecurringModalClose() {
-        closeRecurringModal();
-        resetRecurringState();
-    }
+    @FXML private void onRecurringModalClose() { closeRecurringModal(); resetRecurringState(); }
 
     private void clearRecurringModal() {
-        recurringNameField.clear();
-        recurringAmountField.clear();
-        recurringIntervalField.clear();
-        recurringMaxOccurrencesField.clear();
+        recurringNameField.clear(); recurringAmountField.clear();
+        recurringIntervalField.clear(); recurringMaxOccurrencesField.clear();
         recurringStartDatePicker.setValue(LocalDate.now());
-        recurringStartDatePicker.setConverter(new javafx.util.StringConverter<>() {
-            private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            @Override public String toString(LocalDate d) { return d != null ? d.format(fmt) : ""; }
-            @Override public LocalDate fromString(String s) {
-                return (s != null && !s.isEmpty()) ? LocalDate.parse(s, fmt) : null;
-            }
-        });
-        try {
-            selectableCategories = ServiceLocator.getCategoryService().getCategories();
-        } catch (Exception e) {
-            selectableCategories = List.of();
-        }
-        recurringCategoryCombo.getItems().setAll(
-                selectableCategories.stream().map(Category::getName).toList());
+        recurringStartDatePicker.setConverter(dateConverter());
+
+        try { selectableCategories = ServiceLocator.getCategoryService().getCategories(); }
+        catch (Exception e) { selectableCategories = List.of(); }
+
+        recurringCategoryCombo.getItems().setAll(selectableCategories.stream().map(Category::getName).toList());
         if (!recurringCategoryCombo.getItems().isEmpty())
             recurringCategoryCombo.setValue(recurringCategoryCombo.getItems().get(0));
 
@@ -852,11 +804,9 @@ public class ManagementController {
         recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
 
         recurringTypeCombo.setOnAction(e -> {
-            boolean isExpense = Localization.get("management.recurring.modal.type_expense")
-                    .equals(recurringTypeCombo.getValue());
+            boolean isExpense = Localization.get("management.recurring.modal.type_expense").equals(recurringTypeCombo.getValue());
             recurringClassificationCombo.setDisable(!isExpense);
-            if (!isExpense)
-                recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
+            if (!isExpense) recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
         });
 
         recurringFrequencyCombo.getItems().setAll(
@@ -904,61 +854,31 @@ public class ManagementController {
     }
 
     private void openRecurringModal() {
-        final boolean[] pressedOnOverlay = {false};
-        recurringModalOverlay.setOnMousePressed(e -> pressedOnOverlay[0] = e.getTarget() == recurringModalOverlay);
-        recurringModalOverlay.setOnMouseReleased(e -> {
-            if (pressedOnOverlay[0] && e.getTarget() == recurringModalOverlay) closeRecurringModal();
-        });
-        recurringModalOverlay.setVisible(true);
-        recurringModalOverlay.setManaged(true);
+        final boolean[] p = {false};
+        recurringModalOverlay.setOnMousePressed(e -> p[0] = e.getTarget() == recurringModalOverlay);
+        recurringModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == recurringModalOverlay) closeRecurringModal(); });
+        recurringModalOverlay.setVisible(true); recurringModalOverlay.setManaged(true);
     }
-
-    private void closeRecurringModal() {
-        recurringModalOverlay.setVisible(false);
-        recurringModalOverlay.setManaged(false);
-    }
+    private void closeRecurringModal() { recurringModalOverlay.setVisible(false); recurringModalOverlay.setManaged(false); }
 
     private void resetRecurringState() {
-        selectedRecurringRule = null;
-        editingRecurringRule = null;
+        selectedRecurringRule = null; editingRecurringRule = null;
         recurringEditBtn.getStyleClass().remove("btn-icon-active");
-        if (!recurringEditBtn.getStyleClass().contains("btn-icon-edit"))
-            recurringEditBtn.getStyleClass().add("btn-icon-edit");
+        if (!recurringEditBtn.getStyleClass().contains("btn-icon-edit")) recurringEditBtn.getStyleClass().add("btn-icon-edit");
         recurringDeleteBtn.getStyleClass().remove("btn-icon-danger-active");
-        if (!recurringDeleteBtn.getStyleClass().contains("btn-icon-danger"))
-            recurringDeleteBtn.getStyleClass().add("btn-icon-danger");
-        fixButtonSize(recurringEditBtn);
-        fixButtonSize(recurringDeleteBtn);
-        recurringList.getChildren().forEach(n -> {
-            if (n instanceof HBox r) r.getStyleClass().setAll("table-row");
-        });
+        if (!recurringDeleteBtn.getStyleClass().contains("btn-icon-danger")) recurringDeleteBtn.getStyleClass().add("btn-icon-danger");
+        fixButtonSize(recurringEditBtn); fixButtonSize(recurringDeleteBtn);
+        recurringList.getChildren().forEach(n -> { if (n instanceof HBox r) r.getStyleClass().setAll("table-row"); });
     }
 
-    private void showRecurringError(String key) {
-        recurringErrorLabel.setText(Localization.get(key));
-        recurringErrorLabel.setVisible(true);
-        recurringErrorLabel.setManaged(true);
-    }
+    private void showRecurringError(String key) { recurringErrorLabel.setText(Localization.get(key)); recurringErrorLabel.setVisible(true); recurringErrorLabel.setManaged(true); }
+    private void clearRecurringError() { recurringErrorLabel.setVisible(false); recurringErrorLabel.setManaged(false); }
+    private void showRecurringModalError(String key) { recurringModalErrorLabel.setText(Localization.get(key)); recurringModalErrorLabel.setVisible(true); recurringModalErrorLabel.setManaged(true); }
+    private void clearRecurringModalError() { recurringModalErrorLabel.setVisible(false); recurringModalErrorLabel.setManaged(false); }
 
-    private void clearRecurringError() {
-        recurringErrorLabel.setVisible(false);
-        recurringErrorLabel.setManaged(false);
-    }
-
-    private void showRecurringModalError(String key) {
-        recurringModalErrorLabel.setText(Localization.get(key));
-        recurringModalErrorLabel.setVisible(true);
-        recurringModalErrorLabel.setManaged(true);
-    }
-
-    private void clearRecurringModalError() {
-        recurringModalErrorLabel.setVisible(false);
-        recurringModalErrorLabel.setManaged(false);
-    }
-
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
     //  HELPERS
-    // ============================================================
+    // ════════════════════════════════════════════════════════════
     private String getAccountDisplayName(Account account) {
         if (account.isMainAccount()) return Localization.get("dashboard.account.main");
         if (account.isEmergencyFund()) return Localization.get("dashboard.account.emergency");

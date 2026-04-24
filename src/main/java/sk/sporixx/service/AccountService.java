@@ -15,7 +15,7 @@ public interface AccountService {
     Account createPrivateAccount(String description, double initialAmount);
 
     /**
-     * Vytvorí Saving účet + k nemu SavingGoal.
+     * Vytvorí Saving účet + k nvemu SavingGoal.
      * @param description popis účtu
      * @param initialAmount počiatočný zostatok
      * @param targetAmount cieľová suma
