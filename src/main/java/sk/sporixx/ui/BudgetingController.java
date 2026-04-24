@@ -13,6 +13,7 @@ import sk.sporixx.dto.BudgetData;
 import sk.sporixx.dto.BudgetWarning;
 import sk.sporixx.dto.SavingAccountReportData;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.util.List;
@@ -581,6 +582,6 @@ public class BudgetingController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }

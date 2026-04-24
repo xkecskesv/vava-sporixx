@@ -18,9 +18,8 @@ public class Main extends Application {
 
         loadFonts();
 
-        Localization.load("en");
-
         ServiceLocator.init();
+        Localization.setLanguage(ServiceLocator.getSettingsService().getLanguageCode());
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login.fxml"),
@@ -32,6 +31,7 @@ public class Main extends Application {
         stage.setTitle("Šporixx");
         stage.setScene(scene);
         SceneManager.setStage(stage);
+        SceneManager.setCurrentScene("login.fxml");
         stage.show();
     }
 

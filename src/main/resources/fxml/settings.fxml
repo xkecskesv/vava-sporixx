@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -41,24 +40,12 @@
 
                                 <VBox spacing="6.0">
                                     <Label styleClass="settings-field-label" text="%settings.general.language" />
-                                    <ComboBox prefWidth="220.0" styleClass="settings-combobox" value="%settings.general.language.english">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.general.language.english" />
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ComboBox fx:id="languageComboBox" prefWidth="220.0" styleClass="settings-combobox" />
                                 </VBox>
 
                                 <VBox spacing="6.0">
                                     <Label styleClass="settings-field-label" text="%settings.general.currency" />
-                                    <ComboBox prefWidth="220.0" styleClass="settings-combobox" value="%settings.general.currency.eur">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.general.currency.eur" />
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ComboBox fx:id="currencyComboBox" prefWidth="220.0" styleClass="settings-combobox" />
                                 </VBox>
                             </VBox>
 

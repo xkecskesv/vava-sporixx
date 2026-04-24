@@ -35,6 +35,7 @@ public final class ServiceLocator {
     private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
+    private static SettingsService settingsService;
 
     private static boolean initialized = false;
 
@@ -55,6 +56,7 @@ public final class ServiceLocator {
         logger.info("Initializing ServiceLocator (testMode={})...", USE_TEST_DATA);
 
         try {
+            settingsService = new SettingsServiceImpl();
             if (USE_TEST_DATA) {
                 initTestMode();
             } else {
@@ -236,6 +238,11 @@ public final class ServiceLocator {
     public static BudgetService getBudgetService() {
         checkInitialized();
         return budgetService;
+    }
+
+    public static SettingsService getSettingsService() {
+        checkInitialized();
+        return settingsService;
     }
 
     //  HELPER
