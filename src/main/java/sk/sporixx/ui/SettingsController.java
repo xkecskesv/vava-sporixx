@@ -18,6 +18,13 @@ public class SettingsController implements Initializable {
     private String onText = "On";
     private String offText = "Off";
 
+    /**
+     * Initializes localized toggle labels and wires all settings toggles
+     * to update their displayed text when state changes.
+     *
+     * @param location unused location of the FXML file
+     * @param resources resource bundle used for localized ON/OFF text
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (resources != null) {
@@ -39,6 +46,11 @@ public class SettingsController implements Initializable {
         }
     }
 
+    /**
+     * Updates a toggle button label according to its selected state.
+     *
+     * @param toggle target toggle button
+     */
     private void refreshToggleText(ToggleButton toggle) {
         toggle.setText(toggle.isSelected() ? onText : offText);
     }
