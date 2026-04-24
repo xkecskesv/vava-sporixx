@@ -36,10 +36,10 @@
                     <Label fx:id="totalBalance" text="€124,256.53" styleClass="dashboard-balance"/>
                 </VBox>
 
-                <VBox fx:id="pendingFamilyBanner" styleClass="dashboard-card" spacing="8"
-                      visible="false" managed="false" maxHeight="120">
-                    <Label text="%family.pending.title" styleClass="activities-group-title"/>
-                    <VBox fx:id="pendingFamilyList" spacing="6"/>
+                <VBox fx:id="pendingFamilyBanner" styleClass="dashboard-card" spacing="12"
+                      visible="false" managed="false">
+                    <Label text="%family.pending.title" styleClass="dashboard-card-title"/>
+                    <VBox fx:id="pendingFamilyList" spacing="8"/>
                 </VBox>
 
                 <!-- Account karty -->

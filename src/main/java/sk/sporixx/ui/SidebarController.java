@@ -182,7 +182,11 @@ public class SidebarController {
 
     private void loadUserInfo() {
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
-        AvatarUtil.apply(userAvatar, user.getPhotoPath(), 32, getClass());
+        if (user != null) {
+            userName.setText(user.getName() + " " + user.getSurname());
+            userRole.setText(user.getRole() != null ? user.getRole().name() : "");
+        }
+        AvatarUtil.apply(userAvatar, user != null ? user.getPhotoPath() : null, 32, getClass());
     }
 
     private void loadFallbackAvatar() {

@@ -584,18 +584,32 @@ public class DashboardController {
         accountGoalField.clear();
         accountDatePicker.setValue(null);
 
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         accountDatePicker.setConverter(new javafx.util.StringConverter<LocalDate>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
             @Override
             public String toString(LocalDate date) {
-                return date != null ? date.format(formatter) : "";
+                return date != null ? date.format(fmt) : "";
             }
-
             @Override
             public LocalDate fromString(String string) {
-                return (string != null && !string.isEmpty())
-                        ? LocalDate.parse(string, formatter) : null;
+                if (string == null || string.isEmpty()) return null;
+                try {
+                    return LocalDate.parse(string, fmt);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        });
+
+        // Fix pre ručné zadávanie dátumu
+        accountDatePicker.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                String text = accountDatePicker.getEditor().getText();
+                if (text != null && !text.isEmpty()) {
+                    try {
+                        accountDatePicker.setValue(LocalDate.parse(text, fmt));
+                    } catch (Exception ignored) {}
+                }
             }
         });
 
@@ -716,19 +730,22 @@ public class DashboardController {
             pendingFamilyList.getChildren().clear();
 
             for (FamilyRequest request : pending) {
-                HBox row = new HBox(12);
+                HBox row = new HBox(16);
                 row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                row.setPadding(new javafx.geometry.Insets(4, 0, 4, 0));
 
-                // Pokús sa načítať meno odosielateľa
-                String senderName = "userId=" + request.getFromUserId();
-
-                Label info = new Label(Localization.get("family.pending.from") + ": " + senderName);
+                Label info = new Label(Localization.get("family.pending.from"));
                 info.getStyleClass().add("activity-name");
-                HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
-                row.getChildren().add(info);
+                HBox.setHgrow(info, Priority.ALWAYS);
 
                 Button acceptBtn = new Button(Localization.get("family.pending.accept"));
                 acceptBtn.getStyleClass().add("btn-primary-small");
+                acceptBtn.setMinWidth(80);
+
+                Button rejectBtn = new Button(Localization.get("family.pending.reject"));
+                rejectBtn.getStyleClass().add("btn-secondary");
+                rejectBtn.setMinWidth(80);
+
                 final int reqId = request.getId();
                 acceptBtn.setOnAction(e -> {
                     try {
@@ -738,9 +755,6 @@ public class DashboardController {
                         System.out.println("Accept error: " + ex.getMessage());
                     }
                 });
-
-                Button rejectBtn = new Button(Localization.get("family.pending.reject"));
-                rejectBtn.getStyleClass().add("btn-icon-danger");
                 rejectBtn.setOnAction(e -> {
                     try {
                         ServiceLocator.getFamilyService().rejectFamilyRequest(reqId);
@@ -750,11 +764,10 @@ public class DashboardController {
                     }
                 });
 
-                row.getChildren().addAll(acceptBtn, rejectBtn);
+                row.getChildren().addAll(info, acceptBtn, rejectBtn);
                 pendingFamilyList.getChildren().add(row);
             }
         } catch (Exception e) {
-            // User nemá pending requests — ticho ignoruj
             pendingFamilyBanner.setVisible(false);
             pendingFamilyBanner.setManaged(false);
         }
