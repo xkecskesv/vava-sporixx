@@ -1509,3 +1509,113 @@ Inter 27pt Bold*/
 .budgeting-pie-chart .data2.chart-pie { -fx-pie-color: #F59E0B; }
 .budgeting-pie-chart .data3.chart-pie { -fx-pie-color: #EF4444; }
 .budgeting-pie-chart .data4.chart-pie { -fx-pie-color: #8B5CF6; }
+
+/* SETTINGS */
+.settings-root,
+.settings-scroll,
+.settings-scroll .viewport,
+.settings-page {
+    -fx-background-color: #EFF1F3;
+}
+
+.settings-page {
+    -fx-font-family: 'Inter 28pt Regular';
+}
+
+.settings-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 22px;
+    -fx-text-fill: #0A0A0A;
+}
+
+.settings-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-color: #E3E3E3;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+}
+
+.settings-column {
+    -fx-spacing: 0;
+}
+
+.settings-section-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 14px;
+    -fx-text-fill: #1A1D23;
+}
+
+.settings-field-label {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7280;
+}
+
+.settings-combobox.combo-box,
+.settings-combobox.choice-box,
+.settings-toggle.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-padding: 3px 8px;
+}
+
+.settings-combobox.combo-box .arrow,
+.settings-combobox.choice-box .arrow,
+.settings-toggle.combo-box .arrow {
+    -fx-background-color: #7C8593;
+}
+
+.settings-combobox.combo-box .list-cell,
+.settings-combobox.choice-box .label,
+.settings-toggle.combo-box .list-cell {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1A1A1A;
+    -fx-background-color: transparent;
+}
+
+.settings-notification-row {
+    -fx-padding: 0 0 12 0;
+}
+
+.settings-notification-title {
+    -fx-font-family: 'Inter 28pt SemiBold';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1A1A1A;
+}
+
+.settings-notification-subtitle {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7280;
+}
+
+.settings-about-text {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1A1D23;
+}
+
+.settings-about-link {
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #0E9CA6;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.settings-about-link:hover {
+    -fx-text-fill: #0A7B84;
+}
+
+.settings-divider {
+    -fx-background-color: #E3E3E3;
+    -fx-pref-width: 1px;
+    -fx-min-width: 1px;
+    -fx-max-width: 1px;
+}
+

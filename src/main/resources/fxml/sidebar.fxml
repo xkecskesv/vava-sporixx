@@ -95,7 +95,7 @@
             </HBox>
 
             <!-- Settings -->
-            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+            <HBox fx:id="settingsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
                     <image><Image url="@/assets/icons/settings_icon.png" /></image>
                 </ImageView>
