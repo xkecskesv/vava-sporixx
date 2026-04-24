@@ -5,9 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -18,13 +16,9 @@ import sk.sporixx.dto.AccountsSummaryData;
 import sk.sporixx.dto.ActivitiesData;
 import sk.sporixx.dto.AnalyticsData;
 import sk.sporixx.dto.ChartPeriod;
-import sk.sporixx.model.Account;
-import sk.sporixx.model.RecurringRule;
-import sk.sporixx.model.SavingGoal;
-import sk.sporixx.model.Transaction;
+import sk.sporixx.model.*;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 
 import java.time.LocalDate;
@@ -63,6 +57,10 @@ public class DashboardController {
     @FXML private Label modalAmountPreview;
     @FXML private Label modalErrorLabel;
 
+    //FXML - Family request
+    @FXML private VBox pendingFamilyBanner;
+    @FXML private VBox pendingFamilyList;
+
     // FXML - Analytics
     @FXML private Label analyticsTitle;
     @FXML public ComboBox<String> periodComboBox;
@@ -100,6 +98,7 @@ public class DashboardController {
         loadAccounts(accountsData);
         loadAnalyticsChart(analyticsData);
         loadActivities(activitiesData);
+        loadPendingFamilyRequests();
     }
 
     // ============================================================
@@ -585,18 +584,32 @@ public class DashboardController {
         accountGoalField.clear();
         accountDatePicker.setValue(null);
 
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         accountDatePicker.setConverter(new javafx.util.StringConverter<LocalDate>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
             @Override
             public String toString(LocalDate date) {
-                return date != null ? date.format(formatter) : "";
+                return date != null ? date.format(fmt) : "";
             }
-
             @Override
             public LocalDate fromString(String string) {
-                return (string != null && !string.isEmpty())
-                        ? LocalDate.parse(string, formatter) : null;
+                if (string == null || string.isEmpty()) return null;
+                try {
+                    return LocalDate.parse(string, fmt);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        });
+
+        // Fix pre ručné zadávanie dátumu
+        accountDatePicker.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                String text = accountDatePicker.getEditor().getText();
+                if (text != null && !text.isEmpty()) {
+                    try {
+                        accountDatePicker.setValue(LocalDate.parse(text, fmt));
+                    } catch (Exception ignored) {}
+                }
             }
         });
 
@@ -701,6 +714,62 @@ public class DashboardController {
             } else {
                 showModalError("account.error.invalid_type");
             }
+        }
+    }
+
+    private void loadPendingFamilyRequests() {
+        try {
+            List<FamilyRequest> pending = ServiceLocator.getFamilyService().getPendingRequests();
+            if (pending.isEmpty()) {
+                pendingFamilyBanner.setVisible(false);
+                pendingFamilyBanner.setManaged(false);
+                return;
+            }
+            pendingFamilyBanner.setVisible(true);
+            pendingFamilyBanner.setManaged(true);
+            pendingFamilyList.getChildren().clear();
+
+            for (FamilyRequest request : pending) {
+                HBox row = new HBox(16);
+                row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                row.setPadding(new javafx.geometry.Insets(4, 0, 4, 0));
+
+                Label info = new Label(Localization.get("family.pending.from"));
+                info.getStyleClass().add("activity-name");
+                HBox.setHgrow(info, Priority.ALWAYS);
+
+                Button acceptBtn = new Button(Localization.get("family.pending.accept"));
+                acceptBtn.getStyleClass().add("btn-primary-small");
+                acceptBtn.setMinWidth(80);
+
+                Button rejectBtn = new Button(Localization.get("family.pending.reject"));
+                rejectBtn.getStyleClass().add("btn-secondary");
+                rejectBtn.setMinWidth(80);
+
+                final int reqId = request.getId();
+                acceptBtn.setOnAction(e -> {
+                    try {
+                        ServiceLocator.getFamilyService().acceptFamilyRequest(reqId);
+                        loadPendingFamilyRequests();
+                    } catch (Exception ex) {
+                        System.out.println("Accept error: " + ex.getMessage());
+                    }
+                });
+                rejectBtn.setOnAction(e -> {
+                    try {
+                        ServiceLocator.getFamilyService().rejectFamilyRequest(reqId);
+                        loadPendingFamilyRequests();
+                    } catch (Exception ex) {
+                        System.out.println("Reject error: " + ex.getMessage());
+                    }
+                });
+
+                row.getChildren().addAll(info, acceptBtn, rejectBtn);
+                pendingFamilyList.getChildren().add(row);
+            }
+        } catch (Exception e) {
+            pendingFamilyBanner.setVisible(false);
+            pendingFamilyBanner.setManaged(false);
         }
     }
 }

@@ -3,16 +3,15 @@ package sk.sporixx.service;
 import lombok.Getter;
 
 @Getter
-public class AccountException extends RuntimeException {
-
+public class RecurringRuleException extends RuntimeException {
     private final String messageKey;
 
-    public AccountException(String messageKey) {
+    public RecurringRuleException(String messageKey) {
         super(messageKey);
         this.messageKey = messageKey;
     }
 
-    public AccountException(String messageKey, Throwable cause) {
+    public RecurringRuleException(String messageKey, Throwable cause) {
         super(messageKey, cause);
         this.messageKey = messageKey;
     }

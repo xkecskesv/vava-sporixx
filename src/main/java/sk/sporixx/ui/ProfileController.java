@@ -12,7 +12,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,7 @@ import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.AvatarUtil;
 import sk.sporixx.util.Localization;
 import sk.sporixx.util.ValidationUtil;
 
@@ -101,7 +101,6 @@ public class ProfileController {
 
     @FXML
     public void initialize() {
-        // Load localized labels for static UI content.
         profileTitle.setText(Localization.get("profile.title"));
         logoutButton.setText(Localization.get("profile.logout"));
 
@@ -157,7 +156,6 @@ public class ProfileController {
         // TODO Temporary placeholder until XP data is provided by a dedicated service.
         xpProgressBar.setProgress(1.0);
 
-        // Populate inputs from the active session, or show safe defaults.
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
         if (user == null) {
             firstNameField.setText("");
@@ -165,7 +163,7 @@ public class ProfileController {
             emailField.setText("");
             genderComboBox.setValue("-");
             parentCheckBox.setSelected(false);
-            loadFallbackAvatar();
+            AvatarUtil.apply(profileImage, null, 210, getClass());
             return;
         }
 
@@ -181,22 +179,14 @@ public class ProfileController {
         setupAutosaveHandlers();
     }
 
-    /**
-     * Odhlási aktuálneho používateľa a presmeruje ho na prihlasovaciu obrazovku.
-     */
     @FXML
     private void handleLogout() {
         try {
             ServiceLocator.getAuthService().logout();
             SceneManager.switchTo("login.fxml");
-        } catch (Exception ignored) {
-            // No-op in skeleton phase.
-        }
+        } catch (Exception ignored) {}
     }
 
-    /**
-     * Otvorí výber súboru s profilovou fotkou, zobrazí náhľad a uloží cestu k súboru.
-     */
     @FXML
     private void handleUploadPhoto() {
         FileChooser fileChooser = new FileChooser();
@@ -209,25 +199,16 @@ public class ProfileController {
         if (file == null) return;
 
         try {
-            Image image = new Image(new FileInputStream(file), 210, 210, false, true);
-            profileImage.setImage(image);
-
-            Rectangle clip = new Rectangle(profileImage.getFitWidth(), profileImage.getFitHeight());
-            clip.setArcWidth(30);
-            clip.setArcHeight(30);
-            profileImage.setClip(clip);
-
+            // Aplikuj avatar s kruhovým clipom
+            AvatarUtil.apply(profileImage, file.getAbsolutePath(), 210, getClass());
             ServiceLocator.getProfileService().updateProfilePhoto(file.getAbsolutePath());
         } catch (ProfileException ignored) {
             // Image preview stays visible; persistence is retried on next upload.
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             logger.warn("Selected profile image was not found: {}", file.getAbsolutePath(), e);
         }
     }
 
-    /**
-     * Spracuje žiadosť o zmenu hesla a zobrazí spätnú väzbu priamo vo formulári.
-     */
     @FXML
     private void handleChangePassword() {
         String oldPassword = oldPasswordField.getText();
@@ -245,9 +226,6 @@ public class ProfileController {
         }
     }
 
-    /**
-     * Uloží posledné perzistentné hodnoty profilu pre porovnávanie pri autosave.
-     */
     private void initAutosaveState() {
         lastSavedFirstName = normalized(firstNameField.getText());
         lastSavedLastName = normalized(lastNameField.getText());
@@ -257,15 +235,10 @@ public class ProfileController {
         autosaveEnabled = true;
     }
 
-    /**
-     * Zaregistruje oneskorené a focus-loss spúšťače pre automatické ukladanie.
-     */
     // TODO duplicated code fragment
     private void setupAutosaveHandlers() {
         autosaveTimer.setOnFinished(event -> {
-            if (event != null) {
-                flushAutosave();
-            }
+            if (event != null) flushAutosave();
         });
 
         firstNameField.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -298,18 +271,12 @@ public class ProfileController {
         });
     }
 
-    /**
-     * Spustí alebo reštartuje oneskorovací časovač automatického ukladania.
-     */
     private void scheduleAutosave() {
         if (!autosaveEnabled) return;
         showAutosaveFeedback(Localization.get("profile.autosave.saving"), "profile-feedback-pending");
         autosaveTimer.playFromStart();
     }
 
-    /**
-     * Uloží profilové polia, keď sa zmenili a prešli základnou predvalidáciou.
-     */
     private void flushAutosave() {
         if (!autosaveEnabled) return;
 
@@ -342,7 +309,6 @@ public class ProfileController {
             lastSavedParent = isParent;
             showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
         } catch (ProfileException e) {
-            // Keep user input as-is; save is retried on next valid change.
             showAutosaveFeedback(localizeMessage(e.getMessageKey()), "profile-feedback-error");
         } catch (Exception e) {
             logger.warn("Autosave failed unexpectedly.", e);
@@ -350,28 +316,17 @@ public class ProfileController {
         }
     }
 
-    /**
-     * Vráti zvolenú hodnotu pohlavia alebo náhradnú pomlčku, ak nie je nič vybrané.
-     */
     private String selectedGender() {
         String value = genderComboBox.getValue();
         return value == null ? "-" : value;
     }
 
-    /**
-     * Bezpečne oreže vstup a hodnotu {@code null} prevedie na prázdny reťazec.
-     */
     private String normalized(String value) {
         return value == null ? "" : value.trim();
     }
 
-    /**
-     * Vráti lokalizovaný text podľa kľúča s bezpečným fallbackom pri chýbajúcom kľúči.
-     */
     private String localizeMessage(String key) {
-        if (key == null || key.isBlank()) {
-            return Localization.get("error.unexpected");
-        }
+        if (key == null || key.isBlank()) return Localization.get("error.unexpected");
         try {
             return Localization.get(key);
         } catch (MissingResourceException ignored) {
@@ -379,25 +334,17 @@ public class ProfileController {
         }
     }
 
-    /**
-     * Vykoná základnú predvalidáciu pre autosave a pri chybe vráti lokalizačný kľúč.
-     */
     private String validateAutosaveInput(String firstName, String lastName, String email) {
         if (!ValidationUtil.isNotBlank(firstName)) return "auth.error.first_name_required";
         if (!ValidationUtil.isNotBlank(lastName)) return "auth.error.last_name_required";
         if (!ValidationUtil.isValidEmail(email)) return "auth.error.invalid_email";
-        if (!ValidationUtil.isValidNamePartCharacters(firstName) || !ValidationUtil.isValidNamePart(firstName)) {
+        if (!ValidationUtil.isValidNamePartCharacters(firstName) || !ValidationUtil.isValidNamePart(firstName))
             return "auth.error.invalid_first_name";
-        }
-        if (!ValidationUtil.isValidNamePartCharacters(lastName) || !ValidationUtil.isValidNamePart(lastName)) {
+        if (!ValidationUtil.isValidNamePartCharacters(lastName) || !ValidationUtil.isValidNamePart(lastName))
             return "auth.error.invalid_last_name";
-        }
         return null;
     }
 
-    /**
-     * Zobrazí jednoradkovú spätnú väzbu pre heslo pod tlačidlom akcie.
-     */
     private void showPasswordFeedback(String message, boolean success) {
         passwordFeedbackLabel.setText(message);
         passwordFeedbackLabel.getStyleClass().removeAll("profile-feedback-success", "profile-feedback-error");
@@ -406,17 +353,11 @@ public class ProfileController {
         passwordFeedbackLabel.setManaged(true);
     }
 
-    /**
-     * Skryje inline správu spätnej väzby pre heslo.
-     */
     private void hidePasswordFeedback() {
         passwordFeedbackLabel.setVisible(false);
         passwordFeedbackLabel.setManaged(false);
     }
 
-    /**
-     * Zobrazí jednoradkový stav autosave pod profilovými vstupmi.
-     */
     private void showAutosaveFeedback(String message, String styleClass) {
         autosaveFeedbackLabel.setText(message);
         autosaveFeedbackLabel.getStyleClass().removeAll(
@@ -426,35 +367,18 @@ public class ProfileController {
         autosaveFeedbackLabel.setManaged(true);
     }
 
-    /**
-     * Vráti editovateľnú hodnotu pre vstupy bez vynútenia vizuálnych placeholderov.
-     */
     private String editableText(String value) {
         return (value == null || value.isBlank()) ? "" : value.trim();
     }
 
     /**
-     * Načíta používateľskú fotku z uloženej cesty, pri chybe použije predvolený avatar.
+     * Načíta používateľskú fotku cez AvatarUtil — kruhový clip, fallback na default avatar.
      */
     private void loadUserPhoto(CurrentUser user) {
-        if (user.checkhasPhoto()) {
-            try {
-                profileImage.setImage(new Image(new FileInputStream(user.getPhotoPath())));
-                return;
-            } catch (FileNotFoundException ignored) {
-                // fallback below
-            }
-        }
-        loadFallbackAvatar();
-    }
-
-    /**
-     * Načíta pribalený predvolený obrázok avatara.
-     */
-    private void loadFallbackAvatar() {
-        profileImage.setImage(new Image(Objects.requireNonNull(
-                getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
+        AvatarUtil.apply(
+                profileImage,
+                user.checkhasPhoto() ? user.getPhotoPath() : null,
+                210,
+                getClass());
     }
 }
-
-

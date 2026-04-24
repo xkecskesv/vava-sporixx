@@ -14,6 +14,7 @@ import sk.sporixx.dto.BudgetWarning;
 import sk.sporixx.dto.SavingAccountReportData;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.Localization;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class BudgetingController {
     private BudgetData budgetData;
     private List<SavingAccountReportData> savingAccounts;
     private int savingOffset = 0;
-    private static final int MAX_SAVING_VISIBLE = 3;
+    private static final int MAX_SAVING_VISIBLE = 1;
 
     private double snapEssential, snapEmergency, snapSavings, snapToInvest;
     private boolean syncingAmount = false;
@@ -151,6 +152,7 @@ public class BudgetingController {
 
             budgetData = ServiceLocator.getBudgetService().loadBudgetData();
             populateAllocation();
+            populateEmergencyFund();
 
             if (warning != BudgetWarning.NONE) {
                 showSetupError(Localization.get("budget.warning." + warning.name().toLowerCase()));
@@ -404,8 +406,30 @@ public class BudgetingController {
 
         CategoryAxis xAxis = new CategoryAxis();
         xAxis.getStyleClass().add("analytics-axis");
+
         NumberAxis yAxis = new NumberAxis();
         yAxis.getStyleClass().add("analytics-axis");
+        yAxis.setAutoRanging(false);
+
+        List<Double> values = new ArrayList<>(history.values());
+        double minVal = values.stream().mapToDouble(Double::doubleValue).min().orElse(0);
+        double maxVal = values.stream().mapToDouble(Double::doubleValue).max().orElse(1000);
+        double padding = (maxVal - minVal) * 0.15;
+        double lowerBound = Math.max(0, minVal - padding);
+        double upperBound = maxVal + padding;
+        double tickUnit = (upperBound - lowerBound) / 5.0;
+
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+        yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis) {
+            @Override
+            public String toString(Number value) {
+                double v = value.doubleValue();
+                if (v >= 1000) return String.format("%.0fk", v / 1000);
+                return String.format("%.0f", v);
+            }
+        });
 
         LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setAnimated(false);
@@ -413,7 +437,9 @@ public class BudgetingController {
         chart.setCreateSymbols(false);
         chart.setVerticalGridLinesVisible(false);
         chart.getStyleClass().add("analytics-chart");
-        chart.setPrefHeight(180);
+        chart.prefWidthProperty().bind(emergencyChartContainer.widthProperty());
+        chart.prefHeightProperty().bind(emergencyChartContainer.heightProperty());
+        StackPane.setAlignment(chart, javafx.geometry.Pos.CENTER);
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         history.entrySet().stream()
@@ -424,14 +450,16 @@ public class BudgetingController {
         chart.getData().add(series);
 
         Platform.runLater(() -> {
-            if (!chart.getData().isEmpty() && chart.getData().get(0).getNode() != null) {
-                var line = chart.getData().get(0).getNode().lookup(".chart-series-line");
+            var seriesNode = chart.getData().get(0).getNode();
+            if (seriesNode != null) {
+                var line = seriesNode.lookup(".chart-series-line");
                 if (line != null)
                     line.setStyle("-fx-stroke: #3A7DF6; -fx-stroke-width: 2px;");
             }
         });
 
         emergencyChartContainer.getChildren().add(chart);
+        emergencyChartContainer.layout();
     }
 
     private String formatMonthLabel(String key) {

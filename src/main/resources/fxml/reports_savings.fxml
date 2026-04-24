@@ -6,6 +6,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+
 
 <BorderPane stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/25"
@@ -15,38 +17,41 @@
         <fx:include source="sidebar.fxml"/>
     </left>
     <center>
-        <VBox styleClass="dashboard-content" spacing="24">
+        <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" hbarPolicy="NEVER">
+            <VBox styleClass="dashboard-content" spacing="24">
 
-            <!-- Header -->
-            <VBox spacing="4">
-                <Label text="%reports.title" styleClass="dashboard-title"/>
-                <Label text="%reports.savings.subtitle" styleClass="dashboard-subtitle"/>
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button fx:id="prevButton" styleClass="savings-nav-btn" onAction="#handlePrev"/>
-                        <Button fx:id="nextButton" styleClass="savings-nav-btn" onAction="#handleNext"/>
+                <!-- Header -->
+                <VBox spacing="4">
+                    <Label text="%reports.title" styleClass="dashboard-title"/>
+                    <Label text="%reports.savings.subtitle" styleClass="dashboard-subtitle"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Button fx:id="prevButton" styleClass="savings-nav-btn" onAction="#handlePrev"/>
+                            <Button fx:id="nextButton" styleClass="savings-nav-btn" onAction="#handleNext"/>
+                        </HBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="importButton" text="%reports.import" styleClass="btn-secondary"
+                                onAction="#handleImport"/>
+                        <Button fx:id="exportButton" text="%reports.export" styleClass="btn-export"
+                                onAction="#handleExport"/>
+                        <Label fx:id="exportImportErrorLabel" styleClass="modal-error-label"
+                               wrapText="true" managed="false" visible="false"/>
                     </HBox>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="importButton" text="%reports.import" styleClass="btn-secondary"
-                            onAction="#handleImport"/>
-                    <Button fx:id="exportButton" text="%reports.export" styleClass="btn-export"
-                            onAction="#handleExport"/>
-                    <Label fx:id="exportImportErrorLabel" styleClass="modal-error-label" wrapText="true" managed="false" visible="false" />
-                </HBox>
+                </VBox>
+
+                <!-- Prázdny stav -->
+                <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="8"
+                      visible="false" managed="false">
+                    <Label text="%reports.savings.empty" styleClass="dashboard-subtitle"/>
+                </VBox>
+
+                <!-- Pie chart riadok -->
+                <HBox fx:id="cardsRow" spacing="16"/>
+
+                <!-- Progress chart riadok -->
+                <HBox fx:id="progressRow" spacing="16"/>
+
             </VBox>
-
-            <!-- Prázdny stav -->
-            <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="8"
-                  visible="false" managed="false">
-                <Label text="%reports.savings.empty" styleClass="dashboard-subtitle"/>
-            </VBox>
-
-            <!-- Pie chart riadok -->
-            <HBox fx:id="cardsRow" spacing="16"/>
-
-            <!-- Progress chart riadok -->
-            <HBox fx:id="progressRow" spacing="16"/>
-
-        </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
