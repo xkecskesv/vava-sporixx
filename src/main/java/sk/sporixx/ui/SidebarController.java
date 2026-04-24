@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.AvatarUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -181,19 +182,7 @@ public class SidebarController {
 
     private void loadUserInfo() {
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
-        if (user != null) {
-            userName.setText(user.getName() + " " + user.getSurname());
-            String photoPath = user.getPhotoPath();
-            if (photoPath != null && !photoPath.isBlank()) {
-                try {
-                    userAvatar.setImage(new Image(new FileInputStream(photoPath)));
-                } catch (FileNotFoundException e) {
-                    loadFallbackAvatar();
-                }
-            } else {
-                loadFallbackAvatar();
-            }
-        }
+        AvatarUtil.apply(userAvatar, user.getPhotoPath(), 32, getClass());
     }
 
     private void loadFallbackAvatar() {

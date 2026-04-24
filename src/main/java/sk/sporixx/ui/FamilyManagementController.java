@@ -13,6 +13,7 @@ import sk.sporixx.model.Account;
 import sk.sporixx.model.FamilyRequest;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.util.AvatarUtil;
 import sk.sporixx.util.Localization;
 
 import java.io.FileInputStream;
@@ -152,19 +153,7 @@ public class FamilyManagementController {
         photo.setFitWidth(72); photo.setFitHeight(72); photo.setPreserveRatio(true);
         Circle clip = new Circle(36, 36, 36);
         photo.setClip(clip);
-        try {
-            if (member.getPhotoPath() != null && !member.getPhotoPath().isBlank()) {
-                photo.setImage(new Image(new FileInputStream(member.getPhotoPath())));
-            } else {
-                photo.setImage(new Image(Objects.requireNonNull(
-                        getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
-            }
-        } catch (Exception ignored) {
-            try {
-                photo.setImage(new Image(Objects.requireNonNull(
-                        getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
-            } catch (Exception ignored2) {}
-        }
+        AvatarUtil.apply(photo, member.getPhotoPath(), 72, getClass());
 
         // Info riadok
         Label addedLabel = new Label(Localization.get("family.member.added") + ": "
@@ -315,6 +304,10 @@ public class FamilyManagementController {
                 icon.setFitWidth(14); icon.setFitHeight(14); icon.setPreserveRatio(true);
                 editBtn.setGraphic(icon);
             } catch (Exception ignored) {}
+            // TODO: Adelka — updateSavingAccount validuje účet cez SessionManager.getAccountById()
+            // čo vracia len účty prihláseného usera. Pre Family Manager treba buď:
+            // a) pridať updateSavingAccountById ktorý skipuje SessionManager validáciu
+            // b) alebo načítať účet priamo cez AccountRepository
             editBtn.setOnAction(e -> handleEditSavingAccount(account));
             header.getChildren().add(editBtn);
         }
