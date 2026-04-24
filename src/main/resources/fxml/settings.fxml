@@ -1,194 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/styles.css" styleClass="settings-root">
+<BorderPane styleClass="settings-root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.SettingsController">
     <!-- Sidebar navigation -->
     <left>
-        <fx:include source="sidebar.fxml"/>
+        <fx:include source="sidebar.fxml" />
     </left>
 
     <!-- Main settings content -->
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" styleClass="settings-scroll">
-            <VBox spacing="20.0" styleClass="settings-page" maxHeight="Infinity">
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="settings-scroll">
+            <VBox maxHeight="Infinity" spacing="20.0" styleClass="settings-page">
                 <padding>
-                    <Insets top="32.0" right="28.0" bottom="32.0" left="28.0"/>
+                    <Insets bottom="32.0" left="28.0" right="28.0" top="32.0" />
                 </padding>
 
-                <Label styleClass="settings-title" text="%settings.title"/>
+                <Label styleClass="settings-title" text="%settings.title" />
 
                 <!-- Main settings card -->
-                <StackPane styleClass="settings-card" VBox.vgrow="ALWAYS" maxHeight="Infinity">
-                    <GridPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                <StackPane maxHeight="Infinity" styleClass="settings-card" VBox.vgrow="ALWAYS">
+                    <GridPane maxHeight="Infinity" VBox.vgrow="ALWAYS">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="60.0" hgrow="ALWAYS"/>
-                            <ColumnConstraints percentWidth="40.0" hgrow="ALWAYS"/>
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="60.0" />
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="40.0" />
                         </columnConstraints>
 
                         <!-- Left column: General + Notifications -->
-                        <VBox GridPane.columnIndex="0" spacing="28.0" styleClass="settings-column"
-                              GridPane.vgrow="ALWAYS" maxHeight="Infinity">
+                        <VBox maxHeight="Infinity" spacing="28.0" styleClass="settings-column" GridPane.columnIndex="0" GridPane.vgrow="ALWAYS">
                             <padding>
-                                <Insets top="24.0" right="30.0" bottom="24.0" left="30.0"/>
+                                <Insets bottom="24.0" left="30.0" right="30.0" top="24.0" />
                             </padding>
                             <!-- General section -->
                             <VBox spacing="12.0">
-                                <Label styleClass="settings-section-title" text="%settings.general.title"/>
+                                <Label styleClass="settings-section-title" text="%settings.general.title" />
 
                                 <VBox spacing="6.0">
-                                    <Label styleClass="settings-field-label" text="%settings.general.language"/>
-                                    <ChoiceBox prefWidth="220.0" styleClass="settings-combobox"
-                                               value="%settings.general.language.english">
+                                    <Label styleClass="settings-field-label" text="%settings.general.language" />
+                                    <ComboBox prefWidth="220.0" styleClass="settings-combobox" value="%settings.general.language.english">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.general.language.default"/>
+                                                <String fx:value="%settings.general.language.english" />
                                             </FXCollections>
                                         </items>
-                                    </ChoiceBox>
+                                    </ComboBox>
                                 </VBox>
 
                                 <VBox spacing="6.0">
-                                    <Label styleClass="settings-field-label" text="%settings.general.currency"/>
-                                    <ComboBox prefWidth="220.0" styleClass="settings-combobox"
-                                              value="%settings.general.currency.eur">
+                                    <Label styleClass="settings-field-label" text="%settings.general.currency" />
+                                    <ComboBox prefWidth="220.0" styleClass="settings-combobox" value="%settings.general.currency.eur">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.general.currency.default"/>
+                                                <String fx:value="%settings.general.currency.eur" />
                                             </FXCollections>
                                         </items>
                                     </ComboBox>
                                 </VBox>
                             </VBox>
 
-                            <Region prefHeight="30"/>
+                            <Region prefHeight="30" />
 
                             <!-- Notifications section -->
                             <VBox spacing="12.0">
-                                <Label styleClass="settings-section-title" text="%settings.notifications.title"/>
+                                <Label styleClass="settings-section-title" text="%settings.notifications.title" />
 
-                                <HBox spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox HBox.hgrow="ALWAYS" spacing="4.0">
-                                        <Label styleClass="settings-notification-title"
-                                               text="%settings.notifications.upcoming.title"/>
-                                        <Label styleClass="settings-notification-subtitle"
-                                               text="%settings.notifications.upcoming.subtitle" wrapText="true"/>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="settings-notification-title" text="%settings.notifications.upcoming.title" />
+                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.upcoming.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ComboBox prefWidth="80.0" styleClass="settings-toggle" value="%settings.value.on">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.value.on"/>
-                                                <String fx:value="%settings.value.off"/>
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ToggleButton fx:id="upcomingToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
                                 </HBox>
 
-                                <HBox spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox HBox.hgrow="ALWAYS" spacing="4.0">
-                                        <Label styleClass="settings-notification-title"
-                                               text="%settings.notifications.budget.title"/>
-                                        <Label styleClass="settings-notification-subtitle"
-                                               text="%settings.notifications.budget.subtitle" wrapText="true"/>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="settings-notification-title" text="%settings.notifications.budget.title" />
+                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.budget.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ComboBox prefWidth="80.0" styleClass="settings-toggle" value="%settings.value.on">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.value.on"/>
-                                                <String fx:value="%settings.value.off"/>
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ToggleButton fx:id="budgetToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
                                 </HBox>
 
-                                <HBox spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox HBox.hgrow="ALWAYS" spacing="4.0">
-                                        <Label styleClass="settings-notification-title"
-                                               text="%settings.notifications.reminders.title"/>
-                                        <Label styleClass="settings-notification-subtitle"
-                                               text="%settings.notifications.reminders.subtitle" wrapText="true"/>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="settings-notification-title" text="%settings.notifications.reminders.title" />
+                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.reminders.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ComboBox prefWidth="80.0" styleClass="settings-toggle" value="%settings.value.off">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.value.on"/>
-                                                <String fx:value="%settings.value.off"/>
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ToggleButton fx:id="remindersToggle" prefHeight="44.0" prefWidth="75.0" styleClass="settings-switch" text="%settings.value.off" />
                                 </HBox>
 
-                                <HBox spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox HBox.hgrow="ALWAYS" spacing="4.0">
-                                        <Label styleClass="settings-notification-title"
-                                               text="%settings.notifications.goals.title"/>
-                                        <Label styleClass="settings-notification-subtitle"
-                                               text="%settings.notifications.goals.subtitle" wrapText="true"/>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="settings-notification-title" text="%settings.notifications.goals.title" />
+                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.goals.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ComboBox prefWidth="80.0" styleClass="settings-toggle" value="%settings.value.on">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.value.on"/>
-                                                <String fx:value="%settings.value.off"/>
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ToggleButton fx:id="goalsToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
                                 </HBox>
 
-                                <HBox spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox HBox.hgrow="ALWAYS" spacing="4.0">
-                                        <Label styleClass="settings-notification-title"
-                                               text="%settings.notifications.achievements.title"/>
-                                        <Label styleClass="settings-notification-subtitle"
-                                               text="%settings.notifications.achievements.subtitle" wrapText="true"/>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label styleClass="settings-notification-title" text="%settings.notifications.achievements.title" />
+                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.achievements.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ComboBox prefWidth="80.0" styleClass="settings-toggle" value="%settings.value.on">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="%settings.value.on"/>
-                                                <String fx:value="%settings.value.off"/>
-                                            </FXCollections>
-                                        </items>
-                                    </ComboBox>
+                                    <ToggleButton fx:id="achievementsToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
                                 </HBox>
                             </VBox>
-                            <Region VBox.vgrow="ALWAYS"/>
+                            <Region VBox.vgrow="ALWAYS" />
                         </VBox>
 
                         <!-- Vertical divider between columns -->
-                        <Separator orientation="VERTICAL" styleClass="settings-divider" GridPane.columnIndex="0"
-                                   GridPane.halignment="RIGHT"/>
+                        <Separator orientation="VERTICAL" styleClass="settings-divider" GridPane.columnIndex="0" GridPane.halignment="RIGHT" />
 
                         <!-- Right column: About section -->
-                        <VBox GridPane.columnIndex="1" spacing="10.0" styleClass="settings-column"
-                              GridPane.vgrow="ALWAYS" maxHeight="Infinity">
+                        <VBox maxHeight="Infinity" spacing="10.0" styleClass="settings-column" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                             <padding>
-                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0"/>
+                                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                             </padding>
-                            <Label styleClass="settings-section-title" text="%settings.about.title"/>
-                            <Label styleClass="settings-about-text" text="%settings.about.version" wrapText="true"/>
-                            <Label styleClass="settings-about-text" text="%settings.about.description" wrapText="true"/>
-                            <Label styleClass="settings-about-text" text="%settings.about.project" wrapText="true"/>
+                            <Label styleClass="settings-section-title" text="%settings.about.title" />
+                            <Label styleClass="settings-about-text" text="%settings.about.version" wrapText="true" />
+                            <Label styleClass="settings-about-text" text="%settings.about.description" wrapText="true" />
+                            <Label styleClass="settings-about-text" text="%settings.about.project" wrapText="true" />
                             <HBox alignment="CENTER_LEFT" spacing="4.0">
-                                <Label styleClass="settings-about-text" text="%settings.about.icons.prefix"/>
-                                <Hyperlink styleClass="settings-about-link" text="%settings.about.icons.link"/>
+                                <Label styleClass="settings-about-text" text="%settings.about.icons.prefix" />
+                                <Hyperlink styleClass="settings-about-link" text="%settings.about.icons.link" />
                             </HBox>
-                            <Region VBox.vgrow="ALWAYS"/>
+                            <Region VBox.vgrow="ALWAYS" />
                         </VBox>
                     </GridPane>
                 </StackPane>

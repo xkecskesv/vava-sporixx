@@ -1578,6 +1578,35 @@ Inter 27pt Bold*/
     -fx-background-color: transparent;
 }
 
+.settings-switch {
+    -fx-background-color: #FFFFFF, #FFFFFF;
+    -fx-background-insets: 0, 2 22 2 2;
+    -fx-background-radius: 12, 10;
+    -fx-border-color: #CCCCCC;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-font-family: 'Inter 28pt Regular';
+    -fx-font-size: 13px;
+    -fx-text-fill: #9CA3AF;
+    -fx-alignment: center-left;
+    -fx-padding: 0 12 0 12;
+    -fx-cursor: hand;
+}
+
+.settings-switch:selected {
+    -fx-background-insets: 0, 2 2 2 22;
+    -fx-alignment: center-right;
+    -fx-text-fill: #1A1A1A;
+}
+
+.settings-switch .text {
+    -fx-fill: #9CA3AF;
+}
+
+.settings-switch:selected .text {
+    -fx-fill: #1A1A1A;
+}
+
 .settings-notification-row {
     -fx-padding: 0 0 12 0;
 }
