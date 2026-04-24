@@ -6,6 +6,7 @@ import sk.sporixx.repository.RecurringRuleRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -48,4 +49,19 @@ public class InMemoryRecurringRuleRepository implements RecurringRuleRepository 
     }
 
     public List<RecurringRule> findAll() { return new ArrayList<>(rules); }
+
+    @Override
+    public Optional<RecurringRule> findById(int id) {
+        return rules.stream()
+                .filter(r -> r.getId() == id)
+                .findFirst();
+    }
+
+    @Override
+    public void deactivateById(int id) {
+        rules.stream()
+                .filter(r -> r.getId() == id)
+                .findFirst()
+                .ifPresent(r -> r.setActive(false));
+    }
 }

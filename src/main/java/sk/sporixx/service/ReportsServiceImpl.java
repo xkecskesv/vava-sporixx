@@ -148,11 +148,13 @@ public class ReportsServiceImpl implements ReportsService {
                                 expenseByCategory.merge(category, sum, Double::sum));
             }
 
-            double totalExpense = expenseByCategory.values().stream()
+            Map<String, Double> limited = limitToTopCategories(expenseByCategory);
+
+            double totalExpense = limited.values().stream()
                     .mapToDouble(Double::doubleValue).sum();
 
             return CategoryExpenseData.builder()
-                    .expenseByCategory(expenseByCategory)
+                    .expenseByCategory(limited)
                     .totalExpense(totalExpense)
                     .build();
 
@@ -524,6 +526,36 @@ public class ReportsServiceImpl implements ReportsService {
             cumulative.put(entry.getKey(), running);
         }
         return cumulative;
+    }
+
+    /**
+     * Ak je kategórií viac ako 5, zlúči najmenšie do "Other".
+     * Top 5 kategórií podľa výšky sumy ostanú samostatné.
+     */
+    private Map<String, Double> limitToTopCategories(Map<String, Double> expenseByCategory) {
+        if (expenseByCategory.size() <= 5) return expenseByCategory;
+
+        List<Map.Entry<String, Double>> sorted = expenseByCategory.entrySet().stream()
+                .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                .toList();
+
+        Map<String, Double> result = new LinkedHashMap<>();
+
+        // Top 4 ostanú samostatné
+        for (int i = 0; i < 4; i++) {
+            result.put(sorted.get(i).getKey(), sorted.get(i).getValue());
+        }
+
+        // Zvyšok zlúč do Other
+        double otherSum = sorted.subList(4, sorted.size()).stream()
+                .mapToDouble(Map.Entry::getValue)
+                .sum();
+
+        if (otherSum > 0) {
+            result.put("Other", otherSum);
+        }
+
+        return result;
     }
 
     /**

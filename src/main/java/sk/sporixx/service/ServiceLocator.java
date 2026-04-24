@@ -20,7 +20,7 @@ public final class ServiceLocator {
      * FALSE — reálne JDBC repozitáre, vyžaduje hotovú DB vrstvu
      * Po dokončení všetkých JDBC implementácií zmeniť.
      */
-    private static final boolean USE_TEST_DATA = false;
+    private static final boolean USE_TEST_DATA = true;
 
     // Service inštancie
     private static AuthService authService;
@@ -35,6 +35,8 @@ public final class ServiceLocator {
     private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
+    private static RecurringRuleService recurringRuleService;
+    private static FamilyService familyService;
 
     private static boolean initialized = false;
 
@@ -86,7 +88,8 @@ public final class ServiceLocator {
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
                 testData.getAccountRepository(),
-                testData.getSavingGoalRepository());
+                testData.getSavingGoalRepository(),
+                testData.getAccountAccessRepository());
         reportsService = new ReportsServiceImpl(
                 testData.getTransactionRepository(),
                 testData.getRecurringRuleRepository(),
@@ -104,6 +107,14 @@ public final class ServiceLocator {
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 testData.getTransactionRepository());
+        recurringRuleService = new RecurringRuleServiceImpl(
+                testData.getRecurringRuleRepository(),
+                transactionService);
+        familyService = new FamilyServiceImpl(
+                testData.getAccountAccessRepository(),
+                testData.getAccountRepository(),
+                testData.getUserRepository(),
+                testData.getFamilyRequestRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -134,7 +145,8 @@ public final class ServiceLocator {
 
         accountService = new AccountServiceImpl(
                 accountRepo,
-                savingGoalRepo);
+                savingGoalRepo,
+                testData.getAccountAccessRepository());
 
         reportsService = new ReportsServiceImpl(
                 transactionRepo,
@@ -160,6 +172,16 @@ public final class ServiceLocator {
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 transactionRepo);
+
+        recurringRuleService = new RecurringRuleServiceImpl(
+                recurringRuleRepo,
+                transactionService);
+
+        familyService = new FamilyServiceImpl(
+                testData.getAccountAccessRepository(),
+                accountRepo,
+                userRepo,
+                testData.getFamilyRequestRepository());
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
@@ -238,7 +260,17 @@ public final class ServiceLocator {
         return budgetService;
     }
 
-    //  HELPER
+    public static RecurringRuleService getRecurringRuleService() {
+        checkInitialized();
+        return recurringRuleService;
+    }
+
+    public static FamilyService getFamilyService() {
+        checkInitialized();
+        return familyService;
+    }
+
+    // HELPER
     private static void checkInitialized() {
         if (!initialized) {
             throw new IllegalStateException(

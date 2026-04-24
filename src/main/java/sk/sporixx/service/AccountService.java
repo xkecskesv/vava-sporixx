@@ -1,9 +1,11 @@
 package sk.sporixx.service;
 
 import sk.sporixx.model.Account;
+import sk.sporixx.model.SavingGoal;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface AccountService {
 
@@ -13,7 +15,7 @@ public interface AccountService {
     Account createPrivateAccount(String description, double initialAmount);
 
     /**
-     * Vytvorí Saving účet + k nemu SavingGoal.
+     * Vytvorí Saving účet + k nvemu SavingGoal.
      * @param description popis účtu
      * @param initialAmount počiatočný zostatok
      * @param targetAmount cieľová suma
@@ -40,4 +42,16 @@ public interface AccountService {
      * Aktualizuje popis účtu.
      */
     void updateAccountDescription(int accountId, String description);
+
+    /**
+     * Aktualizuje saving účet a jeho goal.
+     */
+    void updateSavingAccount(int accountId, String description,
+                             double targetAmount, LocalDate targetDate);
+
+    /**
+     * Načíta aktívny SavingGoal pre daný účet.
+     * UI použije pre predvyplnenie formulára pri editácii.
+     */
+    Optional<SavingGoal> getSavingGoal(int accountId);
 }
