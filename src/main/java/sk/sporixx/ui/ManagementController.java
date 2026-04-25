@@ -136,7 +136,7 @@ public class ManagementController {
     // ════════════════════════════════════════════════════════════
     private void loadCategories() {
         try {
-            categories = ServiceLocator.getCategoryService().getCategories();
+            categories = ServiceLocator.getCategoryService().getSelectableCategories();
         } catch (Exception e) {
             categories = List.of();
             showCategoryError("error.db_error");
@@ -785,7 +785,7 @@ public class ManagementController {
         recurringStartDatePicker.setValue(LocalDate.now());
         recurringStartDatePicker.setConverter(dateConverter());
 
-        try { selectableCategories = ServiceLocator.getCategoryService().getCategories(); }
+        try { selectableCategories = ServiceLocator.getCategoryService().getSelectableCategories(); }
         catch (Exception e) { selectableCategories = List.of(); }
 
         recurringCategoryCombo.getItems().setAll(selectableCategories.stream().map(Category::getName).toList());
