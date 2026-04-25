@@ -656,14 +656,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> searchTransactions(String rawInput, int accountId) {
-        logger.info("Searching transactions for accountId={}, input='{}'", accountId, rawInput);
         SearchCriteria criteria = parseSearchInput(rawInput);
         return searchTransactions(criteria, accountId);
     }
 
     @Override
     public List<Transaction> searchTransactions(String rawInput) {
-        logger.info("Searching all transactions, input='{}'", rawInput);
         SearchCriteria criteria = parseSearchInput(rawInput);
         return searchTransactions(criteria);
     }
