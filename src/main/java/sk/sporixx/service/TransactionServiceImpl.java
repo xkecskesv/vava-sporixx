@@ -263,6 +263,7 @@ public class TransactionServiceImpl implements TransactionService {
             autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
         }
 
+        LocalDateTime createdAt = LocalDateTime.now();
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
@@ -273,7 +274,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .amount(amount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
-                .createdAt(LocalDateTime.now())
+                .createdAt(createdAt)
                 .build();
         transactionRepository.save(expense);
 
@@ -286,7 +287,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .amount(amount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
-                .createdAt(LocalDateTime.now())
+                .createdAt(createdAt)
                 .build();
         transactionRepository.save(income);
 
@@ -356,6 +357,40 @@ public class TransactionServiceImpl implements TransactionService {
             transactionRepository.update(updatedTransaction);
             updateBalance(account, newBalance);
 
+            if (original.getCategoryId() != null &&
+                    (original.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                            original.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                            original.getCategoryId() == Transaction.CATEGORY_TRANSFER)) {
+
+                transactionRepository.findPairedTransfer(
+                        original.getAccountId(),
+                        original.getAmount(),
+                        original.getCreatedAt()
+                ).ifPresent(paired -> {
+                    double pairedDiff = updatedTransaction.getAmount() - original.getAmount();
+                    paired.setAmount(updatedTransaction.getAmount());
+                    paired.setDescription(updatedTransaction.getDescription());
+                    paired.setCompleteDate(updatedTransaction.getCompleteDate());
+                    transactionRepository.update(paired);
+
+                    Account pairedAccount = getAccountOrThrow(paired.getAccountId());
+                    double pairedNewBalance;
+                    if (paired.isIncome()) {
+                        pairedNewBalance = pairedAccount.getCurrentBalance() + pairedDiff;
+                    } else {
+                        pairedNewBalance = pairedAccount.getCurrentBalance() - pairedDiff;
+                    }
+                    updateBalance(pairedAccount, pairedNewBalance);
+
+                    if (pairedAccount.isSavingAccount()) {
+                        double goalDelta = paired.isIncome() ? pairedDiff : -pairedDiff;
+                        updateSavingGoalAmount(pairedAccount.getId(), goalDelta);
+                    }
+
+                    logger.info("Paired transfer transaction updated: id={}", paired.getId());
+                });
+            }
+
             if (account.isSavingAccount()) {
                 double goalDelta = original.isIncome() ? difference : -difference;
                 updateSavingGoalAmount(account.getId(), goalDelta);
@@ -411,6 +446,36 @@ public class TransactionServiceImpl implements TransactionService {
 
                 transactionRepository.deleteById(id);
                 logger.info("Transaction deleted: id={}, amount={}", id, tx.getAmount());
+
+                if (tx.getCategoryId() != null &&
+                        (tx.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                                tx.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                                tx.getCategoryId() == Transaction.CATEGORY_TRANSFER)) {
+
+                    transactionRepository.findPairedTransfer(
+                            tx.getAccountId(),
+                            tx.getAmount(),
+                            tx.getCreatedAt()
+                    ).ifPresent(paired -> {
+                        Account pairedAccount = getAccountOrThrow(paired.getAccountId());
+                        double revertedPairedBalance = revertBalance(
+                                pairedAccount.getCurrentBalance(),
+                                paired.getTransactionTypeId(),
+                                paired.getAmount());
+                        updateBalance(pairedAccount, revertedPairedBalance);
+
+                        if (pairedAccount.isSavingAccount()) {
+                            if (paired.isIncome()) {
+                                updateSavingGoalAmount(pairedAccount.getId(), -paired.getAmount());
+                            } else {
+                                updateSavingGoalAmount(pairedAccount.getId(), paired.getAmount());
+                            }
+                        }
+
+                        transactionRepository.deleteById(paired.getId());
+                        logger.info("Paired transfer transaction deleted: id={}", paired.getId());
+                    });
+                }
 
             } catch (Exception e) {
                 logger.error("Failed to delete transaction id={}", id, e);

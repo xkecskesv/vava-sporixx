@@ -198,4 +198,19 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     public List<Transaction> findAll() { return new ArrayList<>(transactions); }
+
+    @Override
+    public Optional<Transaction> findPairedTransfer(int excludeAccountId,
+                                                    double amount,
+                                                    LocalDateTime createdAt) {
+        return transactions.stream()
+                .filter(t -> t.getAccountId() != excludeAccountId)
+                .filter(t -> t.getAmount() == amount)
+                .filter(t -> t.getCreatedAt().equals(createdAt))
+                .filter(t -> t.getCategoryId() != null &&
+                        (t.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                                t.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                                t.getCategoryId() == Transaction.CATEGORY_TRANSFER))
+                .findFirst();
+    }
 }
