@@ -366,32 +366,163 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public List<Transaction> findByAccountId(int accountId) {
-        // TODO: implementovať — SELECT * FROM transactions WHERE account_id = ?
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "SELECT * FROM transactions WHERE account_id = ? ORDER BY transaction_date DESC";
+        List<Transaction> transactions = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, accountId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                transactions.add(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error finding transactions for account {}", accountId, e);
+            throw new RuntimeException("Error reading transactions by account ID", e);
+        }
+        return transactions;
     }
 
     @Override
     public Map<String, Double> sumByTypeAndMonth(int accountId, int transactionTypeId,
                                                  LocalDateTime from,
                                                  List<Integer> excludeCategoryIds) {
-        // TODO: implementovať — sumByTypeAndMonth s WHERE category_id NOT IN (...) OR category_id IS NULL
-        throw new UnsupportedOperationException("Not implemented yet");
+        StringBuilder sql = new StringBuilder(
+                "SELECT strftime('%Y-%m', transaction_date) AS period, SUM(amount) AS total " +
+                        "FROM transactions " +
+                        "WHERE account_id = ? AND transaction_type_id = ? AND transaction_date >= ? "
+        );
+
+        boolean hasExclusions = excludeCategoryIds != null && !excludeCategoryIds.isEmpty();
+        if (hasExclusions) {
+            String placeholders = String.join(",", Collections.nCopies(excludeCategoryIds.size(), "?"));
+            sql.append("AND (category_id NOT IN (").append(placeholders).append(") OR category_id IS NULL) ");
+        }
+
+        sql.append("GROUP BY strftime('%Y-%m', transaction_date) ORDER BY period ASC");
+        Map<String, Double> sumsByMonth = new LinkedHashMap<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            pstmt.setInt(1, accountId);
+            pstmt.setInt(2, transactionTypeId);
+            pstmt.setString(3, from.toString().replace("T", " "));
+
+            int paramIndex = 4;
+            if (hasExclusions) {
+                for (Integer catId : excludeCategoryIds) {
+                    pstmt.setInt(paramIndex++, catId);
+                }
+            }
+
+            ResultSet result = pstmt.executeQuery();
+            while (result.next()) {
+                sumsByMonth.put(result.getString("period"), result.getDouble("total"));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error summarizing monthly transactions with exclusions", e);
+            throw new RuntimeException("Error summarizing transactions by month", e);
+        }
+        return sumsByMonth;
     }
 
     @Override
     public Map<String, Double> sumByTypeAndDay(int accountId, int transactionTypeId,
                                                LocalDateTime from,
                                                List<Integer> excludeCategoryIds) {
-        // TODO: implementovať — sumByTypeAndDay s WHERE category_id NOT IN (...) OR category_id IS NULL
-        throw new UnsupportedOperationException("Not implemented yet");
+        StringBuilder sql = new StringBuilder(
+                "SELECT strftime('%Y-%m-%d', transaction_date) AS period, SUM(amount) AS total " +
+                        "FROM transactions " +
+                        "WHERE account_id = ? AND transaction_type_id = ? AND transaction_date >= ? "
+        );
+
+        boolean hasExclusions = excludeCategoryIds != null && !excludeCategoryIds.isEmpty();
+        if (hasExclusions) {
+            String placeholders = String.join(",", Collections.nCopies(excludeCategoryIds.size(), "?"));
+            sql.append("AND (category_id NOT IN (").append(placeholders).append(") OR category_id IS NULL) ");
+        }
+
+        sql.append("GROUP BY strftime('%Y-%m-%d', transaction_date) ORDER BY period ASC");
+        Map<String, Double> sumsByDay = new LinkedHashMap<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            pstmt.setInt(1, accountId);
+            pstmt.setInt(2, transactionTypeId);
+            pstmt.setString(3, from.toString().replace("T", " "));
+
+            int paramIndex = 4;
+            if (hasExclusions) {
+                for (Integer catId : excludeCategoryIds) {
+                    pstmt.setInt(paramIndex++, catId);
+                }
+            }
+
+            ResultSet result = pstmt.executeQuery();
+            while (result.next()) {
+                sumsByDay.put(result.getString("period"), result.getDouble("total"));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error summarizing daily transactions with exclusions", e);
+            throw new RuntimeException("Error summarizing transactions by day", e);
+        }
+        return sumsByDay;
     }
 
     @Override
     public Map<String, Double> sumByCategoryAndDateRange(int accountId, LocalDateTime from,
                                                          LocalDateTime to,
                                                          List<Integer> excludeCategoryIds) {
-        // TODO: implementovať — sumByCategoryAndDateRange s WHERE category_id NOT IN (...) OR category_id IS NULL
-        throw new UnsupportedOperationException("Not implemented yet");
+        StringBuilder sql = new StringBuilder(
+                "SELECT c.name AS category_name, SUM(t.amount) AS total " +
+                        "FROM transactions t " +
+                        "JOIN categories c ON c.id = t.category_id " +
+                        "WHERE t.account_id = ? " +
+                        "AND t.transaction_date >= ? " +
+                        "AND t.transaction_date <= ? " +
+                        "AND t.transaction_type_id = ? "
+        );
+
+        boolean hasExclusions = excludeCategoryIds != null && !excludeCategoryIds.isEmpty();
+        if (hasExclusions) {
+            String placeholders = String.join(",", Collections.nCopies(excludeCategoryIds.size(), "?"));
+            sql.append("AND t.category_id NOT IN (").append(placeholders).append(") ");
+        }
+
+        sql.append("GROUP BY c.name ORDER BY total DESC");
+        Map<String, Double> sumsByCategory = new LinkedHashMap<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            pstmt.setInt(1, accountId);
+            pstmt.setString(2, from.toString().replace("T", " "));
+            pstmt.setString(3, to.toString().replace("T", " "));
+            pstmt.setInt(4, Transaction.TYPE_EXPENSE);
+
+            int paramIndex = 5;
+            if (hasExclusions) {
+                for (Integer catId : excludeCategoryIds) {
+                    pstmt.setInt(paramIndex++, catId);
+                }
+            }
+
+            ResultSet result = pstmt.executeQuery();
+            while (result.next()) {
+                sumsByCategory.put(result.getString("category_name"), result.getDouble("total"));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error summarizing category expenses with exclusions", e);
+            throw new RuntimeException("Error summarizing expenses by category", e);
+        }
+        return sumsByCategory;
     }
 
     @Override
@@ -399,7 +530,55 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                                            LocalDateTime dateFrom, LocalDateTime dateTo,
                                            Double amountFrom, Double amountTo,
                                            Integer transactionTypeId) {
-        // TODO: implementovať — dynamický SQL filter pre search/filter na Transactions screene
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<Object> params = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM transactions WHERE account_id = ? ");
+        params.add(accountId);
+
+        if (categoryId != null) {
+            sql.append("AND category_id = ? ");
+            params.add(categoryId);
+        }
+        if (dateFrom != null) {
+            sql.append("AND transaction_date >= ? ");
+            params.add(dateFrom.toString().replace("T", " "));
+        }
+        if (dateTo != null) {
+            sql.append("AND transaction_date <= ? ");
+            params.add(dateTo.toString().replace("T", " "));
+        }
+        if (amountFrom != null) {
+            sql.append("AND amount >= ? ");
+            params.add(amountFrom);
+        }
+        if (amountTo != null) {
+            sql.append("AND amount <= ? ");
+            params.add(amountTo);
+        }
+        if (transactionTypeId != null) {
+            sql.append("AND transaction_type_id = ? ");
+            params.add(transactionTypeId);
+        }
+
+        sql.append("ORDER BY transaction_date DESC");
+        List<Transaction> transactions = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                pstmt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                transactions.add(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error filtering transactions", e);
+            throw new RuntimeException("Error applying transaction filters", e);
+        }
+        return transactions;
     }
 }
