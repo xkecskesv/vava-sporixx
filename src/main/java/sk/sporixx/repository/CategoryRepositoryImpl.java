@@ -156,7 +156,24 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public void update(Category category) {
-        // TODO: implementovať — UPDATE categories SET name = ? WHERE id = ?
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE categories SET name = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, category.getName());
+            pstmt.setInt(2, category.getId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No category found to update with ID: " + category.getId());
+            }
+
+            logger.info("Category updated. ID: {}", category.getId());
+
+        } catch (SQLException e) {
+            logger.error("Error updating category ID={}", category.getId(), e);
+            throw new RuntimeException("Error updating category in database (update)", e);
+        }
     }
 }

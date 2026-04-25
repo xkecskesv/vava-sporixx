@@ -121,6 +121,7 @@ public final class ServiceLocator {
         RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
         SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
         CategoryRepository categoryRepo = new CategoryRepositoryImpl();
+        BudgetRepository budgetRepo = new BudgetRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
@@ -158,14 +159,9 @@ public final class ServiceLocator {
         categoryService = new CategoryServiceImpl(categoryRepo);
 
         budgetService = new BudgetServiceImpl(
-                testData.getBudgetRepository(),
+                budgetRepo,
                 transactionRepo);
 
-        // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
-        // SavingGoalRepository savingGoalRepo   = new SavingGoalRepositoryImpl();
-        // CategoryRepository categoryRepo       = new CategoryRepositoryImpl();
-        // BudgetRepository budgetRepo           = new BudgetRepositoryImpl();
     }
 
     //  GETTERY — UI vrstva volá tieto metódy
