@@ -45,6 +45,8 @@ public class TestDataInitializer {
     private final InMemorySavingGoalRepository savingGoalRepository;
     private final InMemoryCategoryRepository categoryRepository;
     private final InMemoryBudgetRepository budgetRepository;
+    private final InMemoryAccountAccessRepository accountAccessRepository;
+    private final InMemoryFamilyRequestRepository familyRequestRepository;
 
     private final AuthService authService;
     private final OverviewService overviewService;
@@ -72,6 +74,8 @@ public class TestDataInitializer {
                 transactionRepository, recurringRuleRepository, savingGoalRepository);
         this.categoryRepository = new InMemoryCategoryRepository();
         this.budgetRepository = new InMemoryBudgetRepository();
+        this.accountAccessRepository = new InMemoryAccountAccessRepository();
+        this.familyRequestRepository = new InMemoryFamilyRequestRepository();
 
         initTestData();
     }
@@ -534,7 +538,10 @@ public class TestDataInitializer {
     // =========================================================================
     //  Rodič / Family Manager
     // =========================================================================
-    private void createParentUser() {
+    // =========================================================================
+//  Rodič / Family Manager
+// =========================================================================
+    private void createParentUser() { // TOTO SOM EDITOL ABY SOM MOHOL TESTOVAT FAMILY MANAGEMENT STRANKU - MAREK - MOZETE PREHODIT /VYMAZAT AKO CHCETE
         User savedParent = userRepository.save(User.builder()
                 .firstName("Jana").lastName("Mrkvičková")
                 .email("jana.mrkvickova@stuba.sk")
@@ -559,7 +566,15 @@ public class TestDataInitializer {
                 .isActive(true).createdAt(LocalDateTime.of(2026, 2, 15, 12, 0))
                 .build());
 
-        logger.info("Vytvorený PARENT: {}", savedParent.getEmail());
+        // Prístup Jany k účtom Mareka (accountId 1-4)
+        for (int accountId = 1; accountId <= 4; accountId++) {
+            accountAccessRepository.grantAccess(
+                    savedParent.getId(),
+                    accountId,
+                    Role.USER.getAccessLevel());
+        }
+
+        logger.info("Vytvorený PARENT: {} s prístupom k účtom Mareka", savedParent.getEmail());
     }
 
     /**

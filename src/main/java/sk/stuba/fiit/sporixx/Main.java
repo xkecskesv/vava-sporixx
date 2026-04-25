@@ -22,6 +22,8 @@ public class Main extends Application {
 
         ServiceLocator.init();
 
+        ServiceLocator.getRecurringRuleService().processRecurringRules();
+
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login.fxml"),
                 Localization.getBundle()

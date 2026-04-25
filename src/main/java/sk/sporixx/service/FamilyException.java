@@ -3,16 +3,16 @@ package sk.sporixx.service;
 import lombok.Getter;
 
 @Getter
-public class AccountException extends RuntimeException {
+public class FamilyException extends RuntimeException {
 
     private final String messageKey;
 
-    public AccountException(String messageKey) {
+    public FamilyException(String messageKey) {
         super(messageKey);
         this.messageKey = messageKey;
     }
 
-    public AccountException(String messageKey, Throwable cause) {
+    public FamilyException(String messageKey, Throwable cause) {
         super(messageKey, cause);
         this.messageKey = messageKey;
     }

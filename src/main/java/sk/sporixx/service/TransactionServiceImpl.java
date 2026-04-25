@@ -70,7 +70,11 @@ public class TransactionServiceImpl implements TransactionService {
                 all.addAll(transactionRepository.findByAccountId(accountId));
             }
 
-            all.sort((a, b) -> b.getCompleteDate().compareTo(a.getCompleteDate()));
+            all.sort((a, b) -> {
+                int dateCompare = b.getCompleteDate().compareTo(a.getCompleteDate());
+                if (dateCompare != 0) return dateCompare;
+                return b.getCreatedAt().compareTo(a.getCreatedAt());
+            });
             return all;
 
         } catch (Exception e) {
@@ -136,7 +140,11 @@ public class TransactionServiceImpl implements TransactionService {
                 all.addAll(searchTransactions(criteria, accountId));
             }
 
-            all.sort((a, b) -> b.getCompleteDate().compareTo(a.getCompleteDate()));
+            all.sort((a, b) -> {
+                int dateCompare = b.getCompleteDate().compareTo(a.getCompleteDate());
+                if (dateCompare != 0) return dateCompare;
+                return b.getCreatedAt().compareTo(a.getCreatedAt());
+            });
             return all;
 
         } catch (TransactionException e) {
