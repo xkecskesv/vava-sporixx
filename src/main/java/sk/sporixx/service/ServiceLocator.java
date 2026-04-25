@@ -114,7 +114,8 @@ public final class ServiceLocator {
                 testData.getAccountAccessRepository(),
                 testData.getAccountRepository(),
                 testData.getUserRepository(),
-                testData.getFamilyRequestRepository());
+                testData.getFamilyRequestRepository(),
+                testData.getSavingGoalRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -182,7 +183,8 @@ public final class ServiceLocator {
                 testData.getAccountAccessRepository(),
                 accountRepo,
                 userRepo,
-                testData.getFamilyRequestRepository());
+                testData.getFamilyRequestRepository(),
+                testData.getSavingGoalRepository());
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();

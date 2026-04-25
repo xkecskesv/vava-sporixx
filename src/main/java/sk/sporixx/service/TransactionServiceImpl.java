@@ -220,12 +220,6 @@ public class TransactionServiceImpl implements TransactionService {
                                                String currencyCode,
                                                LocalDateTime completeDate) {
 
-        if (transactionTypeId == Transaction.TYPE_EXPENSE) {
-            if (account.getCurrentBalance() - amount < 0) {
-                throw new TransactionException("transaction.error.insufficient_funds");
-            }
-        }
-
         Transaction transaction = Transaction.builder()
                 .accountId(account.getId())
                 .transactionTypeId(transactionTypeId)
@@ -268,11 +262,7 @@ public class TransactionServiceImpl implements TransactionService {
         } else if (fromAccount.isSavingAccount()) {
             autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
         }
-        // Inak (napr. main → emergency) kategória ostáva null
 
-        if (fromAccount.getCurrentBalance() - amount < 0) {
-            throw new TransactionException("transaction.error.insufficient_funds");
-        }
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
@@ -361,10 +351,6 @@ public class TransactionServiceImpl implements TransactionService {
                 newBalance = account.getCurrentBalance() + difference;
             } else {
                 newBalance = account.getCurrentBalance() - difference;
-                // Kontrola insufficient funds
-                if (newBalance < 0) {
-                    throw new TransactionException("transaction.error.insufficient_funds");
-                }
             }
 
             transactionRepository.update(updatedTransaction);
