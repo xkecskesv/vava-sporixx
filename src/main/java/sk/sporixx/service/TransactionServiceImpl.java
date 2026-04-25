@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Account;
+import sk.sporixx.model.Category;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.AccountRepository;
@@ -13,6 +14,9 @@ import sk.sporixx.repository.TransactionRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,9 +90,54 @@ public class TransactionServiceImpl implements TransactionService {
     //  VYHĽADÁVANIE S REGEX
     @Override
     public List<Transaction> searchTransactions(SearchCriteria criteria, int accountId) {
-        logger.info("Searching transactions for accountId: {}", accountId);
-
         try {
+            boolean hasCategoryAndText = criteria.getCategoryId() != null
+                    && criteria.getSearchText() != null
+                    && !criteria.getSearchText().isBlank();
+
+            if (hasCategoryAndText) {
+                List<Transaction> byCategory = transactionRepository.findByFilters(
+                        accountId,
+                        criteria.getCategoryId(),
+                        criteria.getDateFrom(),
+                        criteria.getDateTo(),
+                        criteria.getAmountFrom(),
+                        criteria.getAmountTo(),
+                        criteria.getTransactionTypeId());
+
+                List<Transaction> byText = transactionRepository.findByFilters(
+                        accountId,
+                        null,
+                        criteria.getDateFrom(),
+                        criteria.getDateTo(),
+                        criteria.getAmountFrom(),
+                        criteria.getAmountTo(),
+                        criteria.getTransactionTypeId());
+
+                // Regex filter na byText
+                Pattern pattern;
+                try {
+                    pattern = Pattern.compile(
+                            criteria.getSearchText(),
+                            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+                } catch (PatternSyntaxException e) {
+                    String lower = criteria.getSearchText().toLowerCase();
+                    byText = byText.stream()
+                            .filter(t -> t.getDescription().toLowerCase().contains(lower))
+                            .collect(Collectors.toList());
+                    // Zlúč a odstráň duplikáty
+                    return mergeDeduplicated(byCategory, byText);
+                }
+
+                Pattern finalPattern = pattern;
+                byText = byText.stream()
+                        .filter(t -> finalPattern.matcher(t.getDescription()).find())
+                        .collect(Collectors.toList());
+
+                return mergeDeduplicated(byCategory, byText);
+            }
+
+            // Štandardná AND logika
             List<Transaction> filtered = transactionRepository.findByFilters(
                     accountId,
                     criteria.getCategoryId(),
@@ -105,10 +154,9 @@ public class TransactionServiceImpl implements TransactionService {
             Pattern pattern;
             try {
                 pattern = Pattern.compile(
-                        criteria.getSearchText(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+                        criteria.getSearchText(),
+                        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
             } catch (PatternSyntaxException e) {
-                logger.warn("Invalid regex '{}', falling back to plain text",
-                        criteria.getSearchText());
                 String lower = criteria.getSearchText().toLowerCase();
                 return filtered.stream()
                         .filter(t -> t.getDescription().toLowerCase().contains(lower))
@@ -126,6 +174,21 @@ public class TransactionServiceImpl implements TransactionService {
             logger.error("Failed to search transactions", e);
             throw new TransactionException("error.db_error", e);
         }
+    }
+
+    // Helper — zlúč dve listy bez duplikátov podľa id
+    private List<Transaction> mergeDeduplicated(List<Transaction> list1,
+                                                List<Transaction> list2) {
+        List<Transaction> result = new ArrayList<>(list1);
+        list2.stream()
+                .filter(t -> result.stream().noneMatch(r -> r.getId() == t.getId()))
+                .forEach(result::add);
+        result.sort((a, b) -> {
+            int dateCompare = b.getCompleteDate().compareTo(a.getCompleteDate());
+            if (dateCompare != 0) return dateCompare;
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
+        });
+        return result;
     }
 
     @Override
@@ -530,5 +593,78 @@ public class TransactionServiceImpl implements TransactionService {
         goal.setCurrentAmount(newAmount);
         logger.info("SavingGoal updated: accountId={}, newCurrentAmount={}",
                 accountId, newAmount);
+    }
+
+    private SearchCriteria parseSearchInput(String input) {
+
+        if (input == null || input.isBlank()) {
+            return SearchCriteria.builder().build();
+        }
+
+        String trimmed = input.trim();
+        SearchCriteria.SearchCriteriaBuilder builder = SearchCriteria.builder();
+
+        try {
+            LocalDate date = LocalDate.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            LocalDate date = LocalDate.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM.yy"));
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            MonthDay md = MonthDay.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM"));
+            LocalDate date = md.atYear(LocalDate.now().getYear());
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            YearMonth ym = YearMonth.parse(trimmed,
+                    DateTimeFormatter.ofPattern("MM.yyyy"));
+            builder.dateFrom(ym.atDay(1).atStartOfDay());
+            builder.dateTo(ym.atEndOfMonth().atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        List<Category> categories = categoryRepository.findByUserIdOrSystem(
+                SessionManager.getInstance().getCurrentUserId());
+        Optional<Category> matchedCategory = categories.stream()
+                .filter(c -> c.getName().toLowerCase()
+                        .contains(trimmed.toLowerCase()))
+                .findFirst();
+
+        if (matchedCategory.isPresent()) {
+            builder.categoryId(matchedCategory.get().getId());
+            builder.searchText(trimmed);
+            return builder.build();
+        }
+
+        builder.searchText(trimmed);
+        return builder.build();
+    }
+
+    @Override
+    public List<Transaction> searchTransactions(String rawInput, int accountId) {
+        logger.info("Searching transactions for accountId={}, input='{}'", accountId, rawInput);
+        SearchCriteria criteria = parseSearchInput(rawInput);
+        return searchTransactions(criteria, accountId);
+    }
+
+    @Override
+    public List<Transaction> searchTransactions(String rawInput) {
+        logger.info("Searching all transactions, input='{}'", rawInput);
+        SearchCriteria criteria = parseSearchInput(rawInput);
+        return searchTransactions(criteria);
     }
 }

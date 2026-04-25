@@ -141,16 +141,15 @@ public class TransactionController {
 
     private void applyFilters() {
         try {
-            SearchCriteria.SearchCriteriaBuilder builder = SearchCriteria.builder()
-                    .searchText(searchField.getText().trim());
+            String rawInput = searchField.getText().trim();
 
             if (!activeAccountFilter.equals("ALL")) {
                 int accountId = Integer.parseInt(activeAccountFilter);
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(builder.build(), accountId);
+                        .searchTransactions(rawInput, accountId);
             } else {
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(builder.build());
+                        .searchTransactions(rawInput);
             }
         } catch (Exception e) {
             filteredTransactions = new ArrayList<>();
