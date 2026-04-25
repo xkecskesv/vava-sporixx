@@ -3,6 +3,7 @@ package sk.sporixx.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.FamilyMemberData;
+import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.*;
 import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
@@ -246,11 +247,30 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public List<FamilyRequest> getPendingRequests() {
+    public List<FamilyRequestData> getPendingRequests() {
         int userId = SessionManager.getInstance().getCurrentUserId();
         logger.info("Loading pending requests for userId={}", userId);
         try {
-            return familyRequestRepository.findPendingByToUserId(userId);
+            List<FamilyRequest> requests = familyRequestRepository
+                    .findPendingByToUserId(userId);
+
+            List<FamilyRequestData> result = new ArrayList<>();
+            for (FamilyRequest request : requests) {
+                Optional<User> userOpt = userRepository.findById(request.getFromUserId());
+                if (userOpt.isEmpty()) continue;
+
+                User parent = userOpt.get();
+                result.add(FamilyRequestData.builder()
+                        .requestId(request.getId())
+                        .fromUserId(request.getFromUserId())
+                        .fromFirstName(parent.getFirstName())
+                        .fromLastName(parent.getLastName())
+                        .fromEmail(parent.getEmail())
+                        .createdAt(request.getCreatedAt())
+                        .build());
+            }
+            return result;
+
         } catch (Exception e) {
             logger.error("Failed to load pending requests", e);
             throw new FamilyException("error.db_error", e);

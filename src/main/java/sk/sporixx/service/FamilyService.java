@@ -1,6 +1,7 @@
 package sk.sporixx.service;
 
 import sk.sporixx.dto.FamilyMemberData;
+import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.FamilyRequest;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface FamilyService {
      * Načíta všetky pending požiadavky pre prihláseného používateľa.
      * Volá sa pri prihlásení.
      */
-    List<FamilyRequest> getPendingRequests();
+    List<FamilyRequestData> getPendingRequests();
 
     /**
      * Dieťa prijme požiadavku — udelí sa prístup rodičovi.
