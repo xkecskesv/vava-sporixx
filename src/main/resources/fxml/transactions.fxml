@@ -29,7 +29,6 @@
             <VBox styleClass="dashboard-content" spacing="24">
 
                 <!-- Header -->
-                <!-- Header -->
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <VBox spacing="4" HBox.hgrow="ALWAYS">
                         <Label text="%transactions.title" styleClass="dashboard-title"/>
@@ -189,6 +188,9 @@
 
             <!-- Amount preview -->
             <Label fx:id="amountPreview" styleClass="modal-amount-preview"/>
+
+            <Label fx:id="modalErrorLabel" styleClass="modal-error-label"
+                   visible="false" managed="false" wrapText="true"/>
 
         </VBox>
     </StackPane>

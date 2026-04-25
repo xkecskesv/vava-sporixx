@@ -15,7 +15,6 @@ import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.Localization;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +54,7 @@ public class TransactionController {
     @FXML private Label amountPreview;
     @FXML private VBox fromAccountSection;
     @FXML private VBox typeSection;
+    @FXML private Label modalErrorLabel;
 
     private List<Transaction> allTransactions = new ArrayList<>();
     private List<Transaction> filteredTransactions = new ArrayList<>();
@@ -141,16 +141,18 @@ public class TransactionController {
 
     private void applyFilters() {
         try {
-            SearchCriteria.SearchCriteriaBuilder builder = SearchCriteria.builder()
-                    .searchText(searchField.getText().trim());
+            // UI len posiela surový text — service rozhoduje či je to dátum, suma alebo názov
+            SearchCriteria criteria = SearchCriteria.builder()
+                    .searchText(searchField.getText().trim())
+                    .build();
 
             if (!activeAccountFilter.equals("ALL")) {
                 int accountId = Integer.parseInt(activeAccountFilter);
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(builder.build(), accountId);
+                        .searchTransactions(criteria, accountId);
             } else {
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(builder.build());
+                        .searchTransactions(criteria);
             }
         } catch (Exception e) {
             filteredTransactions = new ArrayList<>();
@@ -183,12 +185,10 @@ public class TransactionController {
         row.setAlignment(Pos.CENTER_LEFT);
         row.setOnMouseClicked(e -> selectTransaction(tx, row));
 
-        // Name
         Label name = new Label(tx.getDescription());
         name.getStyleClass().add("table-cell");
         name.setPrefWidth(220);
 
-        // Category — null-safe lookup
         String categoryName = "-";
         if (tx.getCategoryId() != null) {
             if (tx.getCategoryId() == Transaction.CATEGORY_SAVING ||
@@ -206,14 +206,12 @@ public class TransactionController {
         category.getStyleClass().add("table-cell");
         category.setPrefWidth(140);
 
-        // Need/Want
         String nw = tx.isWant() ? Localization.get("dashboard.activities.want")
                 : tx.isNeed() ? Localization.get("dashboard.activities.need") : "-";
         Label needWant = new Label(nw);
         needWant.getStyleClass().add("table-cell");
         needWant.setPrefWidth(100);
 
-        // Type
         String type = tx.isIncome()
                 ? Localization.get("dashboard.activities.incoming")
                 : Localization.get("dashboard.activities.sent");
@@ -221,13 +219,11 @@ public class TransactionController {
         typeLabel.getStyleClass().add("table-cell");
         typeLabel.setPrefWidth(100);
 
-        // Date
         Label date = new Label(tx.getCompleteDate()
                 .format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
         date.getStyleClass().add("table-cell");
         date.setPrefWidth(120);
 
-        // Amount
         String prefix = tx.isIncome() ? "+ " : "- ";
         Label amount = new Label(prefix + formatCurrency(tx.getAmount()));
         amount.getStyleClass().add(tx.isIncome()
@@ -243,6 +239,21 @@ public class TransactionController {
                 n.getStyleClass().setAll("table-row"));
         row.getStyleClass().setAll("table-row-selected");
         selectedTransaction = tx;
+    }
+
+    // ============================================================
+    //  AMOUNT PREVIEW
+    //  Volaná pri zmene sumy aj pri zmene typu — fix Bug 3
+    // ============================================================
+    private void updateAmountPreview() {
+        try {
+            double val = Double.parseDouble(amountField.getText().replace(",", "."));
+            boolean isIncome = typeCombo.getValue() != null &&
+                    typeCombo.getValue().equals(Localization.get("transactions.type.income"));
+            amountPreview.setText((isIncome ? "+ " : "- ") + formatCurrency(val));
+        } catch (NumberFormatException e) {
+            amountPreview.setText("");
+        }
     }
 
     // ============================================================
@@ -274,6 +285,7 @@ public class TransactionController {
     }
 
     private void openModal(boolean isEdit) {
+        clearModalError();
         modalTitle.setText(isEdit
                 ? Localization.get("transactions.modal.edit")
                 : Localization.get("transactions.modal.new"));
@@ -319,11 +331,16 @@ public class TransactionController {
                 Localization.get("transactions.type.expense")
         );
         typeCombo.setValue(Localization.get("transactions.type.expense"));
-        typeCombo.setOnAction(e -> onTypeChanged());
+
+        // Fix Bug 3 — zmena typu refreshne aj amount preview
+        typeCombo.setOnAction(e -> {
+            onTypeChanged();
+            updateAmountPreview();
+        });
 
         // Categories combo
         categoryCombo.getItems().setAll(
-                 selectableCategories.stream().map(Category::getName).collect(Collectors.toList()));
+                selectableCategories.stream().map(Category::getName).collect(Collectors.toList()));
         if (!categoryCombo.getItems().isEmpty())
             categoryCombo.setValue(categoryCombo.getItems().get(0));
 
@@ -357,23 +374,6 @@ public class TransactionController {
             amountField.setText(String.valueOf(selectedTransaction.getAmount()));
             datePicker.setValue(selectedTransaction.getCompleteDate().toLocalDate());
 
-            // Kategória — null-safe
-            if (selectedTransaction.getCategoryId() != null) {
-                String catName = categories.stream()
-                        .filter(c -> c.getId() == selectedTransaction.getCategoryId())
-                        .map(Category::getName)
-                        .findFirst()
-                        .orElse(null);
-                if (catName != null) categoryCombo.setValue(catName);
-            }
-
-            // Need/Want
-            if (selectedTransaction.isWant()) {
-                needWantCombo.setValue(Localization.get("dashboard.activities.want"));
-            } else {
-                needWantCombo.setValue(Localization.get("dashboard.activities.need"));
-            }
-
             // Zachovaj typ pre submitTransaction()
             if (selectedTransaction.isIncome()) {
                 typeCombo.setValue(Localization.get("transactions.type.income"));
@@ -381,14 +381,46 @@ public class TransactionController {
                 typeCombo.setValue(Localization.get("transactions.type.expense"));
             }
 
-            // Category vždy viditeľná, need/want len pre expense
-            categorySection.setVisible(true);
-            categorySection.setManaged(true);
-            boolean isExpense = !selectedTransaction.isIncome();
-            needWantCombo.setVisible(isExpense);
-            needWantCombo.setManaged(isExpense);
-            needWantLabel.setVisible(isExpense);
-            needWantLabel.setManaged(isExpense);
+            // Fix: zisti či je to transfer transakcia
+            boolean isTransfer = selectedTransaction.getCategoryId() != null &&
+                    (selectedTransaction.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                            selectedTransaction.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                            selectedTransaction.getCategoryId() == Transaction.CATEGORY_TRANSFER);
+
+            if (isTransfer) {
+                // Transfer — skry kategóriu aj need/want
+                categorySection.setVisible(false);
+                categorySection.setManaged(false);
+                needWantCombo.setVisible(false);
+                needWantCombo.setManaged(false);
+                needWantLabel.setVisible(false);
+                needWantLabel.setManaged(false);
+            } else {
+                // Štandardná transakcia — nastav kategóriu a need/want
+                categorySection.setVisible(true);
+                categorySection.setManaged(true);
+
+                if (selectedTransaction.getCategoryId() != null) {
+                    String catName = categories.stream()
+                            .filter(c -> c.getId() == selectedTransaction.getCategoryId())
+                            .map(Category::getName)
+                            .findFirst()
+                            .orElse(null);
+                    if (catName != null) categoryCombo.setValue(catName);
+                }
+
+                boolean isExpense = !selectedTransaction.isIncome();
+                needWantCombo.setVisible(isExpense);
+                needWantCombo.setManaged(isExpense);
+                needWantLabel.setVisible(isExpense);
+                needWantLabel.setManaged(isExpense);
+
+                if (selectedTransaction.isWant()) {
+                    needWantCombo.setValue(Localization.get("dashboard.activities.want"));
+                } else {
+                    needWantCombo.setValue(Localization.get("dashboard.activities.need"));
+                }
+            }
 
         } else {
             // Nová transakcia — reset viditeľnosti
@@ -399,15 +431,19 @@ public class TransactionController {
             onTypeChanged();
         }
 
-        // Amount preview listener
-        amountField.textProperty().addListener((obs, old, newVal) -> {
-            try {
-                double val = Double.parseDouble(newVal.replace(",", "."));
-                boolean isIncome = typeCombo.getValue()
-                        .equals(Localization.get("transactions.type.income"));
-                amountPreview.setText((isIncome ? "+ " : "- ") + formatCurrency(val));
-            } catch (NumberFormatException e) {
-                amountPreview.setText("");
+        // Amount preview listener — používa updateAmountPreview() pre konzistenciu
+        amountField.textProperty().addListener((obs, old, newVal) -> updateAmountPreview());
+
+        // DatePicker fix pre ručné zadávanie
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        datePicker.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                String text = datePicker.getEditor().getText();
+                if (text != null && !text.isEmpty()) {
+                    try {
+                        datePicker.setValue(LocalDate.parse(text, fmt));
+                    } catch (Exception ignored) {}
+                }
             }
         });
 
@@ -470,13 +506,13 @@ public class TransactionController {
             typeCombo.setValue(Localization.get("transactions.type.expense"));
             onTypeChanged();
         }
+        updateAmountPreview();
     }
 
     private void onTypeChanged() {
         categorySection.setVisible(true);
         categorySection.setManaged(true);
 
-        // Need/Want len pre expense
         String type = typeCombo.getValue();
         boolean isExpense = type != null &&
                 type.equals(Localization.get("transactions.type.expense"));
@@ -497,19 +533,24 @@ public class TransactionController {
     }
 
     private void submitTransaction() {
+        clearModalError();
+
         String name = nameField.getText().trim();
         String amountText = amountField.getText().trim();
 
-        if (name.isEmpty() || amountText.isEmpty() || datePicker.getValue() == null) return;
+        if (name.isEmpty()) { showModalError("transaction.error.description_required"); return; }
+        if (amountText.isEmpty()) { showModalError("transaction.error.invalid_amount"); return; }
+        if (datePicker.getValue() == null) { showModalError("transaction.error.date_required"); return; }
 
         double amount;
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
+            if (amount <= 0) { showModalError("transaction.error.invalid_amount"); return; }
         } catch (NumberFormatException e) {
+            showModalError("transaction.error.invalid_amount");
             return;
         }
 
-        // From account
         Account fromAccount;
         if (betweenAccountsCheck.isSelected()) {
             fromAccount = userAccounts.stream()
@@ -522,21 +563,18 @@ public class TransactionController {
         }
         if (fromAccount == null) return;
 
-        // Type
         String typeVal = typeCombo.getValue();
-        int typeId = typeVal.equals(Localization.get("transactions.type.income"))
+        int typeId = typeVal != null && typeVal.equals(Localization.get("transactions.type.income"))
                 ? Transaction.TYPE_INCOME : Transaction.TYPE_EXPENSE;
 
-        // Classification — len pre expense
         Integer classificationId = null;
         if (typeId == Transaction.TYPE_EXPENSE && !betweenAccountsCheck.isSelected()) {
-            classificationId = needWantCombo.getValue()
-                    .equals(Localization.get("dashboard.activities.want"))
+            classificationId = needWantCombo.getValue() != null &&
+                    needWantCombo.getValue().equals(Localization.get("dashboard.activities.want"))
                     ? Transaction.CLASSIFICATION_WANT
                     : Transaction.CLASSIFICATION_NEED;
         }
 
-        // Category — null-safe
         Integer categoryId = null;
         if (categoryCombo.getValue() != null) {
             categoryId = categories.stream()
@@ -546,7 +584,6 @@ public class TransactionController {
                     .orElse(1);
         }
 
-        // Target account pre transfer
         Integer targetAccountId = null;
         if (betweenAccountsCheck.isSelected()) {
             Account toAccount = userAccounts.stream()
@@ -560,11 +597,11 @@ public class TransactionController {
                 Transaction updated = Transaction.builder()
                         .id(selectedTransaction.getId())
                         .accountId(fromAccount.getId())
-                        .targetAccountId(targetAccountId)
+                        .targetAccountId(selectedTransaction.getTargetAccountId())
                         .transactionTypeId(typeId)
                         .transactionStatusId(Transaction.STATUS_COMPLETED)
                         .spendingClassificationId(classificationId)
-                        .categoryId(categoryId)
+                        .categoryId(selectedTransaction.getCategoryId())
                         .amount(amount)
                         .currencyCode(fromAccount.getDefaultCurrencyCode())
                         .description(name)
@@ -577,7 +614,7 @@ public class TransactionController {
                         fromAccount.getId(),
                         typeId,
                         targetAccountId,
-                        categoryId,
+                        categoryId != null ? categoryId : 1,
                         classificationId,
                         name,
                         amount,
@@ -590,7 +627,12 @@ public class TransactionController {
             closeModal();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            String msg = e.getMessage();
+            if (msg != null && msg.startsWith("transaction.error.")) {
+                showModalError(msg);
+            } else {
+                showModalError("error.db_error");
+            }
         }
     }
 
@@ -600,20 +642,33 @@ public class TransactionController {
     }
 
     private void setupDatePicker() {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         datePicker.setConverter(new javafx.util.StringConverter<LocalDate>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
             @Override
             public String toString(LocalDate date) {
-                return date != null ? date.format(formatter) : "";
+                return date != null ? date.format(fmt) : "";
             }
-
             @Override
             public LocalDate fromString(String string) {
-                return (string != null && !string.isEmpty())
-                        ? LocalDate.parse(string, formatter) : null;
+                if (string == null || string.isEmpty()) return null;
+                try {
+                    return LocalDate.parse(string, fmt);
+                } catch (Exception e) {
+                    return null;
+                }
             }
         });
+    }
+
+    private void showModalError(String key) {
+        modalErrorLabel.setText(Localization.get(key));
+        modalErrorLabel.setVisible(true);
+        modalErrorLabel.setManaged(true);
+    }
+
+    private void clearModalError() {
+        modalErrorLabel.setVisible(false);
+        modalErrorLabel.setManaged(false);
     }
 
     private String formatCurrency(double value) {
