@@ -262,7 +262,7 @@ public class TransactionServiceImpl implements TransactionService {
         Account toAccount = getAccountOrThrow(targetAccountId);
 
         // Kategória len pri transferoch kde je zapojený saving účet
-        Integer autoCategory = null;
+        Integer autoCategory = Transaction.CATEGORY_TRANSFER;
         if (toAccount.isSavingAccount()) {
             autoCategory = Transaction.CATEGORY_SAVING;
         } else if (fromAccount.isSavingAccount()) {

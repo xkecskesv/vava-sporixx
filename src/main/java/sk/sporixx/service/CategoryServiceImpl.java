@@ -59,7 +59,8 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return categoryRepository.findByUserIdOrSystem(userId).stream()
                     .filter(c -> c.getId() != Transaction.CATEGORY_SAVING
-                            && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE)
+                            && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE
+                            && c.getId() != Transaction.CATEGORY_TRANSFER)
                     .toList();
         } catch (Exception e) {
             logger.error("Failed to load selectable categories for userId: {}", userId, e);
