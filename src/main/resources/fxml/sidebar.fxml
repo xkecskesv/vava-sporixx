@@ -98,6 +98,7 @@
         <VBox styleClass="sidebar-bottom">
             <Separator styleClass="sidebar-separator"/>
 
+            <!-- User s avatarom -->
             <HBox fx:id="userBox" styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
                 <ImageView fx:id="userAvatar" fitWidth="32" fitHeight="32" preserveRatio="true"
                            styleClass="sidebar-avatar"/>
@@ -107,7 +108,8 @@
                 </VBox>
             </HBox>
 
-            <HBox styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
+            <!-- Settings -->
+            <HBox fx:id="settingsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
                     <Image url="@/assets/icons/settings_icon.png"/>
                 </ImageView>

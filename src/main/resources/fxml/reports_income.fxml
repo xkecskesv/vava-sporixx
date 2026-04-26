@@ -41,7 +41,7 @@
 
                 <!-- Income vs Expenses líniový graf -->
                 <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
-                    <Label text="%reports.income.chart_title" styleClass="dashboard-card-title"/>
+                    <Label fx:id="incomeExpenseChartTitle" text="%reports.income.chart_title" styleClass="dashboard-card-title"/>
                     <HBox spacing="4" alignment="CENTER_LEFT">
                         <Label fx:id="totalIncomeAmount" styleClass="analytics-amount"/>
                     </HBox>
@@ -86,7 +86,7 @@
 
                 <!-- Recurring expenses stĺpcový graf -->
                 <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
-                    <Label text="%reports.income.recurring_title" styleClass="dashboard-card-title"/>
+                    <Label fx:id="recurringChartTitle" text="%reports.income.recurring_title" styleClass="dashboard-card-title"/>
                     <HBox VBox.vgrow="ALWAYS">
                         <BarChart fx:id="recurringBarChart" animated="false"
                                   legendVisible="false"

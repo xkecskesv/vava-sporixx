@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import sk.sporixx.dto.*;
 import sk.sporixx.model.*;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 import javafx.scene.layout.StackPane;
 
@@ -308,12 +309,13 @@ public class DashboardController {
             if (node instanceof Label label)
                 label.getStyleClass().setAll(active ? "account-card-desc-active" : "account-card-desc");
             if (node instanceof VBox vbox) {
+                boolean firstLabel = true;
                 for (var child : vbox.getChildren()) {
                     if (child instanceof Label label) {
-                        if (label.getText().startsWith("€"))
-                            label.getStyleClass().setAll(active ? "account-card-amount-active" : "account-card-amount");
-                        else if (label.getText().startsWith("From"))
-                            label.getStyleClass().setAll(active ? "account-card-goal-active" : "account-card-goal");
+                        label.getStyleClass().setAll(firstLabel
+                                ? (active ? "account-card-amount-active" : "account-card-amount")
+                                : (active ? "account-card-goal-active" : "account-card-goal"));
+                        firstLabel = false;
                     }
                 }
             }
@@ -529,7 +531,7 @@ public class DashboardController {
     //  HELPER
     // ============================================================
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 
     // ============================================================

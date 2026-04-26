@@ -31,12 +31,15 @@ public class SidebarController {
     @FXML private Label personalManagementLabel;
     @FXML private Label familyManagementLabel;
 
+    @FXML private HBox settingsItem;
     @FXML private HBox userBox;
 
     @FXML private Label overviewLabel;
     @FXML private Label reportsLabel;
     @FXML private Label transactionsLabel;
     @FXML private Label budgetingLabel;
+
+
     @FXML private Label managementLabel;
     @FXML private Label incomeLabel;
     @FXML private Label savingsLabel;
@@ -44,6 +47,7 @@ public class SidebarController {
     @FXML private ImageView userAvatar;
     @FXML private Label userName;
     @FXML private Label userRole;
+    @FXML private Label settingsLabel;
 
     private boolean reportsExpanded = false;
     private boolean managementExpanded = false;
@@ -69,6 +73,7 @@ public class SidebarController {
         savingsLabel.setOnMouseClicked(e -> navigate("reports_savings.fxml"));
         transactionsItem.setOnMouseClicked(e -> navigate("transactions.fxml"));
         budgetingItem.setOnMouseClicked(e -> navigate("budgeting.fxml"));
+        settingsItem.setOnMouseClicked(e -> navigate("settings.fxml"));
         userBox.setOnMouseClicked(e -> navigate("profile.fxml"));
         userBox.getChildren().forEach(child -> child.setMouseTransparent(true));
     }
@@ -110,6 +115,8 @@ public class SidebarController {
         savingsLabel.setStyle("");
         personalManagementLabel.setStyle("");
         familyManagementLabel.setStyle("");
+        setItemActive(settingsItem, settingsLabel, false);
+
 
         switch (activePage) {
             case "dashboard.fxml" -> setItemActive(overviewItem, overviewLabel, true);
@@ -139,6 +146,8 @@ public class SidebarController {
                         getClass().getResourceAsStream("/assets/icons/icon_chevron_down.png")));
                 familyManagementLabel.setStyle("-fx-text-fill: #FFFFFF;");
             }
+
+            case "settings.fxml" -> setItemActive(settingsItem, settingsLabel, true);
 
             case "reports_income.fxml", "reports_savings.fxml" -> {
                 setItemActive(reportsItem, reportsLabel, true);

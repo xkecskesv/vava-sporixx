@@ -12,6 +12,7 @@ import sk.sporixx.model.Category;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.time.LocalDate;
@@ -675,6 +676,6 @@ public class TransactionController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }
