@@ -213,4 +213,11 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                                 t.getCategoryId() == Transaction.CATEGORY_TRANSFER))
                 .findFirst();
     }
+
+    @Override
+    public boolean existsByCategoryId(int categoryId) {
+        return transactions.stream()
+                .anyMatch(t -> t.getCategoryId() != null
+                        && t.getCategoryId() == categoryId);
+    }
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sk.sporixx.model.Category;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.CategoryRepository;
+import sk.sporixx.repository.TransactionRepository;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
@@ -24,9 +25,12 @@ public class CategoryServiceImpl implements CategoryService {
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     private final CategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               TransactionRepository transactionRepository) {
         this.categoryRepository = categoryRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
@@ -175,6 +179,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         try {
+            if (transactionRepository.existsByCategoryId(categoryId)) {
+                throw new CategoryException("category.error.in_use");
+            }
             categoryRepository.deleteById(categoryId);
             logger.info("Category deleted: id={}", categoryId);
 

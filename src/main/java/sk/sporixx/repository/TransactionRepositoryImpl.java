@@ -616,4 +616,10 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public boolean existsByCategoryId(int categoryId) {
+        // TODO: SELECT COUNT(*) FROM transactions WHERE category_id = ?
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }
