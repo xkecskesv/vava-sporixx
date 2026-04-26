@@ -36,6 +36,7 @@ public final class ServiceLocator {
     private static CategoryService categoryService;
     private static BudgetService budgetService;
     private static SettingsService settingsService;
+    private static CurrencyService currencyService;
     private static RecurringRuleService recurringRuleService;
     private static FamilyService familyService;
 
@@ -59,6 +60,7 @@ public final class ServiceLocator {
 
         try {
             settingsService = new SettingsServiceImpl();
+            currencyService = new CurrencyServiceImpl(settingsService);
             if (USE_TEST_DATA) {
                 initTestMode();
             } else {
@@ -268,6 +270,11 @@ public final class ServiceLocator {
     public static SettingsService getSettingsService() {
         checkInitialized();
         return settingsService;
+    }
+
+    public static CurrencyService getCurrencyService() {
+        checkInitialized();
+        return currencyService;
     }
 
     //  HELPER

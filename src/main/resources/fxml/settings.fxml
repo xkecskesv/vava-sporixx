@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -56,43 +55,48 @@
                                 <Label styleClass="settings-section-title" text="%settings.notifications.title" />
 
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                    <VBox maxWidth="320.0" spacing="4.0" HBox.hgrow="ALWAYS">
                                         <Label styleClass="settings-notification-title" text="%settings.notifications.upcoming.title" />
                                         <Label styleClass="settings-notification-subtitle" text="%settings.notifications.upcoming.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ToggleButton fx:id="upcomingToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <ToggleButton fx:id="upcomingToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
                                         <Label styleClass="settings-notification-title" text="%settings.notifications.budget.title" />
                                         <Label styleClass="settings-notification-subtitle" text="%settings.notifications.budget.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ToggleButton fx:id="budgetToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <ToggleButton fx:id="budgetToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
                                         <Label styleClass="settings-notification-title" text="%settings.notifications.reminders.title" />
                                         <Label styleClass="settings-notification-subtitle" text="%settings.notifications.reminders.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ToggleButton fx:id="remindersToggle" prefHeight="44.0" prefWidth="75.0" styleClass="settings-switch" text="%settings.value.off" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <ToggleButton fx:id="remindersToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.off" HBox.hgrow="NEVER" />
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
                                         <Label styleClass="settings-notification-title" text="%settings.notifications.goals.title" />
                                         <Label styleClass="settings-notification-subtitle" text="%settings.notifications.goals.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ToggleButton fx:id="goalsToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <ToggleButton fx:id="goalsToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
                                         <Label styleClass="settings-notification-title" text="%settings.notifications.achievements.title" />
                                         <Label styleClass="settings-notification-subtitle" text="%settings.notifications.achievements.subtitle" wrapText="true" />
                                     </VBox>
-                                    <ToggleButton fx:id="achievementsToggle" prefHeight="44.0" prefWidth="75.0" selected="true" styleClass="settings-switch" text="%settings.value.on" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <ToggleButton fx:id="achievementsToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
                                 </HBox>
                             </VBox>
                             <Region VBox.vgrow="ALWAYS" />
@@ -116,6 +120,9 @@
                             </HBox>
                             <Region VBox.vgrow="ALWAYS" />
                         </VBox>
+                  <rowConstraints>
+                     <RowConstraints />
+                  </rowConstraints>
                     </GridPane>
                 </StackPane>
             </VBox>
