@@ -18,7 +18,7 @@ public class Main extends Application {
 
         loadFonts();
 
-        Localization.load("en");
+        Localization.load("sk");
 
         ServiceLocator.init();
 
