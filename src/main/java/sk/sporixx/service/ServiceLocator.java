@@ -103,7 +103,8 @@ public final class ServiceLocator {
                 testData.getAccountRepository(),
                 testData.getCategoryRepository(),
                 testData.getSavingGoalRepository());
-        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository(),
+                testData.getTransactionRepository());
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 testData.getTransactionRepository());
@@ -169,7 +170,7 @@ public final class ServiceLocator {
                 categoryRepo,
                 savingGoalRepo);
 
-        categoryService = new CategoryServiceImpl(categoryRepo);
+        categoryService = new CategoryServiceImpl(categoryRepo, transactionRepo);
 
         budgetService = new BudgetServiceImpl(
                 budgetRepo,

@@ -78,4 +78,6 @@ public interface TransactionRepository {
      * Nájde párovú transakciu pre transfer
      */
     Optional<Transaction> findPairedTransfer(int excludeAccountId, double amount, LocalDateTime createdAt);
+
+    boolean existsByCategoryId(int categoryId);
 }
