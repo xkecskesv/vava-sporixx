@@ -33,5 +33,7 @@ public interface SettingsService {
     void setAchievementsEnabled(boolean enabled);
 
     UserSettings getSettingsSnapshot();
+
+    void reload();
 }
 

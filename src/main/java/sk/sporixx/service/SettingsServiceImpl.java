@@ -1,122 +1,197 @@
 package sk.sporixx.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sk.sporixx.dto.UserSettings;
+import sk.sporixx.repository.SettingsRepositoryImpl;
+import sk.sporixx.repository.SettingsRepository;
+
 import java.util.Locale;
 import java.util.Set;
-import java.util.prefs.Preferences;
-import sk.sporixx.dto.UserSettings;
 
 public class SettingsServiceImpl implements SettingsService {
 
-    private static final String PREF_NODE = "sk/sporixx/settings";
-
-    private static final String KEY_LANGUAGE = "language";
-    private static final String KEY_CURRENCY = "currency";
-
-    private static final String KEY_UPCOMING = "notifications.upcoming";
-    private static final String KEY_BUDGET = "notifications.budget";
-    private static final String KEY_REMINDERS = "notifications.reminders";
-    private static final String KEY_GOALS = "notifications.goals";
-    private static final String KEY_ACHIEVEMENTS = "notifications.achievements";
+    private static final Logger logger = LoggerFactory.getLogger(SettingsServiceImpl.class);
 
     private static final String DEFAULT_LANGUAGE = "en";
     private static final String DEFAULT_CURRENCY = "EUR";
 
-    private static final Set<String> SUPPORTED_LANGUAGES = Set.of("en", "sk", "cs");
-    private static final Set<String> SUPPORTED_CURRENCIES = Set.of("EUR", "USD", "CZK");
+    private static final Set<String> SUPPORTED_LANGUAGES = Set.of("en", "sk", "cs", "de", "pl");
+    private static final Set<String> SUPPORTED_CURRENCIES = Set.of("EUR", "USD", "CZK", "GBP", "PLN");
 
-    private final Preferences preferences = Preferences.userRoot().node(PREF_NODE);
+    private final SettingsRepository repository;
+    private UserSettings currentSettings;
+
+    public SettingsServiceImpl() {
+        this(new SettingsRepositoryImpl());
+    }
+
+    SettingsServiceImpl(SettingsRepository repository) {
+        this.repository = repository;
+        this.currentSettings = loadFromRepository();
+    }
+
+    private UserSettings loadFromRepository() {
+        try {
+            UserSettings loaded = repository.load();
+            return sanitize(loaded);
+        } catch (Exception e) {
+            logger.error("Failed to load settings from repository, using defaults", e);
+            return defaultSettings();
+        }
+    }
 
     @Override
     public String getLanguageCode() {
-        String language = preferences.get(KEY_LANGUAGE, DEFAULT_LANGUAGE).toLowerCase(Locale.ROOT);
-        return SUPPORTED_LANGUAGES.contains(language) ? language : DEFAULT_LANGUAGE;
+        return currentSettings.getLanguageCode();
     }
 
     @Override
     public void setLanguageCode(String languageCode) {
-        String normalized = languageCode == null
-                ? DEFAULT_LANGUAGE
-                : languageCode.toLowerCase(Locale.ROOT);
-        preferences.put(KEY_LANGUAGE,
-                SUPPORTED_LANGUAGES.contains(normalized) ? normalized : DEFAULT_LANGUAGE);
+        currentSettings = UserSettings.builder()
+                .languageCode(normalizeLanguage(languageCode))
+                .currencyCode(currentSettings.getCurrencyCode())
+                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
+                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
+                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
+                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
+                .achievementsEnabled(currentSettings.isAchievementsEnabled())
+                .build();
+        persist();
     }
 
     @Override
     public String getCurrencyCode() {
-        String currency = preferences.get(KEY_CURRENCY, DEFAULT_CURRENCY).toUpperCase(Locale.ROOT);
-        return SUPPORTED_CURRENCIES.contains(currency) ? currency : DEFAULT_CURRENCY;
+        return currentSettings.getCurrencyCode();
     }
 
     @Override
     public void setCurrencyCode(String currencyCode) {
-        String normalized = currencyCode == null
-                ? DEFAULT_CURRENCY
-                : currencyCode.toUpperCase(Locale.ROOT);
-        preferences.put(KEY_CURRENCY,
-                SUPPORTED_CURRENCIES.contains(normalized) ? normalized : DEFAULT_CURRENCY);
+        currentSettings = UserSettings.builder()
+                .languageCode(currentSettings.getLanguageCode())
+                .currencyCode(normalizeCurrency(currencyCode))
+                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
+                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
+                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
+                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
+                .achievementsEnabled(currentSettings.isAchievementsEnabled())
+                .build();
+        persist();
     }
 
     @Override
     public boolean isUpcomingPaymentsEnabled() {
-        return preferences.getBoolean(KEY_UPCOMING, true);
+        return currentSettings.isUpcomingPaymentsEnabled();
     }
 
     @Override
     public void setUpcomingPaymentsEnabled(boolean enabled) {
-        preferences.putBoolean(KEY_UPCOMING, enabled);
+        currentSettings.setUpcomingPaymentsEnabled(enabled);
+        persist();
     }
 
     @Override
     public boolean isBudgetLimitAlertsEnabled() {
-        return preferences.getBoolean(KEY_BUDGET, true);
+        return currentSettings.isBudgetLimitAlertsEnabled();
     }
 
     @Override
     public void setBudgetLimitAlertsEnabled(boolean enabled) {
-        preferences.putBoolean(KEY_BUDGET, enabled);
+        currentSettings.setBudgetLimitAlertsEnabled(enabled);
+        persist();
     }
 
     @Override
     public boolean isSavingRemindersEnabled() {
-        return preferences.getBoolean(KEY_REMINDERS, true);
+        return currentSettings.isSavingRemindersEnabled();
     }
 
     @Override
     public void setSavingRemindersEnabled(boolean enabled) {
-        preferences.putBoolean(KEY_REMINDERS, enabled);
+        currentSettings.setSavingRemindersEnabled(enabled);
+        persist();
     }
 
     @Override
     public boolean isSavingGoalsUpdatesEnabled() {
-        return preferences.getBoolean(KEY_GOALS, true);
+        return currentSettings.isSavingGoalsUpdatesEnabled();
     }
 
     @Override
     public void setSavingGoalsUpdatesEnabled(boolean enabled) {
-        preferences.putBoolean(KEY_GOALS, enabled);
+        currentSettings.setSavingGoalsUpdatesEnabled(enabled);
+        persist();
     }
 
     @Override
     public boolean isAchievementsEnabled() {
-        return preferences.getBoolean(KEY_ACHIEVEMENTS, true);
+        return currentSettings.isAchievementsEnabled();
     }
 
     @Override
     public void setAchievementsEnabled(boolean enabled) {
-        preferences.putBoolean(KEY_ACHIEVEMENTS, enabled);
+        currentSettings.setAchievementsEnabled(enabled);
+        persist();
     }
 
     @Override
     public UserSettings getSettingsSnapshot() {
         return UserSettings.builder()
-                .languageCode(getLanguageCode())
-                .currencyCode(getCurrencyCode())
-                .upcomingPaymentsEnabled(isUpcomingPaymentsEnabled())
-                .budgetLimitAlertsEnabled(isBudgetLimitAlertsEnabled())
-                .savingRemindersEnabled(isSavingRemindersEnabled())
-                .savingGoalsUpdatesEnabled(isSavingGoalsUpdatesEnabled())
-                .achievementsEnabled(isAchievementsEnabled())
+                .languageCode(currentSettings.getLanguageCode())
+                .currencyCode(currentSettings.getCurrencyCode())
+                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
+                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
+                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
+                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
+                .achievementsEnabled(currentSettings.isAchievementsEnabled())
+                .build();
+    }
+
+    @Override
+    public void reload() {
+        this.currentSettings = loadFromRepository();
+    }
+
+    private void persist() {
+        try {
+            repository.save(currentSettings);
+        } catch (Exception e) {
+            logger.error("Failed to persist settings", e);
+        }
+    }
+
+    private UserSettings sanitize(UserSettings settings) {
+        if (settings == null) return defaultSettings();
+        return UserSettings.builder()
+                .languageCode(normalizeLanguage(settings.getLanguageCode()))
+                .currencyCode(normalizeCurrency(settings.getCurrencyCode()))
+                .upcomingPaymentsEnabled(settings.isUpcomingPaymentsEnabled())
+                .budgetLimitAlertsEnabled(settings.isBudgetLimitAlertsEnabled())
+                .savingRemindersEnabled(settings.isSavingRemindersEnabled())
+                .savingGoalsUpdatesEnabled(settings.isSavingGoalsUpdatesEnabled())
+                .achievementsEnabled(settings.isAchievementsEnabled())
+                .build();
+    }
+
+    private String normalizeLanguage(String code) {
+        String normalized = code == null ? DEFAULT_LANGUAGE : code.toLowerCase(Locale.ROOT);
+        return SUPPORTED_LANGUAGES.contains(normalized) ? normalized : DEFAULT_LANGUAGE;
+    }
+
+    private String normalizeCurrency(String code) {
+        String normalized = code == null ? DEFAULT_CURRENCY : code.toUpperCase(Locale.ROOT);
+        return SUPPORTED_CURRENCIES.contains(normalized) ? normalized : DEFAULT_CURRENCY;
+    }
+
+    private UserSettings defaultSettings() {
+        return UserSettings.builder()
+                .languageCode(DEFAULT_LANGUAGE)
+                .currencyCode(DEFAULT_CURRENCY)
+                .upcomingPaymentsEnabled(true)
+                .budgetLimitAlertsEnabled(true)
+                .savingRemindersEnabled(false)
+                .savingGoalsUpdatesEnabled(true)
+                .achievementsEnabled(true)
                 .build();
     }
 }
-

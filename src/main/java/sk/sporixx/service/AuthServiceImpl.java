@@ -114,6 +114,7 @@ public class AuthServiceImpl implements AuthService {
         SessionManager.getInstance().setSession(user, accounts);
         boolean mustChangePassword = user.getRole() == Role.ADMIN && ADMIN_PASSWORD.equals(password);
         SessionManager.getInstance().setForcePasswordChange(mustChangePassword);
+        ServiceLocator.getSettingsService().reload();
 
         logger.info("User logged in successfully: id={}, email={}, role={}, accounts={}",
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
@@ -209,6 +210,7 @@ public class AuthServiceImpl implements AuthService {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
 
             SessionManager.getInstance().setSession(savedUser, accounts);
+            ServiceLocator.getSettingsService().reload();
             logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
         } catch (Exception e) {
             logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);
