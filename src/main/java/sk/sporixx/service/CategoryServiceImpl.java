@@ -6,6 +6,7 @@ import sk.sporixx.model.Category;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.CategoryRepository;
 import sk.sporixx.repository.TransactionRepository;
+import sk.sporixx.util.Localization;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,9 @@ public class CategoryServiceImpl implements CategoryService {
         logger.info("Loading categories for userId: {}", userId);
 
         try {
-            return categoryRepository.findByUserIdOrSystem(userId);
+            return categoryRepository.findByUserIdOrSystem(userId).stream()
+                    .map(this::localizeIfSystem)
+                    .toList();
         } catch (Exception e) {
             logger.error("Failed to load categories for userId: {}", userId, e);
             throw new CategoryException("error.db_error", e);
@@ -56,6 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             return categoryRepository.findByUserIdOrSystem(userId).stream()
+                    .map(this::localizeIfSystem)
                     .filter(c -> c.getId() != Transaction.CATEGORY_SAVING
                             && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE
                             && c.getId() != Transaction.CATEGORY_TRANSFER)
@@ -183,5 +187,16 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Failed to delete category id={}", categoryId, e);
             throw new CategoryException("error.db_error", e);
         }
+    }
+
+    private Category localizeIfSystem(Category category) {
+        if (!category.isSystemCategory()) return category;
+        String key = "category.system." + category.getName().toLowerCase()
+                .replace(" ", "_");
+        try {
+            String localized = Localization.get(key);
+            category.setName(localized);
+        } catch (Exception ignored) {}
+        return category;
     }
 }
