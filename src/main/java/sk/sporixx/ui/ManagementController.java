@@ -651,6 +651,7 @@ public class ManagementController {
         editingRecurringRule = null;
         recurringModalTitle.setText(Localization.get("management.recurring.modal.title_add"));
         clearRecurringModal();
+        recurringStartDatePicker.setDisable(false);
         openRecurringModal();
     }
 
@@ -661,6 +662,7 @@ public class ManagementController {
         recurringModalTitle.setText(Localization.get("management.recurring.modal.title_edit"));
         populateRecurringModal(editingRecurringRule);
         clearRecurringModalError();
+        recurringStartDatePicker.setDisable(true);
         openRecurringModal();
     }
 
@@ -789,10 +791,9 @@ public class ManagementController {
             recurringCategoryCombo.setValue(recurringCategoryCombo.getItems().get(0));
 
         recurringClassificationCombo.getItems().setAll(
-                Localization.get("management.recurring.modal.classification_none"),
                 Localization.get("management.recurring.modal.classification_need"),
                 Localization.get("management.recurring.modal.classification_want"));
-        recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
+        recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
 
         recurringFrequencyCombo.getItems().setAll(
                 Localization.get("management.recurring.modal.frequency_daily"),
@@ -810,9 +811,6 @@ public class ManagementController {
         recurringAmountField.setText(String.format("%.2f", rule.getAmount()));
         recurringIntervalField.setText(String.valueOf(rule.getFrequencyInterval()));
 
-        if (rule.getStartDate() != null)
-            recurringStartDatePicker.setValue(rule.getStartDate().toLocalDate());
-        // endDate — voliteľný
         if (rule.getEndDate() != null)
             recurringEndDatePicker.setValue(rule.getEndDate().toLocalDate());
         else
@@ -827,12 +825,10 @@ public class ManagementController {
         recurringFrequencyCombo.setValue(Localization.get(freqKey));
 
         // Classification
-        if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_NEED)
-            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
-        else if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT)
+        if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT)
             recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_want"));
         else
-            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
+            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
 
         // Kategória
         selectableCategories.stream()
@@ -847,7 +843,7 @@ public class ManagementController {
         recurringModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == recurringModalOverlay) closeRecurringModal(); });
         recurringModalOverlay.setVisible(true); recurringModalOverlay.setManaged(true);
     }
-    private void closeRecurringModal() { recurringModalOverlay.setVisible(false); recurringModalOverlay.setManaged(false); }
+    private void closeRecurringModal() { recurringModalOverlay.setVisible(false); recurringModalOverlay.setManaged(false); recurringStartDatePicker.setDisable(false); }
 
     private void resetRecurringState() {
         selectedRecurringRule = null; editingRecurringRule = null;
