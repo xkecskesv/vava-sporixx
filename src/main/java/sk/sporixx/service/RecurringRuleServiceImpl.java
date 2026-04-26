@@ -103,8 +103,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                     .accountId(accountId)
                     .categoryId(categoryId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
-                    .spendingClassificationId(spendingClassificationId != null
-                            ? spendingClassificationId : 0)
+                    .spendingClassificationId(spendingClassificationId)
                     .description(description)
                     .amount(amount)
                     .frequencyType(frequencyType)
@@ -233,8 +232,6 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                     if (rule.getEndDate() != null
                             && rule.getNextDueDate().isAfter(rule.getEndDate())) {
                         recurringRuleRepository.deactivateById(rule.getId());
-                        logger.info("Recurring rule id={} reached end date, deactivated",
-                                rule.getId());
                         break;
                     }
 
@@ -262,8 +259,6 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                         if (rule.isActive() && rule.getEndDate() != null
                                 && rule.getNextDueDate().isAfter(rule.getEndDate())) {
                             recurringRuleRepository.deactivateById(rule.getId());
-                            logger.info("Recurring rule id={} deactivated — nextDueDate after endDate",
-                                    rule.getId());
                         }
 
                         logger.info("Recurring rule id={} processed, nextDueDate={}",
