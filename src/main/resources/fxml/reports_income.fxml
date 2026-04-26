@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<BorderPane stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sk.sporixx.ui.ReportsIncomeController">
+    <left>
+        <fx:include source="sidebar.fxml"/>
+    </left>
+    <center>
+        <VBox styleClass="dashboard-content" spacing="24">
+
+            <!-- Header -->
+            <VBox styleClass="dashboard-header" spacing="4">
+                <Label text="%reports.title" styleClass="dashboard-title"/>
+                <Label text="%reports.income.subtitle" styleClass="dashboard-subtitle"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="periodComboBox" styleClass="analytics-badge"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="exportButton" text="%reports.export" styleClass="btn-export"
+                            onAction="#handleExport"/>
+                </HBox>
+            </VBox>
+
+            <!-- Grafická sekcia -->
+            <HBox spacing="16">
+
+                <!-- Income vs Expenses líniový graf -->
+                <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="%reports.income.chart_title" styleClass="dashboard-card-title"/>
+                    <HBox spacing="4" alignment="CENTER_LEFT">
+                        <Label fx:id="totalIncomeAmount" styleClass="analytics-amount"/>
+                    </HBox>
+                    <Label text="%reports.income.total_income" styleClass="analytics-subtitle"/>
+                    <LineChart fx:id="incomeExpenseChart" animated="false"
+                               legendVisible="false"
+                               createSymbols="false"
+                               verticalGridLinesVisible="false"
+                               styleClass="analytics-chart" VBox.vgrow="ALWAYS">
+                        <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
+                        <yAxis><NumberAxis fx:id="lineYAxis" styleClass="analytics-axis" autoRanging="false"/></yAxis>
+                    </LineChart>
+                    <HBox spacing="16" alignment="CENTER">
+                        <HBox spacing="6" alignment="CENTER_LEFT">
+                            <Region prefWidth="12" prefHeight="3"
+                                    style="-fx-background-color: #3A7DF6; -fx-background-radius: 2px;"/>
+                            <Label text="%reports.income.legend.income" styleClass="analytics-subtitle"/>
+                        </HBox>
+                        <HBox spacing="6" alignment="CENTER_LEFT">
+                            <Region prefWidth="12" prefHeight="3"
+                                    style="-fx-background-color: #EF4444; -fx-background-radius: 2px;"/>
+                            <Label text="%reports.income.legend.expenses" styleClass="analytics-subtitle"/>
+                        </HBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Expenses by category koláčový graf -->
+                <VBox styleClass="dashboard-card" spacing="8" prefWidth="340" minWidth="300">
+                    <Label text="%reports.income.category_title" styleClass="dashboard-card-title"/>
+                    <PieChart fx:id="categoryPieChart" animated="false"
+                              legendVisible="true"
+                              legendSide="BOTTOM"
+                              labelsVisible="false"
+                              styleClass="reports-pie-chart"
+                              prefHeight="320"
+                              minHeight="320"
+                              VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+            </HBox>
+
+            <!-- Spodná sekcia -->
+            <HBox spacing="16">
+
+                <!-- Recurring expenses stĺpcový graf -->
+                <VBox styleClass="dashboard-card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="%reports.income.recurring_title" styleClass="dashboard-card-title"/>
+                    <HBox VBox.vgrow="ALWAYS">
+                        <BarChart fx:id="recurringBarChart" animated="false"
+                                  legendVisible="false"
+                                  verticalGridLinesVisible="false"
+                                  styleClass="analytics-chart" HBox.hgrow="ALWAYS"
+                                  VBox.vgrow="ALWAYS">
+                            <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
+                            <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                        </BarChart>
+                        <VBox spacing="8" alignment="TOP_LEFT" minWidth="120"
+                              style="-fx-padding: 8px 0 0 8px;">
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Region prefWidth="12" prefHeight="12"
+                                        style="-fx-background-color: #EF4444; -fx-background-radius: 3px;"/>
+                                <Label text="%reports.income.want" styleClass="analytics-subtitle"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Region prefWidth="12" prefHeight="12"
+                                        style="-fx-background-color: #3A7DF6; -fx-background-radius: 3px;"/>
+                                <Label text="%reports.income.need" styleClass="analytics-subtitle"/>
+                            </HBox>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <VBox spacing="2">
+                                <VBox.margin>
+                                    <Insets bottom="20"/>
+                                </VBox.margin>
+                                <Label text="Total" styleClass="analytics-subtitle"/>
+                                <Label fx:id="recurringTotalLabel" styleClass="recurring-total"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Want vs Need -->
+                <VBox styleClass="dashboard-card" spacing="8" prefWidth="340" minWidth="300">
+                    <Label text="%reports.income.wantneed_title" styleClass="dashboard-card-title"/>
+                    <BarChart fx:id="wantNeedChart" animated="false"
+                              legendVisible="false" verticalGridLinesVisible="false"
+                              styleClass="analytics-chart" VBox.vgrow="ALWAYS">
+                        <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
+                        <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                    </BarChart>
+                    <HBox spacing="0" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="2" HBox.hgrow="ALWAYS">
+                            <Label fx:id="needPercentLabel" styleClass="wantneed-percent"/>
+                            <Label text="%reports.income.need" styleClass="analytics-subtitle"/>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="2" HBox.hgrow="ALWAYS">
+                            <Label fx:id="wantPercentLabel" styleClass="wantneed-percent"/>
+                            <Label text="%reports.income.want" styleClass="analytics-subtitle"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
