@@ -178,10 +178,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new CategoryException("category.error.not_found");
         }
 
+        if (transactionRepository.existsByCategoryId(categoryId)) {
+            throw new CategoryException("category.error.in_use");
+        }
+
         try {
-            if (transactionRepository.existsByCategoryId(categoryId)) {
-                throw new CategoryException("category.error.in_use");
-            }
             categoryRepository.deleteById(categoryId);
             logger.info("Category deleted: id={}", categoryId);
 

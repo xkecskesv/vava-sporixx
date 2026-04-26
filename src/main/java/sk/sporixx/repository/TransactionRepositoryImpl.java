@@ -619,7 +619,23 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public boolean existsByCategoryId(int categoryId) {
-        // TODO: SELECT COUNT(*) FROM transactions WHERE category_id = ?
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "SELECT COUNT(*) FROM transactions WHERE category_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, categoryId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error checking if category id={} is used in transactions", categoryId, e);
+            throw new RuntimeException("Error checking category usage in transactions", e);
+        }
+
+        return false;
     }
 }

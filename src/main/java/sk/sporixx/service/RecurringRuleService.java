@@ -18,14 +18,13 @@ public interface RecurringRuleService {
      */
     RecurringRule addRecurringRule(int accountId,
                                    int categoryId,
-                                   int transactionTypeId,
                                    Integer spendingClassificationId,
                                    String description,
                                    double amount,
                                    String frequencyType,
                                    int frequencyInterval,
                                    LocalDate startDate,
-                                   Integer maxOccurrences);
+                                   LocalDate endDate);
 
     /**
      * Aktualizuje existujúce pravidlo.
@@ -37,7 +36,7 @@ public interface RecurringRuleService {
                              double amount,
                              String frequencyType,
                              int frequencyInterval,
-                             Integer maxOccurrences);
+                             LocalDate endDate);
 
     /**
      * Deaktivuje pravidlo (soft delete).
