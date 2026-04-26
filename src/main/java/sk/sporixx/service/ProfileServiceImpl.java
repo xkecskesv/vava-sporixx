@@ -2,11 +2,15 @@ package sk.sporixx.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.model.Account;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
+import sk.sporixx.repository.AccountAccessRepository;
+import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
 import sk.sporixx.util.ValidationUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,10 +27,15 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final AccountRepository accountRepository;
+    private final AccountAccessRepository accountAccessRepository;
 
-    public ProfileServiceImpl(UserRepository userRepository, UserService userService) {
+    public ProfileServiceImpl(UserRepository userRepository, UserService userService, AccountRepository accountRepository,
+                              AccountAccessRepository accountAccessRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.accountRepository = accountRepository;
+        this.accountAccessRepository = accountAccessRepository;
     }
 
     /**
@@ -51,24 +60,48 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileException("auth.error.email_exists");
         }
 
+        Role originalRole = currentUser.getRole();
+        boolean roleMutable = originalRole != Role.ADMIN;
+
+        if (roleMutable) {
+            if (isParent && originalRole == Role.USER) {
+                // Kontrola že nie je dieťaťom v rodinke
+                List<Account> userAccounts = accountRepository.findByOwnerUserId(currentUser.getId());
+                boolean isChild = userAccounts.stream()
+                        .anyMatch(a -> !accountAccessRepository.findByAccountId(a.getId()).isEmpty());
+                if (isChild) {
+                    throw new ProfileException("profile.error.already_child");
+                }
+            }
+
+            if (!isParent && originalRole == Role.FAMILY_MANAGER) {
+                // Kontrola že nemá deti v rodinke
+                boolean hasChildren = !accountAccessRepository
+                        .findByUserId(currentUser.getId()).isEmpty();
+                if (hasChildren) {
+                    throw new ProfileException("profile.error.has_children");
+                }
+            }
+        }
+
+        // Nastav hodnoty — rolu ešte nemeníme
         currentUser.setFirstName(ValidationUtil.normalizeName(firstName));
         currentUser.setLastName(ValidationUtil.normalizeName(lastName));
         currentUser.setEmail(normalizedEmail);
         currentUser.setGender(userService.normalizeGender(gender));
 
-        Role originalRole = currentUser.getRole();
-        boolean roleMutable = originalRole != Role.ADMIN;
-        if (roleMutable) {
-            currentUser.setRole(isParent ? Role.FAMILY_MANAGER : Role.USER);
-        }
+        Role newRole = roleMutable
+                ? (isParent ? Role.FAMILY_MANAGER : Role.USER)
+                : originalRole;
 
         try {
+            currentUser.setRole(newRole);
             userRepository.update(currentUser);
             userRepository.updateFamilyManagerStatus(currentUser.getId(), isParent);
+            logger.info("Profile updated for user id={}", currentUser.getId());
         } catch (Exception e) {
-            if (roleMutable) {
-                currentUser.setRole(originalRole);
-            }
+            // Revert roly pri chybe
+            currentUser.setRole(originalRole);
             logger.error("Failed to update profile for user id={}", currentUser.getId(), e);
             throw new ProfileException("error.unexpected", e);
         }

@@ -308,7 +308,10 @@ public class ProfileController {
             lastSavedGender = gender;
             lastSavedParent = isParent;
             showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
+
+            SceneManager.switchTo("profile.fxml");
         } catch (ProfileException e) {
+            parentCheckBox.setSelected(lastSavedParent);
             showAutosaveFeedback(localizeMessage(e.getMessageKey()), "profile-feedback-error");
         } catch (Exception e) {
             logger.warn("Autosave failed unexpectedly.", e);

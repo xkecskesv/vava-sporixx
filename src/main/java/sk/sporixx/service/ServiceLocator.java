@@ -85,7 +85,9 @@ public final class ServiceLocator {
 
         authService    = testData.getAuthService();
         userService = new UserServiceImpl();
-        profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
+        profileService = new ProfileServiceImpl(testData.getUserRepository(), userService,
+                testData.getAccountRepository(),
+                testData.getAccountAccessRepository());
         adminService = new AdminServiceImpl(testData.getUserRepository(), testData.getAccountRepository(), userService);
         overviewService = testData.getOverviewService();
         accountService = new AccountServiceImpl(
@@ -140,7 +142,7 @@ public final class ServiceLocator {
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
-        profileService = new ProfileServiceImpl(userRepo, userService);
+        profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, testData.getAccountAccessRepository());
         adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         overviewService = new OverviewServiceImpl(
