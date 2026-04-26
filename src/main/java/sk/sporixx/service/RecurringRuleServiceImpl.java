@@ -71,6 +71,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
         if (SessionManager.getInstance().getAccountById(accountId) == null) {
             throw new RecurringRuleException("recurring.error.account_not_found");
         }
+        if (endDate != null) {
+            if (endDate.isBefore(startDate)) {
+                throw new RecurringRuleException("recurring.error.end_before_start");
+            }
+            if (endDate.isBefore(LocalDate.now())) {
+                throw new RecurringRuleException("recurring.error.end_in_past");
+            }
+        }
 
         try {
             LocalDateTime startDateTime = startDate.atStartOfDay();
