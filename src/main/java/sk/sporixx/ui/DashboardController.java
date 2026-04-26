@@ -484,7 +484,7 @@ public class DashboardController {
         HBox.setHgrow(info, Priority.ALWAYS);
         Label name = new Label(rule.getDescription());
         name.getStyleClass().add("activity-name");
-        Label type = new Label(Localization.get("dashboard.activities.sent"));
+        Label type = new Label(Localization.get("dashboard.activities.upcoming"));
         type.getStyleClass().add("activity-type");
         info.getChildren().addAll(name, type);
         row.getChildren().add(info);
