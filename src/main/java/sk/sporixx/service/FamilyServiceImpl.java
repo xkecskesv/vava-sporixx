@@ -43,12 +43,11 @@ public class FamilyServiceImpl implements FamilyService {
         logger.info("Loading family members for managerId={}", managerId);
 
         try {
-            // Načítaj všetky prístupy Family Managera
+            // načíta všetky prístupy family managera
             List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
             if (accesses.isEmpty()) return new ArrayList<>();
 
-            // Zoskup account_id podľa owner_user_id
-            // Každý account_id → načítaj account → vezmi ownerUserId
+            // zoskupí account_id podľa owner_user_id
             Map<Integer, List<Account>> accountsByOwner = new java.util.LinkedHashMap<>();
 
             for (AccountAccess access : accesses) {
@@ -61,7 +60,7 @@ public class FamilyServiceImpl implements FamilyService {
                 accountsByOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(account);
             }
 
-            // Pre každého vlastníka načítaj profil
+            // pre každého vlastníka načítaj profil
             List<FamilyMemberData> result = new ArrayList<>();
             for (Map.Entry<Integer, List<Account>> entry : accountsByOwner.entrySet()) {
                 int ownerId = entry.getKey();
@@ -72,7 +71,7 @@ public class FamilyServiceImpl implements FamilyService {
 
                 List<Account> childAccounts = entry.getValue();
 
-                // Nájdi grantedAt
+                // nájde grantedAt
                 LocalDateTime grantedAt = accesses.stream()
                         .filter(a -> childAccounts.stream()
                                 .anyMatch(ca -> ca.getId() == a.getAccountId()))
@@ -129,7 +128,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.no_accounts");
         }
 
-        // Skontroluj či už je member
+        // skontroluj, či už je member
         List<AccountAccess> existing = accountAccessRepository.findByUserId(managerId);
         boolean alreadyAdded = existing.stream()
                 .anyMatch(a -> childAccounts.stream()
@@ -138,7 +137,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.already_member");
         }
 
-        // Skontroluj či už existuje pending request
+        // skontroluje, či už existuje pending request
         if (familyRequestRepository.existsPending(managerId, child.getId())) {
             throw new FamilyException("family.error.request_already_sent");
         }
@@ -167,7 +166,7 @@ public class FamilyServiceImpl implements FamilyService {
 
         int managerId = SessionManager.getInstance().getCurrentUserId();
 
-        // Skontroluj že člen je v rodine
+        // skontroluje, že člen je v rodine
         List<AccountAccess> existing = accountAccessRepository.findByUserId(managerId);
         List<Account> childAccounts = accountRepository.findByOwnerUserId(userId);
 
@@ -180,7 +179,7 @@ public class FamilyServiceImpl implements FamilyService {
         }
 
         try {
-            // Zmaž všetky prístupy Family Managera k účtom tohto dieťaťa
+            // zmaže všetky prístupy family managera k účtom tohto dieťaťa
             for (Account account : childAccounts) {
                 accountAccessRepository.revokeAccess(managerId, account.getId());
             }
@@ -201,13 +200,13 @@ public class FamilyServiceImpl implements FamilyService {
         FamilyRequest request = familyRequestRepository.findById(requestId)
                 .orElseThrow(() -> new FamilyException("family.error.request_not_found"));
 
-        // Skontroluj že request je pre prihláseného používateľa
+        // skontroluje, že request je pre prihláseného používateľa
         int currentUserId = SessionManager.getInstance().getCurrentUserId();
         if (request.getToUserId() != currentUserId) {
             throw new FamilyException("family.error.not_your_request");
         }
 
-        // Skontroluj max 2 rodičia
+        // skontroluje max 2 rodičia
         List<Account> childAccounts = accountRepository
                 .findByOwnerUserId(currentUserId);
 
@@ -222,7 +221,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.max_parents_reached");
         }
 
-        // Udeľ prístup
+        // udelí prístup
         for (Account account : childAccounts) {
             accountAccessRepository.grantAccess(
                     request.getFromUserId(),
@@ -298,7 +297,7 @@ public class FamilyServiceImpl implements FamilyService {
 
         int managerId = SessionManager.getInstance().getCurrentUserId();
 
-        // Skontroluje prístup
+        // dkontroluje prístup
         List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
         boolean hasAccess = accesses.stream()
                 .anyMatch(a -> a.getAccountId() == accountId);
@@ -335,7 +334,7 @@ public class FamilyServiceImpl implements FamilyService {
 
             List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
             if (!goals.isEmpty()) {
-                SavingGoal goal = goals.get(0);
+                SavingGoal goal = goals.getFirst();
                 savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
                 savingGoalRepository.updateTargetDate(goal.getId(), targetDate.atStartOfDay());
             }

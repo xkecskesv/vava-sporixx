@@ -12,25 +12,23 @@ public interface AccountService {
     /**
      * Vytvorí Private účet (len description + amount).
      */
-    Account createPrivateAccount(String description, double initialAmount);
+    void createPrivateAccount(String description, double initialAmount);
 
     /**
-     * Vytvorí Saving účet + k nvemu SavingGoal.
-     * @param description popis účtu
+     * Vytvorí Saving účet + k nemu SavingGoal.
+     *
+     * @param description   popis účtu
      * @param initialAmount počiatočný zostatok
-     * @param targetAmount cieľová suma
-     * @param targetDate dátum do kedy chce nasporiť
+     * @param targetAmount  cieľová suma
+     * @param targetDate    dátum do kedy chce nasporiť
      */
-    Account createSavingAccount(String description, double initialAmount, double targetAmount,
-                                LocalDate targetDate);
+    void createSavingAccount(String description, double initialAmount, double targetAmount, LocalDate targetDate);
 
     /**
-     * Vytvorí saving účet s konkrétnym createdAt — používa sa pri importe XML.
+     * Vytvorí saving účet s konkrétnym createdAt - používa sa pri importe XML.
      * @param createdAt pôvodný dátum vytvorenia účtu
      */
-    Account createSavingAccountFromImport(String description, double initialAmount,
-                                          double targetAmount, LocalDate targetDate,
-                                          LocalDateTime createdAt);
+    Account createSavingAccountFromImport(String description, double initialAmount, double targetAmount, LocalDate targetDate, LocalDateTime createdAt);
 
     /**
      * Deaktivuje účet (soft delete).
@@ -46,8 +44,7 @@ public interface AccountService {
     /**
      * Aktualizuje saving účet a jeho goal.
      */
-    void updateSavingAccount(int accountId, String description,
-                             double targetAmount, LocalDate targetDate);
+    void updateSavingAccount(int accountId, String description, double targetAmount, LocalDate targetDate);
 
     /**
      * Načíta aktívny SavingGoal pre daný účet.

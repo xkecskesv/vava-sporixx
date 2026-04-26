@@ -62,6 +62,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
         if (description == null || description.isBlank()) {
             throw new RecurringRuleException("recurring.error.description_required");
         }
+        if (spendingClassificationId != null
+                && spendingClassificationId != Transaction.CLASSIFICATION_NEED
+                && spendingClassificationId != Transaction.CLASSIFICATION_WANT) {
+            throw new RecurringRuleException("recurring.error.invalid_classification");
+        }
+        if (spendingClassificationId == null) {
+            throw new RecurringRuleException("recurring.error.classification_required");
+        }
         if (startDate == null) {
             throw new RecurringRuleException("recurring.error.start_date_required");
         }
@@ -105,6 +113,12 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
             RecurringRule saved = recurringRuleRepository.save(rule);
             logger.info("Recurring rule created: id={}", saved.getId());
+
+            LocalDateTime now = LocalDateTime.now();
+            if (!saved.getNextDueDate().isAfter(now)) {
+                processSingleRule(saved);
+            }
+
             return saved;
 
         } catch (RecurringRuleException e) {
@@ -117,14 +131,13 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
     @Override
     public void updateRecurringRule(int ruleId,
-                             int categoryId,
-                             Integer spendingClassificationId,
-                             String description,
-                             double amount,
-                             String frequencyType,
-                             int frequencyInterval,
-                             LocalDate endDate) {
-        logger.info("Updating recurring rule id={}", ruleId);
+                                    int categoryId,
+                                    Integer spendingClassificationId,
+                                    String description,
+                                    double amount,
+                                    String frequencyType,
+                                    int frequencyInterval,
+                                    LocalDate endDate) {
 
         if (amount <= 0) {
             throw new RecurringRuleException("recurring.error.invalid_amount");
@@ -134,6 +147,9 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
         }
         if (frequencyInterval <= 0) {
             throw new RecurringRuleException("recurring.error.invalid_interval");
+        }
+        if (endDate != null && endDate.isBefore(LocalDate.now())) {
+            throw new RecurringRuleException("recurring.error.end_in_past");
         }
 
         RecurringRule rule = recurringRuleRepository.findById(ruleId)
@@ -260,5 +276,47 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                 yield current.plusMonths(rule.getFrequencyInterval());
             }
         };
+    }
+
+    private void processSingleRule(RecurringRule rule) {
+        LocalDateTime now = LocalDateTime.now();
+
+        while (!rule.getNextDueDate().isAfter(now)) {
+            if (rule.getEndDate() != null
+                    && rule.getNextDueDate().isAfter(rule.getEndDate())) {
+                recurringRuleRepository.deactivateById(rule.getId());
+                logger.info("Recurring rule id={} reached end date, deactivated", rule.getId());
+                break;
+            }
+
+            try {
+                transactionService.addTransaction(
+                        rule.getAccountId(),
+                        rule.getTransactionTypeId(),
+                        null,
+                        rule.getCategoryId(),
+                        rule.getSpendingClassificationId() != 0
+                                ? rule.getSpendingClassificationId() : null,
+                        rule.getDescription(),
+                        rule.getAmount(),
+                        SessionManager.getInstance()
+                                .getAccountById(rule.getAccountId())
+                                .getDefaultCurrencyCode(),
+                        rule.getNextDueDate().toLocalDate());
+
+                LocalDateTime nextDueDate = calculateNextDueDate(rule);
+                int newCount = rule.getGeneratedCount() + 1;
+                recurringRuleRepository.updateNextDueDate(rule.getId(), nextDueDate, newCount);
+                rule.setNextDueDate(nextDueDate);
+                rule.setGeneratedCount(newCount);
+
+                logger.info("Recurring rule id={} processed immediately, nextDueDate={}",
+                        rule.getId(), nextDueDate);
+
+            } catch (Exception e) {
+                logger.error("Failed to process recurring rule id={} immediately", rule.getId(), e);
+                break;
+            }
+        }
     }
 }
