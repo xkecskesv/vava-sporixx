@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -26,80 +25,83 @@
             <fx:include source="sidebar.fxml"/>
         </left>
         <center>
-            <VBox styleClass="dashboard-content" spacing="24">
+            <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" hbarPolicy="NEVER">
+                <VBox styleClass="dashboard-content" spacing="24">
 
-                <!-- Header -->
-                <HBox alignment="CENTER_LEFT" spacing="12">
-                    <VBox spacing="4" HBox.hgrow="ALWAYS">
-                        <Label text="%transactions.title" styleClass="dashboard-title"/>
-                    </VBox>
-                </HBox>
-
-                <!-- Tabuľka karta -->
-                <VBox styleClass="dashboard-card" spacing="16" VBox.vgrow="ALWAYS">
-
-                    <!-- Tabuľka header -->
+                    <!-- Header -->
                     <HBox alignment="CENTER_LEFT" spacing="12">
-                        <Label text="%transactions.manage" styleClass="dashboard-card-title"
-                               HBox.hgrow="ALWAYS"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="newTransactionBtn" text="%transactions.new"
-                                styleClass="btn-export" onAction="#handleNewTransaction"/>
-                        <Button fx:id="editBtn" styleClass="btn-icon-edit" onAction="#handleEdit">
-                            <graphic>
-                                <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/icon_edit.png"/></image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="deleteBtn" styleClass="btn-icon-danger" onAction="#handleDelete">
-                            <graphic>
-                                <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                    <image><Image url="@/assets/icons/icon_delete.png"/></image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
+                        <VBox spacing="4" HBox.hgrow="ALWAYS">
+                            <Label text="%transactions.title" styleClass="dashboard-title"/>
+                        </VBox>
                     </HBox>
 
-                    <!-- Search + Filter -->
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <HBox styleClass="search-box" spacing="8" alignment="CENTER_LEFT">
-                            <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_search.png"/></image>
-                            </ImageView>
-                            <TextField fx:id="searchField"
-                                       promptText="%transactions.search"
-                                       styleClass="search-field"
-                                       HBox.hgrow="ALWAYS"/>
+                    <!-- Tabuľka karta -->
+                    <VBox styleClass="dashboard-card" spacing="16" VBox.vgrow="ALWAYS">
+
+                        <!-- Tabuľka header -->
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Label text="%transactions.manage" styleClass="dashboard-card-title"
+                                   HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="newTransactionBtn" text="%transactions.new"
+                                    styleClass="btn-export" onAction="#handleNewTransaction"/>
+                            <Button fx:id="editBtn" styleClass="btn-icon-edit" onAction="#handleEdit">
+                                <graphic>
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="deleteBtn" styleClass="btn-icon-danger" onAction="#handleDelete">
+                                <graphic>
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <image><Image url="@/assets/icons/icon_delete.png"/></image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
                         </HBox>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <HBox fx:id="accountFilterContainer" spacing="8"/>
-                    </HBox>
 
-                    <!-- Hlavičky stĺpcov -->
-                    <HBox styleClass="table-header" spacing="0">
-                        <Label text="%transactions.col.name" styleClass="table-header-cell"
-                               prefWidth="220"/>
-                        <Label text="%transactions.col.category" styleClass="table-header-cell"
-                               prefWidth="140"/>
-                        <Label text="%transactions.col.need_want" styleClass="table-header-cell"
-                               prefWidth="100"/>
-                        <Label text="%transactions.col.type" styleClass="table-header-cell"
-                               prefWidth="100"/>
-                        <Label text="%transactions.col.date" styleClass="table-header-cell"
-                               prefWidth="120"/>
-                        <Label text="%transactions.col.amount" styleClass="table-header-cell"
-                               prefWidth="100"/>
-                    </HBox>
+                        <!-- Search + Filter -->
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <HBox styleClass="search-box" spacing="8" alignment="CENTER_LEFT"
+                                  HBox.hgrow="SOMETIMES">
+                                <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                                    <image><Image url="@/assets/icons/icon_search.png"/></image>
+                                </ImageView>
+                                <TextField fx:id="searchField"
+                                           promptText="%transactions.search"
+                                           styleClass="search-field"
+                                           HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <HBox fx:id="accountFilterContainer" spacing="8"/>
+                        </HBox>
 
-                    <!-- Riadky transakcií -->
-                    <ScrollPane styleClass="activities-scroll" fitToWidth="true"
-                                hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
-                        <VBox fx:id="transactionsList" styleClass="transactions-list"/>
-                    </ScrollPane>
+                        <!-- Hlavičky stĺpcov -->
+                        <HBox styleClass="table-header" spacing="0">
+                            <Label text="%transactions.col.name" styleClass="table-header-cell"
+                                   HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="%transactions.col.category" styleClass="table-header-cell"
+                                   HBox.hgrow="SOMETIMES" maxWidth="Infinity"/>
+                            <Label text="%transactions.col.need_want" styleClass="table-header-cell"
+                                   minWidth="80" prefWidth="100"/>
+                            <Label text="%transactions.col.type" styleClass="table-header-cell"
+                                   minWidth="80" prefWidth="100"/>
+                            <Label text="%transactions.col.date" styleClass="table-header-cell"
+                                   minWidth="100" prefWidth="120"/>
+                            <Label text="%transactions.col.amount" styleClass="table-header-cell"
+                                   minWidth="80" prefWidth="100"/>
+                        </HBox>
 
+                        <!-- Riadky transakcií -->
+                        <ScrollPane styleClass="activities-scroll" fitToWidth="true"
+                                    hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="transactionsList" styleClass="transactions-list"/>
+                        </ScrollPane>
+
+                    </VBox>
                 </VBox>
-            </VBox>
+            </ScrollPane>
         </center>
     </BorderPane>
 
@@ -159,7 +161,7 @@
                 </VBox>
             </HBox>
 
-            <!-- Category + Need/Want — len pre expense -->
+            <!-- Category + Need/Want -->
             <HBox fx:id="categorySection" spacing="16" visible="false" managed="false">
                 <VBox spacing="6" HBox.hgrow="ALWAYS">
                     <Label fx:id="categoryLabel" styleClass="modal-field-label"/>

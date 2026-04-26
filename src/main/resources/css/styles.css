@@ -1340,7 +1340,8 @@ Inter 27pt Bold*/
     -fx-border-color: #E2E8F0;
     -fx-border-width: 1px;
     -fx-padding: 8px 12px;
-    -fx-pref-width: 280px;
+    -fx-min-width: 200px;
+    -fx-max-width: 400px;
 }
 
 .search-field {
@@ -1349,7 +1350,7 @@ Inter 27pt Bold*/
     -fx-font-family: 'Inter 28pt Regular';
     -fx-font-size: 13px;
     -fx-text-fill: #0A0A0A;
-    -fx-pref-width: 220px;
+    -fx-max-width: Infinity;
 }
 
 .table-header {

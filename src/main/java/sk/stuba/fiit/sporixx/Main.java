@@ -30,11 +30,21 @@ public class Main extends Application {
         );
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 1250, 920);
+        Scene scene = new Scene(root, 1280, 800);
         stage.setTitle("Šporixx");
         stage.setScene(scene);
+        stage.setMinWidth(1024);
+        stage.setMinHeight(700);
+        stage.setMaximized(true);
+
         SceneManager.setStage(stage);
         stage.show();
+
+        // Centruj na obrazovku
+        javafx.geometry.Rectangle2D screen =
+                javafx.stage.Screen.getPrimary().getVisualBounds();
+        stage.setX((screen.getWidth() - stage.getWidth()) / 2);
+        stage.setY((screen.getHeight() - stage.getHeight()) / 2);
     }
 
     public static void main(String[] args) {

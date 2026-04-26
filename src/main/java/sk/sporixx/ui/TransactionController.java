@@ -184,7 +184,8 @@ public class TransactionController {
 
         Label name = new Label(tx.getDescription());
         name.getStyleClass().add("table-cell");
-        name.setPrefWidth(220);
+        HBox.setHgrow(name, Priority.ALWAYS);
+        name.setMaxWidth(Double.MAX_VALUE);
 
         String categoryName = "-";
         if (tx.getCategoryId() != null) {
@@ -201,12 +202,14 @@ public class TransactionController {
         }
         Label category = new Label(categoryName);
         category.getStyleClass().add("table-cell");
-        category.setPrefWidth(140);
+        HBox.setHgrow(category, Priority.SOMETIMES);
+        category.setMaxWidth(Double.MAX_VALUE);
 
         String nw = tx.isWant() ? Localization.get("dashboard.activities.want")
                 : tx.isNeed() ? Localization.get("dashboard.activities.need") : "-";
         Label needWant = new Label(nw);
         needWant.getStyleClass().add("table-cell");
+        needWant.setMinWidth(80);
         needWant.setPrefWidth(100);
 
         String type = tx.isIncome()
@@ -214,17 +217,20 @@ public class TransactionController {
                 : Localization.get("dashboard.activities.sent");
         Label typeLabel = new Label(type);
         typeLabel.getStyleClass().add("table-cell");
+        typeLabel.setMinWidth(80);
         typeLabel.setPrefWidth(100);
 
         Label date = new Label(tx.getCompleteDate()
                 .format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
         date.getStyleClass().add("table-cell");
+        date.setMinWidth(100);
         date.setPrefWidth(120);
 
         String prefix = tx.isIncome() ? "+ " : "- ";
         Label amount = new Label(prefix + formatCurrency(tx.getAmount()));
         amount.getStyleClass().add(tx.isIncome()
                 ? "table-cell-amount-positive" : "table-cell-amount-negative");
+        amount.setMinWidth(80);
         amount.setPrefWidth(100);
 
         row.getChildren().addAll(name, category, needWant, typeLabel, date, amount);
