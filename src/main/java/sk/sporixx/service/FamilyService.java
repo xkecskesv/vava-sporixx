@@ -1,8 +1,10 @@
 package sk.sporixx.service;
 
 import sk.sporixx.dto.FamilyMemberData;
+import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.FamilyRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface FamilyService {
@@ -21,7 +23,7 @@ public interface FamilyService {
 
     /**
      * Pošle požiadavku na pridanie dieťaťa do rodiny.
-     * Neudelí prístup hneď — čaká na potvrdenie dieťaťa.
+     * Neudelí prístup hneď - čaká na potvrdenie dieťaťa.
      */
     void sendFamilyRequest(String email);
 
@@ -29,10 +31,10 @@ public interface FamilyService {
      * Načíta všetky pending požiadavky pre prihláseného používateľa.
      * Volá sa pri prihlásení.
      */
-    List<FamilyRequest> getPendingRequests();
+    List<FamilyRequestData> getPendingRequests();
 
     /**
-     * Dieťa prijme požiadavku — udelí sa prístup rodičovi.
+     * Dieťa prijme požiadavku - udelí sa prístup rodičovi.
      */
     void acceptFamilyRequest(int requestId);
 
@@ -40,6 +42,13 @@ public interface FamilyService {
      * Dieťa odmietne požiadavku.
      */
     void rejectFamilyRequest(int requestId);
+
+    /**
+     * Family Manager môže upraviť saving account dieťaťa.
+     * Kontroluje, že má prístup k danému účtu.
+     */
+    void updateChildSavingAccount(int accountId, String description,
+                                  double targetAmount, LocalDate targetDate);
 
     List<FamilyRequest> getSentRequests();
 }

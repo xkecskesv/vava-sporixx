@@ -37,7 +37,8 @@
                 </VBox>
 
                 <VBox fx:id="pendingFamilyBanner" styleClass="dashboard-card" spacing="12"
-                      visible="false" managed="false">
+                      visible="false" managed="false"
+                      maxWidth="Infinity" maxHeight="-Infinity">
                     <Label text="%family.pending.title" styleClass="dashboard-card-title"/>
                     <VBox fx:id="pendingFamilyList" spacing="8"/>
                 </VBox>
@@ -61,7 +62,7 @@
                                    VBox.vgrow="ALWAYS" animated="false" legendVisible="false"
                                    createSymbols="false" verticalGridLinesVisible="false">
                             <xAxis><CategoryAxis side="BOTTOM" styleClass="analytics-axis"/></xAxis>
-                            <yAxis><NumberAxis fx:id="yAxis" side="LEFT" styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                            <yAxis><NumberAxis fx:id="yAxis" side="LEFT" styleClass="analytics-axis"/></yAxis>
                         </LineChart>
                     </VBox>
 
@@ -90,13 +91,13 @@
                 <StackPane onMouseClicked="#onModalConfirm" styleClass="modal-action-btn">
                     <ImageView fx:id="modalConfirm" fitWidth="13" fitHeight="13"
                                preserveRatio="true">
-                        <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                        <Image url="@/assets/icons/icon_confirm.png"/>
                     </ImageView>
                 </StackPane>
                 <StackPane onMouseClicked="#onModalClose" styleClass="modal-action-btn">
                     <ImageView fx:id="modalClose" fitWidth="16" fitHeight="16"
                                preserveRatio="true">
-                        <image><Image url="@/assets/icons/icon_close.png"/></image>
+                        <Image url="@/assets/icons/icon_close.png"/>
                     </ImageView>
                 </StackPane>
             </HBox>

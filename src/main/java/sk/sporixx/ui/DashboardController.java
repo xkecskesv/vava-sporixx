@@ -12,10 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import sk.sporixx.dto.AccountsSummaryData;
-import sk.sporixx.dto.ActivitiesData;
-import sk.sporixx.dto.AnalyticsData;
-import sk.sporixx.dto.ChartPeriod;
+import sk.sporixx.dto.*;
 import sk.sporixx.model.*;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.CurrencyFormatUtil;
@@ -487,7 +484,7 @@ public class DashboardController {
         HBox.setHgrow(info, Priority.ALWAYS);
         Label name = new Label(rule.getDescription());
         name.getStyleClass().add("activity-name");
-        Label type = new Label(Localization.get("dashboard.activities.sent"));
+        Label type = new Label(Localization.get("dashboard.activities.upcoming"));
         type.getStyleClass().add("activity-type");
         info.getChildren().addAll(name, type);
         row.getChildren().add(info);
@@ -721,7 +718,7 @@ public class DashboardController {
 
     private void loadPendingFamilyRequests() {
         try {
-            List<FamilyRequest> pending = ServiceLocator.getFamilyService().getPendingRequests();
+            List<FamilyRequestData> pending = ServiceLocator.getFamilyService().getPendingRequests();
             if (pending.isEmpty()) {
                 pendingFamilyBanner.setVisible(false);
                 pendingFamilyBanner.setManaged(false);
@@ -731,12 +728,16 @@ public class DashboardController {
             pendingFamilyBanner.setManaged(true);
             pendingFamilyList.getChildren().clear();
 
-            for (FamilyRequest request : pending) {
+            for (FamilyRequestData request : pending) {
                 HBox row = new HBox(16);
                 row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
                 row.setPadding(new javafx.geometry.Insets(4, 0, 4, 0));
 
-                Label info = new Label(Localization.get("family.pending.from"));
+                // Zobraz meno a email rodiča
+                Label info = new Label(
+                        request.getFromFirstName() + " " + request.getFromLastName()
+                                + " (" + request.getFromEmail() + ") "
+                                + Localization.get("family.pending.from"));
                 info.getStyleClass().add("activity-name");
                 HBox.setHgrow(info, Priority.ALWAYS);
 
@@ -748,7 +749,7 @@ public class DashboardController {
                 rejectBtn.getStyleClass().add("btn-secondary");
                 rejectBtn.setMinWidth(80);
 
-                final int reqId = request.getId();
+                final int reqId = request.getRequestId();
                 acceptBtn.setOnAction(e -> {
                     try {
                         ServiceLocator.getFamilyService().acceptFamilyRequest(reqId);

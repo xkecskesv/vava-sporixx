@@ -47,13 +47,13 @@ public class AuthServiceImpl implements AuthService {
         ensureAdminAccountExists();
     }
 
-    //  LOGIN
+    // LOGIN
     @Override
     public void login(String email, String password) throws AuthException {
 
         logger.info("Login attempt for email: {}", email);
 
-        // Validácia vstupov
+        // validácia vstupov
         if(!ValidationUtil.isNotBlank(email) && !ValidationUtil.isNotBlank(password)) {
             logger.warn("Login failed: empty email and password");
             throw new AuthException("auth.error.invalid_credentials");
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
         String normalizedEmail = email.trim().toLowerCase();
 
-        // Nájdenie používateľa v DB
+        // nájdenie používateľa v DB
         Optional<User> userOptional;
         try {
             userOptional = userRepository.findByEmail(normalizedEmail);
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userOptional.get();
 
-        // Overenie hesla
+        // overenie hesla
         if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             logger.warn("Login failed: wrong password for email: {}", normalizedEmail);
             throw new AuthException("auth.error.invalid_credentials");
@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("auth.error.account_inactive");
         }
 
-        //  Načítanie účtov
+        // načítanie účtov
         List<Account> accounts;
         try {
             accounts = accountRepository.findByOwnerUserId(user.getId());
@@ -105,12 +105,12 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("auth.error.db_error", e);
         }
 
-        // Nastavenie defaultnej roly
+        // nastavenie defaultnej roly
         if (user.getRole() == null) {
             user.setRole(Role.USER);
         }
 
-        // Nastavenie session
+        // nastavenie session
         SessionManager.getInstance().setSession(user, accounts);
         boolean mustChangePassword = user.getRole() == Role.ADMIN && ADMIN_PASSWORD.equals(password);
         SessionManager.getInstance().setForcePasswordChange(mustChangePassword);
@@ -120,21 +120,21 @@ public class AuthServiceImpl implements AuthService {
                 user.getId(), normalizedEmail, user.getRole(), accounts.size());
     }
 
-    //  REGISTER
+    // REGISTER
     @Override
     public void register(String firstName, String lastName, String email, String password, String passwordConfirm)
             throws AuthException {
 
         logger.info("Registration attempt for email: {}", email);
 
-        // Validácia vstupov
+        // validácia vstupov
         validateRegistrationInput(firstName, lastName, email, password, passwordConfirm);
 
         String normalizedEmail = email.trim().toLowerCase();
         String normalizedFirst = ValidationUtil.normalizeName(firstName);
         String normalizedLast = ValidationUtil.normalizeName(lastName);
 
-        // Kontrola duplicity emailu
+        // kontrola duplicity emailu
         try {
             Optional<User> existing = userRepository.findByEmail(normalizedEmail);
             if (existing.isPresent()) {
@@ -148,10 +148,10 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("error.unexpected", e);
         }
 
-        // Hashovanie hesla
+        // hashovanie hesla
         String passwordHash = PasswordUtil.hashPassword(password);
 
-        // Vytvorenie a uloženie používateľa
+        // vytvorenie a uloženie používateľa
         User user = User.builder()
                 .firstName(normalizedFirst)
                 .lastName(normalizedLast)
@@ -172,7 +172,7 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("User registered successfully: id={}, email={}", savedUser.getId(), normalizedEmail);
 
-        // Vytvorenie defaultného Main Account and Emergency Fund
+        // vytvorenie defaultného main account and emergency fund
         try {
             Account mainAccount = Account.builder()
                     .ownerUserId(savedUser.getId())
@@ -205,7 +205,7 @@ public class AuthServiceImpl implements AuthService {
             logger.error("Failed to create default accounts for user: {}", savedUser.getId(), e);
         }
 
-        // Auto-login po úspešnej registrácii
+        // auto-login po úspešnej registrácii
         try {
             List<Account> accounts = accountRepository.findByOwnerUserId(savedUser.getId());
 
@@ -214,11 +214,10 @@ public class AuthServiceImpl implements AuthService {
             logger.info("Auto-login after registration: id={}, email={}", savedUser.getId(), normalizedEmail);
         } catch (Exception e) {
             logger.error("Auto-login failed after registration for user: {}", savedUser.getId(), e);
-            // Registrácia prebehla úspešne, auto-login zlyhal – nevadí, používateľ sa prihlási manuálne
         }
     }
 
-    //  LOGOUT
+    // LOGOUT
     @Override
     public void logout() {
         User currentUser = SessionManager.getInstance().getCurrentUserInternal();
@@ -263,7 +262,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("auth.error.last_name_too_long");
         }
 
-        // Email
+        // email
         if (!ValidationUtil.isNotBlank(email)) {
             logger.warn("Registration validation: empty email");
             throw new AuthException("auth.error.email_required");
@@ -273,7 +272,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("auth.error.invalid_email");
         }
 
-        // Heslo
+        // heslo
         if (!ValidationUtil.isNotBlank(password)) {
             logger.warn("Registration validation: empty password");
             throw new AuthException("auth.error.password_required");
@@ -283,7 +282,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("auth.error.password_too_short");
         }
 
-        // Zhoda hesiel
+        // zhoda hesiel
         if (!password.equals(passwordConfirm)) {
             logger.warn("Registration validation: passwords mismatch");
             throw new AuthException("auth.error.password_mismatch");

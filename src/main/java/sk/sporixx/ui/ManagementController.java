@@ -48,7 +48,6 @@ public class ManagementController {
     @FXML private Button accountAddBtn;
     @FXML private Label accountErrorLabel;
 
-    // New account modal
     @FXML private StackPane accountModalOverlay;
     @FXML private Label accountModalTitle;
     @FXML private ComboBox<String> accountTypeComboBox;
@@ -59,7 +58,6 @@ public class ManagementController {
     @FXML private DatePicker accountDatePicker;
     @FXML private Label accountModalErrorLabel;
 
-    // Edit account modal
     @FXML private StackPane editAccountModalOverlay;
     @FXML private Label editAccountModalTitle;
     @FXML private TextField editAccountDescField;
@@ -80,12 +78,11 @@ public class ManagementController {
     @FXML private TextField recurringNameField;
     @FXML private ComboBox<String> recurringCategoryCombo;
     @FXML private TextField recurringAmountField;
-    @FXML private ComboBox<String> recurringTypeCombo;
     @FXML private ComboBox<String> recurringClassificationCombo;
     @FXML private ComboBox<String> recurringFrequencyCombo;
     @FXML private TextField recurringIntervalField;
     @FXML private DatePicker recurringStartDatePicker;
-    @FXML private TextField recurringMaxOccurrencesField;
+    @FXML private DatePicker recurringEndDatePicker;
     @FXML private Label recurringModalErrorLabel;
 
     // ── State ────────────────────────────────────────────────────
@@ -136,7 +133,7 @@ public class ManagementController {
     // ════════════════════════════════════════════════════════════
     private void loadCategories() {
         try {
-            categories = ServiceLocator.getCategoryService().getCategories();
+            categories = ServiceLocator.getCategoryService().getSelectableCategories();
         } catch (Exception e) {
             categories = List.of();
             showCategoryError("error.db_error");
@@ -370,7 +367,6 @@ public class ManagementController {
             header.getChildren().add(deleteBtn);
         }
 
-        // Edit button — pre všetkých okrem Main Account
         if (!account.isMainAccount()) {
             Button editBtn = new Button();
             editBtn.getStyleClass().add("btn-icon-edit");
@@ -414,9 +410,6 @@ public class ManagementController {
     // ════════════════════════════════════════════════════════════
     @FXML private void handleAccountAdd() { openAccountModal(null); }
 
-    /**
-     * @param forceSaving null = dropdown (Add button), true = len Saving, false = len Account
-     */
     private void openAccountModal(Boolean forceSaving) {
         clearAccountModalError();
         accountModalTitle.setText(Localization.get("dashboard.modal.title"));
@@ -500,17 +493,9 @@ public class ManagementController {
     //  ACCOUNT — edit modal
     // ════════════════════════════════════════════════════════════
     private void handleAccountEdit(Account account) {
-
-        System.out.println("handleAccountEdit called for: " + account.getDescription());
         editingAccount = account;
         clearEditAccountModalError();
-
-        editingAccount = account;
-        clearEditAccountModalError();
-
         editAccountModalTitle.setText(Localization.get("management.accounts.modal.edit_title"));
-
-        // Description — vždy predvyplnená
         editAccountDescField.setText(account.getDescription());
 
         boolean isSaving = account.isSavingAccount();
@@ -519,7 +504,6 @@ public class ManagementController {
 
         if (isSaving) {
             editAccountDatePicker.setConverter(dateConverter());
-            // Predvyplň goal hodnoty cez getSavingGoal
             try {
                 Optional<SavingGoal> goalOpt = ServiceLocator.getAccountService().getSavingGoal(account.getId());
                 if (goalOpt.isPresent()) {
@@ -667,6 +651,7 @@ public class ManagementController {
         editingRecurringRule = null;
         recurringModalTitle.setText(Localization.get("management.recurring.modal.title_add"));
         clearRecurringModal();
+        recurringStartDatePicker.setDisable(false);
         openRecurringModal();
     }
 
@@ -677,6 +662,7 @@ public class ManagementController {
         recurringModalTitle.setText(Localization.get("management.recurring.modal.title_edit"));
         populateRecurringModal(editingRecurringRule);
         clearRecurringModalError();
+        recurringStartDatePicker.setDisable(true);
         openRecurringModal();
     }
 
@@ -701,9 +687,10 @@ public class ManagementController {
         String frequency = recurringFrequencyCombo.getValue();
         String intervalText = recurringIntervalField.getText().trim();
         LocalDate startDate = recurringStartDatePicker.getValue();
+        LocalDate endDate = recurringEndDatePicker.getValue();
         String categoryName = recurringCategoryCombo.getValue();
-        String typeName = recurringTypeCombo.getValue();
 
+        // Validácie
         if (name.isEmpty()) { showRecurringModalError("recurring.error.description_required"); return; }
         if (amountText.isEmpty()) { showRecurringModalError("recurring.error.invalid_amount"); return; }
         if (frequency == null) { showRecurringModalError("recurring.error.invalid_interval"); return; }
@@ -721,29 +708,22 @@ public class ManagementController {
             if (interval <= 0) { showRecurringModalError("recurring.error.invalid_interval"); return; }
         } catch (NumberFormatException e) { showRecurringModalError("recurring.error.invalid_interval"); return; }
 
-        Integer maxOccurrences = null;
-        String maxText = recurringMaxOccurrencesField.getText().trim();
-        if (!maxText.isEmpty()) {
-            try { maxOccurrences = Integer.parseInt(maxText); }
-            catch (NumberFormatException e) { showRecurringModalError("recurring.error.invalid_interval"); return; }
-        }
-
+        // Kategória
         int categoryId = selectableCategories.stream()
                 .filter(c -> c.getName().equals(categoryName))
                 .findFirst().map(Category::getId).orElse(0);
 
-        int transactionTypeId = Localization.get("management.recurring.modal.type_expense")
-                .equals(typeName) ? Transaction.TYPE_EXPENSE : Transaction.TYPE_INCOME;
-
+        // Need/Want classification
         String classificationName = recurringClassificationCombo.getValue();
         Integer spendingClassificationId = null;
-        if (transactionTypeId == Transaction.TYPE_EXPENSE && classificationName != null) {
+        if (classificationName != null) {
             if (Localization.get("management.recurring.modal.classification_need").equals(classificationName))
                 spendingClassificationId = Transaction.CLASSIFICATION_NEED;
             else if (Localization.get("management.recurring.modal.classification_want").equals(classificationName))
                 spendingClassificationId = Transaction.CLASSIFICATION_WANT;
         }
 
+        // Account — Main Account
         Account mainAccount = SessionManager.getInstance().getAccounts().stream()
                 .filter(Account::isMainAccount).findFirst().orElse(null);
         if (mainAccount == null) { showRecurringModalError("account.error.no_main_account"); return; }
@@ -753,13 +733,27 @@ public class ManagementController {
         try {
             if (editingRecurringRule == null) {
                 ServiceLocator.getRecurringRuleService().addRecurringRule(
-                        mainAccount.getId(), categoryId, transactionTypeId,
-                        spendingClassificationId, name, amount, frequencyType,
-                        interval, startDate, maxOccurrences);
+                        mainAccount.getId(),
+                        categoryId,
+                        spendingClassificationId,
+                        name,
+                        amount,
+                        frequencyType,
+                        interval,
+                        startDate,
+                        endDate
+                );
             } else {
                 ServiceLocator.getRecurringRuleService().updateRecurringRule(
-                        editingRecurringRule.getId(), categoryId, spendingClassificationId,
-                        name, amount, frequencyType, interval, maxOccurrences);
+                        editingRecurringRule.getId(),
+                        categoryId,
+                        spendingClassificationId,
+                        name,
+                        amount,
+                        frequencyType,
+                        interval,
+                        endDate
+                );
             }
             closeRecurringModal();
             resetRecurringState();
@@ -780,34 +774,26 @@ public class ManagementController {
     @FXML private void onRecurringModalClose() { closeRecurringModal(); resetRecurringState(); }
 
     private void clearRecurringModal() {
-        recurringNameField.clear(); recurringAmountField.clear();
-        recurringIntervalField.clear(); recurringMaxOccurrencesField.clear();
+        recurringNameField.clear();
+        recurringAmountField.clear();
+        recurringIntervalField.clear();
         recurringStartDatePicker.setValue(LocalDate.now());
         recurringStartDatePicker.setConverter(dateConverter());
+        recurringEndDatePicker.setValue(null);
+        recurringEndDatePicker.setConverter(dateConverter());
 
-        try { selectableCategories = ServiceLocator.getCategoryService().getCategories(); }
+        try { selectableCategories = ServiceLocator.getCategoryService().getSelectableCategories(); }
         catch (Exception e) { selectableCategories = List.of(); }
 
-        recurringCategoryCombo.getItems().setAll(selectableCategories.stream().map(Category::getName).toList());
+        recurringCategoryCombo.getItems().setAll(
+                selectableCategories.stream().map(Category::getName).toList());
         if (!recurringCategoryCombo.getItems().isEmpty())
             recurringCategoryCombo.setValue(recurringCategoryCombo.getItems().get(0));
 
-        recurringTypeCombo.getItems().setAll(
-                Localization.get("management.recurring.modal.type_expense"),
-                Localization.get("management.recurring.modal.type_income"));
-        recurringTypeCombo.setValue(Localization.get("management.recurring.modal.type_expense"));
-
         recurringClassificationCombo.getItems().setAll(
-                Localization.get("management.recurring.modal.classification_none"),
                 Localization.get("management.recurring.modal.classification_need"),
                 Localization.get("management.recurring.modal.classification_want"));
-        recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
-
-        recurringTypeCombo.setOnAction(e -> {
-            boolean isExpense = Localization.get("management.recurring.modal.type_expense").equals(recurringTypeCombo.getValue());
-            recurringClassificationCombo.setDisable(!isExpense);
-            if (!isExpense) recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
-        });
+        recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
 
         recurringFrequencyCombo.getItems().setAll(
                 Localization.get("management.recurring.modal.frequency_daily"),
@@ -824,10 +810,11 @@ public class ManagementController {
         recurringNameField.setText(rule.getDescription());
         recurringAmountField.setText(String.format("%.2f", rule.getAmount()));
         recurringIntervalField.setText(String.valueOf(rule.getFrequencyInterval()));
-        if (rule.getMaxOccurrences() != null)
-            recurringMaxOccurrencesField.setText(String.valueOf(rule.getMaxOccurrences()));
-        if (rule.getStartDate() != null)
-            recurringStartDatePicker.setValue(rule.getStartDate().toLocalDate());
+
+        if (rule.getEndDate() != null)
+            recurringEndDatePicker.setValue(rule.getEndDate().toLocalDate());
+        else
+            recurringEndDatePicker.setValue(null);
 
         String freqKey = switch (rule.getFrequencyType().toUpperCase()) {
             case "DAILY"  -> "management.recurring.modal.frequency_daily";
@@ -836,17 +823,14 @@ public class ManagementController {
             default -> "management.recurring.modal.frequency_monthly";
         };
         recurringFrequencyCombo.setValue(Localization.get(freqKey));
-        recurringTypeCombo.setValue(rule.getTransactionTypeId() == Transaction.TYPE_INCOME
-                ? Localization.get("management.recurring.modal.type_income")
-                : Localization.get("management.recurring.modal.type_expense"));
 
-        if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_NEED)
-            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
-        else if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT)
+        // Classification
+        if (rule.getSpendingClassificationId() == Transaction.CLASSIFICATION_WANT)
             recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_want"));
         else
-            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_none"));
+            recurringClassificationCombo.setValue(Localization.get("management.recurring.modal.classification_need"));
 
+        // Kategória
         selectableCategories.stream()
                 .filter(c -> c.getId() == rule.getCategoryId())
                 .findFirst()
@@ -859,7 +843,7 @@ public class ManagementController {
         recurringModalOverlay.setOnMouseReleased(e -> { if (p[0] && e.getTarget() == recurringModalOverlay) closeRecurringModal(); });
         recurringModalOverlay.setVisible(true); recurringModalOverlay.setManaged(true);
     }
-    private void closeRecurringModal() { recurringModalOverlay.setVisible(false); recurringModalOverlay.setManaged(false); }
+    private void closeRecurringModal() { recurringModalOverlay.setVisible(false); recurringModalOverlay.setManaged(false); recurringStartDatePicker.setDisable(false); }
 
     private void resetRecurringState() {
         selectedRecurringRule = null; editingRecurringRule = null;

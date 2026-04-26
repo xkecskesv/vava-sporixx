@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sk.sporixx.model.Category;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.CategoryRepository;
+import sk.sporixx.repository.TransactionRepository;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
@@ -15,23 +16,22 @@ import java.util.Optional;
  * Implementácia CategoryService.
  * Spravuje systémové aj používateľské kategórie.
  * Systémové kategórie (userId = null) sa nedajú upravovať ani mazať.
- * Saving a Saving Expense sú systémové a skryté pred používateľom —
- * priraďujú sa automaticky pri transferoch medzi účtami.
- * Investment je systémová ale viditeľná — používateľ si ju môže vybrať.
  */
 public class CategoryServiceImpl implements CategoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     private final CategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               TransactionRepository transactionRepository) {
         this.categoryRepository = categoryRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
      * Všetky kategórie prihláseného používateľa vrátane systémových.
-     * Používa sa napr. pri filtrovaní v Transactions screene.
      */
     @Override
     public List<Category> getCategories() {
@@ -48,8 +48,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * Kategórie dostupné používateľovi pri pridávaní/editácii transakcie.
-     * Vylučuje Saving a Saving Expense — tie sa priraďujú automaticky pri transferoch.
-     * Investment je zahrnutý — používateľ si ho môže vybrať manuálne.
      */
     @Override
     public List<Category> getSelectableCategories() {
@@ -59,7 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return categoryRepository.findByUserIdOrSystem(userId).stream()
                     .filter(c -> c.getId() != Transaction.CATEGORY_SAVING
-                            && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE)
+                            && c.getId() != Transaction.CATEGORY_SAVING_EXPENSE
+                            && c.getId() != Transaction.CATEGORY_TRANSFER)
                     .toList();
         } catch (Exception e) {
             logger.error("Failed to load selectable categories for userId: {}", userId, e);
@@ -68,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addCategory(String name) {
+    public void addCategory(String name) {
         logger.info("Adding category: {}", name);
 
         if (!ValidationUtil.isNotBlank(name)) {
@@ -95,7 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
 
             Category saved = categoryRepository.save(category);
             logger.info("Category created: id={}, name={}", saved.getId(), saved.getName());
-            return saved;
 
         } catch (Exception e) {
             logger.error("Failed to save category: {}", name, e);
@@ -171,6 +169,10 @@ public class CategoryServiceImpl implements CategoryService {
             logger.warn("User {} tried to delete category {} owned by {}",
                     userId, categoryId, category.getUserId());
             throw new CategoryException("category.error.not_found");
+        }
+
+        if (transactionRepository.existsByCategoryId(categoryId)) {
+            throw new CategoryException("category.error.in_use");
         }
 
         try {

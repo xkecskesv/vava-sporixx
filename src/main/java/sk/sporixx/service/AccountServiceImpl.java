@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createPrivateAccount(String description, double initialAmount) {
+    public void createPrivateAccount(String description, double initialAmount) {
         logger.info("Creating private account for userId={}", SessionManager.getInstance().getCurrentUserId());
 
         validateAccountInput(description, initialAmount);
@@ -52,12 +52,11 @@ public class AccountServiceImpl implements AccountService {
         grantAccessToParents(saved);
 
         logger.info("Private account created: id={}", saved.getId());
-        return saved;
     }
 
     @Override
-    public Account createSavingAccount(String description, double initialAmount,
-                                       double targetAmount, LocalDate targetDate) {
+    public void createSavingAccount(String description, double initialAmount,
+                                    double targetAmount, LocalDate targetDate) {
 
         validateAccountInput(description, initialAmount);
 
@@ -96,7 +95,6 @@ public class AccountServiceImpl implements AccountService {
         grantAccessToParents(saved);
 
         logger.info("Saving account created: id={}, goal={}", saved.getId(), description);
-        return saved;
     }
 
     @Override
@@ -115,7 +113,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.deactivateById(accountId);
         SessionManager.getInstance().removeAccount(accountId);
 
-        // Zmaž account_access záznamy pre tento účet
+        // zmaže account_access záznamy pre tento účet
         accountAccessRepository.revokeAllAccessForAccount(accountId);
 
         logger.info("Account deactivated: id={}", accountId);
@@ -163,21 +161,21 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountException("account.error.not_saving_account");
         }
 
-        // Skontroluj že targetAmount > currentAmount
+        // kontrola, že targetAmount > currentAmount
         if (targetAmount - account.getCurrentBalance() < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
 
         try {
-            // Aktualizuj description účtu
+            // aktualizuje description účtu
             account.setDescription(description);
             accountRepository.update(account);
 
-            // Aktualizuj goal
+            // aktualizuje goal
             List<SavingGoal> goals = savingGoalRepository
                     .findActiveByAccountId(accountId);
             if (!goals.isEmpty()) {
-                SavingGoal goal = goals.get(0);
+                SavingGoal goal = goals.getFirst();
                 savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
                 savingGoalRepository.updateTargetDate(goal.getId(),
                         targetDate.atStartOfDay());
@@ -193,7 +191,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    // Helper metódy
+    // helper metódy
     private void validateAccountInput(String description, double initialAmount) {
         if (!ValidationUtil.isNotBlank(description)) {
             throw new AccountException("account.error.description_required");
@@ -205,7 +203,8 @@ public class AccountServiceImpl implements AccountService {
 
     private Account buildAccount(int accountTypeId, String description,
                                  double initialAmount) {
-        // Region a currency berieme z Main Accountu
+
+        // region a currency berieme z main accountu
         Account mainAccount = SessionManager.getInstance().getAccounts().stream()
                 .filter(a -> a.getAccountTypeId() == Account.MAIN_ACCOUNT)
                 .findFirst()
@@ -290,7 +289,7 @@ public class AccountServiceImpl implements AccountService {
 
             if (ownerAccounts.isEmpty()) return;
 
-            // Nájdi rodičov cez existujúce účty
+            // nájde rodičov cez existujúce účty
             Set<Integer> parentIds = ownerAccounts.stream()
                     .flatMap(a -> accountAccessRepository.findByAccountId(a.getId()).stream())
                     .map(AccountAccess::getUserId)
@@ -305,7 +304,6 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             logger.warn("Failed to grant parent access for new account id={}",
                     newAccount.getId(), e);
-            // Nehodíme exception — vytvorenie účtu nesmie zlyhať kvôli tomuto
         }
     }
 
@@ -314,7 +312,7 @@ public class AccountServiceImpl implements AccountService {
         logger.info("Loading saving goal for accountId={}", accountId);
         try {
             List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
-            return goals.isEmpty() ? Optional.empty() : Optional.of(goals.get(0));
+            return goals.isEmpty() ? Optional.empty() : Optional.of(goals.getFirst());
         } catch (Exception e) {
             logger.error("Failed to load saving goal for accountId={}", accountId, e);
             throw new AccountException("error.db_error", e);

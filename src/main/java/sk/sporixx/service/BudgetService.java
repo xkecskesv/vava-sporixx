@@ -19,15 +19,11 @@ public interface BudgetService {
      * Uloží Budget Setup a prepočíta Recommended Allocation.
      * @return BudgetWarning.FALLBACK_ALLOCATION_APPLIED ak bol použitý fallback
      */
-    BudgetWarning saveBudgetSetup(double monthlyIncome, double food, double rent,
-                                  double transport, double utilities, double other);
+    BudgetWarning saveBudgetSetup(double monthlyIncome, double food, double rent, double transport, double utilities, double other);
 
     /**
-     * Uloží Custom Allocation — používateľ zadá vlastné sumy.
+     * Uloží Custom Allocation (používateľ zadá vlastné sumy).
      * @return BudgetWarning.ESSENTIAL_BELOW_ACTUAL ak essential < skutočné výdavky
      */
-    BudgetWarning saveCustomAllocation(double essentialExpenses,
-                                       double emergencyFund,
-                                       double savings,
-                                       double toInvest);
+    BudgetWarning saveCustomAllocation(double essentialExpenses, double emergencyFund, double savings, double toInvest);
 }

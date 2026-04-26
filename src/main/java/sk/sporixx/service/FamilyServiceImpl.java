@@ -3,12 +3,12 @@ package sk.sporixx.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.FamilyMemberData;
+import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.*;
-import sk.sporixx.repository.AccountAccessRepository;
-import sk.sporixx.repository.AccountRepository;
-import sk.sporixx.repository.FamilyRequestRepository;
-import sk.sporixx.repository.UserRepository;
+import sk.sporixx.repository.*;
+import sk.sporixx.util.ValidationUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +23,18 @@ public class FamilyServiceImpl implements FamilyService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final FamilyRequestRepository familyRequestRepository;
+    private final SavingGoalRepository savingGoalRepository;
 
     public FamilyServiceImpl(AccountAccessRepository accountAccessRepository,
                              AccountRepository accountRepository,
                              UserRepository userRepository,
-                             FamilyRequestRepository familyRequestRepository) {
+                             FamilyRequestRepository familyRequestRepository,
+                             SavingGoalRepository savingGoalRepository) {
         this.accountAccessRepository = accountAccessRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.familyRequestRepository = familyRequestRepository;
+        this.savingGoalRepository = savingGoalRepository;
     }
 
     @Override
@@ -40,12 +43,11 @@ public class FamilyServiceImpl implements FamilyService {
         logger.info("Loading family members for managerId={}", managerId);
 
         try {
-            // Načítaj všetky prístupy Family Managera
+            // načíta všetky prístupy family managera
             List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
             if (accesses.isEmpty()) return new ArrayList<>();
 
-            // Zoskup account_id podľa owner_user_id
-            // Každý account_id → načítaj account → vezmi ownerUserId
+            // zoskupí account_id podľa owner_user_id
             Map<Integer, List<Account>> accountsByOwner = new java.util.LinkedHashMap<>();
 
             for (AccountAccess access : accesses) {
@@ -58,7 +60,7 @@ public class FamilyServiceImpl implements FamilyService {
                 accountsByOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(account);
             }
 
-            // Pre každého vlastníka načítaj profil
+            // pre každého vlastníka načítaj profil
             List<FamilyMemberData> result = new ArrayList<>();
             for (Map.Entry<Integer, List<Account>> entry : accountsByOwner.entrySet()) {
                 int ownerId = entry.getKey();
@@ -69,7 +71,7 @@ public class FamilyServiceImpl implements FamilyService {
 
                 List<Account> childAccounts = entry.getValue();
 
-                // Nájdi grantedAt
+                // nájde grantedAt
                 LocalDateTime grantedAt = accesses.stream()
                         .filter(a -> childAccounts.stream()
                                 .anyMatch(ca -> ca.getId() == a.getAccountId()))
@@ -126,7 +128,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.no_accounts");
         }
 
-        // Skontroluj či už je member
+        // skontroluj, či už je member
         List<AccountAccess> existing = accountAccessRepository.findByUserId(managerId);
         boolean alreadyAdded = existing.stream()
                 .anyMatch(a -> childAccounts.stream()
@@ -135,7 +137,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.already_member");
         }
 
-        // Skontroluj či už existuje pending request
+        // skontroluje, či už existuje pending request
         if (familyRequestRepository.existsPending(managerId, child.getId())) {
             throw new FamilyException("family.error.request_already_sent");
         }
@@ -164,7 +166,7 @@ public class FamilyServiceImpl implements FamilyService {
 
         int managerId = SessionManager.getInstance().getCurrentUserId();
 
-        // Skontroluj že člen je v rodine
+        // skontroluje, že člen je v rodine
         List<AccountAccess> existing = accountAccessRepository.findByUserId(managerId);
         List<Account> childAccounts = accountRepository.findByOwnerUserId(userId);
 
@@ -177,7 +179,7 @@ public class FamilyServiceImpl implements FamilyService {
         }
 
         try {
-            // Zmaž všetky prístupy Family Managera k účtom tohto dieťaťa
+            // zmaže všetky prístupy family managera k účtom tohto dieťaťa
             for (Account account : childAccounts) {
                 accountAccessRepository.revokeAccess(managerId, account.getId());
             }
@@ -198,13 +200,13 @@ public class FamilyServiceImpl implements FamilyService {
         FamilyRequest request = familyRequestRepository.findById(requestId)
                 .orElseThrow(() -> new FamilyException("family.error.request_not_found"));
 
-        // Skontroluj že request je pre prihláseného používateľa
+        // skontroluje, že request je pre prihláseného používateľa
         int currentUserId = SessionManager.getInstance().getCurrentUserId();
         if (request.getToUserId() != currentUserId) {
             throw new FamilyException("family.error.not_your_request");
         }
 
-        // Skontroluj max 2 rodičia
+        // skontroluje max 2 rodičia
         List<Account> childAccounts = accountRepository
                 .findByOwnerUserId(currentUserId);
 
@@ -219,7 +221,7 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.max_parents_reached");
         }
 
-        // Udeľ prístup
+        // udelí prístup
         for (Account account : childAccounts) {
             accountAccessRepository.grantAccess(
                     request.getFromUserId(),
@@ -246,11 +248,30 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public List<FamilyRequest> getPendingRequests() {
+    public List<FamilyRequestData> getPendingRequests() {
         int userId = SessionManager.getInstance().getCurrentUserId();
         logger.info("Loading pending requests for userId={}", userId);
         try {
-            return familyRequestRepository.findPendingByToUserId(userId);
+            List<FamilyRequest> requests = familyRequestRepository
+                    .findPendingByToUserId(userId);
+
+            List<FamilyRequestData> result = new ArrayList<>();
+            for (FamilyRequest request : requests) {
+                Optional<User> userOpt = userRepository.findById(request.getFromUserId());
+                if (userOpt.isEmpty()) continue;
+
+                User parent = userOpt.get();
+                result.add(FamilyRequestData.builder()
+                        .requestId(request.getId())
+                        .fromUserId(request.getFromUserId())
+                        .fromFirstName(parent.getFirstName())
+                        .fromLastName(parent.getLastName())
+                        .fromEmail(parent.getEmail())
+                        .createdAt(request.getCreatedAt())
+                        .build());
+            }
+            return result;
+
         } catch (Exception e) {
             logger.error("Failed to load pending requests", e);
             throw new FamilyException("error.db_error", e);
@@ -265,6 +286,65 @@ public class FamilyServiceImpl implements FamilyService {
             return familyRequestRepository.findPendingByFromUserId(managerId);
         } catch (Exception e) {
             logger.error("Failed to load sent requests", e);
+            throw new FamilyException("error.db_error", e);
+        }
+    }
+
+    @Override
+    public void updateChildSavingAccount(int accountId, String description,
+                                         double targetAmount, LocalDate targetDate) {
+        logger.info("Family manager updating child saving account id={}", accountId);
+
+        int managerId = SessionManager.getInstance().getCurrentUserId();
+
+        // dkontroluje prístup
+        List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
+        boolean hasAccess = accesses.stream()
+                .anyMatch(a -> a.getAccountId() == accountId);
+        if (!hasAccess) {
+            throw new FamilyException("family.error.no_access");
+        }
+
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isEmpty()) {
+            throw new FamilyException("family.error.account_not_found");
+        }
+
+        Account account = accountOpt.get();
+        if (!account.isSavingAccount()) {
+            throw new FamilyException("family.error.not_saving_account");
+        }
+
+        if (!ValidationUtil.isNotBlank(description)) {
+            throw new FamilyException("family.error.description_required");
+        }
+        if (targetAmount <= 0) {
+            throw new FamilyException("family.error.invalid_amount");
+        }
+        if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
+            throw new FamilyException("family.error.invalid_date");
+        }
+        if (targetAmount - account.getCurrentBalance() < 0.01) {
+            throw new FamilyException("family.error.target_below_current");
+        }
+
+        try {
+            account.setDescription(description);
+            accountRepository.update(account);
+
+            List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
+            if (!goals.isEmpty()) {
+                SavingGoal goal = goals.getFirst();
+                savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
+                savingGoalRepository.updateTargetDate(goal.getId(), targetDate.atStartOfDay());
+            }
+
+            logger.info("Child saving account updated: id={}", accountId);
+
+        } catch (FamilyException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Failed to update child saving account id={}", accountId, e);
             throw new FamilyException("error.db_error", e);
         }
     }

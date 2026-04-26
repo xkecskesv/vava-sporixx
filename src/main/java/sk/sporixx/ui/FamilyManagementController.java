@@ -304,10 +304,6 @@ public class FamilyManagementController {
                 icon.setFitWidth(14); icon.setFitHeight(14); icon.setPreserveRatio(true);
                 editBtn.setGraphic(icon);
             } catch (Exception ignored) {}
-            // TODO: Adelka — updateSavingAccount validuje účet cez SessionManager.getAccountById()
-            // čo vracia len účty prihláseného usera. Pre Family Manager treba buď:
-            // a) pridať updateSavingAccountById ktorý skipuje SessionManager validáciu
-            // b) alebo načítať účet priamo cez AccountRepository
             editBtn.setOnAction(e -> handleEditSavingAccount(account));
             header.getChildren().add(editBtn);
         }
@@ -395,14 +391,14 @@ public class FamilyManagementController {
         }
 
         try {
-            ServiceLocator.getAccountService().updateSavingAccount(
+            ServiceLocator.getFamilyService().updateChildSavingAccount(
                     editingAccount.getId(), desc, goalAmount, editSavingDatePicker.getValue());
             closeEditSavingModal();
             // Reload member accounts
             if (selectedMember != null) loadMemberAccounts(selectedMember);
         } catch (Exception e) {
             String msg = e.getMessage();
-            showEditSavingModalError(msg != null && msg.startsWith("account.error.") ? msg : "error.db_error");
+            showEditSavingModalError(msg != null && msg.startsWith("family.error.") ? msg : "error.db_error");
         }
     }
 

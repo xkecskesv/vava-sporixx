@@ -107,7 +107,8 @@ public final class ServiceLocator {
                 testData.getAccountRepository(),
                 testData.getCategoryRepository(),
                 testData.getSavingGoalRepository());
-        categoryService = new CategoryServiceImpl(testData.getCategoryRepository());
+        categoryService = new CategoryServiceImpl(testData.getCategoryRepository(),
+                testData.getTransactionRepository());
         budgetService = new BudgetServiceImpl(
                 testData.getBudgetRepository(),
                 testData.getTransactionRepository());
@@ -118,7 +119,8 @@ public final class ServiceLocator {
                 testData.getAccountAccessRepository(),
                 testData.getAccountRepository(),
                 testData.getUserRepository(),
-                testData.getFamilyRequestRepository());
+                testData.getFamilyRequestRepository(),
+                testData.getSavingGoalRepository());
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -172,7 +174,7 @@ public final class ServiceLocator {
                 categoryRepo,
                 savingGoalRepo);
 
-        categoryService = new CategoryServiceImpl(categoryRepo);
+        categoryService = new CategoryServiceImpl(categoryRepo, transactionRepo);
 
         budgetService = new BudgetServiceImpl(
                 budgetRepo,
@@ -186,7 +188,8 @@ public final class ServiceLocator {
                 testData.getAccountAccessRepository(),
                 accountRepo,
                 userRepo,
-                testData.getFamilyRequestRepository());
+                testData.getFamilyRequestRepository(),
+                testData.getSavingGoalRepository());
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
