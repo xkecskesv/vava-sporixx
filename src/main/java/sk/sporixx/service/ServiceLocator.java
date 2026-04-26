@@ -35,6 +35,7 @@ public final class ServiceLocator {
     private static TransactionService transactionService;
     private static CategoryService categoryService;
     private static BudgetService budgetService;
+    private static SettingsService settingsService;
     private static RecurringRuleService recurringRuleService;
     private static FamilyService familyService;
 
@@ -57,6 +58,7 @@ public final class ServiceLocator {
         logger.info("Initializing ServiceLocator (testMode={})...", USE_TEST_DATA);
 
         try {
+            settingsService = new SettingsServiceImpl();
             if (USE_TEST_DATA) {
                 initTestMode();
             } else {
@@ -261,6 +263,12 @@ public final class ServiceLocator {
         return budgetService;
     }
 
+    public static SettingsService getSettingsService() {
+        checkInitialized();
+        return settingsService;
+    }
+
+    //  HELPER
     public static RecurringRuleService getRecurringRuleService() {
         checkInitialized();
         return recurringRuleService;

@@ -18,9 +18,8 @@ public class Main extends Application {
 
         loadFonts();
 
-        Localization.load("sk");
-
         ServiceLocator.init();
+        Localization.setLanguage(ServiceLocator.getSettingsService().getLanguageCode());
 
         ServiceLocator.getRecurringRuleService().processRecurringRules();
 
@@ -38,6 +37,7 @@ public class Main extends Application {
         stage.setMaximized(true);
 
         SceneManager.setStage(stage);
+        SceneManager.setCurrentScene("login.fxml");
         stage.show();
 
         // Centruj na obrazovku
