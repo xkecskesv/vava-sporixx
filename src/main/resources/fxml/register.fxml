@@ -16,9 +16,7 @@
    <HBox styleClass="login-card">
       <VBox styleClass="blue-panel">
          <ImageView fitHeight="170" fitWidth="170" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@/assets/logos/log_in_logo.png" />
-            </image>
+            <Image url="@/assets/logos/log_in_logo.png"/>
          </ImageView>
          <Label styleClass="blue-panel-title" text="Be smart with&#10;your money.">
             <VBox.margin>

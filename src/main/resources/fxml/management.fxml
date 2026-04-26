@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -29,14 +28,14 @@
 
                     <Label text="%management.title" styleClass="dashboard-title"/>
 
-                    <HBox spacing="24" fillHeight="true">
+                    <HBox spacing="24">
 
                         <!-- ĽAVÝ STĹPEC: Categories + Recurring -->
                         <VBox spacing="24" HBox.hgrow="ALWAYS" maxWidth="Infinity">
 
                             <!-- Categories karta -->
                             <VBox styleClass="dashboard-card" spacing="16">
-                                <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
                                     <Label text="%management.categories.title"
                                            styleClass="dashboard-card-title"
                                            minWidth="0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
@@ -46,7 +45,7 @@
                                             onAction="#handleCategoryDelete">
                                         <graphic>
                                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                                <image><Image url="@/assets/icons/icon_delete.png"/></image>
+                                                <Image url="@/assets/icons/icon_delete.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -56,7 +55,7 @@
                                             onAction="#handleCategoryEdit">
                                         <graphic>
                                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                                <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                                <Image url="@/assets/icons/icon_edit.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -70,7 +69,7 @@
 
                             <!-- Recurring Payments karta -->
                             <VBox styleClass="dashboard-card" spacing="16">
-                                <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
                                     <Label text="%management.recurring.title"
                                            styleClass="dashboard-card-title"
                                            minWidth="0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
@@ -80,7 +79,7 @@
                                             onAction="#handleRecurringDelete">
                                         <graphic>
                                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                                <image><Image url="@/assets/icons/icon_delete.png"/></image>
+                                                <Image url="@/assets/icons/icon_delete.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -90,7 +89,7 @@
                                             onAction="#handleRecurringEdit">
                                         <graphic>
                                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                                <image><Image url="@/assets/icons/icon_edit.png"/></image>
+                                                <Image url="@/assets/icons/icon_edit.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -109,7 +108,7 @@
 
                             <!-- Horná karta: header + meta info -->
                             <VBox styleClass="dashboard-card" spacing="8">
-                                <HBox alignment="CENTER_LEFT" spacing="8" fillHeight="true">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
                                     <Label text="%management.accounts.title"
                                            styleClass="dashboard-card-title"
                                            minWidth="0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
@@ -146,12 +145,12 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onCategoryModalConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onCategoryModalClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>
@@ -173,12 +172,12 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onAccountModalConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onAccountModalClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>
@@ -218,12 +217,12 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onEditAccountModalConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onEditAccountModalClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>
@@ -255,12 +254,12 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onRecurringModalConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onRecurringModalClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>

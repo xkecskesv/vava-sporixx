@@ -72,8 +72,6 @@
                 <VBox styleClass="dashboard-card" spacing="8" prefWidth="340" minWidth="300">
                     <Label text="%reports.income.category_title" styleClass="dashboard-card-title"/>
                     <PieChart fx:id="categoryPieChart" animated="false"
-                              legendVisible="true"
-                              legendSide="BOTTOM"
                               labelsVisible="false"
                               styleClass="reports-pie-chart"
                               prefHeight="320"
@@ -96,9 +94,9 @@
                                   styleClass="analytics-chart" HBox.hgrow="ALWAYS"
                                   VBox.vgrow="ALWAYS">
                             <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
-                            <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                            <yAxis><NumberAxis styleClass="analytics-axis"/></yAxis>
                         </BarChart>
-                        <VBox spacing="8" alignment="TOP_LEFT" minWidth="120"
+                        <VBox spacing="8" minWidth="120"
                               style="-fx-padding: 8px 0 0 8px;">
                             <HBox spacing="8" alignment="CENTER_LEFT">
                                 <Region prefWidth="12" prefHeight="12"
@@ -122,16 +120,16 @@
                     </HBox>
                 </VBox>
 
-                <!-- Want vs Need -->
+                <!-- Want vs. Need -->
                 <VBox styleClass="dashboard-card" spacing="8" prefWidth="340" minWidth="300">
                     <Label text="%reports.income.wantneed_title" styleClass="dashboard-card-title"/>
                     <BarChart fx:id="wantNeedChart" animated="false"
                               legendVisible="false" verticalGridLinesVisible="false"
                               styleClass="analytics-chart" VBox.vgrow="ALWAYS">
                         <xAxis><CategoryAxis styleClass="analytics-axis"/></xAxis>
-                        <yAxis><NumberAxis styleClass="analytics-axis" autoRanging="true"/></yAxis>
+                        <yAxis><NumberAxis styleClass="analytics-axis"/></yAxis>
                     </BarChart>
-                    <HBox spacing="0" alignment="CENTER">
+                    <HBox alignment="CENTER">
                         <VBox alignment="CENTER" spacing="2" HBox.hgrow="ALWAYS">
                             <Label fx:id="needPercentLabel" styleClass="wantneed-percent"/>
                             <Label text="%reports.income.need" styleClass="analytics-subtitle"/>
