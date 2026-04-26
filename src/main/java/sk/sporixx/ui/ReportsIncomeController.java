@@ -9,8 +9,11 @@ import sk.sporixx.dto.*;
 import sk.sporixx.model.RecurringRule;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
+import java.util.Currency;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -18,6 +21,8 @@ public class ReportsIncomeController {
 
     @FXML private ComboBox<String> periodComboBox;
     @FXML private Button exportButton;
+    @FXML private Label incomeExpenseChartTitle;
+    @FXML private Label recurringChartTitle;
     @FXML private Label totalIncomeAmount;
     @FXML private LineChart<String, Number> incomeExpenseChart;
     @FXML private NumberAxis lineYAxis;
@@ -32,8 +37,31 @@ public class ReportsIncomeController {
 
     @FXML
     public void initialize() {
+        setupDynamicCurrencyTitles();
         setupPeriodComboBox();
         loadAll();
+    }
+
+    private void setupDynamicCurrencyTitles() {
+        String languageCode = ServiceLocator.getSettingsService().getLanguageCode();
+        String currencyCode = ServiceLocator.getSettingsService().getCurrencyCode();
+        String currencyDisplay = resolveCurrencySymbol(currencyCode, languageCode);
+        incomeExpenseChartTitle.setText(Localization.get("reports.income.chart_title") + " (" + currencyDisplay + ")");
+        recurringChartTitle.setText(Localization.get("reports.income.recurring_title") + " (" + currencyDisplay + ")");
+    }
+
+    private String resolveCurrencySymbol(String currencyCode, String languageCode) {
+        Locale locale = switch (languageCode) {
+            case "sk" -> Locale.forLanguageTag("sk-SK");
+            case "cs" -> Locale.forLanguageTag("cs-CZ");
+            default -> Locale.US;
+        };
+
+        try {
+            return Currency.getInstance(currencyCode).getSymbol(locale);
+        } catch (IllegalArgumentException ex) {
+            return currencyCode;
+        }
     }
 
     private void setupPeriodComboBox() {
@@ -250,6 +278,6 @@ public class ReportsIncomeController {
     //  HELPER
     // ============================================================
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }

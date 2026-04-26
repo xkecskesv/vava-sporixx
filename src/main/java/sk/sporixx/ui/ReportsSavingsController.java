@@ -11,6 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import sk.sporixx.dto.SavingAccountReportData;
 import sk.sporixx.service.ServiceLocator;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.time.LocalDate;
@@ -331,7 +332,7 @@ public class ReportsSavingsController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 
     private void showExportImportError(String key) {
