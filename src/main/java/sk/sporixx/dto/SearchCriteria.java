@@ -36,6 +36,8 @@ public class SearchCriteria {
     /** Filter podľa typu — null = všetky */
     private Integer transactionTypeId;
 
+    private String categoryName;
+
     /**
      * Helper pre UI: nastaví filter na konkrétny dátum.
      * Nastaví dateFrom na začiatok dňa a dateTo na koniec dňa.

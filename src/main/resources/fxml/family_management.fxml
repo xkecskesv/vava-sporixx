@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -61,18 +60,18 @@
 
             <!-- ═══ Add User Modal ═══ -->
             <StackPane fx:id="addUserModalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="500">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="250">
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label text="%family.modal.add_title" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onAddUserConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onAddUserClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>
@@ -88,18 +87,18 @@
 
             <!-- ═══ Edit Saving Account Modal ═══ -->
             <StackPane fx:id="editSavingModalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="500">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="440">
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label text="%management.accounts.modal.edit_title" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <StackPane onMouseClicked="#onEditSavingConfirm" styleClass="modal-action-btn">
                             <ImageView fitWidth="13" fitHeight="13" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_confirm.png"/></image>
+                                <Image url="@/assets/icons/icon_confirm.png"/>
                             </ImageView>
                         </StackPane>
                         <StackPane onMouseClicked="#onEditSavingClose" styleClass="modal-action-btn">
                             <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                <image><Image url="@/assets/icons/icon_close.png"/></image>
+                                <Image url="@/assets/icons/icon_close.png"/>
                             </ImageView>
                         </StackPane>
                     </HBox>

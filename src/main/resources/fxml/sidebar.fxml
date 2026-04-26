@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
@@ -18,9 +17,7 @@
     <top>
         <VBox styleClass="sidebar-top" BorderPane.alignment="CENTER">
             <ImageView fitHeight="60" fitWidth="150" pickOnBounds="true" preserveRatio="true">
-                <image>
-                    <Image url="@/assets/logos/sidebar_logo.png" />
-                </image>
+                <Image url="@/assets/logos/sidebar_logo.png"/>
             </ImageView>
         </VBox>
     </top>
@@ -31,7 +28,7 @@
             <!-- Overview -->
             <HBox fx:id="overviewItem" styleClass="sidebar-item-active" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/overview_icon.png" /></image>
+                    <Image url="@/assets/icons/overview_icon.png"/>
                 </ImageView>
                 <Label fx:id="overviewLabel" text="%sidebar.overview" styleClass="sidebar-item-label-active"/>
             </HBox>
@@ -39,12 +36,12 @@
             <!-- Reports -->
             <HBox fx:id="reportsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/reports_icon.png" /></image>
+                    <Image url="@/assets/icons/reports_icon.png"/>
                 </ImageView>
                 <Label fx:id="reportsLabel" text="%sidebar.reports" styleClass="sidebar-item-label"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ImageView fx:id="reportsChevron" fitWidth="12" fitHeight="12" preserveRatio="true">
-                    <image><Image url="@/assets/icons/icon_chevron_right.png" /></image>
+                    <Image url="@/assets/icons/icon_chevron_right.png"/>
                 </ImageView>
             </HBox>
 
@@ -57,7 +54,7 @@
             <!-- Transactions -->
             <HBox fx:id="transactionsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/transaction_icon.png" /></image>
+                    <Image url="@/assets/icons/transaction_icon.png"/>
                 </ImageView>
                 <Label fx:id="transactionsLabel" text="%sidebar.transactions" styleClass="sidebar-item-label"/>
             </HBox>
@@ -65,7 +62,7 @@
             <!-- Budgeting -->
             <HBox fx:id="budgetingItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/budgeting_icon.png" /></image>
+                    <Image url="@/assets/icons/budgeting_icon.png"/>
                 </ImageView>
                 <Label fx:id="budgetingLabel" text="%sidebar.budgeting" styleClass="sidebar-item-label"/>
             </HBox>
@@ -73,13 +70,13 @@
             <!-- Management -->
             <HBox fx:id="managementItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/management_icon.png" /></image>
+                    <Image url="@/assets/icons/management_icon.png"/>
                 </ImageView>
                 <Label fx:id="managementLabel" text="%sidebar.management" styleClass="sidebar-item-label"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ImageView fx:id="managementChevron" fitWidth="12" fitHeight="12" preserveRatio="true"
                            visible="false" managed="false">
-                    <image><Image url="@/assets/icons/icon_chevron_right.png" /></image>
+                    <Image url="@/assets/icons/icon_chevron_right.png"/>
                 </ImageView>
             </HBox>
 
@@ -114,7 +111,7 @@
             <!-- Settings -->
             <HBox fx:id="settingsItem" styleClass="sidebar-item-row" alignment="CENTER_LEFT" spacing="12">
                 <ImageView fitWidth="18" fitHeight="18" preserveRatio="true">
-                    <image><Image url="@/assets/icons/settings_icon.png" /></image>
+                    <Image url="@/assets/icons/settings_icon.png"/>
                 </ImageView>
                 <Label fx:id="settingsLabel" text="%sidebar.settings" styleClass="sidebar-item-label"/>
             </HBox>

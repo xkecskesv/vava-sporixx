@@ -581,4 +581,61 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         }
         return transactions;
     }
+
+    @Override
+    public Optional<Transaction> findPairedTransfer(int excludeAccountId,
+                                                    double amount,
+                                                    LocalDateTime createdAt) {
+        String sql = "SELECT * FROM transactions " +
+                "WHERE account_id != ? " +
+                "AND amount = ? " +
+                "AND created_at = ? " +
+                "AND category_id IN (?, ?, ?) " +
+                "LIMIT 1";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, excludeAccountId);
+            pstmt.setDouble(2, amount);
+            pstmt.setString(3, createdAt.toString().replace("T", " "));
+            pstmt.setInt(4, Transaction.CATEGORY_SAVING);
+            pstmt.setInt(5, Transaction.CATEGORY_SAVING_EXPENSE);
+            pstmt.setInt(6, Transaction.CATEGORY_TRANSFER);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error finding paired transfer for accountId={}, amount={}, createdAt={}",
+                    excludeAccountId, amount, createdAt, e);
+            throw new RuntimeException("Error finding paired transfer", e);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsByCategoryId(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM transactions WHERE category_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, categoryId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error checking if category id={} is used in transactions", categoryId, e);
+            throw new RuntimeException("Error checking category usage in transactions", e);
+        }
+
+        return false;
+    }
 }

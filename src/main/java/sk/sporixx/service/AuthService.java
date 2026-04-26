@@ -1,7 +1,5 @@
 package sk.sporixx.service;
 
-import sk.sporixx.model.User;
-
 /**
  * Rozhranie pre autentifikáciu.
  */

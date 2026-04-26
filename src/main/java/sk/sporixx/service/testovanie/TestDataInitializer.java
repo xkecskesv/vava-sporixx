@@ -541,8 +541,9 @@ public class TestDataInitializer {
     // =========================================================================
 //  Rodič / Family Manager
 // =========================================================================
-    private void createParentUser() { // TOTO SOM EDITOL ABY SOM MOHOL TESTOVAT FAMILY MANAGEMENT STRANKU - MAREK - MOZETE PREHODIT /VYMAZAT AKO CHCETE
-        User savedParent = userRepository.save(User.builder()
+    private void createParentUser() {
+        // ── Rodič 1: Jana Mrkvičková ──
+        User savedParent1 = userRepository.save(User.builder()
                 .firstName("Jana").lastName("Mrkvičková")
                 .email("jana.mrkvickova@stuba.sk")
                 .passwordHash(PasswordUtil.hashPassword("Rodic123!"))
@@ -551,7 +552,7 @@ public class TestDataInitializer {
                 .build());
 
         accountRepository.save(Account.builder()
-                .ownerUserId(savedParent.getId()).regionId(REGION_SK)
+                .ownerUserId(savedParent1.getId()).regionId(REGION_SK)
                 .accountTypeId(Account.MAIN_ACCOUNT).defaultCurrencyCode("EUR")
                 .description("Everyday account")
                 .initialBalance(10_000.00).currentBalance(12_500.00)
@@ -559,22 +560,49 @@ public class TestDataInitializer {
                 .build());
 
         accountRepository.save(Account.builder()
-                .ownerUserId(savedParent.getId()).regionId(REGION_SK)
+                .ownerUserId(savedParent1.getId()).regionId(REGION_SK)
                 .accountTypeId(Account.EMERGENCY_FUND).defaultCurrencyCode("EUR")
                 .description("Use in need")
                 .initialBalance(5_000.00).currentBalance(5_000.00)
                 .isActive(true).createdAt(LocalDateTime.of(2026, 2, 15, 12, 0))
                 .build());
 
-        // Prístup Jany k účtom Mareka (accountId 1-4)
+        // Jana má prístup k účtom Mareka (accountId 1-4)
         for (int accountId = 1; accountId <= 4; accountId++) {
             accountAccessRepository.grantAccess(
-                    savedParent.getId(),
+                    savedParent1.getId(),
                     accountId,
                     Role.USER.getAccessLevel());
         }
 
-        logger.info("Vytvorený PARENT: {} s prístupom k účtom Mareka", savedParent.getEmail());
+        logger.info("Vytvorený PARENT 1: {}", savedParent1.getEmail());
+
+        // ── Rodič 2: Jano Mrkvička ──
+        User savedParent2 = userRepository.save(User.builder()
+                .firstName("Jano").lastName("Mrkvička")
+                .email("jano.mrkvicka@stuba.sk")
+                .passwordHash(PasswordUtil.hashPassword("Rodic123!"))
+                .gender("M").role(Role.FAMILY_MANAGER)
+                .createdAt(LocalDateTime.of(2026, 2, 10, 8, 0))
+                .build());
+
+        accountRepository.save(Account.builder()
+                .ownerUserId(savedParent2.getId()).regionId(REGION_SK)
+                .accountTypeId(Account.MAIN_ACCOUNT).defaultCurrencyCode("EUR")
+                .description("Everyday account")
+                .initialBalance(100_000.00).currentBalance(120_500.00)
+                .isActive(true).createdAt(LocalDateTime.of(2026, 2, 10, 8, 0))
+                .build());
+
+        accountRepository.save(Account.builder()
+                .ownerUserId(savedParent2.getId()).regionId(REGION_SK)
+                .accountTypeId(Account.EMERGENCY_FUND).defaultCurrencyCode("EUR")
+                .description("Use in need")
+                .initialBalance(3_000.00).currentBalance(2_000.00)
+                .isActive(true).createdAt(LocalDateTime.of(2026, 2, 15, 12, 0))
+                .build());
+
+        logger.info("Vytvorený PARENT 2: {}", savedParent2.getEmail());
     }
 
     /**
