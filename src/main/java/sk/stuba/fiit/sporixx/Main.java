@@ -21,6 +21,8 @@ public class Main extends Application {
         ServiceLocator.init();
         Localization.setLanguage(ServiceLocator.getSettingsService().getLanguageCode());
 
+        ServiceLocator.getRecurringRuleService().processRecurringRules();
+
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/login.fxml"),
                 Localization.getBundle()

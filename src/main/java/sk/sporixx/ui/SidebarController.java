@@ -2,47 +2,73 @@ package sk.sporixx.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import sk.sporixx.dto.CurrentUser;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.AvatarUtil;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Objects;
-import javafx.scene.image.Image;
 
 public class SidebarController {
 
-    @FXML private HBox reportsItem;
-    @FXML private VBox reportsSubmenu;
-    @FXML private ImageView reportsChevron;
-    @FXML private ImageView userAvatar;
-    @FXML private Label userName;
-    @FXML private Label userRole;
     @FXML private HBox overviewItem;
+    @FXML private HBox reportsItem;
     @FXML private HBox transactionsItem;
     @FXML private HBox budgetingItem;
     @FXML private HBox managementItem;
+    @FXML private HBox familyManagementItem; // zachované pre kompatibilitu
+
+    @FXML private VBox reportsSubmenu;
+    @FXML private ImageView reportsChevron;
+
+    @FXML private VBox managementSubmenu;
+    @FXML private ImageView managementChevron;
+    @FXML private Label personalManagementLabel;
+    @FXML private Label familyManagementLabel;
+
     @FXML private HBox settingsItem;
     @FXML private HBox userBox;
-    @FXML private Label incomeLabel;
-    @FXML private Label savingsLabel;
+
     @FXML private Label overviewLabel;
     @FXML private Label reportsLabel;
     @FXML private Label transactionsLabel;
     @FXML private Label budgetingLabel;
+
+
+    @FXML private Label managementLabel;
+    @FXML private Label incomeLabel;
+    @FXML private Label savingsLabel;
+
+    @FXML private ImageView userAvatar;
+    @FXML private Label userName;
+    @FXML private Label userRole;
     @FXML private Label settingsLabel;
 
     private boolean reportsExpanded = false;
+    private boolean managementExpanded = false;
+    private boolean isFamilyManager = false;
 
     private static String activePage = "dashboard.fxml";
 
     @FXML
     public void initialize() {
-        reportsItem.setOnMouseClicked(event -> toggleReports());
+        CurrentUser currentUser = SessionManager.getInstance().getCurrentUser();
+        isFamilyManager = currentUser.checkisParent();
 
+        setupNavigation();
+        setupManagementDropdown();
+        applyActiveState();
+        loadUserInfo();
+    }
+
+    private void setupNavigation() {
         overviewItem.setOnMouseClicked(e -> navigate("dashboard.fxml"));
+        reportsItem.setOnMouseClicked(e -> toggleReports());
         incomeLabel.setOnMouseClicked(e -> navigate("reports_income.fxml"));
         savingsLabel.setOnMouseClicked(e -> navigate("reports_savings.fxml"));
         transactionsItem.setOnMouseClicked(e -> navigate("transactions.fxml"));
@@ -50,9 +76,32 @@ public class SidebarController {
         settingsItem.setOnMouseClicked(e -> navigate("settings.fxml"));
         userBox.setOnMouseClicked(e -> navigate("profile.fxml"));
         userBox.getChildren().forEach(child -> child.setMouseTransparent(true));
+    }
 
-        applyActiveState();
-        loadUserInfo();
+    private void setupManagementDropdown() {
+        if (isFamilyManager) {
+            // FAMILY_MANAGER — management item otvára dropdown
+            managementChevron.setVisible(true);
+            managementChevron.setManaged(true);
+
+            managementItem.setOnMouseClicked(e -> toggleManagement());
+            personalManagementLabel.setOnMouseClicked(e -> navigate("management.fxml"));
+            familyManagementLabel.setOnMouseClicked(e -> navigate("family_management.fxml"));
+        } else {
+            // Normálny user — priama navigácia
+            managementItem.setOnMouseClicked(e -> navigate("management.fxml"));
+        }
+    }
+
+    private void toggleManagement() {
+        managementExpanded = !managementExpanded;
+        managementSubmenu.setVisible(managementExpanded);
+        managementSubmenu.setManaged(managementExpanded);
+
+        String chevronPath = managementExpanded
+                ? "/assets/icons/icon_chevron_down.png"
+                : "/assets/icons/icon_chevron_right.png";
+        managementChevron.setImage(new Image(getClass().getResourceAsStream(chevronPath)));
     }
 
     private void applyActiveState() {
@@ -61,13 +110,45 @@ public class SidebarController {
         setItemActive(reportsItem, reportsLabel, false);
         setItemActive(transactionsItem, transactionsLabel, false);
         setItemActive(budgetingItem, budgetingLabel, false);
+        setItemActive(managementItem, managementLabel, false);
+        incomeLabel.setStyle("");
+        savingsLabel.setStyle("");
+        personalManagementLabel.setStyle("");
+        familyManagementLabel.setStyle("");
         setItemActive(settingsItem, settingsLabel, false);
+
 
         switch (activePage) {
             case "dashboard.fxml" -> setItemActive(overviewItem, overviewLabel, true);
+
             case "transactions.fxml" -> setItemActive(transactionsItem, transactionsLabel, true);
+
             case "budgeting.fxml" -> setItemActive(budgetingItem, budgetingLabel, true);
+
+            case "management.fxml" -> {
+                setItemActive(managementItem, managementLabel, true);
+                if (isFamilyManager) {
+                    managementExpanded = true;
+                    managementSubmenu.setVisible(true);
+                    managementSubmenu.setManaged(true);
+                    managementChevron.setImage(new Image(
+                            getClass().getResourceAsStream("/assets/icons/icon_chevron_down.png")));
+                    personalManagementLabel.setStyle("-fx-text-fill: #FFFFFF;");
+                }
+            }
+
+            case "family_management.fxml" -> {
+                setItemActive(managementItem, managementLabel, true);
+                managementExpanded = true;
+                managementSubmenu.setVisible(true);
+                managementSubmenu.setManaged(true);
+                managementChevron.setImage(new Image(
+                        getClass().getResourceAsStream("/assets/icons/icon_chevron_down.png")));
+                familyManagementLabel.setStyle("-fx-text-fill: #FFFFFF;");
+            }
+
             case "settings.fxml" -> setItemActive(settingsItem, settingsLabel, true);
+
             case "reports_income.fxml", "reports_savings.fxml" -> {
                 setItemActive(reportsItem, reportsLabel, true);
                 reportsExpanded = true;
@@ -97,29 +178,6 @@ public class SidebarController {
         }
     }
 
-    private void loadUserInfo() {
-        CurrentUser user = SessionManager.getInstance().getCurrentUser();
-        if (user != null) {
-            userName.setText(user.getName() + " " + user.getSurname());
-
-            String photoPath = user.getPhotoPath();
-            if (photoPath != null && !photoPath.isBlank()) {
-                try {
-                    userAvatar.setImage(new Image(new FileInputStream(photoPath)));
-                } catch (FileNotFoundException e) {
-                    loadFallbackAvatar();
-                }
-            } else {
-                loadFallbackAvatar();
-            }
-        }
-    }
-
-    private void loadFallbackAvatar() {
-        userAvatar.setImage(new Image(Objects.requireNonNull(
-                getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
-    }
-
     private void toggleReports() {
         reportsExpanded = !reportsExpanded;
         reportsSubmenu.setVisible(reportsExpanded);
@@ -128,7 +186,20 @@ public class SidebarController {
         String chevronPath = reportsExpanded
                 ? "/assets/icons/icon_chevron_down.png"
                 : "/assets/icons/icon_chevron_right.png";
-        reportsChevron.setImage(new Image(
-                getClass().getResourceAsStream(chevronPath)));
+        reportsChevron.setImage(new Image(getClass().getResourceAsStream(chevronPath)));
+    }
+
+    private void loadUserInfo() {
+        CurrentUser user = SessionManager.getInstance().getCurrentUser();
+        if (user != null) {
+            userName.setText(user.getName() + " " + user.getSurname());
+            userRole.setText(user.getRole() != null ? user.getRole().name() : "");
+        }
+        AvatarUtil.apply(userAvatar, user != null ? user.getPhotoPath() : null, 32, getClass());
+    }
+
+    private void loadFallbackAvatar() {
+        userAvatar.setImage(new Image(Objects.requireNonNull(
+                getClass().getResourceAsStream("/assets/icons/default_profile_picture.png"))));
     }
 }
