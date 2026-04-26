@@ -37,7 +37,8 @@
                 </VBox>
 
                 <VBox fx:id="pendingFamilyBanner" styleClass="dashboard-card" spacing="12"
-                      visible="false" managed="false">
+                      visible="false" managed="false"
+                      maxWidth="Infinity" maxHeight="-Infinity">
                     <Label text="%family.pending.title" styleClass="dashboard-card-title"/>
                     <VBox fx:id="pendingFamilyList" spacing="8"/>
                 </VBox>

@@ -61,7 +61,7 @@
 
             <!-- ═══ Add User Modal ═══ -->
             <StackPane fx:id="addUserModalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="500">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="250">
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label text="%family.modal.add_title" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                         <Region HBox.hgrow="ALWAYS"/>
@@ -88,7 +88,7 @@
 
             <!-- ═══ Edit Saving Account Modal ═══ -->
             <StackPane fx:id="editSavingModalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="500">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="440" maxHeight="440">
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label text="%management.accounts.modal.edit_title" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                         <Region HBox.hgrow="ALWAYS"/>
