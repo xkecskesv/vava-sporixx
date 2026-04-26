@@ -630,6 +630,15 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (Exception ignored) {}
 
         try {
+            MonthDay md = MonthDay.parse(trimmed.replaceAll("\\.$", ""),
+                    DateTimeFormatter.ofPattern("dd.MM"));
+            LocalDate date = md.atYear(LocalDate.now().getYear());
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
             YearMonth ym = YearMonth.parse(trimmed,
                     DateTimeFormatter.ofPattern("MM.yyyy"));
             builder.dateFrom(ym.atDay(1).atStartOfDay());
