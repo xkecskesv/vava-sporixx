@@ -248,7 +248,7 @@
 
             <!-- ═══ Recurring Modal ═══ -->
             <StackPane fx:id="recurringModalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-                <VBox styleClass="modal-card" spacing="20" maxWidth="560" maxHeight="440">
+                <VBox styleClass="modal-card" spacing="20" maxWidth="560" maxHeight="480">
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label fx:id="recurringModalTitle" styleClass="modal-title" HBox.hgrow="ALWAYS"/>
                         <Region HBox.hgrow="ALWAYS"/>
@@ -278,16 +278,10 @@
                             <TextField fx:id="recurringAmountField" styleClass="modal-input" promptText="0.00"/>
                         </VBox>
                     </HBox>
-                    <HBox spacing="12">
-                        <VBox spacing="6" HBox.hgrow="ALWAYS">
-                            <Label text="%management.recurring.modal.type" styleClass="modal-field-label"/>
-                            <ComboBox fx:id="recurringTypeCombo" styleClass="modal-input" maxWidth="Infinity"/>
-                        </VBox>
-                        <VBox spacing="6" HBox.hgrow="ALWAYS">
-                            <Label text="%management.recurring.modal.classification" styleClass="modal-field-label"/>
-                            <ComboBox fx:id="recurringClassificationCombo" styleClass="modal-input" maxWidth="Infinity"/>
-                        </VBox>
-                    </HBox>
+                    <VBox spacing="6">
+                        <Label text="%management.recurring.modal.classification" styleClass="modal-field-label"/>
+                        <ComboBox fx:id="recurringClassificationCombo" styleClass="modal-input" maxWidth="Infinity"/>
+                    </VBox>
                     <HBox spacing="12">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label text="%management.recurring.modal.frequency" styleClass="modal-field-label"/>
@@ -304,9 +298,8 @@
                             <DatePicker fx:id="recurringStartDatePicker" styleClass="modal-input" maxWidth="Infinity"/>
                         </VBox>
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
-                            <Label text="%management.recurring.modal.max_occurrences" styleClass="modal-field-label"/>
-                            <TextField fx:id="recurringMaxOccurrencesField" styleClass="modal-input"
-                                       promptText="%management.recurring.modal.max_occurrences_placeholder"/>
+                            <Label text="%management.recurring.modal.end_date" styleClass="modal-field-label"/>
+                            <DatePicker fx:id="recurringEndDatePicker" styleClass="modal-input" maxWidth="Infinity"/>
                         </VBox>
                     </HBox>
                     <Label fx:id="recurringModalErrorLabel" styleClass="modal-error-label"
