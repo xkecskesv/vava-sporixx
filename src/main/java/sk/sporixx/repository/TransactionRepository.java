@@ -73,4 +73,9 @@ public interface TransactionRepository {
     void update(Transaction transaction);
 
     void deleteById(int id);
+
+    /**
+     * Nájde párovú transakciu pre transfer
+     */
+    Optional<Transaction> findPairedTransfer(int excludeAccountId, double amount, LocalDateTime createdAt);
 }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.SearchCriteria;
 import sk.sporixx.model.Account;
+import sk.sporixx.model.Category;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.AccountRepository;
@@ -13,6 +14,9 @@ import sk.sporixx.repository.TransactionRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,9 +90,54 @@ public class TransactionServiceImpl implements TransactionService {
     //  VYHĽADÁVANIE S REGEX
     @Override
     public List<Transaction> searchTransactions(SearchCriteria criteria, int accountId) {
-        logger.info("Searching transactions for accountId: {}", accountId);
-
         try {
+            boolean hasCategoryAndText = criteria.getCategoryId() != null
+                    && criteria.getSearchText() != null
+                    && !criteria.getSearchText().isBlank();
+
+            if (hasCategoryAndText) {
+                List<Transaction> byCategory = transactionRepository.findByFilters(
+                        accountId,
+                        criteria.getCategoryId(),
+                        criteria.getDateFrom(),
+                        criteria.getDateTo(),
+                        criteria.getAmountFrom(),
+                        criteria.getAmountTo(),
+                        criteria.getTransactionTypeId());
+
+                List<Transaction> byText = transactionRepository.findByFilters(
+                        accountId,
+                        null,
+                        criteria.getDateFrom(),
+                        criteria.getDateTo(),
+                        criteria.getAmountFrom(),
+                        criteria.getAmountTo(),
+                        criteria.getTransactionTypeId());
+
+                // Regex filter na byText
+                Pattern pattern;
+                try {
+                    pattern = Pattern.compile(
+                            criteria.getSearchText(),
+                            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+                } catch (PatternSyntaxException e) {
+                    String lower = criteria.getSearchText().toLowerCase();
+                    byText = byText.stream()
+                            .filter(t -> t.getDescription().toLowerCase().contains(lower))
+                            .collect(Collectors.toList());
+                    // Zlúč a odstráň duplikáty
+                    return mergeDeduplicated(byCategory, byText);
+                }
+
+                Pattern finalPattern = pattern;
+                byText = byText.stream()
+                        .filter(t -> finalPattern.matcher(t.getDescription()).find())
+                        .collect(Collectors.toList());
+
+                return mergeDeduplicated(byCategory, byText);
+            }
+
+            // Štandardná AND logika
             List<Transaction> filtered = transactionRepository.findByFilters(
                     accountId,
                     criteria.getCategoryId(),
@@ -105,10 +154,9 @@ public class TransactionServiceImpl implements TransactionService {
             Pattern pattern;
             try {
                 pattern = Pattern.compile(
-                        criteria.getSearchText(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+                        criteria.getSearchText(),
+                        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
             } catch (PatternSyntaxException e) {
-                logger.warn("Invalid regex '{}', falling back to plain text",
-                        criteria.getSearchText());
                 String lower = criteria.getSearchText().toLowerCase();
                 return filtered.stream()
                         .filter(t -> t.getDescription().toLowerCase().contains(lower))
@@ -126,6 +174,21 @@ public class TransactionServiceImpl implements TransactionService {
             logger.error("Failed to search transactions", e);
             throw new TransactionException("error.db_error", e);
         }
+    }
+
+    // Helper — zlúč dve listy bez duplikátov podľa id
+    private List<Transaction> mergeDeduplicated(List<Transaction> list1,
+                                                List<Transaction> list2) {
+        List<Transaction> result = new ArrayList<>(list1);
+        list2.stream()
+                .filter(t -> result.stream().noneMatch(r -> r.getId() == t.getId()))
+                .forEach(result::add);
+        result.sort((a, b) -> {
+            int dateCompare = b.getCompleteDate().compareTo(a.getCompleteDate());
+            if (dateCompare != 0) return dateCompare;
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
+        });
+        return result;
     }
 
     @Override
@@ -220,12 +283,6 @@ public class TransactionServiceImpl implements TransactionService {
                                                String currencyCode,
                                                LocalDateTime completeDate) {
 
-        if (transactionTypeId == Transaction.TYPE_EXPENSE) {
-            if (account.getCurrentBalance() - amount < 0) {
-                throw new TransactionException("transaction.error.insufficient_funds");
-            }
-        }
-
         Transaction transaction = Transaction.builder()
                 .accountId(account.getId())
                 .transactionTypeId(transactionTypeId)
@@ -268,11 +325,8 @@ public class TransactionServiceImpl implements TransactionService {
         } else if (fromAccount.isSavingAccount()) {
             autoCategory = Transaction.CATEGORY_SAVING_EXPENSE;
         }
-        // Inak (napr. main → emergency) kategória ostáva null
 
-        if (fromAccount.getCurrentBalance() - amount < 0) {
-            throw new TransactionException("transaction.error.insufficient_funds");
-        }
+        LocalDateTime createdAt = LocalDateTime.now();
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
@@ -283,7 +337,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .amount(amount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
-                .createdAt(LocalDateTime.now())
+                .createdAt(createdAt)
                 .build();
         transactionRepository.save(expense);
 
@@ -296,7 +350,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .amount(amount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
-                .createdAt(LocalDateTime.now())
+                .createdAt(createdAt)
                 .build();
         transactionRepository.save(income);
 
@@ -361,14 +415,44 @@ public class TransactionServiceImpl implements TransactionService {
                 newBalance = account.getCurrentBalance() + difference;
             } else {
                 newBalance = account.getCurrentBalance() - difference;
-                // Kontrola insufficient funds
-                if (newBalance < 0) {
-                    throw new TransactionException("transaction.error.insufficient_funds");
-                }
             }
 
             transactionRepository.update(updatedTransaction);
             updateBalance(account, newBalance);
+
+            if (original.getCategoryId() != null &&
+                    (original.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                            original.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                            original.getCategoryId() == Transaction.CATEGORY_TRANSFER)) {
+
+                transactionRepository.findPairedTransfer(
+                        original.getAccountId(),
+                        original.getAmount(),
+                        original.getCreatedAt()
+                ).ifPresent(paired -> {
+                    double pairedDiff = updatedTransaction.getAmount() - original.getAmount();
+                    paired.setAmount(updatedTransaction.getAmount());
+                    paired.setDescription(updatedTransaction.getDescription());
+                    paired.setCompleteDate(updatedTransaction.getCompleteDate());
+                    transactionRepository.update(paired);
+
+                    Account pairedAccount = getAccountOrThrow(paired.getAccountId());
+                    double pairedNewBalance;
+                    if (paired.isIncome()) {
+                        pairedNewBalance = pairedAccount.getCurrentBalance() + pairedDiff;
+                    } else {
+                        pairedNewBalance = pairedAccount.getCurrentBalance() - pairedDiff;
+                    }
+                    updateBalance(pairedAccount, pairedNewBalance);
+
+                    if (pairedAccount.isSavingAccount()) {
+                        double goalDelta = paired.isIncome() ? pairedDiff : -pairedDiff;
+                        updateSavingGoalAmount(pairedAccount.getId(), goalDelta);
+                    }
+
+                    logger.info("Paired transfer transaction updated: id={}", paired.getId());
+                });
+            }
 
             if (account.isSavingAccount()) {
                 double goalDelta = original.isIncome() ? difference : -difference;
@@ -426,6 +510,36 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionRepository.deleteById(id);
                 logger.info("Transaction deleted: id={}, amount={}", id, tx.getAmount());
 
+                if (tx.getCategoryId() != null &&
+                        (tx.getCategoryId() == Transaction.CATEGORY_SAVING ||
+                                tx.getCategoryId() == Transaction.CATEGORY_SAVING_EXPENSE ||
+                                tx.getCategoryId() == Transaction.CATEGORY_TRANSFER)) {
+
+                    transactionRepository.findPairedTransfer(
+                            tx.getAccountId(),
+                            tx.getAmount(),
+                            tx.getCreatedAt()
+                    ).ifPresent(paired -> {
+                        Account pairedAccount = getAccountOrThrow(paired.getAccountId());
+                        double revertedPairedBalance = revertBalance(
+                                pairedAccount.getCurrentBalance(),
+                                paired.getTransactionTypeId(),
+                                paired.getAmount());
+                        updateBalance(pairedAccount, revertedPairedBalance);
+
+                        if (pairedAccount.isSavingAccount()) {
+                            if (paired.isIncome()) {
+                                updateSavingGoalAmount(pairedAccount.getId(), -paired.getAmount());
+                            } else {
+                                updateSavingGoalAmount(pairedAccount.getId(), paired.getAmount());
+                            }
+                        }
+
+                        transactionRepository.deleteById(paired.getId());
+                        logger.info("Paired transfer transaction deleted: id={}", paired.getId());
+                    });
+                }
+
             } catch (Exception e) {
                 logger.error("Failed to delete transaction id={}", id, e);
                 errors.add(String.valueOf(id));
@@ -479,5 +593,76 @@ public class TransactionServiceImpl implements TransactionService {
         goal.setCurrentAmount(newAmount);
         logger.info("SavingGoal updated: accountId={}, newCurrentAmount={}",
                 accountId, newAmount);
+    }
+
+    private SearchCriteria parseSearchInput(String input) {
+
+        if (input == null || input.isBlank()) {
+            return SearchCriteria.builder().build();
+        }
+
+        String trimmed = input.trim();
+        SearchCriteria.SearchCriteriaBuilder builder = SearchCriteria.builder();
+
+        try {
+            LocalDate date = LocalDate.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            LocalDate date = LocalDate.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM.yy"));
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            MonthDay md = MonthDay.parse(trimmed,
+                    DateTimeFormatter.ofPattern("dd.MM"));
+            LocalDate date = md.atYear(LocalDate.now().getYear());
+            builder.dateFrom(date.atStartOfDay());
+            builder.dateTo(date.atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        try {
+            YearMonth ym = YearMonth.parse(trimmed,
+                    DateTimeFormatter.ofPattern("MM.yyyy"));
+            builder.dateFrom(ym.atDay(1).atStartOfDay());
+            builder.dateTo(ym.atEndOfMonth().atTime(23, 59, 59));
+            return builder.build();
+        } catch (Exception ignored) {}
+
+        List<Category> categories = categoryRepository.findByUserIdOrSystem(
+                SessionManager.getInstance().getCurrentUserId());
+        Optional<Category> matchedCategory = categories.stream()
+                .filter(c -> c.getName().toLowerCase()
+                        .contains(trimmed.toLowerCase()))
+                .findFirst();
+
+        if (matchedCategory.isPresent()) {
+            builder.categoryId(matchedCategory.get().getId());
+            builder.searchText(trimmed);
+            return builder.build();
+        }
+
+        builder.searchText(trimmed);
+        return builder.build();
+    }
+
+    @Override
+    public List<Transaction> searchTransactions(String rawInput, int accountId) {
+        SearchCriteria criteria = parseSearchInput(rawInput);
+        return searchTransactions(criteria, accountId);
+    }
+
+    @Override
+    public List<Transaction> searchTransactions(String rawInput) {
+        SearchCriteria criteria = parseSearchInput(rawInput);
+        return searchTransactions(criteria);
     }
 }

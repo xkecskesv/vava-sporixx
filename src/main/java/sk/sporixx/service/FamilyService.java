@@ -4,6 +4,7 @@ import sk.sporixx.dto.FamilyMemberData;
 import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.FamilyRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface FamilyService {
@@ -41,6 +42,13 @@ public interface FamilyService {
      * Dieťa odmietne požiadavku.
      */
     void rejectFamilyRequest(int requestId);
+
+    /**
+     * Family Manager môže upraviť saving account dieťaťa.
+     * Kontroluje, že má prístup k danému účtu.
+     */
+    void updateChildSavingAccount(int accountId, String description,
+                                  double targetAmount, LocalDate targetDate);
 
     List<FamilyRequest> getSentRequests();
 }

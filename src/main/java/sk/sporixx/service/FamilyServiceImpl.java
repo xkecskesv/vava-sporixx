@@ -5,11 +5,10 @@ import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.FamilyMemberData;
 import sk.sporixx.dto.FamilyRequestData;
 import sk.sporixx.model.*;
-import sk.sporixx.repository.AccountAccessRepository;
-import sk.sporixx.repository.AccountRepository;
-import sk.sporixx.repository.FamilyRequestRepository;
-import sk.sporixx.repository.UserRepository;
+import sk.sporixx.repository.*;
+import sk.sporixx.util.ValidationUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +23,18 @@ public class FamilyServiceImpl implements FamilyService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final FamilyRequestRepository familyRequestRepository;
+    private final SavingGoalRepository savingGoalRepository;
 
     public FamilyServiceImpl(AccountAccessRepository accountAccessRepository,
                              AccountRepository accountRepository,
                              UserRepository userRepository,
-                             FamilyRequestRepository familyRequestRepository) {
+                             FamilyRequestRepository familyRequestRepository,
+                             SavingGoalRepository savingGoalRepository) {
         this.accountAccessRepository = accountAccessRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.familyRequestRepository = familyRequestRepository;
+        this.savingGoalRepository = savingGoalRepository;
     }
 
     @Override
@@ -285,6 +287,65 @@ public class FamilyServiceImpl implements FamilyService {
             return familyRequestRepository.findPendingByFromUserId(managerId);
         } catch (Exception e) {
             logger.error("Failed to load sent requests", e);
+            throw new FamilyException("error.db_error", e);
+        }
+    }
+
+    @Override
+    public void updateChildSavingAccount(int accountId, String description,
+                                         double targetAmount, LocalDate targetDate) {
+        logger.info("Family manager updating child saving account id={}", accountId);
+
+        int managerId = SessionManager.getInstance().getCurrentUserId();
+
+        // Skontroluje prístup
+        List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
+        boolean hasAccess = accesses.stream()
+                .anyMatch(a -> a.getAccountId() == accountId);
+        if (!hasAccess) {
+            throw new FamilyException("family.error.no_access");
+        }
+
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isEmpty()) {
+            throw new FamilyException("family.error.account_not_found");
+        }
+
+        Account account = accountOpt.get();
+        if (!account.isSavingAccount()) {
+            throw new FamilyException("family.error.not_saving_account");
+        }
+
+        if (!ValidationUtil.isNotBlank(description)) {
+            throw new FamilyException("family.error.description_required");
+        }
+        if (targetAmount <= 0) {
+            throw new FamilyException("family.error.invalid_amount");
+        }
+        if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
+            throw new FamilyException("family.error.invalid_date");
+        }
+        if (targetAmount - account.getCurrentBalance() < 0.01) {
+            throw new FamilyException("family.error.target_below_current");
+        }
+
+        try {
+            account.setDescription(description);
+            accountRepository.update(account);
+
+            List<SavingGoal> goals = savingGoalRepository.findActiveByAccountId(accountId);
+            if (!goals.isEmpty()) {
+                SavingGoal goal = goals.get(0);
+                savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
+                savingGoalRepository.updateTargetDate(goal.getId(), targetDate.atStartOfDay());
+            }
+
+            logger.info("Child saving account updated: id={}", accountId);
+
+        } catch (FamilyException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Failed to update child saving account id={}", accountId, e);
             throw new FamilyException("error.db_error", e);
         }
     }

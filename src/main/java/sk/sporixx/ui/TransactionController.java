@@ -141,18 +141,15 @@ public class TransactionController {
 
     private void applyFilters() {
         try {
-            // UI len posiela surový text — service rozhoduje či je to dátum, suma alebo názov
-            SearchCriteria criteria = SearchCriteria.builder()
-                    .searchText(searchField.getText().trim())
-                    .build();
+            String rawInput = searchField.getText().trim();
 
             if (!activeAccountFilter.equals("ALL")) {
                 int accountId = Integer.parseInt(activeAccountFilter);
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(criteria, accountId);
+                        .searchTransactions(rawInput, accountId);
             } else {
                 filteredTransactions = ServiceLocator.getTransactionService()
-                        .searchTransactions(criteria);
+                        .searchTransactions(rawInput);
             }
         } catch (Exception e) {
             filteredTransactions = new ArrayList<>();
