@@ -16,9 +16,6 @@ import java.util.Optional;
  * Implementácia CategoryService.
  * Spravuje systémové aj používateľské kategórie.
  * Systémové kategórie (userId = null) sa nedajú upravovať ani mazať.
- * Saving a Saving Expense sú systémové a skryté pred používateľom —
- * priraďujú sa automaticky pri transferoch medzi účtami.
- * Investment je systémová ale viditeľná — používateľ si ju môže vybrať.
  */
 public class CategoryServiceImpl implements CategoryService {
 
@@ -35,7 +32,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * Všetky kategórie prihláseného používateľa vrátane systémových.
-     * Používa sa napr. pri filtrovaní v Transactions screene.
      */
     @Override
     public List<Category> getCategories() {
@@ -52,8 +48,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * Kategórie dostupné používateľovi pri pridávaní/editácii transakcie.
-     * Vylučuje Saving a Saving Expense — tie sa priraďujú automaticky pri transferoch.
-     * Investment je zahrnutý — používateľ si ho môže vybrať manuálne.
      */
     @Override
     public List<Category> getSelectableCategories() {
@@ -73,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addCategory(String name) {
+    public void addCategory(String name) {
         logger.info("Adding category: {}", name);
 
         if (!ValidationUtil.isNotBlank(name)) {
@@ -100,7 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
 
             Category saved = categoryRepository.save(category);
             logger.info("Category created: id={}, name={}", saved.getId(), saved.getName());
-            return saved;
 
         } catch (Exception e) {
             logger.error("Failed to save category: {}", name, e);

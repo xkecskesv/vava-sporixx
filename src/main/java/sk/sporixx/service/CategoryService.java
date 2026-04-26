@@ -14,23 +14,20 @@ public interface CategoryService {
     /**
      * Načíta všetky kategórie dostupné pre prihláseného používateľa.
      * Vracia systémové (userId = null) + jeho vlastné.
-     * Používa sa pri načítaní dropdownu kategórií vo formulári transakcie.
      */
     List<Category> getCategories();
 
     /**
      * Načíta kategórie dostupné používateľovi pri pridávaní/editácii transakcie.
-     * Vylučuje systémové kategórie Saving a Saving Expense — tie sa priraďujú
-     * automaticky pri transferoch medzi účtami.
-     * Investment je zahrnutý — používateľ si ho môže vybrať manuálne.
+     * Vylučuje systémové kategórie Saving a Saving Expense - tie sa priraďujú automaticky pri transferoch medzi účtami.
      */
     List<Category> getSelectableCategories();
 
     /**
      * Pridá novú vlastnú kategóriu pre prihláseného používateľa.
-     * Validuje, že názov nie je prázdny a neexistuje duplicita (case-insensitive).
+     * Validuje, že názov nie je prázdny a neexistuje duplicita.
      */
-    Category addCategory(String name);
+    void addCategory(String name);
 
     /**
      * Aktualizuje názov existujúcej kategórie.

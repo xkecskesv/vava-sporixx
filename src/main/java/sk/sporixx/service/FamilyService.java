@@ -23,7 +23,7 @@ public interface FamilyService {
 
     /**
      * Pošle požiadavku na pridanie dieťaťa do rodiny.
-     * Neudelí prístup hneď — čaká na potvrdenie dieťaťa.
+     * Neudelí prístup hneď - čaká na potvrdenie dieťaťa.
      */
     void sendFamilyRequest(String email);
 
@@ -34,7 +34,7 @@ public interface FamilyService {
     List<FamilyRequestData> getPendingRequests();
 
     /**
-     * Dieťa prijme požiadavku — udelí sa prístup rodičovi.
+     * Dieťa prijme požiadavku - udelí sa prístup rodičovi.
      */
     void acceptFamilyRequest(int requestId);
 
