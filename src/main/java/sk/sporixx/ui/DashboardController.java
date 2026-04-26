@@ -214,7 +214,7 @@ public class DashboardController {
             header.getChildren().add(icon);
         } catch (Exception e) { /* ikona sa nenašla */ }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add(active ? "account-card-desc-active" : "account-card-desc");
 
         Region vspacer = new Region();

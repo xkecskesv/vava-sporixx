@@ -381,7 +381,7 @@ public class ManagementController {
             header.getChildren().add(editBtn);
         }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add("account-card-desc");
 
         Label created = new Label(Localization.get("management.accounts.created") + ": "
@@ -496,7 +496,7 @@ public class ManagementController {
         editingAccount = account;
         clearEditAccountModalError();
         editAccountModalTitle.setText(Localization.get("management.accounts.modal.edit_title"));
-        editAccountDescField.setText(account.getDescription());
+        editAccountDescField.setText(ServiceLocator.getAccountService().getLocalizedDescription(account));
 
         boolean isSaving = account.isSavingAccount();
         editAccountGoalSection.setVisible(isSaving);

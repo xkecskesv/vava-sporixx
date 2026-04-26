@@ -308,7 +308,7 @@ public class FamilyManagementController {
             header.getChildren().add(editBtn);
         }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add("account-card-desc");
 
         Label created = new Label(Localization.get("management.accounts.created") + ": "
@@ -339,7 +339,7 @@ public class FamilyManagementController {
         editingAccount = account;
         clearEditSavingModalError();
 
-        editSavingDescField.setText(account.getDescription());
+        editSavingDescField.setText(ServiceLocator.getAccountService().getLocalizedDescription(account));
         editSavingDatePicker.setConverter(new javafx.util.StringConverter<>() {
             private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             @Override public String toString(LocalDate d) { return d != null ? d.format(fmt) : ""; }
