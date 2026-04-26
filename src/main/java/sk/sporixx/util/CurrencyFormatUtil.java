@@ -1,7 +1,6 @@
 package sk.sporixx.util;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import sk.sporixx.service.CurrencyService;
 import sk.sporixx.service.ServiceLocator;
 
 public final class CurrencyFormatUtil {
@@ -10,19 +9,32 @@ public final class CurrencyFormatUtil {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static String format(double value) {
-        var settingsService = ServiceLocator.getSettingsService();
-        String languageCode = settingsService.getLanguageCode();
-        String currencyCode = settingsService.getCurrencyCode();
+    /**
+     * Konvertuje sumu z EUR do meny nastavenej používateľom a naformátuje ju.
+     * Volá sa všade tam, kde sa zobrazuje peňažná hodnota.
+     *
+     * @param amount suma v EUR
+     * @return naformátovaný reťazec v používateľovej mene
+     */
+    public static String format(double amount) {
+        CurrencyService currencyService = ServiceLocator.getCurrencyService();
+        String targetCurrency = currencyService.getUserCurrency();
+        double converted = currencyService.convert(amount, "EUR", targetCurrency);
+        return currencyService.format(converted, targetCurrency);
+    }
 
-        Locale locale = switch (languageCode) {
-            case "sk" -> Locale.forLanguageTag("sk-SK");
-            case "cs" -> Locale.forLanguageTag("cs-CZ");
-            default -> Locale.US;
-        };
-
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
-        formatter.setCurrency(java.util.Currency.getInstance(currencyCode));
-        return formatter.format(value);
+    /**
+     * Konvertuje sumu zo zadanej zdrojovej meny do meny nastavenej používateľom.
+     * Používa sa ak zdrojová suma nie je v EUR.
+     *
+     * @param amount suma v zdrojovej mene
+     * @param fromCurrency kód zdrojovej meny (napr. "USD", "CZK")
+     * @return naformátovaný reťazec v používateľovej mene
+     */
+    public static String formatFrom(double amount, String fromCurrency) {
+        CurrencyService currencyService = ServiceLocator.getCurrencyService();
+        String targetCurrency = currencyService.getUserCurrency();
+        double converted = currencyService.convert(amount, fromCurrency, targetCurrency);
+        return currencyService.format(converted, targetCurrency);
     }
 }
