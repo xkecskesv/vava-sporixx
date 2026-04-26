@@ -14,6 +14,7 @@ import sk.sporixx.model.FamilyRequest;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.AvatarUtil;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.io.FileInputStream;
@@ -488,6 +489,6 @@ public class FamilyManagementController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }
