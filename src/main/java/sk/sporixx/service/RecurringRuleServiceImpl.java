@@ -88,6 +88,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
             }
         }
 
+        List<RecurringRule> existing = recurringRuleRepository
+                .findActiveByAccountId(accountId);
+        boolean duplicate = existing.stream()
+                .anyMatch(r -> r.getDescription().equalsIgnoreCase(description));
+        if (duplicate) {
+            throw new RecurringRuleException("recurring.error.already_exists");
+        }
+
         try {
             LocalDateTime startDateTime = startDate.atStartOfDay();
 
@@ -251,6 +259,13 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                         rule.setNextDueDate(nextDueDate);
                         rule.setGeneratedCount(newCount);
 
+                        if (rule.isActive() && rule.getEndDate() != null
+                                && rule.getNextDueDate().isAfter(rule.getEndDate())) {
+                            recurringRuleRepository.deactivateById(rule.getId());
+                            logger.info("Recurring rule id={} deactivated — nextDueDate after endDate",
+                                    rule.getId());
+                        }
+
                         logger.info("Recurring rule id={} processed, nextDueDate={}",
                                 rule.getId(), nextDueDate);
 
@@ -309,6 +324,13 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                 recurringRuleRepository.updateNextDueDate(rule.getId(), nextDueDate, newCount);
                 rule.setNextDueDate(nextDueDate);
                 rule.setGeneratedCount(newCount);
+
+                if (rule.getEndDate() != null
+                        && rule.getNextDueDate().isAfter(rule.getEndDate())) {
+                    recurringRuleRepository.deactivateById(rule.getId());
+                    logger.info("Recurring rule id={} deactivated — nextDueDate after endDate",
+                            rule.getId());
+                }
 
                 logger.info("Recurring rule id={} processed immediately, nextDueDate={}",
                         rule.getId(), nextDueDate);
