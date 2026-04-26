@@ -91,6 +91,17 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> searchTransactions(SearchCriteria criteria, int accountId) {
         try {
+            if (criteria.getSearchText() != null
+                    && criteria.getSearchText().startsWith("__DATE__")) {
+                String datePrefix = criteria.getSearchText().substring(8);
+                List<Transaction> all = transactionRepository.findByAccountId(accountId);
+                return all.stream()
+                        .filter(t -> t.getCompleteDate()
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                .contains(datePrefix))
+                        .collect(Collectors.toList());
+            }
+
             boolean hasCategoryAndText = criteria.getCategoryId() != null
                     && criteria.getSearchText() != null
                     && !criteria.getSearchText().isBlank();
@@ -621,29 +632,37 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (Exception ignored) {}
 
         try {
-            MonthDay md = MonthDay.parse(trimmed,
-                    DateTimeFormatter.ofPattern("dd.MM"));
-            LocalDate date = md.atYear(LocalDate.now().getYear());
-            builder.dateFrom(date.atStartOfDay());
-            builder.dateTo(date.atTime(23, 59, 59));
-            return builder.build();
-        } catch (Exception ignored) {}
+            String cleaned = trimmed.replaceAll("\\.$", "");
+            String[] parts = cleaned.split("\\.");
 
-        try {
-            MonthDay md = MonthDay.parse(trimmed.replaceAll("\\.$", ""),
-                    DateTimeFormatter.ofPattern("dd.MM"));
-            LocalDate date = md.atYear(LocalDate.now().getYear());
-            builder.dateFrom(date.atStartOfDay());
-            builder.dateTo(date.atTime(23, 59, 59));
-            return builder.build();
-        } catch (Exception ignored) {}
+            String isoPrefix = null;
 
-        try {
-            YearMonth ym = YearMonth.parse(trimmed,
-                    DateTimeFormatter.ofPattern("MM.yyyy"));
-            builder.dateFrom(ym.atDay(1).atStartOfDay());
-            builder.dateTo(ym.atEndOfMonth().atTime(23, 59, 59));
-            return builder.build();
+            if (parts.length == 1 && parts[0].matches("\\d{1,2}")) {
+                // len deň: "26"
+                String day = String.format("%02d", Integer.parseInt(parts[0]));
+                isoPrefix = "-" + day;
+            } else if (parts.length == 2
+                    && parts[0].matches("\\d{1,2}")
+                    && parts[1].matches("\\d{1,2}")) {
+                // deň.mesiac: "26.04"
+                String day = String.format("%02d", Integer.parseInt(parts[0]));
+                String month = String.format("%02d", Integer.parseInt(parts[1]));
+                isoPrefix = month + "-" + day;
+            } else if (parts.length == 3
+                    && parts[0].matches("\\d{1,2}")
+                    && parts[1].matches("\\d{1,2}")
+                    && parts[2].matches("\\d{1,4}")) {
+                // deň.mesiac.rok(čiastočný): "26.04.2"
+                String day = String.format("%02d", Integer.parseInt(parts[0]));
+                String month = String.format("%02d", Integer.parseInt(parts[1]));
+                String year = parts[2];
+                isoPrefix = year + "-" + month + "-" + day;
+            }
+
+            if (isoPrefix != null) {
+                builder.searchText("__DATE__" + isoPrefix);
+                return builder.build();
+            }
         } catch (Exception ignored) {}
 
         List<Category> categories = categoryRepository.findByUserIdOrSystem(
