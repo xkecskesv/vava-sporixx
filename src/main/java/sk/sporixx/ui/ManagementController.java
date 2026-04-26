@@ -756,14 +756,9 @@ public class ManagementController {
 
         try {
             if (editingRecurringRule == null) {
-                ServiceLocator.getRecurringRuleService().addRecurringRule(
-                        mainAccount.getId(), categoryId, transactionTypeId,
-                        spendingClassificationId, name, amount, frequencyType,
-                        interval, startDate, maxOccurrences);
+
             } else {
-                ServiceLocator.getRecurringRuleService().updateRecurringRule(
-                        editingRecurringRule.getId(), categoryId, spendingClassificationId,
-                        name, amount, frequencyType, interval, maxOccurrences);
+
             }
             closeRecurringModal();
             resetRecurringState();
