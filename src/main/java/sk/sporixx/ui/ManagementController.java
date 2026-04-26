@@ -207,7 +207,11 @@ public class ManagementController {
             loadCategories();
         } catch (Exception e) {
             String msg = e.getMessage();
-            showCategoryError(msg != null && msg.startsWith("category.error.") ? msg : "error.db_error");
+            if (msg != null && msg.startsWith("category.error.")) {
+                showCategoryError(msg);
+            } else {
+                showCategoryError("error.db_error");
+            }
         }
     }
 
