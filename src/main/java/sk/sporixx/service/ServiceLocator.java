@@ -39,6 +39,7 @@ public final class ServiceLocator {
     private static CurrencyService currencyService;
     private static RecurringRuleService recurringRuleService;
     private static FamilyService familyService;
+    private static MilestoneService milestoneService;
 
     private static boolean initialized = false;
 
@@ -123,6 +124,7 @@ public final class ServiceLocator {
                 testData.getUserRepository(),
                 testData.getFamilyRequestRepository(),
                 testData.getSavingGoalRepository());
+        milestoneService = new MilestoneServiceImpl(reportsService);
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -192,6 +194,7 @@ public final class ServiceLocator {
                 userRepo,
                 testData.getFamilyRequestRepository(),
                 testData.getSavingGoalRepository());
+        milestoneService = new MilestoneServiceImpl(reportsService);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
@@ -286,6 +289,11 @@ public final class ServiceLocator {
     public static FamilyService getFamilyService() {
         checkInitialized();
         return familyService;
+    }
+
+    public static MilestoneService getMilestoneService() {
+        checkInitialized();
+        return milestoneService;
     }
 
     // HELPER
