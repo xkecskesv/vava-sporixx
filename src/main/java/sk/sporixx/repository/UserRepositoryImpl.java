@@ -50,6 +50,16 @@ public class UserRepositoryImpl implements UserRepository {
         if (createdAtStr != null) {
             user.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
         }
+
+        user.setSavingXp(result.getDouble("saving_xp"));
+        user.setBudgetXp(result.getDouble("budget_xp"));
+        user.setInvestorXp(result.getDouble("investor_xp"));
+        user.setSpenderXp(result.getDouble("spender_xp"));
+        user.setSavingLevel(result.getInt("saving_level"));
+        user.setBudgetLevel(result.getInt("budget_level"));
+        user.setInvestorLevel(result.getInt("investor_level"));
+        user.setSpenderLevel(result.getInt("spender_level"));
+
         return user;
     }
 
