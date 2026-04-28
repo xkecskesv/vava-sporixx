@@ -155,9 +155,6 @@ public class BudgetingController {
             populateAllocation();
             populateEmergencyFund();
 
-            if (warning != BudgetWarning.NONE) {
-                showSetupError(Localization.get("budget.warning." + warning.name().toLowerCase()));
-            }
 
         } catch (NumberFormatException e) {
             // Neúplný input — ignoruj

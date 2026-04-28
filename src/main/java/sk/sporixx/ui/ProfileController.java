@@ -21,6 +21,7 @@ import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.AvatarUtil;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 import sk.sporixx.util.ValidationUtil;
 
@@ -214,7 +215,7 @@ public class ProfileController {
     }
 
     private void applyMilestone(ImageView icon, Label subtitle, Label desc, MilestoneData data) {
-        // Ikona podľa levelu — milestone_level_0.png až milestone_level_5.png
+        // Ikona podľa levelu
         String iconPath = "/assets/icons/milestone_level_" + data.getLevel() + ".png";
         try {
             icon.setImage(new Image(Objects.requireNonNull(
@@ -223,11 +224,19 @@ public class ProfileController {
             logger.warn("Milestone icon not found: {}", iconPath);
         }
 
-        // Level name
-        subtitle.setText(data.getLevelName());
+        // Level name — localization kľúč
+        subtitle.setText(localizeMessage(data.getLevelName()));
 
-        // Description — môže byť localization kľúč alebo priamy text
-        desc.setText(localizeMessage(data.getDescription()));
+        // Description — localization kľúč + nahradenie {amount} ak treba
+        String descText = localizeMessage(data.getDescription());
+        if (descText.contains("{amount}") && data.getNextTarget() > 0) {
+            descText = descText.replace("{amount}", formatCurrency(data.getNextTarget()));
+        }
+        desc.setText(descText);
+    }
+
+    private String formatCurrency(double value) {
+        return CurrencyFormatUtil.format(value);
     }
 
     // ════════════════════════════════════════════════════════════
