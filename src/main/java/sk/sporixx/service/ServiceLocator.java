@@ -124,7 +124,8 @@ public final class ServiceLocator {
                 testData.getUserRepository(),
                 testData.getFamilyRequestRepository(),
                 testData.getSavingGoalRepository());
-        milestoneService = new MilestoneServiceImpl(reportsService);
+        milestoneService = new MilestoneServiceImpl(reportsService, testData.getAccountRepository(),
+                testData.getUserRepository(), testData.getTransactionRepository(), budgetService);
     }
 
     //  PRODUKCNY REZIM — reálne JDBC repozitáre
@@ -194,13 +195,15 @@ public final class ServiceLocator {
                 userRepo,
                 testData.getFamilyRequestRepository(),
                 testData.getSavingGoalRepository());
-        milestoneService = new MilestoneServiceImpl(reportsService);
+        milestoneService = new MilestoneServiceImpl(reportsService,
+                accountRepo, userRepo,
+                transactionRepo, budgetService);
 
         // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
         // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
     }
 
-    //  GETTERY — UI vrstva volá tieto metódy
+    //  GETTERY - UI vrstva volá tieto metódy
     /** Autentifikácia: login, register, logout */
     public static AuthService getAuthService() {
         checkInitialized();
