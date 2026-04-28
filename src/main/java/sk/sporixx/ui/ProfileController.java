@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.CurrentUser;
+import sk.sporixx.dto.MilestoneData;
 import sk.sporixx.service.ProfileException;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
@@ -24,32 +25,22 @@ import sk.sporixx.util.Localization;
 import sk.sporixx.util.ValidationUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javafx.util.Duration;
 
-/**
- * JavaFX kontrolér pre obrazovku profilu.
- *
- * <p>Spravuje inicializáciu profilu, automatické ukladanie editovateľných polí,
- * zmenu hesla a nahratie profilovej fotografie vrátane jej uloženia.</p>
- *
- * @author Viktória Kecskés
- */
 public class ProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
-
     private static final Duration AUTOSAVE_DELAY = Duration.millis(800);
 
-    // Header section
+    // ── Header ───────────────────────────────────────────────────
     @FXML private Label profileTitle;
     @FXML private Label profileSubtitle;
     @FXML private Button logoutButton;
 
-    // Account management section
+    // ── Account management ───────────────────────────────────────
     @FXML private Label managementTitle;
     @FXML private ImageView profileImage;
     @FXML private Button uploadPhotoButton;
@@ -60,7 +51,7 @@ public class ProfileController {
     @FXML private Button changePasswordButton;
     @FXML private Label passwordFeedbackLabel;
 
-    // Profile information section
+    // ── Profile information ──────────────────────────────────────
     @FXML private Label firstNameLabel;
     @FXML private Label lastNameLabel;
     @FXML private Label emailLabel;
@@ -75,22 +66,27 @@ public class ProfileController {
     @FXML private Label financialLevelValue;
     @FXML private ProgressBar xpProgressBar;
 
-    // Milestones section
+    // ── Milestones ───────────────────────────────────────────────
     @FXML private Label milestonesTitle;
+    @FXML private ImageView milestone1Icon;
     @FXML private Label milestone1Title;
     @FXML private Label milestone1Subtitle;
     @FXML private Label milestone1Desc;
+    @FXML private ImageView milestone2Icon;
     @FXML private Label milestone2Title;
     @FXML private Label milestone2Subtitle;
     @FXML private Label milestone2Desc;
+    @FXML private ImageView milestone3Icon;
     @FXML private Label milestone3Title;
     @FXML private Label milestone3Subtitle;
     @FXML private Label milestone3Desc;
+    @FXML private ImageView milestone4Icon;
     @FXML private Label milestone4Title;
     @FXML private Label milestone4Subtitle;
     @FXML private Label milestone4Desc;
     @FXML private Label milestonesFooter;
 
+    // ── Autosave state ───────────────────────────────────────────
     private final PauseTransition autosaveTimer = new PauseTransition(AUTOSAVE_DELAY);
     private boolean autosaveEnabled;
     private String lastSavedFirstName = "";
@@ -99,6 +95,7 @@ public class ProfileController {
     private String lastSavedGender = "-";
     private boolean lastSavedParent;
 
+    // ════════════════════════════════════════════════════════════
     @FXML
     public void initialize() {
         profileTitle.setText(Localization.get("profile.title"));
@@ -114,12 +111,8 @@ public class ProfileController {
         oldPasswordField.setPromptText("***************");
         newPasswordField.setPromptText("***************");
 
-        oldPasswordField.textProperty().addListener(obs -> {
-            if (obs != null) hidePasswordFeedback();
-        });
-        newPasswordField.textProperty().addListener(obs -> {
-            if (obs != null) hidePasswordFeedback();
-        });
+        oldPasswordField.textProperty().addListener(obs -> { if (obs != null) hidePasswordFeedback(); });
+        newPasswordField.textProperty().addListener(obs -> { if (obs != null) hidePasswordFeedback(); });
 
         profileSubtitle.setText(Localization.get("profile.information.title"));
         firstNameLabel.setText(Localization.get("profile.information.firstName"));
@@ -134,17 +127,9 @@ public class ProfileController {
 
         milestonesTitle.setText(Localization.get("profile.milestones.title"));
         milestone1Title.setText(Localization.get("profile.milestones.savings_master"));
-        milestone1Subtitle.setText(Localization.get("profile.milestones.subtitle_getting_started"));
-        milestone1Desc.setText(Localization.get("profile.milestones.savings_master_subtitle"));
         milestone2Title.setText(Localization.get("profile.milestones.budget_keeper"));
-        milestone2Subtitle.setText(Localization.get("profile.milestones.subtitle_getting_started"));
-        milestone2Desc.setText(Localization.get("profile.milestones.budget_keeper_subtitle"));
         milestone3Title.setText(Localization.get("profile.milestones.investor"));
-        milestone3Subtitle.setText(Localization.get("profile.milestones.subtitle_getting_started"));
-        milestone3Desc.setText(Localization.get("profile.milestones.investor_subtitle"));
         milestone4Title.setText(Localization.get("profile.milestones.smart_spender"));
-        milestone4Subtitle.setText(Localization.get("profile.milestones.subtitle_getting_started"));
-        milestone4Desc.setText(Localization.get("profile.milestones.smart_spender_subtitle"));
         milestonesFooter.setText(Localization.get("profile.milestones.footer"));
 
         genderComboBox.setItems(FXCollections.observableArrayList(
@@ -153,8 +138,8 @@ public class ProfileController {
                 "-"
         ));
 
-        // TODO Temporary placeholder until XP data is provided by a dedicated service.
-        xpProgressBar.setProgress(1.0);
+        // TODO: xpProgressBar — čaká na dedikovanú XP metódu od Adelky
+        xpProgressBar.setProgress(0.0);
 
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
         if (user == null) {
@@ -164,6 +149,7 @@ public class ProfileController {
             genderComboBox.setValue("-");
             parentCheckBox.setSelected(false);
             AvatarUtil.apply(profileImage, null, 210, getClass());
+            loadMilestones();
             return;
         }
 
@@ -174,11 +160,79 @@ public class ProfileController {
         parentCheckBox.setSelected(user.checkisParent());
 
         loadUserPhoto(user);
-
+        loadMilestones();
         initAutosaveState();
         setupAutosaveHandlers();
     }
 
+    // ════════════════════════════════════════════════════════════
+    //  MILESTONES
+    // ════════════════════════════════════════════════════════════
+    private void loadMilestones() {
+        MilestoneData savingMaster = getMilestoneOrFallback(
+                () -> ServiceLocator.getMilestoneService().getSavingMasterMilestone(),
+                "Saving Master"
+        );
+        MilestoneData budgetKeeper = getMilestoneOrFallback(
+                () -> ServiceLocator.getMilestoneService().getBudgetKeeperMilestone(),
+                "Budget Keeper"
+        );
+        MilestoneData investor = getMilestoneOrFallback(
+                () -> ServiceLocator.getMilestoneService().getInvestorMilestone(),
+                "Investor"
+        );
+        MilestoneData smartSpender = getMilestoneOrFallback(
+                () -> ServiceLocator.getMilestoneService().getSmartSpenderMilestone(),
+                "Smart Spender"
+        );
+
+        applyMilestone(milestone1Icon, milestone1Subtitle, milestone1Desc, savingMaster);
+        applyMilestone(milestone2Icon, milestone2Subtitle, milestone2Desc, budgetKeeper);
+        applyMilestone(milestone3Icon, milestone3Subtitle, milestone3Desc, investor);
+        applyMilestone(milestone4Icon, milestone4Subtitle, milestone4Desc, smartSpender);
+    }
+
+    private MilestoneData getMilestoneOrFallback(Supplier<MilestoneData> supplier, String category) {
+        try {
+            MilestoneData data = supplier.get();
+            return data != null ? data : buildFallback(category);
+        } catch (Exception e) {
+            logger.warn("Failed to load milestone for {}", category, e);
+            return buildFallback(category);
+        }
+    }
+
+    private MilestoneData buildFallback(String category) {
+        return MilestoneData.builder()
+                .category(category)
+                .level(0)
+                .levelName(Localization.get("profile.milestones.subtitle_getting_started"))
+                .xp(0)
+                .progress(0.0)
+                .description("profile.milestones.desc.getting_started")
+                .build();
+    }
+
+    private void applyMilestone(ImageView icon, Label subtitle, Label desc, MilestoneData data) {
+        // Ikona podľa levelu — milestone_level_0.png až milestone_level_5.png
+        String iconPath = "/assets/icons/milestone_level_" + data.getLevel() + ".png";
+        try {
+            icon.setImage(new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream(iconPath))));
+        } catch (Exception e) {
+            logger.warn("Milestone icon not found: {}", iconPath);
+        }
+
+        // Level name
+        subtitle.setText(data.getLevelName());
+
+        // Description — môže byť localization kľúč alebo priamy text
+        desc.setText(localizeMessage(data.getDescription()));
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  LOGOUT & PHOTO
+    // ════════════════════════════════════════════════════════════
     @FXML
     private void handleLogout() {
         try {
@@ -199,16 +253,17 @@ public class ProfileController {
         if (file == null) return;
 
         try {
-            // Aplikuj avatar s kruhovým clipom
             AvatarUtil.apply(profileImage, file.getAbsolutePath(), 210, getClass());
             ServiceLocator.getProfileService().updateProfilePhoto(file.getAbsolutePath());
         } catch (ProfileException ignored) {
-            // Image preview stays visible; persistence is retried on next upload.
         } catch (Exception e) {
             logger.warn("Selected profile image was not found: {}", file.getAbsolutePath(), e);
         }
     }
 
+    // ════════════════════════════════════════════════════════════
+    //  PASSWORD
+    // ════════════════════════════════════════════════════════════
     @FXML
     private void handleChangePassword() {
         String oldPassword = oldPasswordField.getText();
@@ -226,6 +281,9 @@ public class ProfileController {
         }
     }
 
+    // ════════════════════════════════════════════════════════════
+    //  AUTOSAVE
+    // ════════════════════════════════════════════════════════════
     private void initAutosaveState() {
         lastSavedFirstName = normalized(firstNameField.getText());
         lastSavedLastName = normalized(lastNameField.getText());
@@ -235,40 +293,19 @@ public class ProfileController {
         autosaveEnabled = true;
     }
 
-    // TODO duplicated code fragment
     private void setupAutosaveHandlers() {
-        autosaveTimer.setOnFinished(event -> {
-            if (event != null) flushAutosave();
-        });
+        autosaveTimer.setOnFinished(event -> { if (event != null) flushAutosave(); });
 
-        firstNameField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
-        });
-        lastNameField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
-        });
-        emailField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
-        });
-        genderComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
-        });
-        parentCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (obs != null && !Objects.equals(oldValue, newValue)) scheduleAutosave();
-        });
+        firstNameField.textProperty().addListener((obs, o, n) -> { if (!Objects.equals(o, n)) scheduleAutosave(); });
+        lastNameField.textProperty().addListener((obs, o, n) -> { if (!Objects.equals(o, n)) scheduleAutosave(); });
+        emailField.textProperty().addListener((obs, o, n) -> { if (!Objects.equals(o, n)) scheduleAutosave(); });
+        genderComboBox.valueProperty().addListener((obs, o, n) -> { if (!Objects.equals(o, n)) scheduleAutosave(); });
+        parentCheckBox.selectedProperty().addListener((obs, o, n) -> { if (!Objects.equals(o, n)) scheduleAutosave(); });
 
-        firstNameField.focusedProperty().addListener((obs, oldValue, isFocused) -> {
-            if (obs != null && oldValue != isFocused && !isFocused) flushAutosave();
-        });
-        lastNameField.focusedProperty().addListener((obs, oldValue, isFocused) -> {
-            if (obs != null && oldValue != isFocused && !isFocused) flushAutosave();
-        });
-        emailField.focusedProperty().addListener((obs, oldValue, isFocused) -> {
-            if (obs != null && oldValue != isFocused && !isFocused) flushAutosave();
-        });
-        genderComboBox.focusedProperty().addListener((obs, oldValue, isFocused) -> {
-            if (obs != null && oldValue != isFocused && !isFocused) flushAutosave();
-        });
+        firstNameField.focusedProperty().addListener((obs, o, focused) -> { if (!focused) flushAutosave(); });
+        lastNameField.focusedProperty().addListener((obs, o, focused) -> { if (!focused) flushAutosave(); });
+        emailField.focusedProperty().addListener((obs, o, focused) -> { if (!focused) flushAutosave(); });
+        genderComboBox.focusedProperty().addListener((obs, o, focused) -> { if (!focused) flushAutosave(); });
     }
 
     private void scheduleAutosave() {
@@ -308,7 +345,6 @@ public class ProfileController {
             lastSavedGender = gender;
             lastSavedParent = isParent;
             showAutosaveFeedback(Localization.get("profile.autosave.saved"), "profile-feedback-success");
-
             SceneManager.switchTo("profile.fxml");
         } catch (ProfileException e) {
             parentCheckBox.setSelected(lastSavedParent);
@@ -319,6 +355,9 @@ public class ProfileController {
         }
     }
 
+    // ════════════════════════════════════════════════════════════
+    //  HELPERS
+    // ════════════════════════════════════════════════════════════
     private String selectedGender() {
         String value = genderComboBox.getValue();
         return value == null ? "-" : value;
@@ -333,7 +372,7 @@ public class ProfileController {
         try {
             return Localization.get(key);
         } catch (MissingResourceException ignored) {
-            return Localization.get("error.unexpected");
+            return key; // ak kľúč neexistuje, vráť priamy text
         }
     }
 
@@ -374,9 +413,6 @@ public class ProfileController {
         return (value == null || value.isBlank()) ? "" : value.trim();
     }
 
-    /**
-     * Načíta používateľskú fotku cez AvatarUtil — kruhový clip, fallback na default avatar.
-     */
     private void loadUserPhoto(CurrentUser user) {
         AvatarUtil.apply(
                 profileImage,
