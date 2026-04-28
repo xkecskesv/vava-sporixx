@@ -139,6 +139,7 @@ public final class ServiceLocator {
         SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
         CategoryRepository categoryRepo = new CategoryRepositoryImpl();
         BudgetRepository budgetRepo = new BudgetRepositoryImpl();
+        AccountAccessRepository accountAccessRepo = new AccountAccessRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
@@ -153,7 +154,7 @@ public final class ServiceLocator {
         accountService = new AccountServiceImpl(
                 accountRepo,
                 savingGoalRepo,
-                testData.getAccountAccessRepository());
+                accountAccessRepo);
 
         reportsService = new ReportsServiceImpl(
                 transactionRepo,
@@ -185,7 +186,7 @@ public final class ServiceLocator {
                 transactionService);
 
         familyService = new FamilyServiceImpl(
-                testData.getAccountAccessRepository(),
+                accountAccessRepo,
                 accountRepo,
                 userRepo,
                 testData.getFamilyRequestRepository(),
