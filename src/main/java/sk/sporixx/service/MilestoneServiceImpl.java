@@ -2,6 +2,7 @@ package sk.sporixx.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sk.sporixx.dto.BudgetData;
 import sk.sporixx.dto.ChartPeriod;
 import sk.sporixx.dto.MilestoneData;
 import sk.sporixx.dto.WantNeedData;
@@ -12,6 +13,8 @@ import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.TransactionRepository;
 import sk.sporixx.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,16 +23,17 @@ public class MilestoneServiceImpl implements MilestoneService {
     private static final Logger logger = LoggerFactory.getLogger(MilestoneServiceImpl.class);
 
     private final ReportsService reportsService;
-    private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final BudgetService budgetService;
 
     public MilestoneServiceImpl(ReportsService reportsService, AccountRepository accountRepository,
-                                UserRepository userRepository, TransactionRepository transactionRepository) {
+                                UserRepository userRepository, TransactionRepository transactionRepository,
+                                BudgetService budgetService) {
         this.reportsService = reportsService;
-        this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
+        this.budgetService = budgetService;
     }
 
     @Override
@@ -308,7 +312,191 @@ public class MilestoneServiceImpl implements MilestoneService {
 
     @Override
     public MilestoneData getBudgetKeeperMilestone() {
-        // TODO
-        return null;
+        logger.info("Calculating Budget Keeper milestone");
+
+        try {
+            // skontroluje, či má nastavený budget
+            List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
+            int userId = SessionManager.getInstance().getCurrentUserId();
+
+            // načíta budget
+            BudgetData budgetData = budgetService.loadBudgetData();
+            if (budgetData == null || budgetData.getMonthlyIncome() <= 0) {
+                return MilestoneData.builder()
+                        .category("Budget Keeper")
+                        .level(0)
+                        .levelName("milestone.level.0")
+                        .xp(0)
+                        .progress(0.0)
+                        .description("milestone.budget_keeper.desc.no_budget")
+                        .build();
+            }
+
+            // nájde emergency a saving účty
+            int emergencyAccountId = SessionManager.getInstance().getAccounts().stream()
+                    .filter(Account::isEmergencyFund)
+                    .findFirst()
+                    .map(Account::getId)
+                    .orElse(-1);
+
+            List<Integer> savingAccountIds = SessionManager.getInstance().getAccounts().stream()
+                    .filter(Account::isSavingAccount)
+                    .map(Account::getId)
+                    .toList();
+
+            // skontroluje posledných 24 mesiacov
+            int consecutiveMonths = 0;
+            LocalDateTime now = LocalDateTime.now();
+
+            for (int i = 1; i <= 24; i++) {
+                LocalDateTime monthStart = now.minusMonths(i)
+                        .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+                LocalDateTime monthEnd = monthStart.plusMonths(1).minusSeconds(1);
+
+                // načíta všetky transakcie za daný mesiac
+                List<Transaction> monthTransactions = new ArrayList<>();
+                for (int accountId : accountIds) {
+                    monthTransactions.addAll(
+                            transactionRepository.findByAccountIdAndDateRange(
+                                    accountId, monthStart, monthEnd));
+                }
+
+                if (monthTransactions.isEmpty()) break;
+
+                boolean monthOk = checkMonthBudget(
+                        monthTransactions,
+                        budgetData,
+                        emergencyAccountId,
+                        savingAccountIds
+                );
+
+                if (monthOk) {
+                    consecutiveMonths++;
+                } else {
+                    break;
+                }
+            }
+
+            int level = calculateBudgetLevel(consecutiveMonths);
+            double progress = calculateBudgetProgress(consecutiveMonths, level);
+
+            User currentUser = SessionManager.getInstance().getCurrentUserInternal();
+            if (level != currentUser.getBudgetLevel()) {
+                double xp = level * 10.0;
+                userRepository.updateXpAndLevel(userId, "budget", xp, level);
+                currentUser.setBudgetLevel(level);
+                currentUser.setBudgetXp(xp);
+            }
+
+            return MilestoneData.builder()
+                    .category("Budget Keeper")
+                    .level(level)
+                    .levelName(getBudgetLevelName(level))
+                    .xp(level * 10.0)
+                    .progress(progress)
+                    .description(getBudgetDescription(level))
+                    .build();
+
+        } catch (Exception e) {
+            logger.error("Failed to calculate Budget Keeper milestone", e);
+            return MilestoneData.builder()
+                    .category("Budget Keeper")
+                    .level(0)
+                    .levelName("milestone.level.0")
+                    .xp(0)
+                    .progress(0.0)
+                    .description("milestone.budget_keeper.desc.0")
+                    .build();
+        }
+    }
+
+    private boolean checkMonthBudget(List<Transaction> transactions,
+                                     BudgetData budgetData,
+                                     int emergencyAccountId,
+                                     List<Integer> savingAccountIds) {
+        // savings - INCOME na saving účtoch
+        double savingsDeposited = transactions.stream()
+                .filter(t -> savingAccountIds.contains(t.getAccountId()))
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        if (savingsDeposited < budgetData.getSavings()) return false;
+
+        // Emergency Fund - INCOME na emergency účte
+        double emergencyDeposited = transactions.stream()
+                .filter(t -> t.getAccountId() == emergencyAccountId)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        if (emergencyDeposited < budgetData.getEmergencyFund()) return false;
+
+        // Investment - EXPENSE s kategóriou Investment
+        double invested = transactions.stream()
+                .filter(t -> t.getCategoryId() != null
+                        && t.getCategoryId() == Transaction.CATEGORY_INVESTMENT)
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        if (invested < budgetData.getToInvest()) return false;
+
+        // Expenses - ostatné EXPENSE transakcie <= essential + fun_money
+        double expenses = transactions.stream()
+                .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_EXPENSE)
+                .filter(t -> t.getCategoryId() == null
+                        || (t.getCategoryId() != Transaction.CATEGORY_SAVING
+                        && t.getCategoryId() != Transaction.CATEGORY_SAVING_EXPENSE
+                        && t.getCategoryId() != Transaction.CATEGORY_TRANSFER
+                        && t.getCategoryId() != Transaction.CATEGORY_INVESTMENT))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        double allowedExpenses = budgetData.getEssentialExpenses() + budgetData.getFunMoney();
+        return expenses <= allowedExpenses;
+    }
+
+    private int calculateBudgetLevel(int consecutiveMonths) {
+        if (consecutiveMonths >= 24) return 5;
+        if (consecutiveMonths >= 12) return 4;
+        if (consecutiveMonths >= 6)  return 3;
+        if (consecutiveMonths >= 3)  return 2;
+        if (consecutiveMonths >= 1)  return 1;
+        return 0;
+    }
+
+    private double calculateBudgetProgress(int consecutiveMonths, int level) {
+        return switch (level) {
+            case 0 -> consecutiveMonths;
+            case 1 -> (consecutiveMonths - 1) / 2.0;
+            case 2 -> (consecutiveMonths - 3) / 3.0;
+            case 3 -> (consecutiveMonths - 6) / 6.0;
+            case 4 -> (consecutiveMonths - 12) / 12.0;
+            case 5 -> 1.0;
+            default -> 0.0;
+        };
+    }
+
+    private String getBudgetLevelName(int level) {
+        return switch (level) {
+            case 1 -> "milestone.budget_keeper.level.1";
+            case 2 -> "milestone.budget_keeper.level.2";
+            case 3 -> "milestone.budget_keeper.level.3";
+            case 4 -> "milestone.budget_keeper.level.4";
+            case 5 -> "milestone.budget_keeper.level.5";
+            default -> "milestone.level.0";
+        };
+    }
+
+    private String getBudgetDescription(int level) {
+        return switch (level) {
+            case 0 -> "milestone.budget_keeper.desc.0";
+            case 1 -> "milestone.budget_keeper.desc.1";
+            case 2 -> "milestone.budget_keeper.desc.2";
+            case 3 -> "milestone.budget_keeper.desc.3";
+            case 4 -> "milestone.budget_keeper.desc.4";
+            default -> "milestone.budget_keeper.desc.5";
+        };
     }
 }
