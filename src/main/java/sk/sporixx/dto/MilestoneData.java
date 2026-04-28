@@ -12,4 +12,5 @@ public class MilestoneData {
     private double xp;            // level * 10
     private double progress;      // 0.0 - 1.0 pre progress bar
     private String description;   // popis čo treba spraviť pre ďalší level
+    private double nextTarget;
 }

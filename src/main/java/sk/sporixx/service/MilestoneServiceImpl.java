@@ -64,6 +64,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(level * 10.0)
                     .progress(progress)
                     .description(getSmartSpenderDescription(level))
+                    .nextTarget(0)
                     .build();
 
         } catch (Exception e) {
@@ -75,6 +76,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(0)
                     .progress(0.0)
                     .description("milestone.smart_spender.desc.0")
+                    .nextTarget(0)
                     .build();
         }
     }
@@ -127,7 +129,6 @@ public class MilestoneServiceImpl implements MilestoneService {
         logger.info("Calculating Saving Master milestone");
 
         try {
-            // sčíta currentAmount naprieč všetkými saving účtami
             double totalSaved = SessionManager.getInstance().getAccounts().stream()
                     .filter(Account::isSavingAccount)
                     .mapToDouble(Account::getCurrentBalance)
@@ -136,7 +137,6 @@ public class MilestoneServiceImpl implements MilestoneService {
             int level = calculateSavingLevel(totalSaved);
             double progress = calculateSavingProgress(totalSaved, level);
 
-            // aktualizuj XP a level v DB ak sa zmenil
             int userId = SessionManager.getInstance().getCurrentUserId();
             User currentUser = SessionManager.getInstance().getCurrentUserInternal();
 
@@ -154,6 +154,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(level * 10.0)
                     .progress(progress)
                     .description(getSavingDescription(level))
+                    .nextTarget(getSavingNextTarget(level))
                     .build();
 
         } catch (Exception e) {
@@ -165,8 +166,20 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(0)
                     .progress(0.0)
                     .description("milestone.saving_master.desc.0")
+                    .nextTarget(1_000)
                     .build();
         }
+    }
+
+    private double getSavingNextTarget(int level) {
+        return switch (level) {
+            case 0 -> 1_000;
+            case 1 -> 5_000;
+            case 2 -> 10_000;
+            case 3 -> 50_000;
+            case 4 -> 100_000;
+            default -> 0;
+        };
     }
 
     private int calculateSavingLevel(double totalSaved) {
@@ -217,7 +230,6 @@ public class MilestoneServiceImpl implements MilestoneService {
         logger.info("Calculating Investor milestone");
 
         try {
-            // Sčítaj všetky Income transakcie s kategóriou Investment
             List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
             double totalInvested = 0.0;
 
@@ -252,6 +264,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(level * 10.0)
                     .progress(progress)
                     .description(getInvestorDescription(level))
+                    .nextTarget(getInvestorNextTarget(level))
                     .build();
 
         } catch (Exception e) {
@@ -263,8 +276,20 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(0)
                     .progress(0.0)
                     .description("milestone.investor.desc.0")
+                    .nextTarget(1_000)
                     .build();
         }
+    }
+
+    private double getInvestorNextTarget(int level) {
+        return switch (level) {
+            case 0 -> 1_000;
+            case 1 -> 5_000;
+            case 2 -> 10_000;
+            case 3 -> 50_000;
+            case 4 -> 100_000;
+            default -> 0;
+        };
     }
 
     private int calculateInvestorLevel(double totalInvested) {
@@ -315,11 +340,9 @@ public class MilestoneServiceImpl implements MilestoneService {
         logger.info("Calculating Budget Keeper milestone");
 
         try {
-            // skontroluje, či má nastavený budget
             List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
             int userId = SessionManager.getInstance().getCurrentUserId();
 
-            // načíta budget
             BudgetData budgetData = budgetService.loadBudgetData();
             if (budgetData == null || budgetData.getMonthlyIncome() <= 0) {
                 return MilestoneData.builder()
@@ -329,10 +352,10 @@ public class MilestoneServiceImpl implements MilestoneService {
                         .xp(0)
                         .progress(0.0)
                         .description("milestone.budget_keeper.desc.no_budget")
+                        .nextTarget(0)
                         .build();
             }
 
-            // nájde emergency a saving účty
             int emergencyAccountId = SessionManager.getInstance().getAccounts().stream()
                     .filter(Account::isEmergencyFund)
                     .findFirst()
@@ -344,7 +367,6 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .map(Account::getId)
                     .toList();
 
-            // skontroluje posledných 24 mesiacov
             int consecutiveMonths = 0;
             LocalDateTime now = LocalDateTime.now();
 
@@ -353,7 +375,6 @@ public class MilestoneServiceImpl implements MilestoneService {
                         .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
                 LocalDateTime monthEnd = monthStart.plusMonths(1).minusSeconds(1);
 
-                // načíta všetky transakcie za daný mesiac
                 List<Transaction> monthTransactions = new ArrayList<>();
                 for (int accountId : accountIds) {
                     monthTransactions.addAll(
@@ -367,8 +388,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                         monthTransactions,
                         budgetData,
                         emergencyAccountId,
-                        savingAccountIds
-                );
+                        savingAccountIds);
 
                 if (monthOk) {
                     consecutiveMonths++;
@@ -395,6 +415,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(level * 10.0)
                     .progress(progress)
                     .description(getBudgetDescription(level))
+                    .nextTarget(0)
                     .build();
 
         } catch (Exception e) {
@@ -406,6 +427,7 @@ public class MilestoneServiceImpl implements MilestoneService {
                     .xp(0)
                     .progress(0.0)
                     .description("milestone.budget_keeper.desc.0")
+                    .nextTarget(0)
                     .build();
         }
     }
@@ -468,7 +490,7 @@ public class MilestoneServiceImpl implements MilestoneService {
 
     private double calculateBudgetProgress(int consecutiveMonths, int level) {
         return switch (level) {
-            case 0 -> consecutiveMonths;
+            case 0 -> 0.0;
             case 1 -> (consecutiveMonths - 1) / 2.0;
             case 2 -> (consecutiveMonths - 3) / 3.0;
             case 3 -> (consecutiveMonths - 6) / 6.0;
