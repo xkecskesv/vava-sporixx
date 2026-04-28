@@ -121,7 +121,7 @@ public class BudgetServiceImpl implements BudgetService {
             throw new BudgetException("budget.error.negative_expense");
         }
 
-        double essentialTotal = food + rent + transport + utilities + other;
+        double essentialTotal = round2(food + rent + transport + utilities + other);
         if (essentialTotal > monthlyIncome) {
             throw new BudgetException("budget.error.expenses_exceed_income");
         }
@@ -268,8 +268,10 @@ public class BudgetServiceImpl implements BudgetService {
                     - emergencyFromTotal - savingsFromTotal - toInvestFromTotal;
             logger.info("Standard allocation applied");
             return new AllocationResult(
-                    emergencyFromTotal, savingsFromTotal,
-                    toInvestFromTotal, funMoney,
+                    round2(emergencyFromTotal),
+                    round2(savingsFromTotal),
+                    round2(toInvestFromTotal),
+                    round2(funMoney),
                     BudgetWarning.NONE);
         }
 
@@ -283,10 +285,10 @@ public class BudgetServiceImpl implements BudgetService {
             return new AllocationResult(0, 0, 0, 0, BudgetWarning.FALLBACK_ALLOCATION_APPLIED);
         }
 
-        double emergencyFund = remaining * FALLBACK_EMERGENCY_PERCENT;
-        double savings = remaining * FALLBACK_SAVINGS_PERCENT;
-        double toInvest = remaining * FALLBACK_TO_INVEST_PERCENT;
-        double funMoney = remaining - emergencyFund - savings - toInvest;
+        double emergencyFund = round2(remaining * FALLBACK_EMERGENCY_PERCENT);
+        double savings = round2(remaining * FALLBACK_SAVINGS_PERCENT);
+        double toInvest = round2(remaining * FALLBACK_TO_INVEST_PERCENT);
+        double funMoney = round2(remaining - emergencyFund - savings - toInvest);
 
         logger.info("Fallback allocation: emergency={}, savings={}, " +
                         "toInvest={}, funMoney={}",
@@ -410,5 +412,9 @@ public class BudgetServiceImpl implements BudgetService {
             cumulative.put(entry.getKey(), running);
         }
         return cumulative;
+    }
+
+    private double round2(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 }
