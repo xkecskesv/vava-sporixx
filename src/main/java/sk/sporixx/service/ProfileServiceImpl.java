@@ -65,19 +65,25 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (roleMutable) {
             if (isParent && originalRole == Role.USER) {
-                // Kontrola že nie je dieťaťom v rodinke
+                // Kontrola že nie je dieťaťom v rodinke (nezohľadňuje vlastné záznamy)
                 List<Account> userAccounts = accountRepository.findByOwnerUserId(currentUser.getId());
                 boolean isChild = userAccounts.stream()
-                        .anyMatch(a -> !accountAccessRepository.findByAccountId(a.getId()).isEmpty());
+                        .anyMatch(a -> accountAccessRepository.findByAccountId(a.getId())
+                                .stream()
+                                .anyMatch(acc -> acc.getUserId() != currentUser.getId()));
                 if (isChild) {
                     throw new ProfileException("profile.error.already_child");
                 }
             }
 
             if (!isParent && originalRole == Role.FAMILY_MANAGER) {
-                // Kontrola že nemá deti v rodinke
-                boolean hasChildren = !accountAccessRepository
-                        .findByUserId(currentUser.getId()).isEmpty();
+                // Kontrola že nemá deti — ignorujeme self-referenčné záznamy (vlastné účty)
+                List<Account> ownAccounts = accountRepository.findByOwnerUserId(currentUser.getId());
+                boolean hasChildren = accountAccessRepository
+                        .findByUserId(currentUser.getId())
+                        .stream()
+                        .anyMatch(acc -> ownAccounts.stream()
+                                .noneMatch(a -> a.getId() == acc.getAccountId()));
                 if (hasChildren) {
                     throw new ProfileException("profile.error.has_children");
                 }

@@ -34,6 +34,11 @@ public class User {
     @Builder.Default
     private Role role = Role.USER;
 
+    @Builder.Default
+    private String languageCode = "en";
+    @Builder.Default
+    private String currencyCode = "EUR";
+
     // XP polia
     @Builder.Default
     private double savingXp = 0.0;

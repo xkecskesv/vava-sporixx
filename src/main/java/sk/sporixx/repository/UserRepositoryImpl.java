@@ -59,6 +59,8 @@ public class UserRepositoryImpl implements UserRepository {
         user.setBudgetLevel(result.getInt("budget_level"));
         user.setInvestorLevel(result.getInt("investor_level"));
         user.setSpenderLevel(result.getInt("spender_level"));
+        user.setLanguageCode(result.getString("language_code"));
+        user.setCurrencyCode(result.getString("currency_code"));
 
         return user;
     }
@@ -137,7 +139,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, language_code, currency_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -151,8 +153,13 @@ public class UserRepositoryImpl implements UserRepository {
             String gender = user.getGender() != null ? user.getGender() : GenderCode.UNKNOWN;
             pstmt.setString(6, gender);
 
+            String langCode = user.getLanguageCode() != null ? user.getLanguageCode() : "en";
+            pstmt.setString(7, langCode);
+            String currCode = user.getCurrencyCode() != null ? user.getCurrencyCode() : "EUR";
+            pstmt.setString(8, currCode);
+
             LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-            pstmt.setString(7, createdAt.toString().replace("T", " "));
+            pstmt.setString(9, createdAt.toString().replace("T", " "));
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {

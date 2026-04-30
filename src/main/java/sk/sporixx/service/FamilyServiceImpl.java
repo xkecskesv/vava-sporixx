@@ -43,7 +43,7 @@ public class FamilyServiceImpl implements FamilyService {
         logger.info("Loading family members for managerId={}", managerId);
 
         try {
-            // načíta všetky prístupy family managera
+            // načíta prístupy k cudzím účtom (nie k vlastným — self-referenčné záznamy pre rolu preskočíme)
             List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
             if (accesses.isEmpty()) return new ArrayList<>();
 
@@ -56,6 +56,7 @@ public class FamilyServiceImpl implements FamilyService {
 
                 Account account = accountOpt.get();
                 int ownerId = account.getOwnerUserId();
+                if (ownerId == managerId) continue; // preskočí vlastné účty
 
                 accountsByOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(account);
             }
@@ -213,6 +214,7 @@ public class FamilyServiceImpl implements FamilyService {
         long parentCount = childAccounts.stream()
                 .flatMap(ca -> accountAccessRepository
                         .findByAccountId(ca.getId()).stream())
+                .filter(acc -> acc.getUserId() != currentUserId) // preskočí self-referenčné záznamy
                 .map(AccountAccess::getUserId)
                 .distinct()
                 .count();
@@ -297,9 +299,13 @@ public class FamilyServiceImpl implements FamilyService {
 
         int managerId = SessionManager.getInstance().getCurrentUserId();
 
-        // dkontroluje prístup
+        // kontroluje prístup k cudziemu účtu (vlastné účty nepočítame)
         List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
         boolean hasAccess = accesses.stream()
+                .filter(a -> {
+                    Optional<Account> acc = accountRepository.findById(a.getAccountId());
+                    return acc.isPresent() && acc.get().getOwnerUserId() != managerId;
+                })
                 .anyMatch(a -> a.getAccountId() == accountId);
         if (!hasAccess) {
             throw new FamilyException("family.error.no_access");

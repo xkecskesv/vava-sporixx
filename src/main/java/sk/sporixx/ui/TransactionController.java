@@ -597,6 +597,7 @@ public class TransactionController {
         }
 
         try {
+            String currencyCode = ServiceLocator.getSettingsService().getCurrencyCode();
             if (selectedTransaction != null) {
                 Transaction updated = Transaction.builder()
                         .id(selectedTransaction.getId())
@@ -605,9 +606,9 @@ public class TransactionController {
                         .transactionTypeId(typeId)
                         .transactionStatusId(Transaction.STATUS_COMPLETED)
                         .spendingClassificationId(classificationId)
-                        .categoryId(selectedTransaction.getCategoryId())
+                        .categoryId(categoryId != null ? categoryId : selectedTransaction.getCategoryId())
                         .amount(amount)
-                        .currencyCode(fromAccount.getDefaultCurrencyCode())
+                        .currencyCode(currencyCode)
                         .description(name)
                         .completeDate(datePicker.getValue().atStartOfDay())
                         .createdAt(selectedTransaction.getCreatedAt())
@@ -622,7 +623,7 @@ public class TransactionController {
                         classificationId,
                         name,
                         amount,
-                        fromAccount.getDefaultCurrencyCode(),
+                        currencyCode,
                         datePicker.getValue()
                 );
             }

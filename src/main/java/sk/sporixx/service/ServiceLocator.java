@@ -128,15 +128,10 @@ public final class ServiceLocator {
                 testData.getUserRepository(), testData.getTransactionRepository(), budgetService);
     }
 
-    //  PRODUKCNY REZIM — reálne JDBC repozitáre
-    //  TODO: doplniť po dokončení DB vrstvy
     private static void initProductionMode() {
         logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
 
-        // In-memory pre časti ktoré ešte nemajú JDBC implementáciu
-        TestDataInitializer testData = new TestDataInitializer();
-
-        // ── Hotové JDBC repozitáre ──
+        // JDBC repozitáre
         UserRepository userRepo = new UserRepositoryImpl();
         AccountRepository accountRepo = new AccountRepositoryImpl();
         TransactionRepository transactionRepo = new TransactionRepositoryImpl();
@@ -145,10 +140,11 @@ public final class ServiceLocator {
         CategoryRepository categoryRepo = new CategoryRepositoryImpl();
         BudgetRepository budgetRepo = new BudgetRepositoryImpl();
         AccountAccessRepository accountAccessRepo = new AccountAccessRepositoryImpl();
+        FamilyRequestRepository familyRequestRepo = new FamilyRequestRepositoryImpl();
 
         authService = new AuthServiceImpl(userRepo, accountRepo);
         userService = new UserServiceImpl();
-        profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, testData.getAccountAccessRepository());
+        profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, accountAccessRepo);
         adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         overviewService = new OverviewServiceImpl(
@@ -194,14 +190,12 @@ public final class ServiceLocator {
                 accountAccessRepo,
                 accountRepo,
                 userRepo,
-                testData.getFamilyRequestRepository(),
-                testData.getSavingGoalRepository());
+                familyRequestRepo,
+                savingGoalRepo);
+
         milestoneService = new MilestoneServiceImpl(reportsService,
                 accountRepo, userRepo,
                 transactionRepo, budgetService);
-
-        // TODO: nahradiť za reálne repozitáre po dokončení DB vrstvy:
-        // RecurringRuleRepository recurringRepo = new RecurringRuleRepositoryImpl();
     }
 
     //  GETTERY - UI vrstva volá tieto metódy
@@ -284,7 +278,7 @@ public final class ServiceLocator {
         return currencyService;
     }
 
-    //  HELPER
+    // HELPERS
     public static RecurringRuleService getRecurringRuleService() {
         checkInitialized();
         return recurringRuleService;
@@ -300,7 +294,6 @@ public final class ServiceLocator {
         return milestoneService;
     }
 
-    // HELPER
     private static void checkInitialized() {
         if (!initialized) {
             throw new IllegalStateException(

@@ -33,7 +33,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
 
-    private static final String DEFAULT_CURRENCY_CODE = "EUR";
     private static final int DEFAULT_REGION_ID = 1;
     private static final String ADMIN_EMAIL = "admin@sporixx.sk";
     private static final String ADMIN_PASSWORD = "Admin123!";
@@ -178,7 +177,6 @@ public class AuthServiceImpl implements AuthService {
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.MAIN_ACCOUNT)
-                    .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .description(Localization.get("account.default.main_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
@@ -190,7 +188,6 @@ public class AuthServiceImpl implements AuthService {
                     .ownerUserId(savedUser.getId())
                     .regionId(DEFAULT_REGION_ID)
                     .accountTypeId(Account.EMERGENCY_FUND)
-                    .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                     .description(Localization.get("account.default.emergency_description"))
                     .initialBalance(0.0)
                     .currentBalance(0.0)
@@ -333,7 +330,6 @@ public class AuthServiceImpl implements AuthService {
                 .ownerUserId(adminUser.getId())
                 .regionId(DEFAULT_REGION_ID)
                 .accountTypeId(Account.MAIN_ACCOUNT)
-                .defaultCurrencyCode(DEFAULT_CURRENCY_CODE)
                 .description("Admin account")
                 .initialBalance(0.0)
                 .currentBalance(0.0)
