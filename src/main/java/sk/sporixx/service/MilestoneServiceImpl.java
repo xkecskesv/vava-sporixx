@@ -514,6 +514,15 @@ public class MilestoneServiceImpl implements MilestoneService {
         };
     }
 
+    @Override
+    public String getFinancialTitleKey(int totalXp) {
+        if (totalXp >= 160) return "milestone.financial_level.pro";
+        if (totalXp >= 120) return "milestone.financial_level.expert";
+        if (totalXp >= 80)  return "milestone.financial_level.skilled";
+        if (totalXp >= 40)  return "milestone.financial_level.aware";
+        return "milestone.financial_level.started";
+    }
+
     private String getBudgetDescription(int level) {
         return switch (level) {
             case 0 -> "milestone.budget_keeper.desc.0";
