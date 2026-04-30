@@ -9,6 +9,8 @@ import sk.sporixx.dto.AdminUserData;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.model.Account;
+import sk.sporixx.model.AccountAccess;
+import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
 
@@ -27,6 +29,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final AccountAccessRepository accountAccessRepository;
     private final UserService userService;
 
     /**
@@ -34,11 +37,14 @@ public class AdminServiceImpl implements AdminService {
      *
      * @param userRepository repozitár používateľov
      * @param accountRepository repozitár účtov
+     * @param accountAccessRepository repozitár prístupov k účtom
      * @param userService služba pre normalizáciu používateľských údajov
      */
-    public AdminServiceImpl(UserRepository userRepository, AccountRepository accountRepository, UserService userService) {
+    public AdminServiceImpl(UserRepository userRepository, AccountRepository accountRepository,
+                            AccountAccessRepository accountAccessRepository, UserService userService) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.accountAccessRepository = accountAccessRepository;
         this.userService = userService;
     }
 
@@ -175,6 +181,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private AdminUserData toDto(User user) {
+        boolean isChild = false;
+        if (user.getRole() == Role.USER) {
+            List<Account> accounts = accountRepository.findByOwnerUserId(user.getId());
+            isChild = accounts.stream()
+                    .anyMatch(a -> accountAccessRepository.findByAccountId(a.getId())
+                            .stream()
+                            .anyMatch(acc -> acc.getUserId() != user.getId()));
+        }
         return AdminUserData.builder()
                 .id(user.getId())
                 .firstName(safe(user.getFirstName()))
@@ -185,6 +199,7 @@ public class AdminServiceImpl implements AdminService {
                 .photoPath(user.getPhotoPath())
                 .admin(user.getRole() == Role.ADMIN)
                 .familyManager(user.getRole() == Role.FAMILY_MANAGER)
+                .child(isChild)
                 .active(user.isActive())
                 .build();
     }

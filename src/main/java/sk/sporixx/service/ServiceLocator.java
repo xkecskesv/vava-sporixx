@@ -67,7 +67,7 @@ public final class ServiceLocator {
             authService = new AuthServiceImpl(userRepo, accountRepo);
             userService = new UserServiceImpl();
             profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, accountAccessRepo, familyRequestRepo);
-            adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
+            adminService = new AdminServiceImpl(userRepo, accountRepo, accountAccessRepo, userService);
 
             overviewService = new OverviewServiceImpl(transactionRepo, recurringRuleRepo, savingGoalRepo);
 

@@ -22,6 +22,7 @@ public class AdminUserData {
     private String photoPath;
     private boolean admin;
     private boolean familyManager;
+    private boolean child;
     private boolean active;
 }
 
