@@ -14,6 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import sk.sporixx.dto.*;
 import sk.sporixx.model.*;
+import sk.sporixx.service.FamilyException;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
@@ -89,14 +90,21 @@ public class DashboardController {
         activitiesTitle.setText(Localization.get("dashboard.activities"));
 
         AccountsSummaryData accountsData = ServiceLocator.getOverviewService().loadAccountsSummary();
-        AnalyticsData analyticsData = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, accountsData.getAccounts().get(0).getId());
-        ActivitiesData activitiesData = ServiceLocator.getOverviewService().loadActivities(accountsData.getAccounts().get(0).getId());
 
         loadTotalBalance(accountsData);
         loadAccounts(accountsData);
+        loadPendingFamilyRequests();
+
+        if (accountsData.getAccounts().isEmpty()) {
+            return;
+        }
+
+        int defaultAccountId = accountsData.getAccounts().getFirst().getId();
+        AnalyticsData analyticsData = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, defaultAccountId);
+        ActivitiesData activitiesData = ServiceLocator.getOverviewService().loadActivities(defaultAccountId);
+
         loadAnalyticsChart(analyticsData);
         loadActivities(activitiesData);
-        loadPendingFamilyRequests();
     }
 
     // ============================================================
@@ -214,7 +222,7 @@ public class DashboardController {
             header.getChildren().add(icon);
         } catch (Exception e) { /* ikona sa nenašla */ }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add(active ? "account-card-desc-active" : "account-card-desc");
 
         Region vspacer = new Region();
@@ -754,16 +762,20 @@ public class DashboardController {
                     try {
                         ServiceLocator.getFamilyService().acceptFamilyRequest(reqId);
                         loadPendingFamilyRequests();
+                    } catch (FamilyException ex) {
+                        showPendingRequestError(ex.getMessageKey());
                     } catch (Exception ex) {
-                        System.out.println("Accept error: " + ex.getMessage());
+                        showPendingRequestError("error.db_error");
                     }
                 });
                 rejectBtn.setOnAction(e -> {
                     try {
                         ServiceLocator.getFamilyService().rejectFamilyRequest(reqId);
                         loadPendingFamilyRequests();
+                    } catch (FamilyException ex) {
+                        showPendingRequestError(ex.getMessageKey());
                     } catch (Exception ex) {
-                        System.out.println("Reject error: " + ex.getMessage());
+                        showPendingRequestError("error.db_error");
                     }
                 });
 
@@ -774,5 +786,13 @@ public class DashboardController {
             pendingFamilyBanner.setVisible(false);
             pendingFamilyBanner.setManaged(false);
         }
+    }
+
+    private void showPendingRequestError(String messageKey) {
+        pendingFamilyList.getChildren().removeIf(n -> n.getStyleClass().contains("pending-request-error"));
+        Label errorLabel = new Label(Localization.get(messageKey));
+        errorLabel.getStyleClass().addAll("modal-error-label", "pending-request-error");
+        errorLabel.setWrapText(true);
+        pendingFamilyList.getChildren().add(0, errorLabel);
     }
 }

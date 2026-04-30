@@ -50,6 +50,18 @@ public class UserRepositoryImpl implements UserRepository {
         if (createdAtStr != null) {
             user.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
         }
+
+        user.setSavingXp(result.getDouble("saving_xp"));
+        user.setBudgetXp(result.getDouble("budget_xp"));
+        user.setInvestorXp(result.getDouble("investor_xp"));
+        user.setSpenderXp(result.getDouble("spender_xp"));
+        user.setSavingLevel(result.getInt("saving_level"));
+        user.setBudgetLevel(result.getInt("budget_level"));
+        user.setInvestorLevel(result.getInt("investor_level"));
+        user.setSpenderLevel(result.getInt("spender_level"));
+        user.setLanguageCode(result.getString("language_code"));
+        user.setCurrencyCode(result.getString("currency_code"));
+
         return user;
     }
 
@@ -127,7 +139,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, language_code, currency_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -141,8 +153,13 @@ public class UserRepositoryImpl implements UserRepository {
             String gender = user.getGender() != null ? user.getGender() : GenderCode.UNKNOWN;
             pstmt.setString(6, gender);
 
+            String langCode = user.getLanguageCode() != null ? user.getLanguageCode() : "en";
+            pstmt.setString(7, langCode);
+            String currCode = user.getCurrencyCode() != null ? user.getCurrencyCode() : "EUR";
+            pstmt.setString(8, currCode);
+
             LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-            pstmt.setString(7, createdAt.toString().replace("T", " "));
+            pstmt.setString(9, createdAt.toString().replace("T", " "));
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
@@ -310,6 +327,46 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (SQLException e) {
             logger.error("Database error while updating family manager status for user {}", userId, e);
             throw new RuntimeException("Error updating family manager status", e);
+        }
+    }
+
+    @Override
+    public void updateXpAndLevel(int userId, String category, double xp, int level) {
+        String xpColumn = switch (category) {
+            case "saving" -> "saving_xp";
+            case "budget" -> "budget_xp";
+            case "investor" -> "investor_xp";
+            case "spender" -> "spender_xp";
+            default -> throw new IllegalArgumentException("Unknown category: " + category);
+        };
+
+        String levelColumn = switch (category) {
+            case "saving" -> "saving_level";
+            case "budget" -> "budget_level";
+            case "investor" -> "investor_level";
+            case "spender" -> "spender_level";
+            default -> throw new IllegalArgumentException("Unknown category: " + category);
+        };
+
+        String sql = "UPDATE users SET " + xpColumn + " = ?, " + levelColumn + " = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setDouble(1, xp);
+            pstmt.setInt(2, level);
+            pstmt.setInt(3, userId);
+
+            int affected = pstmt.executeUpdate();
+            if (affected == 0) {
+                throw new RuntimeException("No user found with ID: " + userId);
+            }
+
+            logger.info("Updated {} xp={} level={} for userId={}", category, xp, level, userId);
+
+        } catch (SQLException e) {
+            logger.error("Error updating xp/level for userId={}", userId, e);
+            throw new RuntimeException("Error updating user xp/level", e);
         }
     }
 }

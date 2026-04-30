@@ -294,13 +294,15 @@ public class TransactionServiceImpl implements TransactionService {
                                                String currencyCode,
                                                LocalDateTime completeDate) {
 
+        double roundedAmount = Math.round(amount * 100.0) / 100.0;
+
         Transaction transaction = Transaction.builder()
                 .accountId(account.getId())
                 .transactionTypeId(transactionTypeId)
                 .categoryId(categoryId)
                 .spendingClassificationId(spendingClassificationId)
                 .description(description)
-                .amount(amount)
+                .amount(roundedAmount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
                 .createdAt(LocalDateTime.now())
@@ -308,8 +310,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction saved = transactionRepository.save(transaction);
 
-        double newBalance = calculateNewBalance(
-                account.getCurrentBalance(), transactionTypeId, amount);
+        double newBalance = Math.round(calculateNewBalance(
+                account.getCurrentBalance(), transactionTypeId, roundedAmount) * 100.0) / 100.0;
         updateBalance(account, newBalance);
 
         logger.info("Transaction added: id={}, type={}, amount={}",
@@ -338,35 +340,43 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         LocalDateTime createdAt = LocalDateTime.now();
+        double roundedAmount = Math.round(amount * 100.0) / 100.0;
 
         Transaction expense = Transaction.builder()
                 .accountId(fromAccount.getId())
                 .transactionTypeId(Transaction.TYPE_EXPENSE)
-                .categoryId(autoCategory)  // môže byť null
+                .categoryId(autoCategory)
                 .spendingClassificationId(null)
                 .description(description)
-                .amount(amount)
+                .amount(roundedAmount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
                 .createdAt(createdAt)
                 .build();
-        transactionRepository.save(expense);
 
         Transaction income = Transaction.builder()
                 .accountId(toAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
-                .categoryId(autoCategory)  // môže byť null
+                .categoryId(autoCategory)
                 .spendingClassificationId(null)
                 .description(description)
-                .amount(amount)
+                .amount(roundedAmount)
                 .currencyCode(currencyCode)
                 .completeDate(completeDate)
                 .createdAt(createdAt)
                 .build();
-        transactionRepository.save(income);
 
-        updateBalance(fromAccount, fromAccount.getCurrentBalance() - amount);
-        updateBalance(toAccount, toAccount.getCurrentBalance() + amount);
+        double newFromBalance = Math.round((fromAccount.getCurrentBalance() - roundedAmount) * 100.0) / 100.0;
+        double newToBalance   = Math.round((toAccount.getCurrentBalance()   + roundedAmount) * 100.0) / 100.0;
+
+        // Atomický zápis: 2× INSERT + 2× UPDATE balance v jednej SQLite transakcii
+        transactionRepository.saveTransfer(expense, income,
+                fromAccount.getId(), newFromBalance,
+                toAccount.getId(), newToBalance);
+
+        // In-memory sync (DB je už zapísaný vyššie)
+        fromAccount.setCurrentBalance(newFromBalance);
+        toAccount.setCurrentBalance(newToBalance);
 
         // Aktualizuj currentAmount v SavingGoal ak je zapojený saving účet
         if (toAccount.isSavingAccount()) {
@@ -419,13 +429,15 @@ public class TransactionServiceImpl implements TransactionService {
 
         try {
             Account account = getAccountOrThrow(original.getAccountId());
-            double difference = updatedTransaction.getAmount() - original.getAmount();
+            double roundedNew = Math.round(updatedTransaction.getAmount() * 100.0) / 100.0;
+            updatedTransaction.setAmount(roundedNew);
+            double difference = roundedNew - original.getAmount();
 
             double newBalance;
             if (original.getTransactionTypeId() == Transaction.TYPE_INCOME) {
-                newBalance = account.getCurrentBalance() + difference;
+                newBalance = Math.round((account.getCurrentBalance() + difference) * 100.0) / 100.0;
             } else {
-                newBalance = account.getCurrentBalance() - difference;
+                newBalance = Math.round((account.getCurrentBalance() - difference) * 100.0) / 100.0;
             }
 
             transactionRepository.update(updatedTransaction);

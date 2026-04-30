@@ -82,6 +82,14 @@ public class SessionManager {
                 .gender(currentUser.getGender())
                 .photoPath(currentUser.getPhotoPath())
                 .role(currentUser.getRole())
+                .savingXp(currentUser.getSavingXp())
+                .budgetXp(currentUser.getBudgetXp())
+                .investorXp(currentUser.getInvestorXp())
+                .spenderXp(currentUser.getSpenderXp())
+                .savingLevel(currentUser.getSavingLevel())
+                .budgetLevel(currentUser.getBudgetLevel())
+                .investorLevel(currentUser.getInvestorLevel())
+                .spenderLevel(currentUser.getSpenderLevel())
                 .build();
     }
 

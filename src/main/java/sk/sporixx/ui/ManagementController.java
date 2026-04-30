@@ -14,6 +14,7 @@ import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.time.LocalDate;
@@ -255,7 +256,8 @@ public class ManagementController {
         try {
             List<Account> accounts = SessionManager.getInstance().getAccounts();
             accountManagerSubtitle.setText(Localization.get("management.accounts.total") + ": " + accounts.size());
-            accountManagerCurrency.setText(Localization.get("management.accounts.currency") + ": Eur");
+            String currency = ServiceLocator.getSettingsService().getCurrencyCode();
+            accountManagerCurrency.setText(Localization.get("management.accounts.currency") + ": " + currency);
             allDefaultAccounts = accounts.stream().filter(a -> !a.isSavingAccount()).collect(Collectors.toList());
             allSavingAccounts  = accounts.stream().filter(Account::isSavingAccount).collect(Collectors.toList());
             defaultAccountOffset = 0;
@@ -367,7 +369,7 @@ public class ManagementController {
             header.getChildren().add(deleteBtn);
         }
 
-        if (!account.isMainAccount()) {
+        if (!account.isMainAccount() && !account.isEmergencyFund()) {
             Button editBtn = new Button();
             editBtn.getStyleClass().add("btn-icon-edit");
             fixButtonSize(editBtn);
@@ -381,7 +383,7 @@ public class ManagementController {
             header.getChildren().add(editBtn);
         }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add("account-card-desc");
 
         Label created = new Label(Localization.get("management.accounts.created") + ": "
@@ -496,7 +498,7 @@ public class ManagementController {
         editingAccount = account;
         clearEditAccountModalError();
         editAccountModalTitle.setText(Localization.get("management.accounts.modal.edit_title"));
-        editAccountDescField.setText(account.getDescription());
+        editAccountDescField.setText(ServiceLocator.getAccountService().getLocalizedDescription(account));
 
         boolean isSaving = account.isSavingAccount();
         editAccountGoalSection.setVisible(isSaving);
@@ -871,6 +873,6 @@ public class ManagementController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }

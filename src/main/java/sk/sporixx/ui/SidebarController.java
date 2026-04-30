@@ -7,7 +7,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import sk.sporixx.dto.CurrentUser;
+import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
+import sk.sporixx.util.Localization;
 import sk.sporixx.util.AvatarUtil;
 
 import java.io.FileInputStream;
@@ -193,7 +195,10 @@ public class SidebarController {
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
         if (user != null) {
             userName.setText(user.getName() + " " + user.getSurname());
-            userRole.setText(user.getRole() != null ? user.getRole().name() : "");
+            int totalXp = (int) (user.getSavingXp() + user.getBudgetXp()
+                    + user.getInvestorXp() + user.getSpenderXp());
+            String titleKey = ServiceLocator.getMilestoneService().getFinancialTitleKey(totalXp);
+            userRole.setText(Localization.get(titleKey));
         }
         AvatarUtil.apply(userAvatar, user != null ? user.getPhotoPath() : null, 32, getClass());
     }

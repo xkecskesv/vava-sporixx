@@ -70,6 +70,14 @@ public interface TransactionRepository {
 
     Transaction save(Transaction transaction);
 
+    /**
+     * Atomicky uloží dvojicu transferových transakcií a aktualizuje zostatky oboch účtov
+     * v jednej SQLite transakcii. Zabraňuje čiastočnému stavu pri zlyhaní.
+     */
+    void saveTransfer(Transaction expense, Transaction income,
+                      int fromAccountId, double fromNewBalance,
+                      int toAccountId, double toNewBalance);
+
     void update(Transaction transaction);
 
     void deleteById(int id);

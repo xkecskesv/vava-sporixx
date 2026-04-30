@@ -88,6 +88,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
             }
         }
 
+        List<RecurringRule> existing = recurringRuleRepository
+                .findActiveByAccountId(accountId);
+        boolean duplicate = existing.stream()
+                .anyMatch(r -> r.getDescription().equalsIgnoreCase(description));
+        if (duplicate) {
+            throw new RecurringRuleException("recurring.error.already_exists");
+        }
+
         try {
             LocalDateTime startDateTime = startDate.atStartOfDay();
 
@@ -95,8 +103,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                     .accountId(accountId)
                     .categoryId(categoryId)
                     .transactionTypeId(Transaction.TYPE_EXPENSE)
-                    .spendingClassificationId(spendingClassificationId != null
-                            ? spendingClassificationId : 0)
+                    .spendingClassificationId(spendingClassificationId)
                     .description(description)
                     .amount(amount)
                     .frequencyType(frequencyType)
@@ -148,6 +155,13 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
         if (frequencyInterval <= 0) {
             throw new RecurringRuleException("recurring.error.invalid_interval");
         }
+        if (spendingClassificationId == null) {
+            throw new RecurringRuleException("recurring.error.classification_required");
+        }
+        if (spendingClassificationId != Transaction.CLASSIFICATION_NEED
+                && spendingClassificationId != Transaction.CLASSIFICATION_WANT) {
+            throw new RecurringRuleException("recurring.error.invalid_classification");
+        }
         if (endDate != null && endDate.isBefore(LocalDate.now())) {
             throw new RecurringRuleException("recurring.error.end_in_past");
         }
@@ -161,8 +175,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
         try {
             rule.setCategoryId(categoryId);
-            rule.setSpendingClassificationId(spendingClassificationId != null
-                    ? spendingClassificationId : 0);
+            rule.setSpendingClassificationId(spendingClassificationId);
             rule.setDescription(description);
             rule.setAmount(amount);
             rule.setFrequencyType(frequencyType);
@@ -225,8 +238,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                     if (rule.getEndDate() != null
                             && rule.getNextDueDate().isAfter(rule.getEndDate())) {
                         recurringRuleRepository.deactivateById(rule.getId());
-                        logger.info("Recurring rule id={} reached end date, deactivated",
-                                rule.getId());
+                        break;
+                    }
+
+                    var ruleAccount = SessionManager.getInstance().getAccountById(rule.getAccountId());
+                    if (ruleAccount == null) {
+                        logger.warn("Account {} not found for rule {}, deactivating",
+                                rule.getAccountId(), rule.getId());
+                        recurringRuleRepository.deactivateById(rule.getId());
                         break;
                     }
 
@@ -240,9 +259,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                                         ? rule.getSpendingClassificationId() : null,
                                 rule.getDescription(),
                                 rule.getAmount(),
-                                SessionManager.getInstance()
-                                        .getAccountById(rule.getAccountId())
-                                        .getDefaultCurrencyCode(),
+                                ruleAccount.getDefaultCurrencyCode(),
                                 rule.getNextDueDate().toLocalDate());
 
                         LocalDateTime nextDueDate = calculateNextDueDate(rule);
@@ -250,6 +267,11 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                         recurringRuleRepository.updateNextDueDate(rule.getId(), nextDueDate, newCount);
                         rule.setNextDueDate(nextDueDate);
                         rule.setGeneratedCount(newCount);
+
+                        if (rule.isActive() && rule.getEndDate() != null
+                                && rule.getNextDueDate().isAfter(rule.getEndDate())) {
+                            recurringRuleRepository.deactivateById(rule.getId());
+                        }
 
                         logger.info("Recurring rule id={} processed, nextDueDate={}",
                                 rule.getId(), nextDueDate);
@@ -289,6 +311,14 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                 break;
             }
 
+            var ruleAccount = SessionManager.getInstance().getAccountById(rule.getAccountId());
+            if (ruleAccount == null) {
+                logger.warn("Account {} not found for rule {}, deactivating",
+                        rule.getAccountId(), rule.getId());
+                recurringRuleRepository.deactivateById(rule.getId());
+                break;
+            }
+
             try {
                 transactionService.addTransaction(
                         rule.getAccountId(),
@@ -299,9 +329,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                                 ? rule.getSpendingClassificationId() : null,
                         rule.getDescription(),
                         rule.getAmount(),
-                        SessionManager.getInstance()
-                                .getAccountById(rule.getAccountId())
-                                .getDefaultCurrencyCode(),
+                        ruleAccount.getDefaultCurrencyCode(),
                         rule.getNextDueDate().toLocalDate());
 
                 LocalDateTime nextDueDate = calculateNextDueDate(rule);
@@ -309,6 +337,13 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                 recurringRuleRepository.updateNextDueDate(rule.getId(), nextDueDate, newCount);
                 rule.setNextDueDate(nextDueDate);
                 rule.setGeneratedCount(newCount);
+
+                if (rule.getEndDate() != null
+                        && rule.getNextDueDate().isAfter(rule.getEndDate())) {
+                    recurringRuleRepository.deactivateById(rule.getId());
+                    logger.info("Recurring rule id={} deactivated — nextDueDate after endDate",
+                            rule.getId());
+                }
 
                 logger.info("Recurring rule id={} processed immediately, nextDueDate={}",
                         rule.getId(), nextDueDate);

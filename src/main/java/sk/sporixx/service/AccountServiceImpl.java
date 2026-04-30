@@ -10,6 +10,7 @@ import sk.sporixx.model.SavingGoal;
 import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.SavingGoalRepository;
+import sk.sporixx.util.Localization;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDate;
@@ -317,5 +318,16 @@ public class AccountServiceImpl implements AccountService {
             logger.error("Failed to load saving goal for accountId={}", accountId, e);
             throw new AccountException("error.db_error", e);
         }
+    }
+
+    @Override
+    public String getLocalizedDescription(Account account) {
+        if (account.isMainAccount()) {
+            return Localization.get("account.default.main_description");
+        }
+        if (account.isEmergencyFund()) {
+            return Localization.get("account.default.emergency_description");
+        }
+        return account.getDescription();
     }
 }

@@ -94,23 +94,57 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (ratesCache.isEmpty()) {
             return String.format("%.2f %s (!)", amount, targetCurrency);
         }
-
         try {
-            String langCode = settingsService.getLanguageCode();
-            Locale locale = switch (langCode) {
-                case "sk" -> Locale.forLanguageTag("sk-SK");
-                case "cs" -> Locale.forLanguageTag("cs-CZ");
-                default -> Locale.US;
-            };
-
+            // Mena určuje locale (formát čísla + symbol).
+            // EUR je výnimka — používa sa vo viacerých krajinách, preto sleduje jazyk aplikácie.
+            Locale locale = localeForCurrency(targetCurrency);
             NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
             formatter.setCurrency(Currency.getInstance(targetCurrency));
+
+            // Symbol sa nastaví explicitne, aby bol správny bez ohľadu na locale.
+            if (formatter instanceof java.text.DecimalFormat df) {
+                java.text.DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+                dfs.setCurrencySymbol(symbolForCurrency(targetCurrency));
+                df.setDecimalFormatSymbols(dfs);
+            }
+
             return formatter.format(amount);
 
         } catch (Exception e) {
             logger.warn("Failed to format currency {}: {}", targetCurrency, e.getMessage());
             return String.format("%.2f %s", amount, targetCurrency);
         }
+    }
+
+    private Locale localeForCurrency(String currencyCode) {
+        return switch (currencyCode) {
+            case "CZK" -> Locale.forLanguageTag("cs-CZ");
+            case "PLN" -> Locale.forLanguageTag("pl-PL");
+            case "USD" -> Locale.US;
+            case "GBP" -> Locale.UK;
+            default    -> localeForLanguage(settingsService.getLanguageCode());
+        };
+    }
+
+    private String symbolForCurrency(String currencyCode) {
+        return switch (currencyCode) {
+            case "EUR" -> "€";
+            case "USD" -> "$";
+            case "GBP" -> "£";
+            case "CZK" -> "Kč";
+            case "PLN" -> "zł";
+            default    -> currencyCode;
+        };
+    }
+
+    private Locale localeForLanguage(String langCode) {
+        return switch (langCode) {
+            case "sk" -> Locale.forLanguageTag("sk-SK");
+            case "cs" -> Locale.forLanguageTag("cs-CZ");
+            case "de" -> Locale.forLanguageTag("de-DE");
+            case "pl" -> Locale.forLanguageTag("pl-PL");
+            default   -> Locale.US;
+        };
     }
 
     @Override

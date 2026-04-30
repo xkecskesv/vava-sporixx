@@ -24,4 +24,6 @@ public interface FamilyRequestRepository {
     void updateStatus(int requestId, String status);
 
     List<FamilyRequest> findPendingByFromUserId(int fromUserId);
+
+    void cancelAllPendingByFromUserId(int fromUserId);
 }

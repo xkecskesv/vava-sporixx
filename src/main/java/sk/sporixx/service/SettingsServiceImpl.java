@@ -6,6 +6,8 @@ import sk.sporixx.dto.UserSettings;
 import sk.sporixx.repository.SettingsRepositoryImpl;
 import sk.sporixx.repository.SettingsRepository;
 
+import sk.sporixx.util.Localization;
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -150,6 +152,7 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public void reload() {
         this.currentSettings = loadFromRepository();
+        Localization.setLanguage(currentSettings.getLanguageCode());
     }
 
     private void persist() {

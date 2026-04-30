@@ -220,8 +220,8 @@ public class ReportsServiceImpl implements ReportsService {
                         .sumByClassificationAndDateRange(
                                 accountId, from, LocalDateTime.now());
 
-                totalWant += result.getOrDefault("WANT", 0.0);
-                totalNeed += result.getOrDefault("NEED", 0.0);
+                totalWant += result.getOrDefault("Wants", 0.0);
+                totalNeed += result.getOrDefault("Needs", 0.0);
             }
 
             double total = totalWant + totalNeed;
