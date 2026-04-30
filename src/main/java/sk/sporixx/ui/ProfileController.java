@@ -139,9 +139,6 @@ public class ProfileController {
                 "-"
         ));
 
-        // TODO: xpProgressBar — čaká na dedikovanú XP metódu od Adelky
-        xpProgressBar.setProgress(0.0);
-
         CurrentUser user = SessionManager.getInstance().getCurrentUser();
         if (user == null) {
             firstNameField.setText("");
@@ -191,6 +188,15 @@ public class ProfileController {
         applyMilestone(milestone2Icon, milestone2Subtitle, milestone2Desc, budgetKeeper);
         applyMilestone(milestone3Icon, milestone3Subtitle, milestone3Desc, investor);
         applyMilestone(milestone4Icon, milestone4Subtitle, milestone4Desc, smartSpender);
+
+        double totalEffectiveXp = effectiveXp(savingMaster) + effectiveXp(budgetKeeper)
+                + effectiveXp(investor) + effectiveXp(smartSpender);
+        xpProgressBar.setProgress(totalEffectiveXp / 200.0);
+
+        int totalXp = (int) (savingMaster.getXp() + budgetKeeper.getXp()
+                + investor.getXp() + smartSpender.getXp());
+        String titleKey = ServiceLocator.getMilestoneService().getFinancialTitleKey(totalXp);
+        financialLevelValue.setText(localizeMessage(titleKey) + "  ·  " + totalXp + " / 200 XP");
     }
 
     private MilestoneData getMilestoneOrFallback(Supplier<MilestoneData> supplier, String category) {
@@ -416,6 +422,10 @@ public class ProfileController {
         autosaveFeedbackLabel.getStyleClass().add(styleClass);
         autosaveFeedbackLabel.setVisible(true);
         autosaveFeedbackLabel.setManaged(true);
+    }
+
+    private double effectiveXp(MilestoneData m) {
+        return m.getLevel() * 10.0 + (m.getLevel() < 5 ? m.getProgress() * 10.0 : 0.0);
     }
 
     private String editableText(String value) {

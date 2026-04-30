@@ -25,4 +25,10 @@ public interface MilestoneService {
      * Vypočíta Budget Keeper milestone podľa dodržiavania budgetu.
      */
     MilestoneData getBudgetKeeperMilestone();
+
+    /**
+     * Vráti lokalizačný kľúč titulu používateľa podľa celkového XP (0–200).
+     * 0–39 → started, 40–79 → aware, 80–119 → skilled, 120–159 → expert, 160–200 → pro
+     */
+    String getFinancialTitleKey(int totalXp);
 }
