@@ -207,6 +207,11 @@ public class FamilyServiceImpl implements FamilyService {
             throw new FamilyException("family.error.not_your_request");
         }
 
+        // rodič nemôže byť zároveň dieťaťom
+        if (SessionManager.getInstance().isFamilyManager()) {
+            throw new FamilyException("family.error.already_parent");
+        }
+
         // skontroluje max 2 rodičia
         List<Account> childAccounts = accountRepository
                 .findByOwnerUserId(currentUserId);

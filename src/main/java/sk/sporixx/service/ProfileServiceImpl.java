@@ -7,6 +7,7 @@ import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
+import sk.sporixx.repository.FamilyRequestRepository;
 import sk.sporixx.repository.UserRepository;
 import sk.sporixx.util.ValidationUtil;
 
@@ -29,13 +30,17 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserService userService;
     private final AccountRepository accountRepository;
     private final AccountAccessRepository accountAccessRepository;
+    private final FamilyRequestRepository familyRequestRepository;
 
-    public ProfileServiceImpl(UserRepository userRepository, UserService userService, AccountRepository accountRepository,
-                              AccountAccessRepository accountAccessRepository) {
+    public ProfileServiceImpl(UserRepository userRepository, UserService userService,
+                              AccountRepository accountRepository,
+                              AccountAccessRepository accountAccessRepository,
+                              FamilyRequestRepository familyRequestRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.accountRepository = accountRepository;
         this.accountAccessRepository = accountAccessRepository;
+        this.familyRequestRepository = familyRequestRepository;
     }
 
     /**
@@ -104,6 +109,9 @@ public class ProfileServiceImpl implements ProfileService {
             currentUser.setRole(newRole);
             userRepository.update(currentUser);
             userRepository.updateFamilyManagerStatus(currentUser.getId(), isParent);
+            if (!isParent && originalRole == Role.FAMILY_MANAGER) {
+                familyRequestRepository.cancelAllPendingByFromUserId(currentUser.getId());
+            }
             logger.info("Profile updated for user id={}", currentUser.getId());
         } catch (Exception e) {
             // Revert roly pri chybe
