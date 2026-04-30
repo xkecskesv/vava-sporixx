@@ -89,14 +89,21 @@ public class DashboardController {
         activitiesTitle.setText(Localization.get("dashboard.activities"));
 
         AccountsSummaryData accountsData = ServiceLocator.getOverviewService().loadAccountsSummary();
-        AnalyticsData analyticsData = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, accountsData.getAccounts().get(0).getId());
-        ActivitiesData activitiesData = ServiceLocator.getOverviewService().loadActivities(accountsData.getAccounts().get(0).getId());
 
         loadTotalBalance(accountsData);
         loadAccounts(accountsData);
+        loadPendingFamilyRequests();
+
+        if (accountsData.getAccounts().isEmpty()) {
+            return;
+        }
+
+        int defaultAccountId = accountsData.getAccounts().getFirst().getId();
+        AnalyticsData analyticsData = ServiceLocator.getOverviewService().loadAnalytics(currentChartPeriod, defaultAccountId);
+        ActivitiesData activitiesData = ServiceLocator.getOverviewService().loadActivities(defaultAccountId);
+
         loadAnalyticsChart(analyticsData);
         loadActivities(activitiesData);
-        loadPendingFamilyRequests();
     }
 
     // ============================================================

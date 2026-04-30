@@ -256,11 +256,7 @@ public class ManagementController {
         try {
             List<Account> accounts = SessionManager.getInstance().getAccounts();
             accountManagerSubtitle.setText(Localization.get("management.accounts.total") + ": " + accounts.size());
-            String currency = SessionManager.getInstance().getAccounts().stream()
-                    .filter(Account::isMainAccount)
-                    .findFirst()
-                    .map(Account::getDefaultCurrencyCode)
-                    .orElse("EUR");
+            String currency = ServiceLocator.getSettingsService().getCurrencyCode();
             accountManagerCurrency.setText(Localization.get("management.accounts.currency") + ": " + currency);
             allDefaultAccounts = accounts.stream().filter(a -> !a.isSavingAccount()).collect(Collectors.toList());
             allSavingAccounts  = accounts.stream().filter(Account::isSavingAccount).collect(Collectors.toList());

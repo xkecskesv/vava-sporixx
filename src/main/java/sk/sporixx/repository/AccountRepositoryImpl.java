@@ -157,7 +157,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setDouble(1, newBalance);
+            pstmt.setDouble(1, Math.round(newBalance * 100.0) / 100.0);
             pstmt.setInt(2, accountId);
             pstmt.executeUpdate();
 

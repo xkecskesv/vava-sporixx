@@ -221,7 +221,8 @@ public class MilestoneServiceImpl implements MilestoneService {
             case 2 -> "milestone.saving_master.desc.2";
             case 3 -> "milestone.saving_master.desc.3";
             case 4 -> "milestone.saving_master.desc.4";
-            default -> "milestone.saving_master.desc.5";
+            case 5 -> "milestone.saving_master.desc.5";
+            default -> "milestone.saving_master.desc.0";
         };
     }
 
@@ -331,7 +332,8 @@ public class MilestoneServiceImpl implements MilestoneService {
             case 2 -> "milestone.investor.desc.2";
             case 3 -> "milestone.investor.desc.3";
             case 4 -> "milestone.investor.desc.4";
-            default -> "milestone.investor.desc.5";
+            case 5 -> "milestone.investor.desc.5";
+            default -> "milestone.investor.desc.0";
         };
     }
 
@@ -476,7 +478,8 @@ public class MilestoneServiceImpl implements MilestoneService {
                 .sum();
 
         double allowedExpenses = budgetData.getEssentialExpenses() + budgetData.getFunMoney();
-        return expenses <= allowedExpenses;
+        // tolerancia 0.005 € pre floating-point odchýlky pri akumulovaní double operácií
+        return expenses <= allowedExpenses + 0.005;
     }
 
     private int calculateBudgetLevel(int consecutiveMonths) {
@@ -518,7 +521,8 @@ public class MilestoneServiceImpl implements MilestoneService {
             case 2 -> "milestone.budget_keeper.desc.2";
             case 3 -> "milestone.budget_keeper.desc.3";
             case 4 -> "milestone.budget_keeper.desc.4";
-            default -> "milestone.budget_keeper.desc.5";
+            case 5 -> "milestone.budget_keeper.desc.5";
+            default -> "milestone.budget_keeper.desc.0";
         };
     }
 }
