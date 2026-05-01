@@ -179,4 +179,23 @@ public class FamilyRequestRepositoryImpl implements FamilyRequestRepository {
         }
         return requests;
     }
+
+    @Override
+    public void cancelAllPendingByFromUserId(int fromUserId) {
+        String sql = "DELETE FROM family_requests WHERE from_user_id = ? AND status = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, fromUserId);
+            pstmt.setString(2, FamilyRequest.STATUS_PENDING);
+
+            int affectedRows = pstmt.executeUpdate();
+            logger.info("Cancelled (deleted) {} pending family requests from user ID: {}", affectedRows, fromUserId);
+
+        } catch (SQLException e) {
+            logger.error("Error cancelling pending requests from user ID: {}", fromUserId, e);
+            throw new RuntimeException("Error updating family requests in database", e);
+        }
+    }
 }

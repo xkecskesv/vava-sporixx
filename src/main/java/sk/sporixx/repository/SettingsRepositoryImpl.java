@@ -117,12 +117,10 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                     notif_achievements = excluded.notif_achievements
                 """;
 
-        String userSql = "UPDATE users SET language_code = ?, currency_code = ? WHERE id = ?";
-
 
         try (Connection conn = getConnection()) {
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(notifSql)) {
                 ps.setInt(1, userId);
                 ps.setInt(2, settings.isUpcomingPaymentsEnabled() ? 1 : 0);
                 ps.setInt(3, settings.isBudgetLimitAlertsEnabled() ? 1 : 0);
