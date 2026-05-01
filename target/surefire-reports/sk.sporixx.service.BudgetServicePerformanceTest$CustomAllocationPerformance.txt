@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: sk.sporixx.service.BudgetServicePerformanceTest$CustomAllocationPerformance
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in sk.sporixx.service.BudgetServicePerformanceTest$CustomAllocationPerformance

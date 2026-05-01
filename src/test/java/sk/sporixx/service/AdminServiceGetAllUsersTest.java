@@ -200,7 +200,7 @@ class AdminServiceGetAllUsersTest extends AdminServiceTestSupport {
         };
         // znova prihlasime admina, pretože ideme použiť nový service s novým repo
         // ale repo je prazdne - takze session admin je stale validne nastavený
-        AdminService svc = new AdminServiceImpl(failing, accountRepo, accountAccessRepo, userService);
+        AdminService svc = new AdminServiceImpl(failing, accountRepo, userService);
 
         // Pozor: requireAdmin() sa vykoná SKÔR ako findAll() - preto lockneme sessiona
         // platne, akurat bezpecnostna kontrola preskoci ak SessionManager.isAdmin() == true

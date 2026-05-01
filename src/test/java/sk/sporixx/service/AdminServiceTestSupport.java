@@ -6,7 +6,6 @@ import sk.sporixx.model.Account;
 import sk.sporixx.model.GenderCode;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
-import sk.sporixx.service.testovanie.InMemoryAccountAccessRepository;
 import sk.sporixx.service.testovanie.InMemoryAccountRepository;
 import sk.sporixx.service.testovanie.InMemoryUserRepository;
 import sk.sporixx.util.PasswordUtil;
@@ -26,7 +25,6 @@ abstract class AdminServiceTestSupport {
 
     protected InMemoryUserRepository userRepo;
     protected InMemoryAccountRepository accountRepo;
-    protected InMemoryAccountAccessRepository accountAccessRepo;
     protected UserService userService;
     protected AdminService adminService;
 
@@ -39,9 +37,8 @@ abstract class AdminServiceTestSupport {
     void baseSetUp() {
         userRepo = new InMemoryUserRepository();
         accountRepo = new InMemoryAccountRepository();
-        accountAccessRepo = new InMemoryAccountAccessRepository();
         userService = new UserServiceImpl();
-        adminService = new AdminServiceImpl(userRepo, accountRepo, accountAccessRepo, userService);
+        adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
 
         // Pripravime testovacích pouzivatelov
         admin = saveUser("admin@sporixx.sk", "Admin", "Adminov", Role.ADMIN, GenderCode.MALE, true);
