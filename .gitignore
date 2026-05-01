@@ -1,16 +1,38 @@
-# Compiled class file
-*.class
+# =====================
+# OS (macOS)
+# =====================
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Log file
+# =====================
+# IntelliJ IDEA
+# =====================
+.idea/
+*.iml
+out/
+
+# =====================
+# Maven / Build
+# =====================
+target/
+build/
+
+# =====================
+# Logs
+# =====================
 *.log
 
-# BlueJ files
-*.ctxt
+# =====================
+# Java
+# =====================
+*.class
+hs_err_pid*
+replay_pid*
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# =====================
+# Archives
+# =====================
 *.jar
 *.war
 *.nar
@@ -19,9 +41,20 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# =====================
+# Databases / local files
+# =====================
+*.sqlite
+*.db
 
-.idea/
-target/sporixx.sqlite
+# =====================
+# Test outputs
+# =====================
+target/surefire-reports/
+*.dumpstream
+
+# =====================
+# Misc
+# =====================
+*.tmp
+*.swp
