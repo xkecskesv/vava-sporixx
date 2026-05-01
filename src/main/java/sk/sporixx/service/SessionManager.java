@@ -14,8 +14,6 @@ import java.util.List;
 
 /**
  * Správca session prihláseného používateľa.
- * Singleton
- * Kolekcie: ArrayList pre účty, Collections.unmodifiableList() pre read-only prístup
  */
 public class SessionManager {
 
@@ -94,7 +92,7 @@ public class SessionManager {
     }
 
     /**
-     * Pre service vrstvu — plný User s passwordHash.
+     * Pre service vrstvu - plný User s passwordHash.
      * Package-private: dostupné len v sk.sporixx.service balíčku.
      */
     User getCurrentUserInternal() {

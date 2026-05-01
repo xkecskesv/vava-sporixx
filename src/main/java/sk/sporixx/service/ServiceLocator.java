@@ -137,7 +137,7 @@ public final class ServiceLocator {
         return importService;
     }
 
-    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi a normalizáciu. */
+    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi.*/
     public static UserService getUserService() {
         checkInitialized();
         return userService;

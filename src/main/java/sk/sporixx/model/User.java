@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 /**
  * Datový model pre používateľa.
  * Mapuje sa na DB tabuľku 'users'.
- * Žiadne public polia - enkapsulácia cez Lombok @Data.
  */
 @Data
 @Builder

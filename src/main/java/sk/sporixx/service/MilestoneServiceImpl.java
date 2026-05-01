@@ -91,7 +91,7 @@ public class MilestoneServiceImpl implements MilestoneService {
     }
 
     private double calculateSmartSpenderProgress(double wantPercentage, int level) {
-        // Progress v rámci aktuálneho levelu (0.0 - 1.0)
+        // progress v rámci aktuálneho levelu (0.0 - 1.0)
         return switch (level) {
             case 1 -> 1.0 - ((wantPercentage - 70) / 30.0);  // 70-100%
             case 2 -> 1.0 - ((wantPercentage - 50) / 20.0);  // 50-70%

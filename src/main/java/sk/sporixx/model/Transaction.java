@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * Reprezentuje finančnú transakciu (príjem, výdavok, investment).
- * Ak je to transakcia medzi účtami (saving, savaing_expense)
+ * Ak je to transakcia medzi účtami (saving, saving_expense)
  */
 @Data
 @Builder

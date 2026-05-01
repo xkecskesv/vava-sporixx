@@ -14,7 +14,7 @@ public class UserSettings {
     private String dateFormat;          // "dd.MM.yyyy" alebo "MM/dd/yyyy"
     private String timeFormat;          // "HH:mm" alebo "hh:mm a"
 
-    // Notifikácie — polia sú tu, implementácia bude neskôr
+    // Notifikácie
     private boolean upcomingPaymentsEnabled;
     private boolean budgetLimitAlertsEnabled;
     private boolean savingRemindersEnabled;

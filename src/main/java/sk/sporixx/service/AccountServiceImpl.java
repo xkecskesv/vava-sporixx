@@ -205,7 +205,7 @@ public class AccountServiceImpl implements AccountService {
     private Account buildAccount(int accountTypeId, String description,
                                  double initialAmount) {
 
-        // region a currency berieme z main accountu
+        // region berieme z main accountu
         Account mainAccount = SessionManager.getInstance().getAccounts().stream()
                 .filter(a -> a.getAccountTypeId() == Account.MAIN_ACCOUNT)
                 .findFirst()
@@ -215,7 +215,6 @@ public class AccountServiceImpl implements AccountService {
                 .ownerUserId(SessionManager.getInstance().getCurrentUserId())
                 .regionId(mainAccount.getRegionId())
                 .accountTypeId(accountTypeId)
-                .defaultCurrencyCode(mainAccount.getDefaultCurrencyCode())
                 .description(description)
                 .initialBalance(initialAmount)
                 .currentBalance(initialAmount)
@@ -250,7 +249,6 @@ public class AccountServiceImpl implements AccountService {
                 .ownerUserId(SessionManager.getInstance().getCurrentUserId())
                 .regionId(mainAccount.getRegionId())
                 .accountTypeId(Account.SAVING_ACCOUNT)
-                .defaultCurrencyCode(mainAccount.getDefaultCurrencyCode())
                 .description(description)
                 .initialBalance(initialAmount)
                 .currentBalance(initialAmount)

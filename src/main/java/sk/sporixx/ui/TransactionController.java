@@ -588,6 +588,19 @@ public class TransactionController {
                     .orElse(1);
         }
 
+        // Pri editácii transfer transakcie (CATEGORY_TRANSFER, CATEGORY_SAVING, CATEGORY_SAVING_EXPENSE)
+        // je checkbox betweenAccountsCheck skrytý a odznačený, čo by spôsobilo prepísanie
+        // kategórie na Clothing a classification na Need. Zachovaj pôvodné hodnoty.
+        if (selectedTransaction != null) {
+            Integer origCat = selectedTransaction.getCategoryId();
+            if (origCat != null && (origCat == Transaction.CATEGORY_TRANSFER
+                    || origCat == Transaction.CATEGORY_SAVING
+                    || origCat == Transaction.CATEGORY_SAVING_EXPENSE)) {
+                categoryId = origCat;
+                classificationId = selectedTransaction.getSpendingClassificationId();
+            }
+        }
+
         Integer targetAccountId = null;
         if (betweenAccountsCheck.isSelected()) {
             Account toAccount = userAccounts.stream()

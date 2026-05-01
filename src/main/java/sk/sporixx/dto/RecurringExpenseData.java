@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class RecurringExpenseData {
-    /** Priamo RecurringRule objekty — majú description, amount, spendingClassificationId */
+    /** Priamo RecurringRule objekty - majú description, amount, spendingClassificationId */
     private List<RecurringRule> items;
     private double totalWant;
     private double totalNeed;

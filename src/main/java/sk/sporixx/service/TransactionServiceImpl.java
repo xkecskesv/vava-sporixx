@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * Implementácia TransactionService.
  * Transakcie sú výhradne TYPE_INCOME alebo TYPE_EXPENSE.
  * Transfer medzi účtami vytvorí dve transakcie s automaticky priradenou
- * systémovou kategóriou (CATEGORY_SAVING alebo CATEGORY_SAVING_EXPENSE).
+ * systémovou kategóriou.
  * Pri každej zmene transakcie sa aktualizuje zostatok účtu
  * v DB (AccountRepository) aj v SessionManager.
  */
@@ -125,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
                         criteria.getAmountTo(),
                         criteria.getTransactionTypeId());
 
-                // Regex filter na byText
+                // regex filter na byText
                 Pattern pattern;
                 try {
                     pattern = Pattern.compile(
@@ -136,7 +136,7 @@ public class TransactionServiceImpl implements TransactionService {
                     byText = byText.stream()
                             .filter(t -> t.getDescription().toLowerCase().contains(lower))
                             .collect(Collectors.toList());
-                    // Zlúč a odstráň duplikáty
+                    // zlúči a odstráni duplikáty
                     return mergeDeduplicated(byCategory, byText);
                 }
 
@@ -148,7 +148,7 @@ public class TransactionServiceImpl implements TransactionService {
                 return mergeDeduplicated(byCategory, byText);
             }
 
-            // Štandardná AND logika
+            // štandardná AND logika
             List<Transaction> filtered = transactionRepository.findByFilters(
                     accountId,
                     criteria.getCategoryId(),
@@ -187,7 +187,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    // Helper — zlúč dve listy bez duplikátov podľa id
+    // Helper - zlúči dve listy bez duplikátov podľa id
     private List<Transaction> mergeDeduplicated(List<Transaction> list1,
                                                 List<Transaction> list2) {
         List<Transaction> result = new ArrayList<>(list1);
@@ -229,7 +229,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    //  PRIDANIE TRANSAKCIE
+    // PRIDANIE TRANSAKCIE
     @Override
     public Transaction addTransaction(int accountId,
                                       int transactionTypeId,
@@ -284,7 +284,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    // ── Helper — štandardná transakcia (Income/Expense) ──
+    // helper - štandardná transakcia (Income/Expense)
     private Transaction addStandardTransaction(Account account,
                                                int transactionTypeId,
                                                int categoryId,
@@ -319,10 +319,10 @@ public class TransactionServiceImpl implements TransactionService {
         return saved;
     }
 
-    // ── Helper — prevod medzi účtami ──
+    // helper - prevod medzi účtami
     // Kategória sa určí automaticky podľa smeru prevodu:
-    //   main → saving = CATEGORY_SAVING
-    //   saving → main = CATEGORY_SAVING_EXPENSE
+    //   z main na saving = CATEGORY_SAVING
+    //   zo saving na main = CATEGORY_SAVING_EXPENSE
     private Transaction addTransfer(Account fromAccount,
                                     int targetAccountId,
                                     String description,
@@ -331,7 +331,7 @@ public class TransactionServiceImpl implements TransactionService {
                                     LocalDateTime completeDate) {
         Account toAccount = getAccountOrThrow(targetAccountId);
 
-        // Kategória len pri transferoch kde je zapojený saving účet
+        // kategória len pri transferoch kde je zapojený saving účet
         Integer autoCategory = Transaction.CATEGORY_TRANSFER;
         if (toAccount.isSavingAccount()) {
             autoCategory = Transaction.CATEGORY_SAVING;
@@ -369,16 +369,16 @@ public class TransactionServiceImpl implements TransactionService {
         double newFromBalance = Math.round((fromAccount.getCurrentBalance() - roundedAmount) * 100.0) / 100.0;
         double newToBalance   = Math.round((toAccount.getCurrentBalance()   + roundedAmount) * 100.0) / 100.0;
 
-        // Atomický zápis: 2× INSERT + 2× UPDATE balance v jednej SQLite transakcii
+        // atomický zápis: 2× INSERT + 2× UPDATE balance v jednej SQLite transakcii
         transactionRepository.saveTransfer(expense, income,
                 fromAccount.getId(), newFromBalance,
                 toAccount.getId(), newToBalance);
 
-        // In-memory sync (DB je už zapísaný vyššie)
+        // in-memory sync (DB je už zapísaný vyššie)
         fromAccount.setCurrentBalance(newFromBalance);
         toAccount.setCurrentBalance(newToBalance);
 
-        // Aktualizuj currentAmount v SavingGoal ak je zapojený saving účet
+        // aktualizuj currentAmount v SavingGoal ak je zapojený saving účet
         if (toAccount.isSavingAccount()) {
             updateSavingGoalAmount(toAccount.getId(), amount);
         } else if (fromAccount.isSavingAccount()) {
@@ -390,7 +390,7 @@ public class TransactionServiceImpl implements TransactionService {
         return expense;
     }
 
-    //  AKTUALIZÁCIA TRANSAKCIE
+    // AKTUALIZÁCIA TRANSAKCIE
     @Override
     public void updateTransaction(Transaction updatedTransaction) {
         logger.info("Updating transaction id={}", updatedTransaction.getId());
@@ -417,7 +417,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionException("transaction.error.type_cannot_change");
         }
 
-        // Systémové kategórie (Saving, Saving Expense) sa nedajú manuálne nastaviť pri editácii
+        // systémové kategórie (Saving, Saving Expense) sa nedajú manuálne nastaviť pri editácii
         Integer newCategoryId = updatedTransaction.getCategoryId();
         if (newCategoryId != null &&
                 (newCategoryId == Transaction.CATEGORY_SAVING
@@ -493,7 +493,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    //  MAZANIE TRANSAKCIÍ
+    // MAZANIE TRANSAKCIÍ
     @Override
     public void deleteTransactions(List<Integer> transactionIds) {
         logger.info("Deleting {} transactions", transactionIds.size());
@@ -521,7 +521,7 @@ public class TransactionServiceImpl implements TransactionService {
                         tx.getAmount());
                 updateBalance(account, revertedBalance);
 
-                // Aktualizuj SavingGoal ak je to saving účet
+                // aktualizuj SavingGoal ak je to saving účet
                 if (account.isSavingAccount()) {
                     if (tx.isIncome()) {
                         updateSavingGoalAmount(account.getId(), -tx.getAmount());
@@ -574,7 +574,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    //  HELPERS
+    // HELPERS
     private Account getAccountOrThrow(int accountId) {
         Account account = SessionManager.getInstance().getAccountById(accountId);
         if (account == null) {
