@@ -283,12 +283,9 @@ public class ReportsServiceImpl implements ReportsService {
                         goal.getTargetDate().toLocalDate());
                 String grouping = resolveGrouping(totalDays);
 
-                // načíta TYPE_INCOME transakcie pre saving účet od createdAt
+                // načíta všetky TYPE_INCOME transakcie pre saving účet bez ohľadu na dátum
                 List<Transaction> transactions = transactionRepository
-                        .findByAccountIdAndDateRange(
-                                account.getId(),
-                                goal.getCreatedAt(),
-                                LocalDateTime.now())
+                        .findByAccountId(account.getId())
                         .stream()
                         .filter(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME)
                         .toList();
