@@ -37,7 +37,7 @@ public interface ReportsService {
 
     /**
      * Načíta dáta pre Saving Accounts screen.
-     * Vracia zoznam — jeden záznam pre každý saving účet.
+     * Vracia zoznam - jeden záznam pre každý saving účet.
      */
     List<SavingAccountReportData> loadSavingAccountsData();
 }

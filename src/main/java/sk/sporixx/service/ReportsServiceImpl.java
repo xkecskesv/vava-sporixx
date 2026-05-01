@@ -30,9 +30,9 @@ public class ReportsServiceImpl implements ReportsService {
      * Grouping sa určuje podľa celkovej dĺžky goalu (createdAt → targetDate).
      * Rovnaký grouping sa použije pre obe krivky (expected aj actual)
      * aby boli na rovnakej osi X a dali sa porovnať.
-     * DAY   — goal kratší ako 3 mesiace (< 90 dní)
-     * MONTH — goal 3 mesiace až 5 rokov (90 — 1825 dní)
-     * YEAR  — goal dlhší ako 5 rokov (> 1825 dní)
+     * DAY - goal kratší ako 3 mesiace (< 90 dní)
+     * MONTH - goal 3 mesiace až 5 rokov (90 - 1825 dní)
+     * YEAR - goal dlhší ako 5 rokov (> 1825 dní)
      */
     private static final int DAY_THRESHOLD_DAYS = 90;
     private static final int MONTH_THRESHOLD_DAYS = 1825;
@@ -61,18 +61,18 @@ public class ReportsServiceImpl implements ReportsService {
         this.savingGoalRepository = savingGoalRepository;
     }
 
-    // Helper - získa všetky accountIds prihláseného používateľa
+    // helper - získa všetky accountIds prihláseného používateľa
     private List<Integer> getAccountIds() {
         return SessionManager.getInstance().getAccountIds();
     }
 
-    // Helper - vypočíta from datetime podľa ChartPeriod
+    // helper - vypočíta from datetime podľa ChartPeriod
     private LocalDateTime calculateFrom(ChartPeriod period) {
         return period.calculateStartDate().atStartOfDay();
     }
 
 
-    //  INCOME VS EXPENSES
+    // INCOME VS EXPENSES
     @Override
     public IncomeExpenseData loadIncomeExpenseData(ChartPeriod period) {
         logger.info("Loading income/expense data for period: {}", period);
@@ -129,7 +129,7 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-    //  EXPENSES BY CATEGORY
+    // EXPENSES BY CATEGORY
     @Override
     public CategoryExpenseData loadCategoryExpenseData(ChartPeriod period) {
         logger.info("Loading category expense data for period: {}", period);
@@ -164,7 +164,7 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-    //  RECURRING EXPENSES
+    // RECURRING EXPENSES
     @Override
     public RecurringExpenseData loadRecurringExpenseData() {
         logger.info("Loading recurring expense data");
@@ -203,7 +203,7 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-    //  WANT VS NEED
+    // WANT VS NEED
     @Override
     public WantNeedData loadWantNeedData(ChartPeriod period) {
         logger.info("Loading want/need data for period: {}", period);
@@ -241,7 +241,7 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-    //  SAVING ACCOUNTS
+    // SAVING ACCOUNTS
     @Override
     public List<SavingAccountReportData> loadSavingAccountsData() {
         logger.info("Loading saving accounts report data");
@@ -283,7 +283,7 @@ public class ReportsServiceImpl implements ReportsService {
                         goal.getTargetDate().toLocalDate());
                 String grouping = resolveGrouping(totalDays);
 
-                // Načítaj TYPE_INCOME transakcie pre saving účet od createdAt
+                // načíta TYPE_INCOME transakcie pre saving účet od createdAt
                 List<Transaction> transactions = transactionRepository
                         .findByAccountIdAndDateRange(
                                 account.getId(),
@@ -317,7 +317,7 @@ public class ReportsServiceImpl implements ReportsService {
         }
     }
 
-    //  HELPERS — GROUPING
+    // HELPERS - GROUPING
     /**
      * Určí grouping podľa celkovej dĺžky goalu.
      * Rovnaký grouping sa použije pre expected aj actual krivku
@@ -329,10 +329,10 @@ public class ReportsServiceImpl implements ReportsService {
         return "YEAR";
     }
 
-    //  HELPERS — EXPECTED PROGRESS
+    // HELPERS - EXPECTED PROGRESS
     /**
      * Vypočíta lineárny expected progress od createdAt po targetDate.
-     * Krivka je statická — zobrazuje celý plán sporenia.
+     * Krivka je statická - zobrazuje celý plán sporenia.
      */
     private Map<String, Double> calculateExpectedProgress(SavingGoal goal,
                                                           long totalDays,
@@ -349,7 +349,7 @@ public class ReportsServiceImpl implements ReportsService {
         double initialBalance = getInitialBalance(goal.getAccountId());
         double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        // Goal už splnený
+        // goal už splnený
         if (remainingToSave <= 0) {
             expected.put(goal.getCreatedAt().format(DAY_FORMAT), goal.getTargetAmount());
             return expected;
@@ -378,7 +378,7 @@ public class ReportsServiceImpl implements ReportsService {
         double initialBalance = getInitialBalance(goal.getAccountId());
         double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        // Goal už splnený
+        // goal už splnený
         if (remainingToSave <= 0) {
             expected.put(goal.getCreatedAt().format(MONTH_FORMAT), goal.getTargetAmount());
             return expected;
@@ -407,7 +407,7 @@ public class ReportsServiceImpl implements ReportsService {
         double initialBalance = getInitialBalance(goal.getAccountId());
         double remainingToSave = goal.getTargetAmount() - initialBalance;
 
-        // Goal už splnený
+        // goal už splnený
         if (remainingToSave <= 0) {
             expected.put(goal.getCreatedAt().format(YEAR_FORMAT), goal.getTargetAmount());
             return expected;
@@ -425,11 +425,11 @@ public class ReportsServiceImpl implements ReportsService {
         return expected;
     }
 
-    //  HELPERS — ACTUAL PROGRESS
+    // HELPERS - ACTUAL PROGRESS
     /**
      * Vypočíta skutočný kumulatívny progress podľa TYPE_INCOME transakcií.
      * Krivka rastie postupne s pribúdajúcimi transakciami.
-     * Rovnaký grouping ako expected — obe krivky na rovnakej osi X.
+     * Rovnaký grouping ako expected - obe krivky na rovnakej osi X.
      */
     private Map<String, Double> calculateActualProgress(int accountId,
                                                         SavingGoal goal,
@@ -451,7 +451,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        // Doplň chýbajúce dni medzi createdAt a dnes
+        // doplní chýbajúce dni medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt();
         LocalDateTime until = LocalDateTime.now();
         while (!current.isAfter(until)) {
@@ -469,7 +469,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        // Doplň chýbajúce mesiace medzi createdAt a dnes
+        // doplní chýbajúce mesiace medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
         LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
         while (!current.isAfter(until)) {
@@ -492,7 +492,7 @@ public class ReportsServiceImpl implements ReportsService {
 
         double initialBalance = getInitialBalance(accountId);
 
-        // Doplň chýbajúce roky medzi createdAt a dnes
+        // doplní chýbajúce roky medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt();
         LocalDateTime until = LocalDateTime.now();
         while (!current.isAfter(until)) {
@@ -515,7 +515,7 @@ public class ReportsServiceImpl implements ReportsService {
     /**
      * Prepočíta mapu denných/mesačných súm na kumulatívne hodnoty.
      * Štartuje od initialBalance saving účtu.
-     * Vstup:  { "2026-02": 10000, "2026-03": 5000 }
+     * Vstup: { "2026-02": 10000, "2026-03": 5000 }
      * Výstup: { "2026-02": 60000, "2026-03": 65000 } (pri initialBalance=50000)
      */
     private Map<String, Double> toCumulative(Map<String, Double> raw, double initialBalance) {
@@ -541,12 +541,12 @@ public class ReportsServiceImpl implements ReportsService {
 
         Map<String, Double> result = new LinkedHashMap<>();
 
-        // Top 4 ostanú samostatné
+        // top 4 ostanú samostatné
         for (int i = 0; i < 4; i++) {
             result.put(sorted.get(i).getKey(), sorted.get(i).getValue());
         }
 
-        // Zvyšok zlúč do Other
+        // zvyšok zlúč do Other
         double otherSum = sorted.subList(4, sorted.size()).stream()
                 .mapToDouble(Map.Entry::getValue)
                 .sum();
@@ -559,7 +559,7 @@ public class ReportsServiceImpl implements ReportsService {
     }
 
     /**
-     * Prepočíta na kumulatívne hodnoty — štartuje od 0.
+     * Prepočíta na kumulatívne hodnoty - štartuje od 0.
      */
     private Map<String, Double> toCumulative(Map<String, Double> raw) {
         return toCumulative(raw, 0.0);

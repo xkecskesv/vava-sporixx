@@ -13,5 +13,6 @@ import java.util.Map;
 public class CategoryExpenseData {
     /** Kľúč: názov kategórie, hodnota: suma */
     private Map<String, Double> expenseByCategory;
+
     private double totalExpense;
 }

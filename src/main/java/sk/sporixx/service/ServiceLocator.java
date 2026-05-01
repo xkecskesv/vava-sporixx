@@ -62,11 +62,11 @@ public final class ServiceLocator {
             CategoryRepository categoryRepo = new CategoryRepositoryImpl();
             BudgetRepository budgetRepo = new BudgetRepositoryImpl();
             AccountAccessRepository accountAccessRepo = new AccountAccessRepositoryImpl();
-            //FamilyRequestRepository familyRequestRepo = new FamilyRequestRepositoryImpl();
+            FamilyRequestRepository familyRequestRepo = new FamilyRequestRepositoryImpl();
 
             authService = new AuthServiceImpl(userRepo, accountRepo);
             userService = new UserServiceImpl();
-            //profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, accountAccessRepo, familyRequestRepo);
+            profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, accountAccessRepo, familyRequestRepo);
             adminService = new AdminServiceImpl(userRepo, accountRepo, accountAccessRepo, userService);
 
             overviewService = new OverviewServiceImpl(transactionRepo, recurringRuleRepo, savingGoalRepo);
@@ -87,7 +87,7 @@ public final class ServiceLocator {
 
             recurringRuleService = new RecurringRuleServiceImpl(recurringRuleRepo, transactionService);
 
-            //familyService = new FamilyServiceImpl(accountAccessRepo, accountRepo, userRepo, familyRequestRepo, savingGoalRepo);
+            familyService = new FamilyServiceImpl(accountAccessRepo, accountRepo, userRepo, familyRequestRepo, savingGoalRepo);
 
             milestoneService = new MilestoneServiceImpl(reportsService, accountRepo, userRepo, transactionRepo, budgetService);
 
@@ -137,7 +137,7 @@ public final class ServiceLocator {
         return importService;
     }
 
-    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi a normalizáciu. */
+    /** Pomocná používateľská služba pre prístup k aktuálnemu používateľovi.*/
     public static UserService getUserService() {
         checkInitialized();
         return userService;

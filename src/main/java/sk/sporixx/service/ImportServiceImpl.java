@@ -23,10 +23,6 @@ import java.util.stream.Collectors;
 /**
  * Implementácia ImportService.
  * Parsuje XML súbory vygenerované ExportServiceImpl.
- * Aktualizuje saving goals podľa importovaných dát:
- * - currentAmount (savedUp)
- * - targetAmount
- * - targetDate
  */
 public class ImportServiceImpl implements ImportService {
 
@@ -122,7 +118,7 @@ public class ImportServiceImpl implements ImportService {
         }
     }
 
-    // ── Helper — aktualizuje existujúci saving účet ──
+    // Helper - aktualizuje existujúci saving účet
     private void updateExistingSavingAccount(Account matchingAccount,
                                              double savedUp,
                                              double targetAmount,
@@ -143,10 +139,10 @@ public class ImportServiceImpl implements ImportService {
         if (!targetDateStr.isEmpty()) {
             savingGoalRepository.updateTargetDate(goal.getId(), targetDate.atStartOfDay());
         }
-        // Aktualizuj DB
+        // aktualizuje DB
         accountRepository.updateBalance(matchingAccount.getId(), savedUp);
 
-        // Aktualizuj SessionManager
+        // aktualizuje SessionManager
         Account sessionAccount = SessionManager.getInstance()
                 .getAccountById(matchingAccount.getId());
         if (sessionAccount != null) {
@@ -157,7 +153,7 @@ public class ImportServiceImpl implements ImportService {
                 matchingAccount.getDescription(), savedUp, targetAmount);
     }
 
-    // ── Helper — parsuje targetDate ──
+    // Helper - parsuje targetDate
     private LocalDate parseTargetDate(String targetDateStr) {
         if (targetDateStr == null || targetDateStr.isEmpty()) {
             return LocalDate.now().plusYears(1);
@@ -170,7 +166,7 @@ public class ImportServiceImpl implements ImportService {
         }
     }
 
-    // ── Helper — parsuje LocalDateTime ──
+    // Helper - parsuje LocalDateTime
     private LocalDateTime parseDateTime(String dateTimeStr) {
         if (dateTimeStr == null || dateTimeStr.isEmpty()) {
             return LocalDateTime.now();
@@ -183,7 +179,7 @@ public class ImportServiceImpl implements ImportService {
         }
     }
 
-    // ── Helper — parsuje double s fallback hodnotou ──
+    // Helper - parsuje double s fallback hodnotou
     private double parseDouble(String value, double fallback) {
         if (value == null || value.isEmpty()) return fallback;
         try {
@@ -203,12 +199,12 @@ public class ImportServiceImpl implements ImportService {
 
     /**
      * Importuje transakcie pre saving účet.
-     * Pri importe existujúceho účtu — vymaže staré TYPE_INCOME transakcie
+     * Pri importe existujúceho účtu - vymaže staré TYPE_INCOME transakcie
      * a nahradí ich importovanými.
-     * Pri importe nového účtu — len pridá transakcie.
+     * Pri importe nového účtu - len pridá transakcie.
      */
     private void importTransactions(int accountId, NodeList txNodes) {
-        // Vymaž existujúce TYPE_INCOME transakcie na účte
+        // vymaže existujúce TYPE_INCOME transakcie na účte
         List<Transaction> existing = transactionRepository
                 .findByAccountIdAndDateRange(
                         accountId,
@@ -222,7 +218,7 @@ public class ImportServiceImpl implements ImportService {
             transactionRepository.deleteById(tx.getId());
         }
 
-        // Pridaj importované transakcie
+        // pridá importované transakcie
         for (int i = 0; i < txNodes.getLength(); i++) {
             Element txEl = (Element) txNodes.item(i);
 

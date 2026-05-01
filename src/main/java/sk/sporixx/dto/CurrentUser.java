@@ -5,7 +5,7 @@ import lombok.Data;
 import sk.sporixx.model.Role;
 
 /**
- * DTO pre prihláseného používateľa — bez passwordHash.
+ * DTO pre prihláseného používateľa - bez passwordHash.
  * Toto vidí UI vrstva. Service vrstva pracuje s plným User modelom.
  */
 @Data
@@ -16,7 +16,7 @@ public class CurrentUser {
     private String surname;
     private String email;
     private String gender;
-    private String photoPath;  // môže byť null — nie každý má fotku
+    private String photoPath;  // môže byť null - nie každý má fotku
     private Role role;
 
     // XP polia
