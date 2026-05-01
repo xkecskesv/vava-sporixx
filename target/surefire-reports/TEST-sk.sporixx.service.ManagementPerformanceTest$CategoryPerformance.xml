@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.047" tests="5" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Bratislava"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="SK"/>
+    <property name="sun.boot.library.path" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501173344963_3.jar /Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire 2026-05-01T17-33-44_905-jvmRun1 surefire-20260501173344963_1tmp surefire_0-20260501173344963_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="AdminServiceAuthorizationTest,AdminServiceChangeOwnPasswordTest,AdminServiceGetAllUsersTest,AdminServiceIntegrationTest,AdminServiceLifecycleTest,AdminServicePerformanceTest,AdminServiceUpdateUserTest,AuthServicePerformanceTest,AuthServiceTest,BudgetServiceCustomAllocationTest,BudgetServiceLoadDataTest,BudgetServicePerformanceTest,BudgetServiceSaveSetupTest,BudgetServiceScenarioTest,ManagementAccountServiceTest,ManagementCategoryServiceTest,ManagementPerformanceTest,ManagementRecurringRuleServiceTest,OverviewPerformanceTest,OverviewServiceAccountsSummaryTest,OverviewServiceActivitiesTest,OverviewServiceAnalyticsTest,ReportsServiceCategoryExpenseJdbcTest,ReportsServiceCategoryExpenseTest,ReportsServiceIncomeExpenseJdbcTest,ReportsServiceIncomeExpenseTest,ReportsServicePerformanceTest,ReportsServiceRecurringExpenseJdbcTest,ReportsServiceRecurringExpenseTest,ReportsServiceSavingAccountsJdbcTest,ReportsServiceSavingAccountsTest,ReportsServiceWantNeedJdbcTest,ReportsServiceWantNeedTest,TransactionServiceAddTest,TransactionServiceDeleteTest,TransactionServicePerformanceTest,TransactionServiceSearchTest,TransactionServiceUpdateTest,MilestoneServiceSmartSpenderTest,MilestoneServiceSavingMasterTest,MilestoneServiceInvestorTest,MilestoneServiceBudgetKeeperTest,MilestoneServiceFinancialTitleTest"/>
+    <property name="surefire.test.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/davidbabis"/>
+    <property name="user.language" value="sk"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-09-16"/>
+    <property name="java.home" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501173344963_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="25-loom+1-11"/>
+    <property name="user.name" value="davidbabis"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="26.3.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/Users/davidbabis/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/"/>
+    <property name="java.version" value="25-loom"/>
+    <property name="user.dir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/davidbabis/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25-loom+1-11"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="duplicateCheckIn1000Categories_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.002">
+    <system-out><![CDATA[17:34:36.764 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: Cat-1
+17:34:36.765 [main] WARN sk.sporixx.service.CategoryServiceImpl -- Category already exists: Cat-1
+[PERF] duplicateCheck (1 000 záznamov): 1 ms
+]]></system-out>
+  </testcase>
+  <testcase name="getSelectableCategories1000_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.001">
+    <system-out><![CDATA[17:34:36.765 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Loading selectable categories for userId: 1
+[PERF] getSelectableCategories (1 000 záznamov): 0 ms
+]]></system-out>
+  </testcase>
+  <testcase name="load1000Categories_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.007">
+    <system-out><![CDATA[17:34:36.767 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Loading categories for userId: 1
+[PERF] getCategories (1 000 záznamov): 5 ms
+]]></system-out>
+  </testcase>
+  <testcase name="updateCategoryIn1000_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.001">
+    <system-out><![CDATA[17:34:36.773 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Updating category id=1000 to name=UpdatedName
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category updated: id=1000, newName=UpdatedName
+[PERF] updateCategory (1 000 záznamov): 0 ms
+]]></system-out>
+  </testcase>
+  <testcase name="add500Categories_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$CategoryPerformance" time="0.035">
+    <system-out><![CDATA[17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-1
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=1, name=PerfCat-1
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-2
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=2, name=PerfCat-2
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-3
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=3, name=PerfCat-3
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-4
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=4, name=PerfCat-4
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-5
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=5, name=PerfCat-5
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-6
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=6, name=PerfCat-6
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-7
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=7, name=PerfCat-7
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-8
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=8, name=PerfCat-8
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-9
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=9, name=PerfCat-9
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-10
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=10, name=PerfCat-10
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-11
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=11, name=PerfCat-11
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-12
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=12, name=PerfCat-12
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-13
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=13, name=PerfCat-13
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-14
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=14, name=PerfCat-14
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-15
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=15, name=PerfCat-15
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-16
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=16, name=PerfCat-16
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-17
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=17, name=PerfCat-17
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-18
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=18, name=PerfCat-18
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-19
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=19, name=PerfCat-19
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-20
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=20, name=PerfCat-20
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-21
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=21, name=PerfCat-21
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-22
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=22, name=PerfCat-22
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-23
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=23, name=PerfCat-23
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-24
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=24, name=PerfCat-24
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-25
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=25, name=PerfCat-25
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-26
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=26, name=PerfCat-26
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-27
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=27, name=PerfCat-27
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-28
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=28, name=PerfCat-28
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-29
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=29, name=PerfCat-29
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-30
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=30, name=PerfCat-30
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-31
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=31, name=PerfCat-31
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-32
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=32, name=PerfCat-32
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-33
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=33, name=PerfCat-33
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-34
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=34, name=PerfCat-34
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-35
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=35, name=PerfCat-35
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-36
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=36, name=PerfCat-36
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-37
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=37, name=PerfCat-37
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-38
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=38, name=PerfCat-38
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-39
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=39, name=PerfCat-39
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-40
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=40, name=PerfCat-40
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-41
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=41, name=PerfCat-41
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-42
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=42, name=PerfCat-42
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-43
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=43, name=PerfCat-43
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-44
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=44, name=PerfCat-44
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-45
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=45, name=PerfCat-45
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-46
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=46, name=PerfCat-46
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-47
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=47, name=PerfCat-47
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-48
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=48, name=PerfCat-48
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-49
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=49, name=PerfCat-49
+17:34:36.774 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-50
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=50, name=PerfCat-50
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-51
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=51, name=PerfCat-51
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-52
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=52, name=PerfCat-52
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-53
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=53, name=PerfCat-53
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-54
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=54, name=PerfCat-54
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-55
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=55, name=PerfCat-55
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-56
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=56, name=PerfCat-56
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-57
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=57, name=PerfCat-57
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-58
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=58, name=PerfCat-58
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-59
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=59, name=PerfCat-59
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-60
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=60, name=PerfCat-60
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-61
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=61, name=PerfCat-61
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-62
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=62, name=PerfCat-62
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-63
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=63, name=PerfCat-63
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-64
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=64, name=PerfCat-64
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-65
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=65, name=PerfCat-65
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-66
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=66, name=PerfCat-66
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-67
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=67, name=PerfCat-67
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-68
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=68, name=PerfCat-68
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-69
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=69, name=PerfCat-69
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-70
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=70, name=PerfCat-70
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-71
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=71, name=PerfCat-71
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-72
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=72, name=PerfCat-72
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-73
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=73, name=PerfCat-73
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-74
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=74, name=PerfCat-74
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-75
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=75, name=PerfCat-75
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-76
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=76, name=PerfCat-76
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-77
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=77, name=PerfCat-77
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-78
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=78, name=PerfCat-78
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-79
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=79, name=PerfCat-79
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-80
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=80, name=PerfCat-80
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-81
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=81, name=PerfCat-81
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-82
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=82, name=PerfCat-82
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-83
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=83, name=PerfCat-83
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-84
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=84, name=PerfCat-84
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-85
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=85, name=PerfCat-85
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-86
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=86, name=PerfCat-86
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-87
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=87, name=PerfCat-87
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-88
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=88, name=PerfCat-88
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-89
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=89, name=PerfCat-89
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-90
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=90, name=PerfCat-90
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-91
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=91, name=PerfCat-91
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-92
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=92, name=PerfCat-92
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-93
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=93, name=PerfCat-93
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-94
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=94, name=PerfCat-94
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-95
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=95, name=PerfCat-95
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-96
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=96, name=PerfCat-96
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-97
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=97, name=PerfCat-97
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-98
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=98, name=PerfCat-98
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-99
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=99, name=PerfCat-99
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-100
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=100, name=PerfCat-100
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-101
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=101, name=PerfCat-101
+17:34:36.775 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-102
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=102, name=PerfCat-102
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-103
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=103, name=PerfCat-103
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-104
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=104, name=PerfCat-104
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-105
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=105, name=PerfCat-105
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-106
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=106, name=PerfCat-106
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-107
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=107, name=PerfCat-107
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-108
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=108, name=PerfCat-108
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-109
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=109, name=PerfCat-109
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-110
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=110, name=PerfCat-110
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-111
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=111, name=PerfCat-111
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-112
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=112, name=PerfCat-112
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-113
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=113, name=PerfCat-113
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-114
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=114, name=PerfCat-114
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-115
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=115, name=PerfCat-115
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-116
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=116, name=PerfCat-116
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-117
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=117, name=PerfCat-117
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-118
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=118, name=PerfCat-118
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-119
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=119, name=PerfCat-119
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-120
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=120, name=PerfCat-120
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-121
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=121, name=PerfCat-121
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-122
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=122, name=PerfCat-122
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-123
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=123, name=PerfCat-123
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-124
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=124, name=PerfCat-124
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-125
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=125, name=PerfCat-125
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-126
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=126, name=PerfCat-126
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-127
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=127, name=PerfCat-127
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-128
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=128, name=PerfCat-128
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-129
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=129, name=PerfCat-129
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-130
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=130, name=PerfCat-130
+17:34:36.776 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-131
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=131, name=PerfCat-131
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-132
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=132, name=PerfCat-132
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-133
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=133, name=PerfCat-133
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-134
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=134, name=PerfCat-134
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-135
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=135, name=PerfCat-135
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-136
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=136, name=PerfCat-136
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-137
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=137, name=PerfCat-137
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-138
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=138, name=PerfCat-138
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-139
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=139, name=PerfCat-139
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-140
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=140, name=PerfCat-140
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-141
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=141, name=PerfCat-141
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-142
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=142, name=PerfCat-142
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-143
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=143, name=PerfCat-143
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-144
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=144, name=PerfCat-144
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-145
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=145, name=PerfCat-145
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-146
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=146, name=PerfCat-146
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-147
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=147, name=PerfCat-147
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-148
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=148, name=PerfCat-148
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-149
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=149, name=PerfCat-149
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-150
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=150, name=PerfCat-150
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-151
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=151, name=PerfCat-151
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-152
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=152, name=PerfCat-152
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-153
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=153, name=PerfCat-153
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-154
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=154, name=PerfCat-154
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-155
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=155, name=PerfCat-155
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-156
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=156, name=PerfCat-156
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-157
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=157, name=PerfCat-157
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-158
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=158, name=PerfCat-158
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-159
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=159, name=PerfCat-159
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-160
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=160, name=PerfCat-160
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-161
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=161, name=PerfCat-161
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-162
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=162, name=PerfCat-162
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-163
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=163, name=PerfCat-163
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-164
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=164, name=PerfCat-164
+17:34:36.777 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-165
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=165, name=PerfCat-165
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-166
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=166, name=PerfCat-166
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-167
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=167, name=PerfCat-167
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-168
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=168, name=PerfCat-168
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-169
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=169, name=PerfCat-169
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-170
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=170, name=PerfCat-170
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-171
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=171, name=PerfCat-171
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-172
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=172, name=PerfCat-172
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-173
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=173, name=PerfCat-173
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-174
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=174, name=PerfCat-174
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-175
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=175, name=PerfCat-175
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-176
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=176, name=PerfCat-176
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-177
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=177, name=PerfCat-177
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-178
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=178, name=PerfCat-178
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-179
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=179, name=PerfCat-179
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-180
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=180, name=PerfCat-180
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-181
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=181, name=PerfCat-181
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-182
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=182, name=PerfCat-182
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-183
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=183, name=PerfCat-183
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-184
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=184, name=PerfCat-184
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-185
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=185, name=PerfCat-185
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-186
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=186, name=PerfCat-186
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-187
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=187, name=PerfCat-187
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-188
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=188, name=PerfCat-188
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-189
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=189, name=PerfCat-189
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-190
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=190, name=PerfCat-190
+17:34:36.778 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-191
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=191, name=PerfCat-191
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-192
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=192, name=PerfCat-192
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-193
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=193, name=PerfCat-193
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-194
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=194, name=PerfCat-194
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-195
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=195, name=PerfCat-195
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-196
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=196, name=PerfCat-196
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-197
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=197, name=PerfCat-197
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-198
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=198, name=PerfCat-198
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-199
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=199, name=PerfCat-199
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-200
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=200, name=PerfCat-200
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-201
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=201, name=PerfCat-201
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-202
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=202, name=PerfCat-202
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-203
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=203, name=PerfCat-203
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-204
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=204, name=PerfCat-204
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-205
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=205, name=PerfCat-205
+17:34:36.779 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-206
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=206, name=PerfCat-206
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-207
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=207, name=PerfCat-207
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-208
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=208, name=PerfCat-208
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-209
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=209, name=PerfCat-209
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-210
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=210, name=PerfCat-210
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-211
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=211, name=PerfCat-211
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-212
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=212, name=PerfCat-212
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-213
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=213, name=PerfCat-213
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-214
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=214, name=PerfCat-214
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-215
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=215, name=PerfCat-215
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-216
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=216, name=PerfCat-216
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-217
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=217, name=PerfCat-217
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-218
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=218, name=PerfCat-218
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-219
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=219, name=PerfCat-219
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-220
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=220, name=PerfCat-220
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-221
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=221, name=PerfCat-221
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-222
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=222, name=PerfCat-222
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-223
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=223, name=PerfCat-223
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-224
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=224, name=PerfCat-224
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-225
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=225, name=PerfCat-225
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-226
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=226, name=PerfCat-226
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-227
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=227, name=PerfCat-227
+17:34:36.780 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-228
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=228, name=PerfCat-228
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-229
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=229, name=PerfCat-229
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-230
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=230, name=PerfCat-230
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-231
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=231, name=PerfCat-231
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-232
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=232, name=PerfCat-232
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-233
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=233, name=PerfCat-233
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-234
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=234, name=PerfCat-234
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-235
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=235, name=PerfCat-235
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-236
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=236, name=PerfCat-236
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-237
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=237, name=PerfCat-237
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-238
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=238, name=PerfCat-238
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-239
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=239, name=PerfCat-239
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-240
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=240, name=PerfCat-240
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-241
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=241, name=PerfCat-241
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-242
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=242, name=PerfCat-242
+17:34:36.781 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-243
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=243, name=PerfCat-243
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-244
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=244, name=PerfCat-244
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-245
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=245, name=PerfCat-245
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-246
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=246, name=PerfCat-246
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-247
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=247, name=PerfCat-247
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-248
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=248, name=PerfCat-248
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-249
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=249, name=PerfCat-249
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-250
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=250, name=PerfCat-250
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-251
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=251, name=PerfCat-251
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-252
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=252, name=PerfCat-252
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-253
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=253, name=PerfCat-253
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-254
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=254, name=PerfCat-254
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-255
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=255, name=PerfCat-255
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-256
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=256, name=PerfCat-256
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-257
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=257, name=PerfCat-257
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-258
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=258, name=PerfCat-258
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-259
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=259, name=PerfCat-259
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-260
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=260, name=PerfCat-260
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-261
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=261, name=PerfCat-261
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-262
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=262, name=PerfCat-262
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-263
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=263, name=PerfCat-263
+17:34:36.782 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-264
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=264, name=PerfCat-264
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-265
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=265, name=PerfCat-265
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-266
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=266, name=PerfCat-266
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-267
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=267, name=PerfCat-267
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-268
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=268, name=PerfCat-268
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-269
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=269, name=PerfCat-269
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-270
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=270, name=PerfCat-270
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-271
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=271, name=PerfCat-271
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-272
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=272, name=PerfCat-272
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-273
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=273, name=PerfCat-273
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-274
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=274, name=PerfCat-274
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-275
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=275, name=PerfCat-275
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-276
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=276, name=PerfCat-276
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-277
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=277, name=PerfCat-277
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-278
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=278, name=PerfCat-278
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-279
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=279, name=PerfCat-279
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-280
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=280, name=PerfCat-280
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-281
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=281, name=PerfCat-281
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-282
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=282, name=PerfCat-282
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-283
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=283, name=PerfCat-283
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-284
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=284, name=PerfCat-284
+17:34:36.783 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-285
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=285, name=PerfCat-285
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-286
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=286, name=PerfCat-286
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-287
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=287, name=PerfCat-287
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-288
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=288, name=PerfCat-288
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-289
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=289, name=PerfCat-289
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-290
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=290, name=PerfCat-290
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-291
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=291, name=PerfCat-291
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-292
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=292, name=PerfCat-292
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-293
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=293, name=PerfCat-293
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-294
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=294, name=PerfCat-294
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-295
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=295, name=PerfCat-295
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-296
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=296, name=PerfCat-296
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-297
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=297, name=PerfCat-297
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-298
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=298, name=PerfCat-298
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-299
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=299, name=PerfCat-299
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-300
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=300, name=PerfCat-300
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-301
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=301, name=PerfCat-301
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-302
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=302, name=PerfCat-302
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-303
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=303, name=PerfCat-303
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-304
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=304, name=PerfCat-304
+17:34:36.784 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-305
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=305, name=PerfCat-305
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-306
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=306, name=PerfCat-306
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-307
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=307, name=PerfCat-307
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-308
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=308, name=PerfCat-308
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-309
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=309, name=PerfCat-309
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-310
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=310, name=PerfCat-310
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-311
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=311, name=PerfCat-311
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-312
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=312, name=PerfCat-312
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-313
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=313, name=PerfCat-313
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-314
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=314, name=PerfCat-314
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-315
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=315, name=PerfCat-315
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-316
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=316, name=PerfCat-316
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-317
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=317, name=PerfCat-317
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-318
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=318, name=PerfCat-318
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-319
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=319, name=PerfCat-319
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-320
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=320, name=PerfCat-320
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-321
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=321, name=PerfCat-321
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-322
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=322, name=PerfCat-322
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-323
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=323, name=PerfCat-323
+17:34:36.785 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-324
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=324, name=PerfCat-324
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-325
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=325, name=PerfCat-325
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-326
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=326, name=PerfCat-326
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-327
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=327, name=PerfCat-327
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-328
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=328, name=PerfCat-328
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-329
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=329, name=PerfCat-329
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-330
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=330, name=PerfCat-330
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-331
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=331, name=PerfCat-331
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-332
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=332, name=PerfCat-332
+17:34:36.786 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-333
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=333, name=PerfCat-333
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-334
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=334, name=PerfCat-334
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-335
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=335, name=PerfCat-335
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-336
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=336, name=PerfCat-336
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-337
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=337, name=PerfCat-337
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-338
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=338, name=PerfCat-338
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-339
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=339, name=PerfCat-339
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-340
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=340, name=PerfCat-340
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-341
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=341, name=PerfCat-341
+17:34:36.787 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-342
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=342, name=PerfCat-342
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-343
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=343, name=PerfCat-343
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-344
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=344, name=PerfCat-344
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-345
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=345, name=PerfCat-345
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-346
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=346, name=PerfCat-346
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-347
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=347, name=PerfCat-347
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-348
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=348, name=PerfCat-348
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-349
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=349, name=PerfCat-349
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-350
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=350, name=PerfCat-350
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-351
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=351, name=PerfCat-351
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-352
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=352, name=PerfCat-352
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-353
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=353, name=PerfCat-353
+17:34:36.788 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-354
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=354, name=PerfCat-354
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-355
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=355, name=PerfCat-355
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-356
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=356, name=PerfCat-356
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-357
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=357, name=PerfCat-357
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-358
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=358, name=PerfCat-358
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-359
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=359, name=PerfCat-359
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-360
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=360, name=PerfCat-360
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-361
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=361, name=PerfCat-361
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-362
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=362, name=PerfCat-362
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-363
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=363, name=PerfCat-363
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-364
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=364, name=PerfCat-364
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-365
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=365, name=PerfCat-365
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-366
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=366, name=PerfCat-366
+17:34:36.789 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-367
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=367, name=PerfCat-367
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-368
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=368, name=PerfCat-368
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-369
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=369, name=PerfCat-369
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-370
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=370, name=PerfCat-370
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-371
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=371, name=PerfCat-371
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-372
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=372, name=PerfCat-372
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-373
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=373, name=PerfCat-373
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-374
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=374, name=PerfCat-374
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-375
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=375, name=PerfCat-375
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-376
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=376, name=PerfCat-376
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-377
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=377, name=PerfCat-377
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-378
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=378, name=PerfCat-378
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-379
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=379, name=PerfCat-379
+17:34:36.790 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-380
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=380, name=PerfCat-380
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-381
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=381, name=PerfCat-381
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-382
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=382, name=PerfCat-382
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-383
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=383, name=PerfCat-383
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-384
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=384, name=PerfCat-384
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-385
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=385, name=PerfCat-385
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-386
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=386, name=PerfCat-386
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-387
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=387, name=PerfCat-387
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-388
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=388, name=PerfCat-388
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-389
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=389, name=PerfCat-389
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-390
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=390, name=PerfCat-390
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-391
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=391, name=PerfCat-391
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-392
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=392, name=PerfCat-392
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-393
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=393, name=PerfCat-393
+17:34:36.791 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-394
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=394, name=PerfCat-394
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-395
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=395, name=PerfCat-395
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-396
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=396, name=PerfCat-396
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-397
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=397, name=PerfCat-397
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-398
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=398, name=PerfCat-398
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-399
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=399, name=PerfCat-399
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-400
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=400, name=PerfCat-400
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-401
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=401, name=PerfCat-401
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-402
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=402, name=PerfCat-402
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-403
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=403, name=PerfCat-403
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-404
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=404, name=PerfCat-404
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-405
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=405, name=PerfCat-405
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-406
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=406, name=PerfCat-406
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-407
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=407, name=PerfCat-407
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-408
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=408, name=PerfCat-408
+17:34:36.792 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-409
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=409, name=PerfCat-409
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-410
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=410, name=PerfCat-410
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-411
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=411, name=PerfCat-411
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-412
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=412, name=PerfCat-412
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-413
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=413, name=PerfCat-413
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-414
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=414, name=PerfCat-414
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-415
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=415, name=PerfCat-415
+17:34:36.793 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-416
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=416, name=PerfCat-416
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-417
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=417, name=PerfCat-417
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-418
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=418, name=PerfCat-418
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-419
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=419, name=PerfCat-419
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-420
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=420, name=PerfCat-420
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-421
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=421, name=PerfCat-421
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-422
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=422, name=PerfCat-422
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-423
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=423, name=PerfCat-423
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-424
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=424, name=PerfCat-424
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-425
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=425, name=PerfCat-425
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-426
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=426, name=PerfCat-426
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-427
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=427, name=PerfCat-427
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-428
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=428, name=PerfCat-428
+17:34:36.794 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-429
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=429, name=PerfCat-429
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-430
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=430, name=PerfCat-430
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-431
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=431, name=PerfCat-431
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-432
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=432, name=PerfCat-432
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-433
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=433, name=PerfCat-433
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-434
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=434, name=PerfCat-434
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-435
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=435, name=PerfCat-435
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-436
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=436, name=PerfCat-436
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-437
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=437, name=PerfCat-437
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-438
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=438, name=PerfCat-438
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-439
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=439, name=PerfCat-439
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-440
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=440, name=PerfCat-440
+17:34:36.795 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-441
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=441, name=PerfCat-441
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-442
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=442, name=PerfCat-442
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-443
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=443, name=PerfCat-443
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-444
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=444, name=PerfCat-444
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-445
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=445, name=PerfCat-445
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-446
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=446, name=PerfCat-446
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-447
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=447, name=PerfCat-447
+17:34:36.796 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-448
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=448, name=PerfCat-448
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-449
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=449, name=PerfCat-449
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-450
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=450, name=PerfCat-450
+17:34:36.803 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-451
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=451, name=PerfCat-451
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-452
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=452, name=PerfCat-452
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-453
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=453, name=PerfCat-453
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-454
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=454, name=PerfCat-454
+17:34:36.804 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-455
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=455, name=PerfCat-455
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-456
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=456, name=PerfCat-456
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-457
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=457, name=PerfCat-457
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-458
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=458, name=PerfCat-458
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-459
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=459, name=PerfCat-459
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-460
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=460, name=PerfCat-460
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-461
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=461, name=PerfCat-461
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-462
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=462, name=PerfCat-462
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-463
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=463, name=PerfCat-463
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-464
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=464, name=PerfCat-464
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-465
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=465, name=PerfCat-465
+17:34:36.805 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-466
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=466, name=PerfCat-466
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-467
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=467, name=PerfCat-467
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-468
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=468, name=PerfCat-468
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-469
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=469, name=PerfCat-469
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-470
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=470, name=PerfCat-470
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-471
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=471, name=PerfCat-471
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-472
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=472, name=PerfCat-472
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-473
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=473, name=PerfCat-473
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-474
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=474, name=PerfCat-474
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-475
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=475, name=PerfCat-475
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-476
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=476, name=PerfCat-476
+17:34:36.806 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-477
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=477, name=PerfCat-477
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-478
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=478, name=PerfCat-478
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-479
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=479, name=PerfCat-479
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-480
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=480, name=PerfCat-480
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-481
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=481, name=PerfCat-481
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-482
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=482, name=PerfCat-482
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-483
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=483, name=PerfCat-483
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-484
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=484, name=PerfCat-484
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-485
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=485, name=PerfCat-485
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-486
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=486, name=PerfCat-486
+17:34:36.807 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-487
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=487, name=PerfCat-487
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-488
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=488, name=PerfCat-488
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-489
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=489, name=PerfCat-489
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-490
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=490, name=PerfCat-490
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-491
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=491, name=PerfCat-491
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-492
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=492, name=PerfCat-492
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-493
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=493, name=PerfCat-493
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-494
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=494, name=PerfCat-494
+17:34:36.808 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-495
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=495, name=PerfCat-495
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-496
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=496, name=PerfCat-496
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-497
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=497, name=PerfCat-497
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-498
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=498, name=PerfCat-498
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-499
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=499, name=PerfCat-499
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Adding category: PerfCat-500
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Category created: id=500, name=PerfCat-500
+17:34:36.809 [main] INFO sk.sporixx.service.CategoryServiceImpl -- Loading categories for userId: 1
+[PERF] addCategory x500: 35 ms
+]]></system-out>
+  </testcase>
+</testsuite>

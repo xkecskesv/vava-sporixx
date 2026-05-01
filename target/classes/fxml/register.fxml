@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane styleClass="root-pane" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.RegisterController">
+   <HBox styleClass="login-card">
+      <VBox styleClass="blue-panel">
+         <ImageView fitHeight="170" fitWidth="170" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/assets/logos/log_in_logo.png"/>
+         </ImageView>
+         <Label styleClass="blue-panel-title" text="Be smart with&#10;your money.">
+            <VBox.margin>
+               <Insets top="10" />
+            </VBox.margin>
+         </Label>
+      </VBox>
+      <VBox styleClass="form-panel">
+         <Label styleClass="title" text="%register.title" />
+         <Label styleClass="subtitle" text="%register.subtitle" />
+         <HBox spacing="12.0">
+            <VBox HBox.hgrow="ALWAYS">
+               <Label styleClass="field-label" text="%register.firstName" />
+               <TextField fx:id="firstNameField" promptText="%register.firstName.prompt" styleClass="input-field" maxWidth="Infinity" />
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS">
+               <Label styleClass="field-label" text="%register.lastName" />
+               <TextField fx:id="lastNameField" promptText="%register.lastName.prompt" styleClass="input-field" maxWidth="Infinity" />
+            </VBox>
+         </HBox>
+         <Label styleClass="field-label" text="%login.email" />
+         <TextField fx:id="emailField" promptText="sample@domain.com" styleClass="input-field" />
+         <Label styleClass="field-label" text="%login.password" />
+         <PasswordField fx:id="passwordField" promptText="••••••••••••••••••" styleClass="input-field" />
+         <Label styleClass="field-label" text="%register.password_confirm" />
+         <PasswordField fx:id="repeatPasswordField" promptText="••••••••••••••••••" styleClass="input-field" />
+         <Label fx:id="errorLabel" styleClass="error-label" visible="false" />
+         <HBox alignment="CENTER">
+            <VBox.margin>
+               <Insets top="1" />
+            </VBox.margin>
+            <Button fx:id="registerButton" defaultButton="true" onAction="#handleRegister" styleClass="btn-primary" text="%register.button" />
+         </HBox>
+         <HBox alignment="CENTER" spacing="4">
+            <VBox.margin>
+               <Insets top="8" />
+            </VBox.margin>
+            <Label styleClass="text-secondary" text="%register.hasaccount" />
+            <Hyperlink fx:id="hasAccountLink" onAction="#handleHasAccount" styleClass="link" text="%register.login" />
+         </HBox>
+      </VBox>
+   </HBox>
+</StackPane>

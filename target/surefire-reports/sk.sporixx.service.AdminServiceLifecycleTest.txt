@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: sk.sporixx.service.AdminServiceLifecycleTest
+-------------------------------------------------------------------------------
+Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.17 s -- in sk.sporixx.service.AdminServiceLifecycleTest

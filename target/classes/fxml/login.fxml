@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane styleClass="root-pane" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.LoginController">
+   <HBox styleClass="login-card">
+      <VBox styleClass="blue-panel">
+         <ImageView fitHeight="170" fitWidth="170" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/assets/logos/log_in_logo.png"/>
+         </ImageView>
+         <Label styleClass="blue-panel-title" text="Be smart with&#10;your money.">
+            <VBox.margin>
+               <Insets top="10" />
+            </VBox.margin>
+         </Label>
+      </VBox>
+      <VBox styleClass="form-panel">
+         <Label styleClass="title" text="%login.title" />
+         <Label styleClass="subtitle" text="%login.subtitle" />
+         <Label styleClass="field-label" text="%login.email" />
+         <TextField fx:id="emailField" promptText="sample@domain.com" styleClass="input-field" />
+         <Label styleClass="field-label" text="%login.password" />
+         <PasswordField fx:id="passwordField" promptText="••••••••••••••••••" styleClass="input-field" />
+         <Label fx:id="errorLabel" styleClass="error-label" visible="false" />
+         <HBox alignment="CENTER">
+            <VBox.margin>
+               <Insets top="10" />
+            </VBox.margin>
+            <Button fx:id="loginButton" defaultButton="true" onAction="#handleLogin" styleClass="btn-primary" text="%login.button" />
+         </HBox>
+         <HBox alignment="CENTER" spacing="4">
+            <VBox.margin>
+               <Insets top="8" />
+            </VBox.margin>
+            <Label styleClass="text-secondary" text="%login.create" />
+            <Hyperlink fx:id="newAccountLink" onAction="#handleNewAccount" styleClass="link" text="%login.newaccount" />
+         </HBox>
+      </VBox>
+   </HBox>
+</StackPane>

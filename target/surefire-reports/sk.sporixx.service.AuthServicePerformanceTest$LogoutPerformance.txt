@@ -1,0 +1,15 @@
+-------------------------------------------------------------------------------
+Test set: sk.sporixx.service.AuthServicePerformanceTest$LogoutPerformance
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.251 s <<< FAILURE! -- in sk.sporixx.service.AuthServicePerformanceTest$LogoutPerformance
+sk.sporixx.service.AuthServicePerformanceTest$LogoutPerformance.loginLogout10x_withinTimeLimit -- Time elapsed: 1.249 s <<< ERROR!
+java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at sk.sporixx.service.ServiceLocator.checkInitialized(ServiceLocator.java:292)
+	at sk.sporixx.service.ServiceLocator.getSettingsService(ServiceLocator.java:269)
+	at sk.sporixx.service.AuthServiceImpl.login(AuthServiceImpl.java:117)
+	at sk.sporixx.service.AuthServicePerformanceTest$LogoutPerformance.loginLogout10x_withinTimeLimit(AuthServicePerformanceTest.java:118)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

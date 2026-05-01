@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="sk.sporixx.service.AdminServiceLifecycleTest" time="22.17" tests="26" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Bratislava"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="SK"/>
+    <property name="sun.boot.library.path" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260428112632147_3.jar /Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire 2026-04-28T11-26-32_096-jvmRun1 surefire-20260428112632147_1tmp surefire_0-20260428112632147_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="AdminServiceAuthorizationTest,AdminServiceChangeOwnPasswordTest,AdminServiceGetAllUsersTest,AdminServiceIntegrationTest,AdminServiceLifecycleTest,AdminServicePerformanceTest,AdminServiceUpdateUserTest,AuthServicePerformanceTest,AuthServiceTest,BudgetServiceCustomAllocationTest,BudgetServiceLoadDataTest,BudgetServicePerformanceTest,BudgetServiceSaveSetupTest,BudgetServiceScenarioTest,ManagementAccountServiceTest,ManagementCategoryServiceTest,ManagementPerformanceTest,ManagementRecurringRuleServiceTest,OverviewPerformanceTest,OverviewServiceAccountsSummaryTest,OverviewServiceActivitiesTest,OverviewServiceAnalyticsTest,ReportsServiceCategoryExpenseJdbcTest,ReportsServiceCategoryExpenseTest,ReportsServiceIncomeExpenseJdbcTest,ReportsServiceIncomeExpenseTest,ReportsServicePerformanceTest,ReportsServiceRecurringExpenseJdbcTest,ReportsServiceRecurringExpenseTest,ReportsServiceSavingAccountsJdbcTest,ReportsServiceSavingAccountsTest,ReportsServiceWantNeedJdbcTest,ReportsServiceWantNeedTest,TransactionServiceAddTest,TransactionServiceDeleteTest,TransactionServicePerformanceTest,TransactionServiceSearchTest,TransactionServiceUpdateTest"/>
+    <property name="surefire.test.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/davidbabis"/>
+    <property name="user.language" value="sk"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-09-16"/>
+    <property name="java.home" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260428112632147_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="25-loom+1-11"/>
+    <property name="user.name" value="davidbabis"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="26.3.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/Users/davidbabis/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/"/>
+    <property name="java.version" value="25-loom"/>
+    <property name="user.dir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/davidbabis/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25-loom+1-11"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="delete_notAdmin_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.817">
+    <system-out><![CDATA[11:27:40.012 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:40.287 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:40.558 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_nonExistent_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.822">
+    <system-out><![CDATA[11:27:40.830 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:41.101 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:41.379 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_userWithoutAccounts_ok" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="1.174">
+    <system-out><![CDATA[11:27:41.652 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:41.925 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:42.197 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:42.516 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_null_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.827">
+    <system-out><![CDATA[11:27:42.826 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:43.107 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:43.379 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_asFamilyManager_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.837">
+    <system-out><![CDATA[11:27:43.653 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:43.926 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:44.200 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_zeroId_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.869">
+    <system-out><![CDATA[11:27:44.490 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:44.798 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:45.081 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_reactivatesAccounts" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.815">
+    <system-out><![CDATA[11:27:45.359 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:45.632 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:45.903 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_idempotent" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:27:46.175 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:46.446 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:46.717 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_userWithoutAccounts_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="1.085">
+    <system-out><![CDATA[11:27:46.989 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:47.260 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:47.531 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:47.802 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:48.074 [main] WARN sk.sporixx.service.AdminServiceImpl -- No accounts found for user id=4 while changing active state to true
+]]></system-out>
+  </testcase>
+  <testcase name="activate_self_allowed" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:27:48.074 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:48.345 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:48.616 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_negativeId_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.815">
+    <system-out><![CDATA[11:27:48.888 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:49.160 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:49.431 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_self_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:49.703 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:49.974 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:50.245 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_null_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:50.517 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:50.788 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:51.059 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_leavesOrphanedAccounts" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:51.330 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:51.601 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:51.872 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_zeroId_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:27:52.144 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:52.414 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:52.685 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_nonExistent_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.818">
+    <system-out><![CDATA[11:27:52.957 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:53.228 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:53.503 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_notAdmin_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:53.775 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:54.046 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:54.317 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_deactivatesAllUserAccounts" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:54.589 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:54.859 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:55.130 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_self_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.812">
+    <system-out><![CDATA[11:27:55.402 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:55.672 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:55.943 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_null_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:56.215 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:56.485 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:56.756 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_nonExistent_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:27:57.028 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:57.299 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:57.570 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="activate_notAdmin_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:27:57.842 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:58.113 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:58.383 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_userWithoutAccounts_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="1.086">
+    <system-out><![CDATA[11:27:58.655 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:58.926 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:59.197 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:59.469 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:27:59.740 [main] WARN sk.sporixx.service.AdminServiceImpl -- No accounts found for user id=4 while changing active state to false
+]]></system-out>
+  </testcase>
+  <testcase name="deactivate_returnsExistingUser" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:27:59.741 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:00.012 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:00.283 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_negativeId_throws" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.813">
+    <system-out><![CDATA[11:28:00.555 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:00.826 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:01.097 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+  <testcase name="delete_removesUser" classname="sk.sporixx.service.AdminServiceLifecycleTest" time="0.814">
+    <system-out><![CDATA[11:28:01.369 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:01.640 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+11:28:01.911 [main] DEBUG sk.sporixx.util.PasswordUtil -- Hashing password with BCrypt (cost=12)
+]]></system-out>
+  </testcase>
+</testsuite>

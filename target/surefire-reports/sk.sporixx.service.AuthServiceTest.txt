@@ -1,0 +1,62 @@
+-------------------------------------------------------------------------------
+Test set: sk.sporixx.service.AuthServiceTest
+-------------------------------------------------------------------------------
+Tests run: 35, Failures: 2, Errors: 2, Skipped: 0, Time elapsed: 18.39 s <<< FAILURE! -- in sk.sporixx.service.AuthServiceTest
+sk.sporixx.service.AuthServiceTest.login_nullRole_shouldSetDefaultRole -- Time elapsed: 1.132 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertDoesNotThrow.createAssertionFailedError(AssertDoesNotThrow.java:84)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:53)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:36)
+	at org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3199)
+	at sk.sporixx.service.AuthServiceTest.login_nullRole_shouldSetDefaultRole(AuthServiceTest.java:335)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+Caused by: java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at sk.sporixx.service.ServiceLocator.checkInitialized(ServiceLocator.java:200)
+	at sk.sporixx.service.ServiceLocator.getSettingsService(ServiceLocator.java:174)
+	at sk.sporixx.service.AuthServiceImpl.login(AuthServiceImpl.java:116)
+	at sk.sporixx.service.AuthServiceTest.lambda$login_nullRole_shouldSetDefaultRole$0(AuthServiceTest.java:336)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:49)
+	... 6 more
+
+sk.sporixx.service.AuthServiceTest.logout_shouldSucceed -- Time elapsed: 0.827 s <<< ERROR!
+java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at sk.sporixx.service.ServiceLocator.checkInitialized(ServiceLocator.java:200)
+	at sk.sporixx.service.ServiceLocator.getSettingsService(ServiceLocator.java:174)
+	at sk.sporixx.service.AuthServiceImpl.login(AuthServiceImpl.java:116)
+	at sk.sporixx.service.AuthServiceTest.logout_shouldSucceed(AuthServiceTest.java:383)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+sk.sporixx.service.AuthServiceTest.login_validCredentials_shouldSucceed -- Time elapsed: 0.829 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertDoesNotThrow.createAssertionFailedError(AssertDoesNotThrow.java:84)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:53)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:36)
+	at org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3199)
+	at sk.sporixx.service.AuthServiceTest.login_validCredentials_shouldSucceed(AuthServiceTest.java:248)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+Caused by: java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at sk.sporixx.service.ServiceLocator.checkInitialized(ServiceLocator.java:200)
+	at sk.sporixx.service.ServiceLocator.getSettingsService(ServiceLocator.java:174)
+	at sk.sporixx.service.AuthServiceImpl.login(AuthServiceImpl.java:116)
+	at sk.sporixx.service.AuthServiceTest.lambda$login_validCredentials_shouldSucceed$0(AuthServiceTest.java:249)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:49)
+	... 6 more
+
+sk.sporixx.service.AuthServiceTest.logout_withActiveSession_shouldLogAndClear -- Time elapsed: 0.826 s <<< ERROR!
+java.lang.IllegalStateException: ServiceLocator not initialized! Call ServiceLocator.init() in Main.start() first.
+	at sk.sporixx.service.ServiceLocator.checkInitialized(ServiceLocator.java:200)
+	at sk.sporixx.service.ServiceLocator.getSettingsService(ServiceLocator.java:174)
+	at sk.sporixx.service.AuthServiceImpl.login(AuthServiceImpl.java:116)
+	at sk.sporixx.service.AuthServiceTest.logout_withActiveSession_shouldLogAndClear(AuthServiceTest.java:397)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

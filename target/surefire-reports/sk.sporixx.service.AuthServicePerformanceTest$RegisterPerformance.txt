@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------
+Test set: sk.sporixx.service.AuthServicePerformanceTest$RegisterPerformance
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.289 s <<< FAILURE! -- in sk.sporixx.service.AuthServicePerformanceTest$RegisterPerformance
+sk.sporixx.service.AuthServicePerformanceTest$RegisterPerformance.register200Users_withinTimeLimit -- Time elapsed: 0.287 s <<< ERROR!
+sk.sporixx.service.AuthException: auth.error.invalid_last_name
+	at sk.sporixx.service.AuthServiceImpl.validateRegistrationInput(AuthServiceImpl.java:258)
+	at sk.sporixx.service.AuthServiceImpl.register(AuthServiceImpl.java:131)
+	at sk.sporixx.service.AuthServicePerformanceTest$RegisterPerformance.register200Users_withinTimeLimit(AuthServicePerformanceTest.java:48)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

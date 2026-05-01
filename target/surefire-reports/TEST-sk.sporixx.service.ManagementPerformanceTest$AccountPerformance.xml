@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="sk.sporixx.service.ManagementPerformanceTest$AccountPerformance" time="0.023" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Bratislava"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="SK"/>
+    <property name="sun.boot.library.path" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501173344963_3.jar /Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire 2026-05-01T17-33-44_905-jvmRun1 surefire-20260501173344963_1tmp surefire_0-20260501173344963_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="AdminServiceAuthorizationTest,AdminServiceChangeOwnPasswordTest,AdminServiceGetAllUsersTest,AdminServiceIntegrationTest,AdminServiceLifecycleTest,AdminServicePerformanceTest,AdminServiceUpdateUserTest,AuthServicePerformanceTest,AuthServiceTest,BudgetServiceCustomAllocationTest,BudgetServiceLoadDataTest,BudgetServicePerformanceTest,BudgetServiceSaveSetupTest,BudgetServiceScenarioTest,ManagementAccountServiceTest,ManagementCategoryServiceTest,ManagementPerformanceTest,ManagementRecurringRuleServiceTest,OverviewPerformanceTest,OverviewServiceAccountsSummaryTest,OverviewServiceActivitiesTest,OverviewServiceAnalyticsTest,ReportsServiceCategoryExpenseJdbcTest,ReportsServiceCategoryExpenseTest,ReportsServiceIncomeExpenseJdbcTest,ReportsServiceIncomeExpenseTest,ReportsServicePerformanceTest,ReportsServiceRecurringExpenseJdbcTest,ReportsServiceRecurringExpenseTest,ReportsServiceSavingAccountsJdbcTest,ReportsServiceSavingAccountsTest,ReportsServiceWantNeedJdbcTest,ReportsServiceWantNeedTest,TransactionServiceAddTest,TransactionServiceDeleteTest,TransactionServicePerformanceTest,TransactionServiceSearchTest,TransactionServiceUpdateTest,MilestoneServiceSmartSpenderTest,MilestoneServiceSavingMasterTest,MilestoneServiceInvestorTest,MilestoneServiceBudgetKeeperTest,MilestoneServiceFinancialTitleTest"/>
+    <property name="surefire.test.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/davidbabis"/>
+    <property name="user.language" value="sk"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-09-16"/>
+    <property name="java.home" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501173344963_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="25-loom+1-11"/>
+    <property name="user.name" value="davidbabis"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="26.3.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/Users/davidbabis/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/"/>
+    <property name="java.version" value="25-loom"/>
+    <property name="user.dir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/davidbabis/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25-loom+1-11"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="create100SavingAccounts_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$AccountPerformance" time="0.006">
+    <system-out><![CDATA[17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=3, goal=SavingGoal-1
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=4, goal=SavingGoal-2
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=5, goal=SavingGoal-3
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=6, goal=SavingGoal-4
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=7, goal=SavingGoal-5
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=8, goal=SavingGoal-6
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=9, goal=SavingGoal-7
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=10, goal=SavingGoal-8
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=11, goal=SavingGoal-9
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=12, goal=SavingGoal-10
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=13, goal=SavingGoal-11
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=14, goal=SavingGoal-12
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=15, goal=SavingGoal-13
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=16, goal=SavingGoal-14
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=17, goal=SavingGoal-15
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=18, goal=SavingGoal-16
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=19, goal=SavingGoal-17
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=20, goal=SavingGoal-18
+17:34:36.718 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=21, goal=SavingGoal-19
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=22, goal=SavingGoal-20
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=23, goal=SavingGoal-21
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=24, goal=SavingGoal-22
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=25, goal=SavingGoal-23
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=26, goal=SavingGoal-24
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=27, goal=SavingGoal-25
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=28, goal=SavingGoal-26
+17:34:36.719 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=29, goal=SavingGoal-27
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=30, goal=SavingGoal-28
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=31, goal=SavingGoal-29
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=32, goal=SavingGoal-30
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=33, goal=SavingGoal-31
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=34, goal=SavingGoal-32
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=35, goal=SavingGoal-33
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=36, goal=SavingGoal-34
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=37, goal=SavingGoal-35
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=38, goal=SavingGoal-36
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=39, goal=SavingGoal-37
+17:34:36.720 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=40, goal=SavingGoal-38
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=41, goal=SavingGoal-39
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=42, goal=SavingGoal-40
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=43, goal=SavingGoal-41
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=44, goal=SavingGoal-42
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=45, goal=SavingGoal-43
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=46, goal=SavingGoal-44
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=47, goal=SavingGoal-45
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=48, goal=SavingGoal-46
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=49, goal=SavingGoal-47
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=50, goal=SavingGoal-48
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=51, goal=SavingGoal-49
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=52, goal=SavingGoal-50
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=53, goal=SavingGoal-51
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=54, goal=SavingGoal-52
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=55, goal=SavingGoal-53
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=56, goal=SavingGoal-54
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=57, goal=SavingGoal-55
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=58, goal=SavingGoal-56
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=59, goal=SavingGoal-57
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=60, goal=SavingGoal-58
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=61, goal=SavingGoal-59
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=62, goal=SavingGoal-60
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=63, goal=SavingGoal-61
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=64, goal=SavingGoal-62
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=65, goal=SavingGoal-63
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=66, goal=SavingGoal-64
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=67, goal=SavingGoal-65
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=68, goal=SavingGoal-66
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=69, goal=SavingGoal-67
+17:34:36.721 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=70, goal=SavingGoal-68
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=71, goal=SavingGoal-69
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=72, goal=SavingGoal-70
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=73, goal=SavingGoal-71
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=74, goal=SavingGoal-72
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=75, goal=SavingGoal-73
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=76, goal=SavingGoal-74
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=77, goal=SavingGoal-75
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=78, goal=SavingGoal-76
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=79, goal=SavingGoal-77
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=80, goal=SavingGoal-78
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=81, goal=SavingGoal-79
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=82, goal=SavingGoal-80
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=83, goal=SavingGoal-81
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=84, goal=SavingGoal-82
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=85, goal=SavingGoal-83
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=86, goal=SavingGoal-84
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=87, goal=SavingGoal-85
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=88, goal=SavingGoal-86
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=89, goal=SavingGoal-87
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=90, goal=SavingGoal-88
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=91, goal=SavingGoal-89
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=92, goal=SavingGoal-90
+17:34:36.722 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=93, goal=SavingGoal-91
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=94, goal=SavingGoal-92
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=95, goal=SavingGoal-93
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=96, goal=SavingGoal-94
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=97, goal=SavingGoal-95
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=98, goal=SavingGoal-96
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=99, goal=SavingGoal-97
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=100, goal=SavingGoal-98
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=101, goal=SavingGoal-99
+17:34:36.723 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=102, goal=SavingGoal-100
+[PERF] createSavingAccount x100: 5 ms
+]]></system-out>
+  </testcase>
+  <testcase name="createAndDelete100Accounts_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$AccountPerformance" time="0.005">
+    <system-out><![CDATA[17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=3, goal=Fund-1
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=4, goal=Fund-2
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=5, goal=Fund-3
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=6, goal=Fund-4
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=7, goal=Fund-5
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=8, goal=Fund-6
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=9, goal=Fund-7
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=10, goal=Fund-8
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=11, goal=Fund-9
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=12, goal=Fund-10
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=13, goal=Fund-11
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=14, goal=Fund-12
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=15, goal=Fund-13
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=16, goal=Fund-14
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=17, goal=Fund-15
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=18, goal=Fund-16
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=19, goal=Fund-17
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=20, goal=Fund-18
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=21, goal=Fund-19
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=22, goal=Fund-20
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=23, goal=Fund-21
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=24, goal=Fund-22
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=25, goal=Fund-23
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=26, goal=Fund-24
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=27, goal=Fund-25
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=28, goal=Fund-26
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=29, goal=Fund-27
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=30, goal=Fund-28
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=31, goal=Fund-29
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=32, goal=Fund-30
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=33, goal=Fund-31
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=34, goal=Fund-32
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=35, goal=Fund-33
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=36, goal=Fund-34
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=37, goal=Fund-35
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=38, goal=Fund-36
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=39, goal=Fund-37
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=40, goal=Fund-38
+17:34:36.724 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=41, goal=Fund-39
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=42, goal=Fund-40
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=43, goal=Fund-41
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=44, goal=Fund-42
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=45, goal=Fund-43
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=46, goal=Fund-44
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=47, goal=Fund-45
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=48, goal=Fund-46
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=49, goal=Fund-47
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=50, goal=Fund-48
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=51, goal=Fund-49
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=52, goal=Fund-50
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=53, goal=Fund-51
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=54, goal=Fund-52
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=55, goal=Fund-53
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=56, goal=Fund-54
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=57, goal=Fund-55
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=58, goal=Fund-56
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=59, goal=Fund-57
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=60, goal=Fund-58
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=61, goal=Fund-59
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=62, goal=Fund-60
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=63, goal=Fund-61
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=64, goal=Fund-62
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=65, goal=Fund-63
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=66, goal=Fund-64
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=67, goal=Fund-65
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=68, goal=Fund-66
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=69, goal=Fund-67
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=70, goal=Fund-68
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=71, goal=Fund-69
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=72, goal=Fund-70
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=73, goal=Fund-71
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=74, goal=Fund-72
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=75, goal=Fund-73
+17:34:36.725 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=76, goal=Fund-74
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=77, goal=Fund-75
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=78, goal=Fund-76
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=79, goal=Fund-77
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=80, goal=Fund-78
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=81, goal=Fund-79
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=82, goal=Fund-80
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=83, goal=Fund-81
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=84, goal=Fund-82
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=85, goal=Fund-83
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=86, goal=Fund-84
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=87, goal=Fund-85
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=88, goal=Fund-86
+17:34:36.726 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=89, goal=Fund-87
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=90, goal=Fund-88
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=91, goal=Fund-89
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=92, goal=Fund-90
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=93, goal=Fund-91
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=94, goal=Fund-92
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=95, goal=Fund-93
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=96, goal=Fund-94
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=97, goal=Fund-95
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=98, goal=Fund-96
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=99, goal=Fund-97
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=100, goal=Fund-98
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=101, goal=Fund-99
+17:34:36.727 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=102, goal=Fund-100
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=3
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=3
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=4
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=4
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=5
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=5
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=6
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=6
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=7
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=7
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=8
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=8
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=9
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=9
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=10
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=10
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=11
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=11
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=12
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=12
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=13
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=13
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=14
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=14
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=15
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=15
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=16
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=16
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=17
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=17
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=18
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=18
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=19
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=19
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=20
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=20
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=21
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=21
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=22
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=22
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=23
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=23
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=24
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=24
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=25
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=25
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=26
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=26
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=27
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=27
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=28
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=28
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=29
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=29
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=30
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=30
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=31
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=31
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=32
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=32
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=33
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=33
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=34
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=34
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=35
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=35
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=36
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=36
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=37
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=37
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=38
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=38
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=39
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=39
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=40
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=40
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=41
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=41
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=42
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=42
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=43
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=43
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=44
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=44
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=45
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=45
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=46
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=46
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=47
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=47
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=48
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=48
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=49
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=49
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=50
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=50
+17:34:36.728 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=51
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=51
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=52
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=52
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=53
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=53
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=54
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=54
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=55
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=55
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=56
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=56
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=57
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=57
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=58
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=58
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=59
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=59
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=60
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=60
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=61
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=61
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=62
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=62
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=63
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=63
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=64
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=64
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=65
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=65
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=66
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=66
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=67
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=67
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=68
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=68
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=69
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=69
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=70
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=70
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=71
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=71
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=72
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=72
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=73
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=73
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=74
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=74
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=75
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=75
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=76
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=76
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=77
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=77
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=78
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=78
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=79
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=79
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=80
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=80
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=81
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=81
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=82
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=82
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=83
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=83
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=84
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=84
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=85
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=85
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=86
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=86
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=87
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=87
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=88
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=88
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=89
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=89
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=90
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=90
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=91
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=91
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=92
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=92
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=93
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=93
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=94
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=94
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=95
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=95
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=96
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=96
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=97
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=97
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=98
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=98
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=99
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=99
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=100
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=100
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=101
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=101
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Deleting account: id=102
+17:34:36.729 [main] INFO sk.sporixx.service.AccountServiceImpl -- Account deactivated: id=102
+[PERF] deleteAccount x100: 1 ms
+]]></system-out>
+  </testcase>
+  <testcase name="create100PrivateAccounts_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$AccountPerformance" time="0.004">
+    <system-out><![CDATA[17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=3
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=4
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=5
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=6
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=7
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=8
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=9
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=10
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=11
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=12
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=13
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=14
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=15
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=16
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=17
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=18
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=19
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=20
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=21
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=22
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=23
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=24
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=25
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=26
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=27
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=28
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=29
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=30
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=31
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=32
+17:34:36.730 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=33
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=34
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=35
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=36
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=37
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=38
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=39
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=40
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=41
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=42
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=43
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=44
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=45
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=46
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=47
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=48
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=49
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=50
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=51
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=52
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=53
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=54
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=55
+17:34:36.731 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=56
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=57
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=58
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=59
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=60
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=61
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=62
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=63
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=64
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=65
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=66
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=67
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=68
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=69
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=70
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=71
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=72
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=73
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=74
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=75
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=76
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=77
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=78
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=79
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=80
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=81
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=82
+17:34:36.732 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=83
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=84
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=85
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=86
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=87
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=88
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=89
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=90
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=91
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=92
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=93
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=94
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=95
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=96
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=97
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=98
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=99
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=100
+17:34:36.733 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.734 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=101
+17:34:36.734 [main] INFO sk.sporixx.service.AccountServiceImpl -- Creating private account for userId=1
+17:34:36.734 [main] INFO sk.sporixx.service.AccountServiceImpl -- Private account created: id=102
+[PERF] createPrivateAccount x100: 3 ms
+]]></system-out>
+  </testcase>
+  <testcase name="getSavingGoalFor100Accounts_withinTimeLimit" classname="sk.sporixx.service.ManagementPerformanceTest$AccountPerformance" time="0.006">
+    <system-out><![CDATA[17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=3, goal=Goal-1
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=4, goal=Goal-2
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=5, goal=Goal-3
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=6, goal=Goal-4
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=7, goal=Goal-5
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=8, goal=Goal-6
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=9, goal=Goal-7
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=10, goal=Goal-8
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=11, goal=Goal-9
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=12, goal=Goal-10
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=13, goal=Goal-11
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=14, goal=Goal-12
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=15, goal=Goal-13
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=16, goal=Goal-14
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=17, goal=Goal-15
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=18, goal=Goal-16
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=19, goal=Goal-17
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=20, goal=Goal-18
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=21, goal=Goal-19
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=22, goal=Goal-20
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=23, goal=Goal-21
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=24, goal=Goal-22
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=25, goal=Goal-23
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=26, goal=Goal-24
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=27, goal=Goal-25
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=28, goal=Goal-26
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=29, goal=Goal-27
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=30, goal=Goal-28
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=31, goal=Goal-29
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=32, goal=Goal-30
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=33, goal=Goal-31
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=34, goal=Goal-32
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=35, goal=Goal-33
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=36, goal=Goal-34
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=37, goal=Goal-35
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=38, goal=Goal-36
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=39, goal=Goal-37
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=40, goal=Goal-38
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=41, goal=Goal-39
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=42, goal=Goal-40
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=43, goal=Goal-41
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=44, goal=Goal-42
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=45, goal=Goal-43
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=46, goal=Goal-44
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=47, goal=Goal-45
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=48, goal=Goal-46
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=49, goal=Goal-47
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=50, goal=Goal-48
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=51, goal=Goal-49
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=52, goal=Goal-50
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=53, goal=Goal-51
+17:34:36.735 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=54, goal=Goal-52
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=55, goal=Goal-53
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=56, goal=Goal-54
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=57, goal=Goal-55
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=58, goal=Goal-56
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=59, goal=Goal-57
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=60, goal=Goal-58
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=61, goal=Goal-59
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=62, goal=Goal-60
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=63, goal=Goal-61
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=64, goal=Goal-62
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=65, goal=Goal-63
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=66, goal=Goal-64
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=67, goal=Goal-65
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=68, goal=Goal-66
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=69, goal=Goal-67
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=70, goal=Goal-68
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=71, goal=Goal-69
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=72, goal=Goal-70
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=73, goal=Goal-71
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=74, goal=Goal-72
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=75, goal=Goal-73
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=76, goal=Goal-74
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=77, goal=Goal-75
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=78, goal=Goal-76
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=79, goal=Goal-77
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=80, goal=Goal-78
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=81, goal=Goal-79
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=82, goal=Goal-80
+17:34:36.736 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=83, goal=Goal-81
+17:34:36.737 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=84, goal=Goal-82
+17:34:36.737 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=85, goal=Goal-83
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=86, goal=Goal-84
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=87, goal=Goal-85
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=88, goal=Goal-86
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=89, goal=Goal-87
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=90, goal=Goal-88
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=91, goal=Goal-89
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=92, goal=Goal-90
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=93, goal=Goal-91
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=94, goal=Goal-92
+17:34:36.738 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=95, goal=Goal-93
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=96, goal=Goal-94
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=97, goal=Goal-95
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=98, goal=Goal-96
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=99, goal=Goal-97
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=100, goal=Goal-98
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=101, goal=Goal-99
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Saving account created: id=102, goal=Goal-100
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=3
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=4
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=5
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=6
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=7
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=8
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=9
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=10
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=11
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=12
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=13
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=14
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=15
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=16
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=17
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=18
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=19
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=20
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=21
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=22
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=23
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=24
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=25
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=26
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=27
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=28
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=29
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=30
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=31
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=32
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=33
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=34
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=35
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=36
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=37
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=38
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=39
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=40
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=41
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=42
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=43
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=44
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=45
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=46
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=47
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=48
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=49
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=50
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=51
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=52
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=53
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=54
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=55
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=56
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=57
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=58
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=59
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=60
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=61
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=62
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=63
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=64
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=65
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=66
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=67
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=68
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=69
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=70
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=71
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=72
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=73
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=74
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=75
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=76
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=77
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=78
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=79
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=80
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=81
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=82
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=83
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=84
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=85
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=86
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=87
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=88
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=89
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=90
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=91
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=92
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=93
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=94
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=95
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=96
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=97
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=98
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=99
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=100
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=101
+17:34:36.739 [main] INFO sk.sporixx.service.AccountServiceImpl -- Loading saving goal for accountId=102
+[PERF] getSavingGoal x100: 0 ms
+]]></system-out>
+  </testcase>
+</testsuite>

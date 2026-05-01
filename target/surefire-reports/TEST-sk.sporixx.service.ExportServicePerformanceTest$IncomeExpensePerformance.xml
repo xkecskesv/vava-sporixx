@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="sk.sporixx.service.ExportServicePerformanceTest$IncomeExpensePerformance" time="0.081" tests="2" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Bratislava"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="SK"/>
+    <property name="sun.boot.library.path" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501190722476_3.jar /Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire 2026-05-01T19-07-22_433-jvmRun1 surefire-20260501190722476_1tmp surefire_0-20260501190722476_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="ExportServicePerformanceTest"/>
+    <property name="surefire.test.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/test-classes:/Users/davidbabis/IdeaProjects/vava-sporixx/target/classes:/Users/davidbabis/.m2/repository/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar:/Users/davidbabis/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/Users/davidbabis/.m2/repository/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar:/Users/davidbabis/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-classic/1.5.21/logback-classic-1.5.21.jar:/Users/davidbabis/.m2/repository/ch/qos/logback/logback-core/1.5.21/logback-core-1.5.21.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.3/junit-jupiter-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/davidbabis/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/davidbabis/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.3/junit-jupiter-params-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.3/junit-jupiter-engine-5.11.3.jar:/Users/davidbabis/.m2/repository/org/junit/platform/junit-platform-engine/1.11.3/junit-platform-engine-1.11.3.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar:/Users/davidbabis/.m2/repository/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/davidbabis"/>
+    <property name="user.language" value="sk"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-09-16"/>
+    <property name="java.home" value="/Users/davidbabis/Library/Java/JavaVirtualMachines/loom-ea-25-loom+1-11/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/davidbabis/IdeaProjects/vava-sporixx/target/surefire/surefirebooter-20260501190722476_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="25-loom+1-11"/>
+    <property name="user.name" value="davidbabis"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="26.3.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/Users/davidbabis/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/"/>
+    <property name="java.version" value="25-loom"/>
+    <property name="user.dir" value="/Users/davidbabis/IdeaProjects/vava-sporixx"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/davidbabis/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25-loom+1-11"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="export100Times_withinTimeLimit" classname="sk.sporixx.service.ExportServicePerformanceTest$IncomeExpensePerformance" time="0.077">
+    <system-out><![CDATA[19:07:22.884 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2688516053322288604.xml
+19:07:22.885 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2688516053322288604.xml
+19:07:22.885 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5875949480393256408.xml
+19:07:22.886 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5875949480393256408.xml
+19:07:22.887 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14828740373085917218.xml
+19:07:22.887 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14828740373085917218.xml
+19:07:22.888 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15884160602483928137.xml
+19:07:22.888 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15884160602483928137.xml
+19:07:22.889 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9987700754249615345.xml
+19:07:22.889 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9987700754249615345.xml
+19:07:22.890 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16057881444064687508.xml
+19:07:22.890 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16057881444064687508.xml
+19:07:22.890 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8167855648471004465.xml
+19:07:22.891 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8167855648471004465.xml
+19:07:22.892 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-1121915961027536280.xml
+19:07:22.893 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-1121915961027536280.xml
+19:07:22.893 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14079957574568583105.xml
+19:07:22.893 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14079957574568583105.xml
+19:07:22.894 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4475665319326001281.xml
+19:07:22.894 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4475665319326001281.xml
+19:07:22.894 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15584892533033434404.xml
+19:07:22.895 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15584892533033434404.xml
+19:07:22.895 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2334845483414181717.xml
+19:07:22.896 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2334845483414181717.xml
+19:07:22.896 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4207412224155386382.xml
+19:07:22.897 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4207412224155386382.xml
+19:07:22.897 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13549624838603438212.xml
+19:07:22.898 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13549624838603438212.xml
+19:07:22.898 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14764360943559170434.xml
+19:07:22.898 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14764360943559170434.xml
+19:07:22.899 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7861323599841133545.xml
+19:07:22.899 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7861323599841133545.xml
+19:07:22.900 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12109305025829269177.xml
+19:07:22.900 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12109305025829269177.xml
+19:07:22.901 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8918449351472951563.xml
+19:07:22.901 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8918449351472951563.xml
+19:07:22.901 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16352166580691465966.xml
+19:07:22.902 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16352166580691465966.xml
+19:07:22.902 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2209223290593908348.xml
+19:07:22.903 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2209223290593908348.xml
+19:07:22.903 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13526915406620976598.xml
+19:07:22.903 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13526915406620976598.xml
+19:07:22.904 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8960037762987712327.xml
+19:07:22.904 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8960037762987712327.xml
+19:07:22.904 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6442527172590841091.xml
+19:07:22.905 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6442527172590841091.xml
+19:07:22.905 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9345661205887719586.xml
+19:07:22.906 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9345661205887719586.xml
+19:07:22.906 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8083511327689972107.xml
+19:07:22.908 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8083511327689972107.xml
+19:07:22.909 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-18318789384800929117.xml
+19:07:22.909 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-18318789384800929117.xml
+19:07:22.910 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16611726761858486678.xml
+19:07:22.910 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16611726761858486678.xml
+19:07:22.910 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6219812304934933097.xml
+19:07:22.911 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6219812304934933097.xml
+19:07:22.911 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13067387601381218373.xml
+19:07:22.912 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13067387601381218373.xml
+19:07:22.912 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5041858466047463084.xml
+19:07:22.913 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5041858466047463084.xml
+19:07:22.913 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4385273842320398951.xml
+19:07:22.913 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4385273842320398951.xml
+19:07:22.913 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4388854029773046258.xml
+19:07:22.914 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4388854029773046258.xml
+19:07:22.914 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9413435201329176085.xml
+19:07:22.915 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9413435201329176085.xml
+19:07:22.915 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12717450292593152496.xml
+19:07:22.916 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12717450292593152496.xml
+19:07:22.916 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7090530419059764008.xml
+19:07:22.916 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7090530419059764008.xml
+19:07:22.917 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3942103883632744111.xml
+19:07:22.917 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3942103883632744111.xml
+19:07:22.917 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13964000698654894443.xml
+19:07:22.918 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13964000698654894443.xml
+19:07:22.918 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3482660797785236939.xml
+19:07:22.919 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3482660797785236939.xml
+19:07:22.919 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2652452283398072503.xml
+19:07:22.919 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2652452283398072503.xml
+19:07:22.919 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9549250604287488714.xml
+19:07:22.920 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9549250604287488714.xml
+19:07:22.920 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5041668392357415069.xml
+19:07:22.921 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5041668392357415069.xml
+19:07:22.921 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4887274808250294606.xml
+19:07:22.921 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4887274808250294606.xml
+19:07:22.922 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3877465810376103027.xml
+19:07:22.922 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3877465810376103027.xml
+19:07:22.922 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2942794034626295671.xml
+19:07:22.923 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2942794034626295671.xml
+19:07:22.923 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12413454022246052547.xml
+19:07:22.923 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12413454022246052547.xml
+19:07:22.924 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5804472113344342386.xml
+19:07:22.924 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5804472113344342386.xml
+19:07:22.924 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11878760242388083951.xml
+19:07:22.925 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11878760242388083951.xml
+19:07:22.925 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3581510880490243970.xml
+19:07:22.925 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3581510880490243970.xml
+19:07:22.925 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11103199687976850065.xml
+19:07:22.926 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11103199687976850065.xml
+19:07:22.926 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12943804919157271602.xml
+19:07:22.927 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12943804919157271602.xml
+19:07:22.927 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12171266329121548088.xml
+19:07:22.927 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12171266329121548088.xml
+19:07:22.927 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16282455726292771750.xml
+19:07:22.928 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16282455726292771750.xml
+19:07:22.928 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14317712198086772956.xml
+19:07:22.929 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14317712198086772956.xml
+19:07:22.929 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8490186981994571393.xml
+19:07:22.929 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8490186981994571393.xml
+19:07:22.929 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3230498747655812067.xml
+19:07:22.930 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3230498747655812067.xml
+19:07:22.930 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7646031555453943424.xml
+19:07:22.930 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7646031555453943424.xml
+19:07:22.931 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6583372519199598495.xml
+19:07:22.931 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6583372519199598495.xml
+19:07:22.931 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2718858007836333504.xml
+19:07:22.932 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2718858007836333504.xml
+19:07:22.932 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6847716932168314437.xml
+19:07:22.932 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6847716932168314437.xml
+19:07:22.932 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13714357086028650254.xml
+19:07:22.933 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13714357086028650254.xml
+19:07:22.933 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15668783354474306275.xml
+19:07:22.934 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15668783354474306275.xml
+19:07:22.934 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-17068470754530451846.xml
+19:07:22.934 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-17068470754530451846.xml
+19:07:22.934 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6916896895233584338.xml
+19:07:22.935 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6916896895233584338.xml
+19:07:22.935 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10815611482293878685.xml
+19:07:22.936 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10815611482293878685.xml
+19:07:22.936 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-845800858506260138.xml
+19:07:22.936 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-845800858506260138.xml
+19:07:22.936 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9633435480914026217.xml
+19:07:22.937 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9633435480914026217.xml
+19:07:22.937 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8976753861768574481.xml
+19:07:22.937 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-8976753861768574481.xml
+19:07:22.937 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12376540441423931257.xml
+19:07:22.938 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-12376540441423931257.xml
+19:07:22.938 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-18097203800581989316.xml
+19:07:22.938 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-18097203800581989316.xml
+19:07:22.939 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7113561624927585816.xml
+19:07:22.939 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7113561624927585816.xml
+19:07:22.939 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9586903494673110616.xml
+19:07:22.940 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9586903494673110616.xml
+19:07:22.940 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16491503616372129178.xml
+19:07:22.940 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-16491503616372129178.xml
+19:07:22.940 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7705626818976047162.xml
+19:07:22.941 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7705626818976047162.xml
+19:07:22.941 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2404043770272332083.xml
+19:07:22.941 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2404043770272332083.xml
+19:07:22.942 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7221784977508111455.xml
+19:07:22.942 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7221784977508111455.xml
+19:07:22.942 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9290698825330634829.xml
+19:07:22.943 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9290698825330634829.xml
+19:07:22.943 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-17745473848121108697.xml
+19:07:22.944 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-17745473848121108697.xml
+19:07:22.944 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5678684435881970343.xml
+19:07:22.944 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5678684435881970343.xml
+19:07:22.945 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5867619164715385529.xml
+19:07:22.945 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5867619164715385529.xml
+19:07:22.945 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13324655414227885558.xml
+19:07:22.946 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-13324655414227885558.xml
+19:07:22.946 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5010966090752977958.xml
+19:07:22.946 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-5010966090752977958.xml
+19:07:22.946 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11353489124017831770.xml
+19:07:22.947 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11353489124017831770.xml
+19:07:22.947 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10939504771731245251.xml
+19:07:22.947 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10939504771731245251.xml
+19:07:22.948 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15328474643532547572.xml
+19:07:22.948 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15328474643532547572.xml
+19:07:22.948 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2610035295765850543.xml
+19:07:22.949 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-2610035295765850543.xml
+19:07:22.949 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10209214243086003067.xml
+19:07:22.949 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10209214243086003067.xml
+19:07:22.949 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3359482786160172726.xml
+19:07:22.950 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3359482786160172726.xml
+19:07:22.950 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15389952968383409022.xml
+19:07:22.950 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-15389952968383409022.xml
+19:07:22.951 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-338222294731498874.xml
+19:07:22.951 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-338222294731498874.xml
+19:07:22.951 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6358991497783149748.xml
+19:07:22.952 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6358991497783149748.xml
+19:07:22.952 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9849892900017336176.xml
+19:07:22.952 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-9849892900017336176.xml
+19:07:22.952 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3249920693801901418.xml
+19:07:22.953 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-3249920693801901418.xml
+19:07:22.953 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4239940854940035355.xml
+19:07:22.953 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4239940854940035355.xml
+19:07:22.953 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4167061066933200504.xml
+19:07:22.954 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-4167061066933200504.xml
+19:07:22.954 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6578689960657566366.xml
+19:07:22.954 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6578689960657566366.xml
+19:07:22.954 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10624226105621076809.xml
+19:07:22.955 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-10624226105621076809.xml
+19:07:22.955 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6126847750949131471.xml
+19:07:22.955 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-6126847750949131471.xml
+19:07:22.956 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14594022065913776167.xml
+19:07:22.956 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-14594022065913776167.xml
+19:07:22.956 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11563220881886508185.xml
+19:07:22.957 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-11563220881886508185.xml
+19:07:22.957 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7345619500846083823.xml
+19:07:22.957 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-100-7345619500846083823.xml
+[PERF] exportIncomeExpense x100: 74 ms
+]]></system-out>
+  </testcase>
+  <testcase name="export500Periods_withinTimeLimit" classname="sk.sporixx.service.ExportServicePerformanceTest$IncomeExpensePerformance" time="0.004">
+    <system-out><![CDATA[19:07:22.959 [main] INFO sk.sporixx.service.ExportServiceImpl -- Exporting income/expense report for period: TWELVE_MONTHS to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-test-5726656138156940025.xml
+19:07:22.961 [main] INFO sk.sporixx.service.ExportServiceImpl -- Income/expense report exported successfully to /var/folders/9k/w4j9tsy17mv65xsssnrn5_jw0000gn/T/export-perf-test-5726656138156940025.xml
+[PERF] exportIncomeExpense (500 periód): 2 ms
+]]></system-out>
+  </testcase>
+</testsuite>

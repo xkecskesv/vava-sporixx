@@ -1,5 +1,7 @@
 # Unit testy – Service vrstva (`sk.sporixx.service`)
 
+Overview, management, milestone, export
+
 Všetky testy sú **unit testy** – bežia bez databázy, bez JavaFX a bez siete.
 Používajú **InMemory** implementácie repozitárov (z balíka `sk.sporixx.service.testovanie`)
 a izolovaný `SessionManager` s testovacím používateľom.

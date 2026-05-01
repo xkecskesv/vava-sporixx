@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: sk.sporixx.service.AdminServiceGetAllUsersTest
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.35 s -- in sk.sporixx.service.AdminServiceGetAllUsersTest
