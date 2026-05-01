@@ -51,4 +51,6 @@ public interface AccountService {
      * UI použije pre predvyplnenie formulára pri editácii.
      */
     Optional<SavingGoal> getSavingGoal(int accountId);
+
+    String getLocalizedDescription(Account account);
 }

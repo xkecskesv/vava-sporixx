@@ -122,6 +122,15 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     @Override
+    public void saveTransfer(Transaction expense, Transaction income,
+                             int fromAccountId, double fromNewBalance,
+                             int toAccountId, double toNewBalance) {
+        save(expense);
+        save(income);
+        // balance updates sú in-memory riešené priamo cez account.setCurrentBalance() v service vrstve
+    }
+
+    @Override
     public void update(Transaction transaction) {
         transactions.removeIf(t -> t.getId() == transaction.getId());
         transactions.add(transaction);

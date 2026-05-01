@@ -34,6 +34,8 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 .savingGoalsUpdatesEnabled(true)
                 .achievementsEnabled(true);
 
+        String userSql = "SELECT language_code, currency_code FROM users WHERE id = ?";
+
         String accountSql = """
                 SELECT u.language_code, u.currency_code,
                        r.decimal_separator, r.thousands_separator,
@@ -53,6 +55,15 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 """;
 
         try (Connection conn = getConnection()) {
+
+            try (PreparedStatement ps = conn.prepareStatement(userSql)) {
+                ps.setInt(1, userId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    builder.languageCode(rs.getString("language_code"))
+                            .currencyCode(rs.getString("currency_code"));
+                }
+            }
 
             try (PreparedStatement ps = conn.prepareStatement(accountSql)) {
                 ps.setInt(1, userId);
@@ -92,7 +103,9 @@ public class SettingsRepositoryImpl implements SettingsRepository {
     public void save(UserSettings settings) {
         int userId = SessionManager.getInstance().getCurrentUserId();
 
-        String sql = """
+        String userSql = "UPDATE users SET language_code = ?, currency_code = ? WHERE id = ?";
+
+        String notifSql = """
                 INSERT INTO user_notification_settings
                 (user_id, notif_upcoming, notif_budget, notif_reminders, notif_goals, notif_achievements)
                 VALUES (?, ?, ?, ?, ?, ?)

@@ -49,6 +49,18 @@ public class UserRepositoryImpl implements UserRepository {
         if (createdAtStr != null) {
             user.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
         }
+
+        user.setSavingXp(result.getDouble("saving_xp"));
+        user.setBudgetXp(result.getDouble("budget_xp"));
+        user.setInvestorXp(result.getDouble("investor_xp"));
+        user.setSpenderXp(result.getDouble("spender_xp"));
+        user.setSavingLevel(result.getInt("saving_level"));
+        user.setBudgetLevel(result.getInt("budget_level"));
+        user.setInvestorLevel(result.getInt("investor_level"));
+        user.setSpenderLevel(result.getInt("spender_level"));
+        user.setLanguageCode(result.getString("language_code"));
+        user.setCurrencyCode(result.getString("currency_code"));
+
         return user;
     }
 
@@ -283,6 +295,46 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (SQLException e) {
             logger.error("Database error while updating family manager status for user {}", userId, e);
             throw new RuntimeException("Error updating family manager status", e);
+        }
+    }
+
+    @Override
+    public void updateXpAndLevel(int userId, String category, double xp, int level) {
+        String xpColumn = switch (category) {
+            case "saving" -> "saving_xp";
+            case "budget" -> "budget_xp";
+            case "investor" -> "investor_xp";
+            case "spender" -> "spender_xp";
+            default -> throw new IllegalArgumentException("Unknown category: " + category);
+        };
+
+        String levelColumn = switch (category) {
+            case "saving" -> "saving_level";
+            case "budget" -> "budget_level";
+            case "investor" -> "investor_level";
+            case "spender" -> "spender_level";
+            default -> throw new IllegalArgumentException("Unknown category: " + category);
+        };
+
+        String sql = "UPDATE users SET " + xpColumn + " = ?, " + levelColumn + " = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setDouble(1, xp);
+            pstmt.setInt(2, level);
+            pstmt.setInt(3, userId);
+
+            int affected = pstmt.executeUpdate();
+            if (affected == 0) {
+                throw new RuntimeException("No user found with ID: " + userId);
+            }
+
+            logger.info("Updated {} xp={} level={} for userId={}", category, xp, level, userId);
+
+        } catch (SQLException e) {
+            logger.error("Error updating xp/level for userId={}", userId, e);
+            throw new RuntimeException("Error updating user xp/level", e);
         }
     }
 }

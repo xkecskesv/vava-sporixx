@@ -312,7 +312,7 @@ public class TransactionController {
         // From Account combo
         fromAccountCombo.getItems().setAll(
                 userAccounts.stream()
-                        .map(Account::getDescription)
+                        .map(this::accountDisplayName)
                         .collect(Collectors.toList()));
         if (!fromAccountCombo.getItems().isEmpty())
             fromAccountCombo.setValue(fromAccountCombo.getItems().get(0));
@@ -324,7 +324,7 @@ public class TransactionController {
         toAccountCombo.getItems().setAll(
                 userAccounts.stream()
                         .filter(a -> !a.isMainAccount())
-                        .map(Account::getDescription)
+                        .map(this::accountDisplayName)
                         .collect(Collectors.toList()));
         if (!toAccountCombo.getItems().isEmpty())
             toAccountCombo.setValue(toAccountCombo.getItems().get(0));
@@ -466,7 +466,7 @@ public class TransactionController {
         if (fromVal == null) return;
 
         Account fromAccount = userAccounts.stream()
-                .filter(a -> a.getDescription().equals(fromVal))
+                .filter(a -> accountDisplayName(a).equals(fromVal))
                 .findFirst().orElse(null);
 
         if (fromAccount == null) return;
@@ -475,13 +475,13 @@ public class TransactionController {
             toAccountCombo.getItems().setAll(
                     userAccounts.stream()
                             .filter(a -> !a.isMainAccount())
-                            .map(Account::getDescription)
+                            .map(this::accountDisplayName)
                             .collect(Collectors.toList()));
         } else {
             toAccountCombo.getItems().setAll(
                     userAccounts.stream()
                             .filter(Account::isMainAccount)
-                            .map(Account::getDescription)
+                            .map(this::accountDisplayName)
                             .collect(Collectors.toList()));
         }
 
@@ -558,7 +558,7 @@ public class TransactionController {
         Account fromAccount;
         if (betweenAccountsCheck.isSelected()) {
             fromAccount = userAccounts.stream()
-                    .filter(a -> a.getDescription().equals(fromAccountCombo.getValue()))
+                    .filter(a -> accountDisplayName(a).equals(fromAccountCombo.getValue()))
                     .findFirst().orElse(null);
         } else {
             fromAccount = userAccounts.stream()
@@ -591,12 +591,13 @@ public class TransactionController {
         Integer targetAccountId = null;
         if (betweenAccountsCheck.isSelected()) {
             Account toAccount = userAccounts.stream()
-                    .filter(a -> a.getDescription().equals(toAccountCombo.getValue()))
+                    .filter(a -> accountDisplayName(a).equals(toAccountCombo.getValue()))
                     .findFirst().orElse(null);
             if (toAccount != null) targetAccountId = toAccount.getId();
         }
 
         try {
+            String currencyCode = ServiceLocator.getSettingsService().getCurrencyCode();
             if (selectedTransaction != null) {
                 Transaction updated = Transaction.builder()
                         .id(selectedTransaction.getId())
@@ -605,9 +606,9 @@ public class TransactionController {
                         .transactionTypeId(typeId)
                         .transactionStatusId(Transaction.STATUS_COMPLETED)
                         .spendingClassificationId(classificationId)
-                        .categoryId(selectedTransaction.getCategoryId())
+                        .categoryId(categoryId != null ? categoryId : selectedTransaction.getCategoryId())
                         .amount(amount)
-                        .currencyCode(fromAccount.getDefaultCurrencyCode())
+                        .currencyCode(currencyCode)
                         .description(name)
                         .completeDate(datePicker.getValue().atStartOfDay())
                         .createdAt(selectedTransaction.getCreatedAt())
@@ -622,7 +623,7 @@ public class TransactionController {
                         classificationId,
                         name,
                         amount,
-                        fromAccount.getDefaultCurrencyCode(),
+                        currencyCode,
                         datePicker.getValue()
                 );
             }
@@ -677,5 +678,15 @@ public class TransactionController {
 
     private String formatCurrency(double value) {
         return CurrencyFormatUtil.format(value);
+    }
+
+    private String accountDisplayName(Account account) {
+        return switch (account.getAccountTypeId()) {
+            case Account.MAIN_ACCOUNT   -> Localization.get("dashboard.account.main");
+            case Account.EMERGENCY_FUND -> Localization.get("dashboard.account.emergency");
+            default -> account.getDescription() != null && !account.getDescription().isBlank()
+                    ? account.getDescription()
+                    : Localization.get("dashboard.account.default");
+        };
     }
 }

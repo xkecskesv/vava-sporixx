@@ -3,7 +3,6 @@ package sk.sporixx.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.repository.*;
-import sk.sporixx.service.testovanie.TestDataInitializer;
 
 /**
  * Centrálny prístupový bod pre service vrstvu.
@@ -13,14 +12,6 @@ import sk.sporixx.service.testovanie.TestDataInitializer;
 public final class ServiceLocator {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceLocator.class);
-
-    /**
-     * Prepínač medzi testovacím a produkčným režimom.
-     * TRUE  — in-memory repozitáre (TestDataInitializer), bez DB
-     * FALSE — reálne JDBC repozitáre, vyžaduje hotovú DB vrstvu
-     * Po dokončení všetkých JDBC implementácií zmeniť.
-     */
-    private static final boolean USE_TEST_DATA = false;
 
     // Service inštancie
     private static AuthService authService;
@@ -39,6 +30,7 @@ public final class ServiceLocator {
     private static CurrencyService currencyService;
     private static RecurringRuleService recurringRuleService;
     private static FamilyService familyService;
+    private static MilestoneService milestoneService;
 
     private static boolean initialized = false;
 
@@ -56,16 +48,49 @@ public final class ServiceLocator {
             return;
         }
 
-        logger.info("Initializing ServiceLocator (testMode={})...", USE_TEST_DATA);
+        logger.info("Initializing ServiceLocator...");
 
         try {
             settingsService = new SettingsServiceImpl();
             currencyService = new CurrencyServiceImpl(settingsService);
-            if (USE_TEST_DATA) {
-                initTestMode();
-            } else {
-                initProductionMode();
-            }
+
+            UserRepository userRepo = new UserRepositoryImpl();
+            AccountRepository accountRepo = new AccountRepositoryImpl();
+            TransactionRepository transactionRepo = new TransactionRepositoryImpl();
+            RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
+            SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
+            CategoryRepository categoryRepo = new CategoryRepositoryImpl();
+            BudgetRepository budgetRepo = new BudgetRepositoryImpl();
+            AccountAccessRepository accountAccessRepo = new AccountAccessRepositoryImpl();
+            FamilyRequestRepository familyRequestRepo = new FamilyRequestRepositoryImpl();
+
+            authService = new AuthServiceImpl(userRepo, accountRepo);
+            userService = new UserServiceImpl();
+            profileService = new ProfileServiceImpl(userRepo, userService, accountRepo, accountAccessRepo, familyRequestRepo);
+            adminService = new AdminServiceImpl(userRepo, accountRepo, accountAccessRepo, userService);
+
+            overviewService = new OverviewServiceImpl(transactionRepo, recurringRuleRepo, savingGoalRepo);
+
+            accountService = new AccountServiceImpl(accountRepo, savingGoalRepo, accountAccessRepo);
+
+            reportsService = new ReportsServiceImpl(transactionRepo, recurringRuleRepo, savingGoalRepo);
+
+            exportService = new ExportServiceImpl(reportsService);
+
+            importService = new ImportServiceImpl(savingGoalRepo, accountService, transactionRepo, accountRepo);
+
+            transactionService = new TransactionServiceImpl(transactionRepo, accountRepo, categoryRepo, savingGoalRepo);
+
+            categoryService = new CategoryServiceImpl(categoryRepo, transactionRepo);
+
+            budgetService = new BudgetServiceImpl(budgetRepo, transactionRepo);
+
+            recurringRuleService = new RecurringRuleServiceImpl(recurringRuleRepo, transactionService);
+
+            familyService = new FamilyServiceImpl(accountAccessRepo, accountRepo, userRepo, familyRequestRepo, savingGoalRepo);
+
+            milestoneService = new MilestoneServiceImpl(reportsService, accountRepo, userRepo, transactionRepo, budgetService);
+
         } catch (Exception e) {
             logger.error("FAILED to initialize ServiceLocator!", e);
             throw new RuntimeException("Critical failure in ServiceLocator", e);
@@ -75,127 +100,7 @@ public final class ServiceLocator {
         logger.info("ServiceLocator initialized successfully.");
     }
 
-
-    //  TESTOVACI REZIM — in-memory repozitáre, bez DB
-    private static void initTestMode() {
-        logger.info("Using TEST DATA (in-memory repositories)");
-        logger.info("Login: marek.mosko@stuba.sk / Heslo123!");
-        logger.info("Login: admin@sporixx.sk / Admin123!");
-        logger.info("Login: jana.mrkvickova@stuba.sk / Rodic123!");
-
-        TestDataInitializer testData = new TestDataInitializer();
-
-        authService    = testData.getAuthService();
-        userService = new UserServiceImpl();
-        profileService = new ProfileServiceImpl(testData.getUserRepository(), userService);
-        adminService = new AdminServiceImpl(testData.getUserRepository(), testData.getAccountRepository(), userService);
-        overviewService = testData.getOverviewService();
-        accountService = new AccountServiceImpl(
-                testData.getAccountRepository(),
-                testData.getSavingGoalRepository(),
-                testData.getAccountAccessRepository());
-        reportsService = new ReportsServiceImpl(
-                testData.getTransactionRepository(),
-                testData.getRecurringRuleRepository(),
-                testData.getSavingGoalRepository());
-        exportService  = new ExportServiceImpl(reportsService);
-        importService  = new ImportServiceImpl(testData.getSavingGoalRepository(), accountService,
-                testData.getTransactionRepository(),
-                testData.getAccountRepository());
-        transactionService = new TransactionServiceImpl(
-                testData.getTransactionRepository(),
-                testData.getAccountRepository(),
-                testData.getCategoryRepository(),
-                testData.getSavingGoalRepository());
-        categoryService = new CategoryServiceImpl(testData.getCategoryRepository(),
-                testData.getTransactionRepository());
-        budgetService = new BudgetServiceImpl(
-                testData.getBudgetRepository(),
-                testData.getTransactionRepository());
-        recurringRuleService = new RecurringRuleServiceImpl(
-                testData.getRecurringRuleRepository(),
-                transactionService);
-        familyService = new FamilyServiceImpl(
-                testData.getAccountAccessRepository(),
-                testData.getAccountRepository(),
-                testData.getUserRepository(),
-                testData.getFamilyRequestRepository(),
-                testData.getSavingGoalRepository());
-    }
-
-    //  PRODUKCNY REZIM — reálne JDBC repozitáre
-    //  TODO: doplniť po dokončení DB vrstvy
-    private static void initProductionMode() {
-        logger.info("Using PRODUCTION repositories (JDBC + SQLite)");
-
-        // In-memory pre časti ktoré ešte nemajú JDBC implementáciu
-        TestDataInitializer testData = new TestDataInitializer();
-
-        // ── Hotové JDBC repozitáre ──
-        UserRepository userRepo = new UserRepositoryImpl();
-        AccountRepository accountRepo = new AccountRepositoryImpl();
-        TransactionRepository transactionRepo = new TransactionRepositoryImpl();
-        RecurringRuleRepository recurringRuleRepo = new RecurringRuleRepositoryImpl();
-        SavingGoalRepository savingGoalRepo = new SavingGoalRepositoryImpl();
-        CategoryRepository categoryRepo = new CategoryRepositoryImpl();
-        BudgetRepository budgetRepo = new BudgetRepositoryImpl();
-        AccountAccessRepository accountAccessRepo = new AccountAccessRepositoryImpl();
-        FamilyRequestRepository familyRequestRepo = new FamilyRequestRepositoryImpl();
-
-        authService = new AuthServiceImpl(userRepo, accountRepo);
-        userService = new UserServiceImpl();
-        profileService = new ProfileServiceImpl(userRepo, userService);
-        adminService = new AdminServiceImpl(userRepo, accountRepo, userService);
-
-        overviewService = new OverviewServiceImpl(
-                transactionRepo,
-                recurringRuleRepo,
-                savingGoalRepo);
-
-        accountService = new AccountServiceImpl(
-                accountRepo,
-                savingGoalRepo,
-                accountAccessRepo);
-
-        reportsService = new ReportsServiceImpl(
-                transactionRepo,
-                recurringRuleRepo,
-                savingGoalRepo);
-
-        exportService = new ExportServiceImpl(reportsService);
-
-        importService = new ImportServiceImpl(
-                savingGoalRepo,
-                accountService,
-                transactionRepo,
-                accountRepo);
-
-        transactionService = new TransactionServiceImpl(
-                transactionRepo,
-                accountRepo,
-                categoryRepo,
-                savingGoalRepo);
-
-        categoryService = new CategoryServiceImpl(categoryRepo, transactionRepo);
-
-        budgetService = new BudgetServiceImpl(
-                budgetRepo,
-                transactionRepo);
-
-        recurringRuleService = new RecurringRuleServiceImpl(
-                recurringRuleRepo,
-                transactionService);
-
-        familyService = new FamilyServiceImpl(
-                accountAccessRepo,
-                accountRepo,
-                userRepo,
-                familyRequestRepo,
-                savingGoalRepo);
-
-    }
-
-    //  GETTERY — UI vrstva volá tieto metódy
+    //  GETTERY - UI vrstva volá tieto metódy
     /** Autentifikácia: login, register, logout */
     public static AuthService getAuthService() {
         checkInitialized();
@@ -275,7 +180,6 @@ public final class ServiceLocator {
         return currencyService;
     }
 
-    //  HELPER
     public static RecurringRuleService getRecurringRuleService() {
         checkInitialized();
         return recurringRuleService;
@@ -286,7 +190,11 @@ public final class ServiceLocator {
         return familyService;
     }
 
-    // HELPER
+    public static MilestoneService getMilestoneService() {
+        checkInitialized();
+        return milestoneService;
+    }
+
     private static void checkInitialized() {
         if (!initialized) {
             throw new IllegalStateException(

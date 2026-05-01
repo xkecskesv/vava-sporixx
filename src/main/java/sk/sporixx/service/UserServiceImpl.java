@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         if (normalized.startsWith("m")) {
             return GenderCode.MALE;
         }
-        if (normalized.startsWith("f") || normalized.startsWith("z")) {
+        if (normalized.startsWith("f") || normalized.startsWith("z") || normalized.startsWith("ž")) {
             return GenderCode.FEMALE;
         }
         return GenderCode.UNKNOWN;
