@@ -125,7 +125,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
         failing.save(admin);
         // Reset session: session sa odkazuje na 'admin' objekt, ktorý bol uložený aj sem
 
-        AdminService svc = new AdminServiceImpl(failing, accountRepo, accountAccessRepo, userService);
+        AdminService svc = new AdminServiceImpl(failing, accountRepo, userService);
 
         // Pokus o zmenu hesla – update zlyhá
         RuntimeException ex = assertThrows(RuntimeException.class,
@@ -149,7 +149,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
                 throw new RuntimeException("Simulated DB failure on findAllByOwnerUserId");
             }
         };
-        AdminService svc = new AdminServiceImpl(userRepo, failingAccounts, accountAccessRepo, userService);
+        AdminService svc = new AdminServiceImpl(userRepo, failingAccounts, userService);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> svc.deactivateUser(User.builder().id(regularUser.getId()).build()));
@@ -181,7 +181,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
                 super.deactivateById(accountId);
             }
         };
-        AdminService svc = new AdminServiceImpl(userRepo, mixedFail, accountAccessRepo, userService);
+        AdminService svc = new AdminServiceImpl(userRepo, mixedFail, userService);
 
         // BUG nález: deactivate nie je transactional
         // Ak prvý účet zlyhá, pre druhý sa nikdy neprejde - throw je fail-fast
