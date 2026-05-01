@@ -35,11 +35,12 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 .achievementsEnabled(true);
 
         String accountSql = """
-                SELECT r.locale_code, a.default_currency_code,
+                SELECT u.language_code, u.currency_code,
                        r.decimal_separator, r.thousands_separator,
                        r.date_format, r.time_format
                 FROM accounts a
                 JOIN regions r ON a.region_id = r.id
+                JOIN users u ON u.id = a.owner_user_id
                 WHERE a.owner_user_id = ?
                 LIMIT 1
                 """;
@@ -57,8 +58,8 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 ps.setInt(1, userId);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    builder.languageCode(rs.getString("locale_code"))
-                            .currencyCode(rs.getString("default_currency_code"))
+                    builder.languageCode(rs.getString("language_code"))
+                            .currencyCode(rs.getString("currency_code"))
                             .decimalSeparator(rs.getString("decimal_separator"))
                             .thousandsSeparator(rs.getString("thousands_separator"))
                             .dateFormat(rs.getString("date_format"))
@@ -103,18 +104,29 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                     notif_achievements = excluded.notif_achievements
                 """;
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String userSql = "UPDATE users SET language_code = ?, currency_code = ? WHERE id = ?";
 
-            ps.setInt(1, userId);
-            ps.setInt(2, settings.isUpcomingPaymentsEnabled() ? 1 : 0);
-            ps.setInt(3, settings.isBudgetLimitAlertsEnabled() ? 1 : 0);
-            ps.setInt(4, settings.isSavingRemindersEnabled() ? 1 : 0);
-            ps.setInt(5, settings.isSavingGoalsUpdatesEnabled() ? 1 : 0);
-            ps.setInt(6, settings.isAchievementsEnabled() ? 1 : 0);
-            ps.executeUpdate();
 
-            logger.info("Notification settings saved for userId={}", userId);
+        try (Connection conn = getConnection()) {
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, settings.isUpcomingPaymentsEnabled() ? 1 : 0);
+                ps.setInt(3, settings.isBudgetLimitAlertsEnabled() ? 1 : 0);
+                ps.setInt(4, settings.isSavingRemindersEnabled() ? 1 : 0);
+                ps.setInt(5, settings.isSavingGoalsUpdatesEnabled() ? 1 : 0);
+                ps.setInt(6, settings.isAchievementsEnabled() ? 1 : 0);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement psUser = conn.prepareStatement(userSql)) {
+                psUser.setString(1, settings.getLanguageCode());
+                psUser.setString(2, settings.getCurrencyCode());
+                psUser.setInt(3, userId);
+                psUser.executeUpdate();
+            }
+
+            logger.info("Notification and user settings saved for userId={}", userId);
 
         } catch (SQLException e) {
             logger.error("Failed to save settings for userId={}", userId, e);

@@ -30,11 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     /**
-     * Namapuje riadok databázy na doménový objekt {@link User}.
-     *
-     * @param result výsledok SQL dotazu
-     * @return namapovaný používateľ bez odvodených príznakov
-     * @throws SQLException keď nastane chyba pri čítaní stĺpcov
+     * Namapuje riadok databázy na user objekt.
      */
     private User mapResult(ResultSet result) throws SQLException {
         User user = new User();
@@ -46,6 +42,9 @@ public class UserRepositoryImpl implements UserRepository {
         user.setPhotoPath(result.getString("photo_path"));
         user.setGender(result.getString("gender"));
 
+        user.setLanguageCode(result.getString("language_code"));
+        user.setCurrencyCode(result.getString("currency_code"));
+
         String createdAtStr = result.getString("created_at");
         if (createdAtStr != null) {
             user.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
@@ -53,13 +52,6 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    /**
-     * Aplikuje odvodené príznaky používateľa (rola a aktívny stav).
-     *
-     * @param result výsledok SQL dotazu s vypočítanými stĺpcami
-     * @param user používateľ, do ktorého sa príznaky zapisujú
-     * @throws SQLException keď nastane chyba pri čítaní výsledku
-     */
     private void applyDerivedFlags(ResultSet result, User user) throws SQLException {
         if (result.getInt("admin_access") == 1) {
             user.setRole(Role.ADMIN);
@@ -71,21 +63,11 @@ public class UserRepositoryImpl implements UserRepository {
         user.setActive(result.getInt("user_active") == 1);
     }
 
-    /**
-     * Namapuje používateľa vrátane odvodených príznakov z adminového SELECT-u.
-     *
-     * @param result výsledok SQL dotazu
-     * @return používateľ s nastavenou rolou a aktívnym stavom
-     * @throws SQLException keď nastane chyba pri mapovaní
-     */
     private User mapUserWithFlags(ResultSet result) throws SQLException {
         User user = mapResult(result);
         applyDerivedFlags(result, user);
         return user;
     }
-
-    //TODO: vo find nastaviť role usera
-
 
     @Override
     public Optional<User> findByEmail(String email) {
@@ -127,7 +109,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, first_name, last_name, photo_path, gender, language_code, currency_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -137,12 +119,12 @@ public class UserRepositoryImpl implements UserRepository {
             pstmt.setString(3, user.getFirstName());
             pstmt.setString(4, user.getLastName());
             pstmt.setString(5, user.getPhotoPath());
-
             String gender = user.getGender() != null ? user.getGender() : GenderCode.UNKNOWN;
             pstmt.setString(6, gender);
-
+            pstmt.setString(7, user.getLanguageCode());
+            pstmt.setString(8, user.getCurrencyCode());
             LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-            pstmt.setString(7, createdAt.toString().replace("T", " "));
+            pstmt.setString(9, createdAt.toString().replace("T", " "));
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
@@ -164,7 +146,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User update(User user) {
-        String sql = "UPDATE users SET email = ?, password_hash = ?, first_name = ?, last_name = ?, photo_path = ?, gender = ? WHERE id = ?";
+        String sql = "UPDATE users SET email = ?, password_hash = ?, first_name = ?, last_name = ?, photo_path = ?, gender = ?, language_code = ?, currency_code = ? WHERE id = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -175,7 +157,9 @@ public class UserRepositoryImpl implements UserRepository {
             pstmt.setString(4, user.getLastName());
             pstmt.setString(5, user.getPhotoPath());
             pstmt.setString(6, user.getGender());
-            pstmt.setInt(7, user.getId());
+            pstmt.setString(7, user.getLanguageCode());
+            pstmt.setString(8, user.getCurrencyCode());
+            pstmt.setInt(9, user.getId());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -212,7 +196,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteById(int id) {
-        // Keep this order to satisfy FK dependencies: account_access -> accounts -> users.
         String deleteAccessSql = "DELETE FROM account_access WHERE user_id = ?";
         String deleteAccountsSql = "DELETE FROM accounts WHERE owner_user_id = ?";
         String deleteUserSql = "DELETE FROM users WHERE id = ?";
@@ -250,16 +233,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    /**
-     * Uloží stav roly rodinného manažéra úpravou záznamov v {@code account_access}.
-     *
-     * <p>Pri povýšení zabezpečí, že používateľ má aspoň jedno oprávnenie s úrovňou 2.
-     * Pri znížení roly zníži existujúce oprávnenia úrovne 2 na úroveň 1, pričom vyššie
-     * úrovne (napr. admin úroveň 3) ponechá bez zmeny.</p>
-     *
-     * @param userId ID používateľa, ktorému sa má upraviť oprávnenie
-     * @param isFamilyManager požadovaný stav roly rodinného manažéra
-     */
     @Override
     public void updateFamilyManagerStatus(int userId, boolean isFamilyManager) {
         String demoteSql = "UPDATE account_access SET access_level = 1 WHERE user_id = ? AND access_level = 2";

@@ -34,6 +34,12 @@ public class User {
     @Builder.Default
     private Role role = Role.USER;
 
+    @Builder.Default
+    private String languageCode = "en_US";
+
+    @Builder.Default
+    private String currencyCode = "EUR";
+
     public boolean hasRole(Role expectedRole) {
         return this.role == expectedRole;
     }
