@@ -37,10 +37,12 @@ public class SettingsRepositoryImpl implements SettingsRepository {
         String userSql = "SELECT language_code, currency_code FROM users WHERE id = ?";
 
         String accountSql = """
-                SELECT r.decimal_separator, r.thousands_separator,
+                SELECT u.language_code, u.currency_code,
+                       r.decimal_separator, r.thousands_separator,
                        r.date_format, r.time_format
                 FROM accounts a
                 JOIN regions r ON a.region_id = r.id
+                JOIN users u ON u.id = a.owner_user_id
                 WHERE a.owner_user_id = ?
                 LIMIT 1
                 """;
@@ -67,7 +69,9 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 ps.setInt(1, userId);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    builder.decimalSeparator(rs.getString("decimal_separator"))
+                    builder.languageCode(rs.getString("language_code"))
+                            .currencyCode(rs.getString("currency_code"))
+                            .decimalSeparator(rs.getString("decimal_separator"))
                             .thousandsSeparator(rs.getString("thousands_separator"))
                             .dateFormat(rs.getString("date_format"))
                             .timeFormat(rs.getString("time_format"));
@@ -113,14 +117,8 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                     notif_achievements = excluded.notif_achievements
                 """;
 
-        try (Connection conn = getConnection()) {
 
-            try (PreparedStatement ps = conn.prepareStatement(userSql)) {
-                ps.setString(1, settings.getLanguageCode());
-                ps.setString(2, settings.getCurrencyCode());
-                ps.setInt(3, userId);
-                ps.executeUpdate();
-            }
+        try (Connection conn = getConnection()) {
 
             try (PreparedStatement ps = conn.prepareStatement(notifSql)) {
                 ps.setInt(1, userId);
@@ -132,7 +130,14 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 ps.executeUpdate();
             }
 
-            logger.info("Settings saved for userId={}", userId);
+            try (PreparedStatement psUser = conn.prepareStatement(userSql)) {
+                psUser.setString(1, settings.getLanguageCode());
+                psUser.setString(2, settings.getCurrencyCode());
+                psUser.setInt(3, userId);
+                psUser.executeUpdate();
+            }
+
+            logger.info("Notification and user settings saved for userId={}", userId);
 
         } catch (SQLException e) {
             logger.error("Failed to save settings for userId={}", userId, e);
