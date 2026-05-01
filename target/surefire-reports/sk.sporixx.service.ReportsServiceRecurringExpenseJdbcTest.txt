@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: sk.sporixx.service.ReportsServiceRecurringExpenseJdbcTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s -- in sk.sporixx.service.ReportsServiceRecurringExpenseJdbcTest
