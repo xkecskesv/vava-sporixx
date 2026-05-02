@@ -96,32 +96,40 @@ class ImportServiceTest {
     /** Minimálny XML pre jeden saving account */
     private String minimalXml(String accountName, double savedUp, double target) {
         return """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <SavingAccountsReport>
-                  <SavingAccount name="%s" savedUp="%.2f" targetAmount="%.2f"
-                    initialBalance="0.00"
-                    targetDate="2027-01-01 00:00:00"
-                    createdAt="2025-01-01 00:00:00"/>
-                </SavingAccountsReport>
-                """.formatted(accountName, savedUp, target);
+            <?xml version="1.0" encoding="UTF-8"?>
+            <SavingAccountsReport>
+              <SavingAccount name="%s" savedUp="%s" targetAmount="%s"
+                initialBalance="0.00"
+                targetDate="2027-01-01 00:00:00"
+                createdAt="2025-01-01 00:00:00"/>
+            </SavingAccountsReport>
+            """.formatted(
+                accountName,
+                String.format(java.util.Locale.US, "%.2f", savedUp),
+                String.format(java.util.Locale.US, "%.2f", target)
+        );
     }
 
     /** XML s transakciami */
     private String xmlWithTransactions(String accountName, double savedUp, double target) {
         return """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <SavingAccountsReport>
-                  <SavingAccount name="%s" savedUp="%.2f" targetAmount="%.2f"
-                    initialBalance="0.00"
-                    targetDate="2027-01-01 00:00:00"
-                    createdAt="2025-01-01 00:00:00">
-                    <Transaction date="2025-06-01 10:00:00" amount="200.00"
-                      description="Vklad" categoryId="0" currencyCode="EUR"/>
-                    <Transaction date="2025-07-01 10:00:00" amount="300.00"
-                      description="Ďalší vklad" categoryId="0" currencyCode="EUR"/>
-                  </SavingAccount>
-                </SavingAccountsReport>
-                """.formatted(accountName, savedUp, target);
+            <?xml version="1.0" encoding="UTF-8"?>
+            <SavingAccountsReport>
+              <SavingAccount name="%s" savedUp="%s" targetAmount="%s"
+                initialBalance="0.00"
+                targetDate="2027-01-01 00:00:00"
+                createdAt="2025-01-01 00:00:00">
+                <Transaction date="2025-06-01 10:00:00" amount="200.00"
+                  description="Vklad" categoryId="0" currencyCode="EUR"/>
+                <Transaction date="2025-07-01 10:00:00" amount="300.00"
+                  description="Ďalší vklad" categoryId="0" currencyCode="EUR"/>
+              </SavingAccount>
+            </SavingAccountsReport>
+            """.formatted(
+                accountName,
+                String.format(java.util.Locale.US, "%.2f", savedUp),
+                String.format(java.util.Locale.US, "%.2f", target)
+        );
     }
 
     // ─── Validácia cesty ──────────────────────────────────────────────────────
