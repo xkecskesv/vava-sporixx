@@ -8,6 +8,7 @@ import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
+import sk.sporixx.service.testovanie.InMemoryAccountAccessRepository;
 import sk.sporixx.service.testovanie.InMemoryAccountRepository;
 import sk.sporixx.service.testovanie.InMemoryUserRepository;
 import sk.sporixx.util.PasswordUtil;
@@ -125,7 +126,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
         failing.save(admin);
         // Reset session: session sa odkazuje na 'admin' objekt, ktorý bol uložený aj sem
 
-        AdminService svc = new AdminServiceImpl(failing, accountRepo, userService);
+        AdminService svc = new AdminServiceImpl(failing, accountRepo, accountAccessRepo, userService);
 
         // Pokus o zmenu hesla – update zlyhá
         RuntimeException ex = assertThrows(RuntimeException.class,
@@ -149,7 +150,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
                 throw new RuntimeException("Simulated DB failure on findAllByOwnerUserId");
             }
         };
-        AdminService svc = new AdminServiceImpl(userRepo, failingAccounts, userService);
+        AdminService svc = new AdminServiceImpl(userRepo, failingAccounts, accountAccessRepo, userService);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> svc.deactivateUser(User.builder().id(regularUser.getId()).build()));
@@ -181,7 +182,7 @@ class AdminServiceIntegrationTest extends AdminServiceTestSupport {
                 super.deactivateById(accountId);
             }
         };
-        AdminService svc = new AdminServiceImpl(userRepo, mixedFail, userService);
+        AdminService svc = new AdminServiceImpl(userRepo, mixedFail, accountAccessRepo, userService);
 
         // BUG nález: deactivate nie je transactional
         // Ak prvý účet zlyhá, pre druhý sa nikdy neprejde - throw je fail-fast
