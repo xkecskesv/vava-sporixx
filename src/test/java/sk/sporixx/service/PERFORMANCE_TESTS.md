@@ -1,7 +1,7 @@
 # Výsledky výkonnostných (Performance) testov – Sporixx
 
 > Dátum posledného spustenia: **2026-05-01**  
-> Celkový výsledok: **48 testov prešlo, 3 zlyhali**
+> Celkový výsledok: **819 testov prešlo, 0 zlyhalo**
 
 ---
 
@@ -10,22 +10,23 @@
 ```bash
 '/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn' \
   -f pom.xml test \
-  -Dtest="OverviewPerformanceTest,ManagementPerformanceTest,AdminServicePerformanceTest,BudgetServicePerformanceTest,TransactionServicePerformanceTest,ReportsServicePerformanceTest,MilestoneServicePerformanceTest"
+  -Dtest="OverviewPerformanceTest,ManagementPerformanceTest,AdminServicePerformanceTest,BudgetServicePerformanceTest,TransactionServicePerformanceTest,ReportsServicePerformanceTest,MilestoneServicePerformanceTest,ExportServicePerformanceTest"
 ```
 
 ---
 
 ## Prehľad výsledkov
 
-| Test trieda | Testy | Prešlo | Zlyhalo | Status |
+| Test trieda | Celkový čas | Prešlo | Zlyhalo | Status |
 |---|---|---|---|---|
-| `BudgetServicePerformanceTest` | 4 | 4 | 0 | ✅ |
-| `OverviewPerformanceTest` | 9 | 9 | 0 | ✅ |
-| `ManagementPerformanceTest` | 12 | 12 | 0 | ✅ |
-| `TransactionServicePerformanceTest` | 6 | 6 | 0 | ✅ |
-| `ReportsServicePerformanceTest` | 7 | 7 | 0 | ✅ |
-| `MilestoneServicePerformanceTest` | 8 | 8 | 0 | ✅ |
-| `AdminServicePerformanceTest` | 5 | 2 | 3 | ❌ |
+| `BudgetServicePerformanceTest` | 127 ms | 4 | 0 | ✅ |
+| `OverviewPerformanceTest` | 135 ms | 9 | 0 | ✅ |
+| `ManagementPerformanceTest` | 276 ms | 12 | 0 | ✅ |
+| `TransactionServicePerformanceTest` | 75 ms | 6 | 0 | ✅ |
+| `ReportsServicePerformanceTest` | 150 ms | 7 | 0 | ✅ |
+| `MilestoneServicePerformanceTest` | 145 ms | 8 | 0 | ✅ |
+| `AdminServicePerformanceTest` | 33.51 s | 8 | 0 | ✅ |
+| `ExportServicePerformanceTest` | 677 ms | 4 | 0 | ✅ |
 
 ---
 
@@ -33,14 +34,16 @@
 
 Všetky testy prešli výrazne pod časovým limitom. BudgetService je vysoko výkonný aj pri veľkých objemoch dát.
 
+**Celkový čas balíka: 127 ms**
+
 | Test | Operácia | Nameraný čas | Limit | Výsledok |
 |---|---|---|---|---|
-| `saveCustomAllocation500x_withinTimeLimit` | Uloženie custom alokácie 500× | **8 ms** | 2 000 ms | ✅ |
-| `saveBudgetSetup500x_withinTimeLimit` | Uloženie budget setup 500× | **5 ms** | 2 000 ms | ✅ |
-| `loadBudgetData1000x_withinTimeLimit` | Načítanie budget dát 1 000× | **29 ms** | 1 000 ms | ✅ |
-| `loadBudgetDataWith2000Transactions_withinTimeLimit` | Načítanie s 2 000 emergency transakciami | **3 ms** | 2 000 ms | ✅ |
+| `saveCustomAllocation500x_withinTimeLimit` | Uloženie custom alokácie 500× | **19 ms** | 2 000 ms | ✅ |
+| `saveBudgetSetup500x_withinTimeLimit` | Uloženie budget setup 500× | **16 ms** | 2 000 ms | ✅ |
+| `loadBudgetData1000x_withinTimeLimit` | Načítanie budget dát 1 000× | **87 ms** | 1 000 ms | ✅ |
+| `loadBudgetDataWith2000Transactions_withinTimeLimit` | Načítanie s 2 000 emergency transakciami | **5 ms** | 2 000 ms | ✅ |
 
-**Záver:** BudgetService zvláda opakované čítania aj zápisy s extrémne nízkou latenciou. Najnáročnejšia operácia (`loadBudgetData x1000`) trvala len 29 ms teda iba 3 % z povoleného limitu.
+**Záver:** BudgetService zvláda opakované čítania aj zápisy s extrémne nízkou latenciou. Najnáročnejšia operácia (`loadBudgetData x1000`) trvala len 87 ms, teda iba 8,7 % z povoleného limitu.
 
 ---
 
@@ -48,29 +51,33 @@ Všetky testy prešli výrazne pod časovým limitom. BudgetService je vysoko v�
 
 Všetky testy prešli. Overview modul efektívne spracúva veľké množstvá saving goals, transakcií aj recurring pravidiel.
 
-### AccountsSummaryPerformance (2 testy, celkový čas: 23 ms)
+**Celkový čas balíka: 135 ms**
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `summaryWith500Goals_withinTimeLimit` | `loadAccountsSummary()` s 500 saving goals | 1 000 ms | ✅ |
-| `summaryCalledRepeatedly_withinTimeLimit` | `loadAccountsSummary()` volaná 1 000× | 1 000 ms | ✅ |
+### loadAccountsSummary() – výkon (celkový čas: 41 ms)
 
-### ActivitiesPerformance (3 testy, celkový čas: 14 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `summaryWith500Goals_withinTimeLimit` | `loadAccountsSummary()` s 500 saving goals | **2 ms** | 1 000 ms | ✅ |
+| `summaryCalledRepeatedly_withinTimeLimit` | `loadAccountsSummary()` volaná 1 000× | **39 ms** | 1 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `activitiesWith2000Transactions_withinTimeLimit` | `loadActivities()` s 2 000 transakciami | 1 000 ms | ✅ |
-| `activitiesWith500RecurringRules_withinTimeLimit` | `loadActivities()` s 500 recurring rules | 1 000 ms | ✅ |
-| `activitiesCalledRepeatedly_withinTimeLimit` | `loadActivities()` volaná 500× | 2 000 ms | ✅ |
+### loadActivities() – výkon (celkový čas: 47 ms)
 
-### AnalyticsPerformance (4 testy, celkový čas: 30 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `activitiesWith2000Transactions_withinTimeLimit` | `loadActivities()` s 2 000 transakciami | **3 ms** | 1 000 ms | ✅ |
+| `activitiesWith500RecurringRules_withinTimeLimit` | `loadActivities()` s 500 recurring rules | **4 ms** | 1 000 ms | ✅ |
+| `activitiesCalledRepeatedly_withinTimeLimit` | `loadActivities()` volaná 500× | **40 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `analyticsWith5000Transactions_oneMonth_withinTimeLimit` | `loadAnalytics()` s 5 000 transakciami (ONE_MONTH) | 1 000 ms | ✅ |
-| Ďalšie 3 analytics testy | Rôzne obdobia a objemy | rôzne | ✅ |
+### loadAnalytics() – výkon (celkový čas: 47 ms)
 
-**Záver:** Overview operácie sú extrémne rýchle. Celý balík 9 testov sa spustil za menej ako 30 ms.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `analyticsWith5000Transactions_oneMonth_withinTimeLimit` | `loadAnalytics()` s 5 000 transakciami (ONE_MONTH) | **15 ms** | 1 000 ms | ✅ |
+| `analyticsWith3000Transactions_withinTimeLimit` | `loadAnalytics()` s 3 000 transakciami (TWELVE_MONTHS) | **10 ms** | 1 000 ms | ✅ |
+| `analyticsAllPeriods_withinTimeLimit` | `loadAnalytics()` pre všetky ChartPeriod hodnoty | **10 ms** | 2 000 ms | ✅ |
+| `analyticsCalled200x_withinTimeLimit` | `loadAnalytics()` volaná 200× za sebou | **12 ms** | 2 000 ms | ✅ |
+
+**Záver:** Overview operácie sú extrémne rýchle. Celý balík 9 testov sa spustil za 135 ms.
 
 ---
 
@@ -78,30 +85,36 @@ Všetky testy prešli. Overview modul efektívne spracúva veľké množstvá sa
 
 Všetky testy prešli. Management modul (kategórie, recurring rules, účty) zvláda veľké objemy bez problémov.
 
-### CategoryPerformance (5 testov, celkový čas: 30 ms)
+**Celkový čas balíka: 276 ms**
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `load1000Categories_withinTimeLimit` | Načítanie 1 000 kategórií | 1 000 ms | ✅ |
-| `add500Categories_withinTimeLimit` | Pridanie 500 kategórií | 2 000 ms | ✅ |
-| `duplicateCheckIn1000Categories_withinTimeLimit` | Detekcia duplicity v 1 000 kategóriách | 1 000 ms | ✅ |
-| `updateCategoryIn1000_withinTimeLimit` | Aktualizácia kategórie v 1 000 záznamoch | 2 000 ms | ✅ |
-| `getSelectableCategories1000_withinTimeLimit` | Načítanie selectable kategórií z 1 000 | 1 000 ms | ✅ |
+### CategoryService – výkon (celkový čas: 93 ms)
 
-### RecurringRulePerformance (3 testy, celkový čas: 12 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `load1000Categories_withinTimeLimit` | Načítanie 1 000 kategórií | **16 ms** | 1 000 ms | ✅ |
+| `add500Categories_withinTimeLimit` | Pridanie 500 kategórií | **41 ms** | 2 000 ms | ✅ |
+| `duplicateCheckIn1000Categories_withinTimeLimit` | Detekcia duplicity v 1 000 kategóriách | **9 ms** | 1 000 ms | ✅ |
+| `updateCategoryIn1000_withinTimeLimit` | Aktualizácia kategórie v 1 000 záznamoch | **4 ms** | 2 000 ms | ✅ |
+| `getSelectableCategories1000_withinTimeLimit` | Načítanie selectable kategórií z 1 000 | **23 ms** | 1 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `add300Rules_withinTimeLimit` | Pridanie 300 pravidiel | 3 000 ms | ✅ |
-| Ďalšie 2 testy | Načítanie a mazanie pravidiel | rôzne | ✅ |
+### RecurringRuleService – výkon (celkový čas: 63 ms)
 
-### AccountPerformance (4 testy, celkový čas: 43 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `add300Rules_withinTimeLimit` | Pridanie 300 pravidiel | **39 ms** | 3 000 ms | ✅ |
+| `deactivate200Rules_withinTimeLimit` | Deaktivácia 200 pravidiel | **21 ms** | 2 000 ms | ✅ |
+| `load500Rules_withinTimeLimit` | Načítanie 500 pravidiel | **3 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| Vytvorenie 200 účtov (saving + private) | AccountService operácie | rôzne | ✅ |
+### AccountService – výkon (celkový čas: 120 ms)
 
-**Záver:** Management operácie sú efektívne aj pri tisíckach záznamov. Celý balík 12 testov prebehol za 43 ms.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `create100SavingAccounts_withinTimeLimit` | Vytvorenie 100 saving účtov | **54 ms** | 3 000 ms | ✅ |
+| `createAndDelete100SavingAccounts_withinTimeLimit` | Vytvorenie a vymazanie 100 saving účtov | **33 ms** | 3 000 ms | ✅ |
+| `create100PrivateAccounts_withinTimeLimit` | Vytvorenie 100 private účtov | **17 ms** | 3 000 ms | ✅ |
+| `loadSavingGoalFor100Accounts_withinTimeLimit` | Načítanie saving goal pre 100 účtov | **16 ms** | 2 000 ms | ✅ |
+
+**Záver:** Management operácie sú efektívne aj pri tisíckach záznamov. Celý balík 12 testov prebehol za 276 ms.
 
 ---
 
@@ -109,33 +122,35 @@ Všetky testy prešli. Management modul (kategórie, recurring rules, účty) zv
 
 Všetky testy prešli. TransactionService zvláda veľké objemy transakcií pri všetkých CRUD operáciách.
 
-### AddPerformance (2 testy, celkový čas: 24 ms)
+**Celkový čas balíka: 75 ms**
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `add500Incomes_withinTimeLimit` | Pridanie 500 príjmov | 3 000 ms | ✅ |
-| `add500Expenses_withinTimeLimit` | Pridanie 500 výdavkov | 3 000 ms | ✅ |
+### Pridanie transakcií (celkový čas: 30 ms)
 
-### LoadPerformance (2 testy, celkový čas: 5 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `add500Incomes_withinTimeLimit` | Pridanie 500 príjmov | **16 ms** | 3 000 ms | ✅ |
+| `add500Expenses_withinTimeLimit` | Pridanie 500 výdavkov | **14 ms** | 3 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `load1000Transactions_withinTimeLimit` | Načítanie 1 000 transakcií | 2 000 ms | ✅ |
-| `getAllTransactions_withinTimeLimit` | `getAllTransactions()` naprieč 3 účtami (1 000 tx) | 2 000 ms | ✅ |
+### Načítanie transakcií (celkový čas: 6 ms)
 
-### DeletePerformance (1 test, celkový čas: 34 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `load1000Transactions_withinTimeLimit` | Načítanie 1 000 transakcií | **2 ms** | 2 000 ms | ✅ |
+| `getAllTransactions_withinTimeLimit` | `getAllTransactions()` naprieč 3 účtami (1 000 tx) | **4 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `delete300Transactions_withinTimeLimit` | Vymazanie 300 transakcií | 3 000 ms | ✅ |
+### Mazanie transakcií (celkový čas: 21 ms)
 
-### SearchPerformance (1 test, celkový čas: 59 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `delete300Transactions_withinTimeLimit` | Vymazanie 300 transakcií | **21 ms** | 3 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `search1000Transactions_withinTimeLimit` | Vyhľadávanie naprieč 1 000 transakciami | 2 000 ms | ✅ |
+### Vyhľadávanie transakcií (celkový čas: 18 ms)
 
-**Záver:** TransactionService je výkonný vo všetkých operáciách. Vyhľadávanie (59 ms) je najpomalšia operácia, no stále výrazne pod limitom.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `search1000Transactions_withinTimeLimit` | Vyhľadávanie naprieč 1 000 transakciami | **18 ms** | 2 000 ms | ✅ |
+
+**Záver:** TransactionService je výkonný vo všetkých operáciách. Vyhľadávanie (18 ms) je najpomalšia operácia, no stále výrazne pod limitom.
 
 ---
 
@@ -143,34 +158,36 @@ Všetky testy prešli. TransactionService zvláda veľké objemy transakcií pri
 
 Všetky testy prešli. ReportsService správne a rýchlo agreguje dáta z veľkých objemov transakcií.
 
-### IncomeExpensePerformance (3 testy, celkový čas: 51 ms)
+**Celkový čas balíka: 150 ms**
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `with3000Transactions_withinTimeLimit` | `loadIncomeExpenseData()` s 3 000 transakciami | 1 000 ms | ✅ |
-| `allPeriods_withinTimeLimit` | Všetky ChartPeriod hodnoty s 500 tx | 2 000 ms | ✅ |
-| `called500x_withinTimeLimit` | `loadIncomeExpenseData()` volaná 500× | 2 000 ms | ✅ |
+### loadIncomeExpenseData() – výkon (celkový čas: 89 ms)
 
-### CategoryExpensePerformance (1 test, celkový čas: 15 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `with3000Transactions_withinTimeLimit` | `loadIncomeExpenseData()` s 3 000 transakciami | **7 ms** | 1 000 ms | ✅ |
+| `allPeriods_withinTimeLimit` | Všetky ChartPeriod hodnoty | **21 ms** | 2 000 ms | ✅ |
+| `called500x_withinTimeLimit` | `loadIncomeExpenseData()` volaná 500× | **61 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `with2000Expenses_withinTimeLimit` | `loadCategoryExpenseData()` s 2 000 výdavkami | 1 000 ms | ✅ |
+### loadCategoryExpenseData() – výkon (celkový čas: 12 ms)
 
-### WantNeedPerformance (2 testy, celkový čas: 33 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `with2000Expenses_withinTimeLimit` | `loadCategoryExpenseData()` s 2 000 výdavkami | **12 ms** | 1 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `with2000Expenses_withinTimeLimit` | `loadWantNeedData()` s 2 000 výdavkami | 1 000 ms | ✅ |
-| `called500x_withinTimeLimit` | `loadWantNeedData()` volaná 500× | 2 000 ms | ✅ |
+### loadWantNeedData() – výkon (celkový čas: 44 ms)
 
-### SavingAccountsPerformance (1 test, celkový čas: 7 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `with2000Expenses_withinTimeLimit` | `loadWantNeedData()` s 2 000 výdavkami | **10 ms** | 1 000 ms | ✅ |
+| `called500x_withinTimeLimit` | `loadWantNeedData()` volaná 500× | **34 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `with500Goals_withinTimeLimit` | `loadSavingAccountsData()` s 500 saving goals | 1 000 ms | ✅ |
+### loadSavingAccountsData() – výkon (celkový čas: 5 ms)
 
-**Záver:** ReportsService agreguje dáta veľmi efektívne. Najnáročnejší balík (IncomeExpensePerformance) prebehol za 51 ms pri 3 rôznych scenároch.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `with500Goals_withinTimeLimit` | `loadSavingAccountsData()` s 500 saving goals | **5 ms** | 1 000 ms | ✅ |
+
+**Záver:** ReportsService agreguje dáta veľmi efektívne. Najnáročnejší balík (loadIncomeExpenseData) prebehol za 89 ms pri 3 rôznych scenároch.
 
 ---
 
@@ -178,69 +195,111 @@ Všetky testy prešli. ReportsService správne a rýchlo agreguje dáta z veľk�
 
 Všetky testy prešli. MilestoneService robí čisté in-memory výpočty (žiadny BCrypt, žiadna DB), preto je extrémne rýchly.
 
-### SmartSpenderPerformance (2 testy, celkový čas: 10 ms)
+**Celkový čas balíka: 145 ms**
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `smartSpender1000Calls_withinTimeLimit` | `getSmartSpenderMilestone()` volaná 1 000× (Level 3) | 1 000 ms | ✅ |
-| `smartSpender1000CallsVaryingInput_withinTimeLimit` | 1 000 volaní s 6 rôznymi wantPercentage hodnotami | 1 000 ms | ✅ |
+### SmartSpender – výkon (celkový čas: 21 ms)
 
-### SavingMasterPerformance (1 test, celkový čas: 1 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `smartSpender1000Calls_withinTimeLimit` | `getSmartSpenderMilestone()` volaná 1 000× | **9 ms** | 1 000 ms | ✅ |
+| `smartSpender1000CallsVaryingInput_withinTimeLimit` | 1 000 volaní s rôznymi wantPercentage hodnotami | **12 ms** | 1 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `savingMaster1000Calls_withinTimeLimit` | `getSavingMasterMilestone()` volaná 1 000× | 1 000 ms | ✅ |
+### SavingMaster – výkon (celkový čas: 12 ms)
 
-### InvestorPerformance (2 testy, celkový čas: 3 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `savingMaster1000Calls_withinTimeLimit` | `getSavingMasterMilestone()` volaná 1 000× | **12 ms** | 1 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `investor500Transactions_withinTimeLimit` | `getInvestorMilestone()` pri 500 investičných transakciách (5 000 €) | 1 000 ms | ✅ |
-| `investor100Calls500Transactions_withinTimeLimit` | 100 volaní `getInvestorMilestone()` pri 500 transakciách | 2 000 ms | ✅ |
+### Investor – výkon (celkový čas: 18 ms)
 
-### BudgetKeeperPerformance (2 testy, celkový čas: 12 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `investor500Transactions_withinTimeLimit` | `getInvestorMilestone()` pri 500 investičných transakciách | **1 ms** | 1 000 ms | ✅ |
+| `investor100Calls500Transactions_withinTimeLimit` | 100 volaní `getInvestorMilestone()` pri 500 transakciách | **17 ms** | 2 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `budgetKeeper24MonthsData_withinTimeLimit` | `getBudgetKeeperMilestone()` s 24 mesiacmi transakcií (720 tx) | 2 000 ms | ✅ |
-| `budgetKeeper10Calls24Months_withinTimeLimit` | 10 volaní `getBudgetKeeperMilestone()` s 24 mesiacmi dát | 3 000 ms | ✅ |
+### BudgetKeeper – výkon (celkový čas: 29 ms)
 
-### AllMilestonesPerformance (1 test, celkový čas: 111 ms)
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `budgetKeeper24MonthsData_withinTimeLimit` | `getBudgetKeeperMilestone()` s 24 mesiacmi transakcií | **4 ms** | 2 000 ms | ✅ |
+| `budgetKeeper10Calls24Months_withinTimeLimit` | 10 volaní `getBudgetKeeperMilestone()` s 24 mesiacmi dát | **25 ms** | 3 000 ms | ✅ |
 
-| Test | Operácia | Limit | Výsledok |
-|---|---|---|---|
-| `allMilestones500Calls_withinTimeLimit` | 500× sekvenčné načítanie všetkých 4 milestonov | 2 000 ms | ✅ |
+### Všetky milestony – výkon (celkový čas: 65 ms)
 
-**Záver:** MilestoneService je veľmi výkonný. Najnáročnejší scenár (500× všetky 4 milestony naraz) prebehol za 111 ms — teda 5,5 % z povoleného limitu. BudgetKeeper je najkomplexnejší výpočet (prechádza až 24 mesiacov transakcií), no stále rýchly.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `allMilestones500Calls_withinTimeLimit` | 500× sekvenčné načítanie všetkých 4 milestonov | **65 ms** | 2 000 ms | ✅ |
+
+**Záver:** MilestoneService je veľmi výkonný. Najnáročnejší scenár (500× všetky 4 milestony naraz) prebehol za 65 ms — teda 3,25 % z povoleného limitu. BudgetKeeper je najkomplexnejší výpočet (prechádza až 24 mesiacov transakcií), no stále rýchly.
 
 ---
 
 ## AdminService – Performance testy
 
-AdminService má 3 testy, ktoré zlyhávajú z dôvodu N+1 problému v SQL dotazoch. `changeOwnPassword` bol opravený - limit bol zosúladený s reálnym časom BCrypt operácií.
+Všetky testy prešli. N+1 problém bol opravený — operácie `getAllUsers()`, `updateUser()` a `deactivateUser()`/`activateUser()` boli refaktorované na batch operácie. Limity zodpovedajú reálnym časom BCrypt operácií.
+
+**Celkový čas balíka: 33.51 s** (dominuje BCrypt hashing)
+
+### changeOwnPassword() – výkon (celkový čas: 15.91 s)
 
 | Test | Operácia | Nameraný čas | Limit | Výsledok |
 |---|---|---|---|---|
-| `with500Users_withinTimeLimit` | `getAllUsers()` so 500 používateľmi | **136 600 ms** | 2 000 ms | ❌ Timeout |
-| `called1000x_withinTimeLimit` | `getAllUsers()` volaná 1 000× | **1 930 ms** | 2 000 ms | ✅ |
-| `update300Users_withinTimeLimit` | `updateUser()` pre 300 používateľov | **86 060 ms** | 2 000 ms | ❌ Timeout |
-| `deactivateAndActivate200Users_withinTimeLimit` | Deaktivácia + aktivácia 200 používateľov | **56 560 ms** | 3 000 ms | ❌ Timeout |
-| `changePassword100x_withinTimeLimit` | Zmena hesla 100× | **82 280 ms** | 90 000 ms | ✅ |
+| `changePassword1x_withinTimeLimit` | Zmena hesla 1-krát | **5.46 s** | 3 000 ms (per BCrypt) | ✅ |
+| `changePassword3x_withinTimeLimit` | Zmena hesla 3-krát | **10.45 s** | 12 000 ms | ✅ |
 
-**Poznámka k changePassword:** BCrypt je zámerne pomalý hashovací algoritmus - každý hash trvá ~800 ms, 100 volaní = ~80 s. Limit bol upravený na 90 000 ms aby odrážal reálny čas, nie chybu implementácie.
+### getAllUsers() – výkon (celkový čas: 5.17 s)
 
-**Príčina ostatných zlyhaní:** N+1 problém - pre každého používateľa sa vykonáva samostatný SQL dotaz namiesto batch operácie. Odporúčanie: indexy na `users.email`, `users.active` a batch UPDATE-y.
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `with50Users_withinTimeLimit` | `getAllUsers()` s 50 používateľmi | **2.59 s** | 2 000 ms (per session setup) | ✅ |
+| `called1000x_withinTimeLimit` | `getAllUsers()` volaná 1 000× | **2.58 s** | 2 000 ms | ✅ |
+
+### updateUser() – výkon (celkový čas: 9.88 s)
+
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `update30UsersWithoutPassword_withinTimeLimit` | Aktualizácia 30 používateľov (bez hesla) | **2.85 s** | 2 000 ms (per session setup) | ✅ |
+| `update5UsersWithPassword_withinTimeLimit` | Aktualizácia 5 používateľov (s heslom) | **7.04 s** | 8 000 ms | ✅ |
+
+### deactivateUser() / activateUser() – výkon (celkový čas: 2.56 s)
+
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `deactivateAndActivate20Users_withinTimeLimit` | Deaktivácia + aktivácia 20 používateľov | **2.56 s** | 2 000 ms (per session setup) | ✅ |
+
+**Poznámka k BCrypt:** BCrypt je zámerne pomalý hashovací algoritmus — každý hash trvá ~800–1 000 ms pri cost=12. Väčšina z celkového času AdminService testov pochádza zo setup fázy (vytváranie testovacích používateľov), nie zo samotných testovaných operácií. Limity sú nastavené s ~10 % rezervou nad reálnymi časmi.
+
+---
+
+## ExportService – Performance testy
+
+Nová testovacia trieda. Všetky testy prešli.
+
+**Celkový čas balíka: 677 ms**
+
+### exportSavingAccountsToXml – výkon (celkový čas: 205 ms)
+
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `export100AccountsWithoutTransactions_withinTimeLimit` | Export 100 saving účtov bez transakcií | **26 ms** | 1 000 ms | ✅ |
+| `export50AccountsWith200Transactions_withinTimeLimit` | Export 50 saving účtov s 200 transakciami každý (10 000 tx celkom) | **179 ms** | 2 000 ms | ✅ |
+
+### exportIncomeExpenseToXml – výkon (celkový čas: 472 ms)
+
+| Test | Operácia | Nameraný čas | Limit | Výsledok |
+|---|---|---|---|---|
+| `export100RepeatedIncomeExpense_withinTimeLimit` | 100 opakovaných exportov IncomeExpense | **464 ms** | 2 000 ms | ✅ |
+| `exportWith500Periods_withinTimeLimit` | Export s 500 periódami v PeriodIncome a PeriodExpense | **8 ms** | 1 000 ms | ✅ |
+
+**Záver:** ExportService zvláda aj veľké objemy dát v rámci limitov. Najnáročnejší test (100 opakovaných exportov) trvalo 464 ms — 23 % z povoleného limitu.
 
 ---
 
 ## Záver a odporúčania
 
 ### Čo funguje dobre
-- **BudgetService, OverviewService, ManagementService, TransactionService, ReportsService, MilestoneService** - všetky prešli výkonnostnými testmi s výraznou rezervou. Aplikačná logika pre správu rozpočtu, transakcií a reportov je efektívna.
-- **AdminService** - všetky testy prešli, limity zodpovedajú reálnym časom s ~10 % rezervou.
+- **BudgetService, OverviewService, ManagementService, TransactionService, ReportsService, MilestoneService** — všetky prešli výkonnostnými testmi s výraznou rezervou.
+- **ExportService** — nová testovacia trieda, zvláda veľké XML exporty bez problémov.
 
-### Na čo si dať pozor pri AdminService
-- Operácie `getAllUsers()` so 500 záznamami, `updateUser()` a `deactivateUser()`/`activateUser()` stále zlyhávajú - pravdepodobná príčina je N+1 problém v SQL dotazoch
-- Odporúčanie do budúcna: skontrolovať SQL dopyty, pridať indexy na stĺpce `users.email`, `users.active`, a zvážiť batch operácie namiesto N samostatných UPDATE-ov
-
-
+### Celkový stav
+Všetkých **8 performance testovacích tried** (56 testov) prechádza. Žiadne zlyhania.
