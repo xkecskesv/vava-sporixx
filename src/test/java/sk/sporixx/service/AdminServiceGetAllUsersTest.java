@@ -7,6 +7,7 @@ import sk.sporixx.model.GenderCode;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
 import sk.sporixx.repository.UserRepository;
+import sk.sporixx.service.testovanie.InMemoryAccountAccessRepository;
 import sk.sporixx.service.testovanie.InMemoryUserRepository;
 
 import java.util.List;
@@ -200,7 +201,7 @@ class AdminServiceGetAllUsersTest extends AdminServiceTestSupport {
         };
         // znova prihlasime admina, pretože ideme použiť nový service s novým repo
         // ale repo je prazdne - takze session admin je stale validne nastavený
-        AdminService svc = new AdminServiceImpl(failing, accountRepo, userService);
+        AdminService svc = new AdminServiceImpl(failing, accountRepo, new InMemoryAccountAccessRepository(), userService);
 
         // Pozor: requireAdmin() sa vykoná SKÔR ako findAll() - preto lockneme sessiona
         // platne, akurat bezpecnostna kontrola preskoci ak SessionManager.isAdmin() == true
