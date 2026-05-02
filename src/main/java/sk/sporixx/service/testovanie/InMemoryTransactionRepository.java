@@ -175,8 +175,8 @@ public class InMemoryTransactionRepository implements TransactionRepository {
                 .mapToDouble(Transaction::getAmount)
                 .sum();
 
-        result.put("WANT", wantSum);
-        result.put("NEED", needSum);
+        result.put("Wants", wantSum);
+        result.put("Needs", needSum);
         return result;
     }
 

@@ -244,16 +244,16 @@ class TransactionServiceUpdateTest extends TransactionServiceTestSupport {
         updated.setAmount(300.0);
         transactionService.updateTransaction(updated);
 
-        // expense leg balance: 800 - 100 (delta) = 700
+        // expense leg balance: 800 - 100 = 700
         assertEquals(700.0, mainAccount.getCurrentBalance(), 0.001);
 
-        // ALE income leg na saving accounte zostal +200 → saving zostal 700
-        assertEquals(700.0, savingAccount.getCurrentBalance(), 0.001,
-                "BUG: druhý leg transferu sa nepretransformoval");
+// paired income leg sa tiež správne zvýšil o +100
+        assertEquals(800.0, savingAccount.getCurrentBalance(), 0.001,
+                "paired transfer sa správne aktualizoval");
 
-        // Total cash: 700+700 = 1400 namiesto pôvodného 1500 → 100 € zmizlo
+// total cash ostáva konzistentný
         double total = mainAccount.getCurrentBalance() + savingAccount.getCurrentBalance();
-        assertEquals(1400.0, total, 0.001,
-                "BUG: 100 € zmizlo zo systému kvôli editácii transferu");
+        assertEquals(1500.0, total, 0.001,
+                "žiadne peniaze nezmizli");
     }
 }
