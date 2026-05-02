@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
  * Implementácia OverviewService.
  * Dáta o účtoch čerpá zo SessionManager (účty sú v pamäti od prihlásenia).
  * Transakcie, recurring rules a saving goals načítava z DB cez repozitáre.
- * UI vrstva volá metódy bez parametrov — service si všetko získa sama.
- * Tým sa dodržuje čistý tok: UI -> Service -> Repository -> DB
  */
 public class OverviewServiceImpl implements OverviewService {
 
@@ -58,12 +56,12 @@ public class OverviewServiceImpl implements OverviewService {
                         .build();
             }
 
-            // Total balance z pamäte (účty sú už v session)
+            // total balance z pamäte (účty sú už v session)
             double totalBalance = accounts.stream()
                     .mapToDouble(Account::getCurrentBalance)
                     .sum();
 
-            // Saving goals len pre saving účty (z DB)
+            // saving goals len pre saving účty (z DB)
             List<Integer> savingAccountIds = accounts.stream()
                     .filter(Account::isSavingAccount)
                     .map(Account::getId)
@@ -93,12 +91,12 @@ public class OverviewServiceImpl implements OverviewService {
         try {
             LocalDateTime from = chartPeriod.calculateStartDate().atStartOfDay();
 
-            // Repozitár voláme iba pre JEDEN účet
+            // repozitár voláme iba pre JEDEN účet
             Map<String, Double> chartData = chartPeriod.isGroupByDay()
                     ? transactionRepository.sumByTypeAndDay(accountId, Transaction.TYPE_INCOME, from)
                     : transactionRepository.sumByTypeAndMonth(accountId, Transaction.TYPE_INCOME, from);
 
-            // Sčítame všetky hodnoty (sumy príjmov) z mapy chartData
+            // sčítame všetky hodnoty (sumy príjmov) z mapy chartData
             double totalIncome = chartData.values().stream()
                     .mapToDouble(Double::doubleValue)
                     .sum();
@@ -120,11 +118,11 @@ public class OverviewServiceImpl implements OverviewService {
         logger.info("Loading activities for accountId={}", accountId);
 
         try {
-            // Upcoming payments (najbližšie 3 pre tento jeden účet)
+            // upcoming payments (najbližšie 3 pre tento jeden účet)
             LocalDateTime now = LocalDateTime.now();
             List<RecurringRule> upcoming = recurringRuleRepository.findUpcomingByAccountId(accountId, now, 3);
 
-            // Nedávne transakcie (posledné 2 týždne pre tento jeden účet)
+            // nedávne transakcie (posledné 2 týždne pre tento jeden účet)
             LocalDateTime twoWeeksAgo = now.minusWeeks(2).toLocalDate().atStartOfDay();
             List<Transaction> recent = transactionRepository.findByAccountIdAndDateRange(
                     accountId, twoWeeksAgo, now);

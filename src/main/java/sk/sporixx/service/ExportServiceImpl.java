@@ -25,8 +25,6 @@ import java.util.Map;
 /**
  * Implementácia ExportService.
  * Používa javax.xml DOM API pre generovanie XML.
- * Dáta načítava cez ReportsService — žiadny priamy prístup k DB.
- * Bezpečnostné nastavenia proti XXE útokom sú aplikované cez XmlUtil.
  */
 public class ExportServiceImpl implements ExportService {
 
@@ -58,13 +56,13 @@ public class ExportServiceImpl implements ExportService {
             root.setAttribute("groupBy", period.isGroupByDay() ? "DAY" : "MONTH");
             doc.appendChild(root);
 
-            // Total sumy
+            // total sumy
             Element totals = doc.createElement("Totals");
             totals.setAttribute("totalIncome", String.valueOf(data.getTotalIncome()));
             totals.setAttribute("totalExpense", String.valueOf(data.getTotalExpense()));
             root.appendChild(totals);
 
-            // Period príjmy
+            // period príjmy
             Element incomeEl = doc.createElement("PeriodIncome");
             for (Map.Entry<String, Double> entry : data.getMonthlyIncome().entrySet()) {
                 Element e = doc.createElement("Entry");
@@ -74,7 +72,7 @@ public class ExportServiceImpl implements ExportService {
             }
             root.appendChild(incomeEl);
 
-            // Period výdavky
+            // period výdavky
             Element expenseEl = doc.createElement("PeriodExpense");
             for (Map.Entry<String, Double> entry : data.getMonthlyExpense().entrySet()) {
                 Element e = doc.createElement("Entry");
@@ -133,7 +131,7 @@ public class ExportServiceImpl implements ExportService {
                         account.getCreatedAt() != null ?
                                 account.getCreatedAt().format(EXPORT_TIMESTAMP) : "");
 
-                // Expected progress
+                // expected progress
                 Element expectedEl = doc.createElement("ExpectedProgress");
                 for (Map.Entry<String, Double> entry : account.getExpectedProgress().entrySet()) {
                     Element point = doc.createElement("Point");
@@ -143,7 +141,7 @@ public class ExportServiceImpl implements ExportService {
                 }
                 accountEl.appendChild(expectedEl);
 
-                // Actual progress
+                // actual progress
                 Element actualEl = doc.createElement("ActualProgress");
                 for (Map.Entry<String, Double> entry : account.getActualProgress().entrySet()) {
                     Element point = doc.createElement("Point");
@@ -153,7 +151,7 @@ public class ExportServiceImpl implements ExportService {
                 }
                 accountEl.appendChild(actualEl);
 
-                // Transakcie pre úplnú obnovu
+                // transakcie pre úplnú obnovu
                 Element transactionsEl = doc.createElement("Transactions");
                 if (account.getTransactions() != null) {
                     for (Transaction tx : account.getTransactions()) {
@@ -185,7 +183,7 @@ public class ExportServiceImpl implements ExportService {
 
     /**
      * Vytvorí prázdny DOM Document.
-     * Bezpečnostné nastavenia zabraňujú XXE útokom - deleguje na XmlUtil.
+     * Bezpečnostné nastavenia zabraňujú XXE útokom.
      */
     private Document createDocument() throws Exception {
         return XmlUtil.createSecureFactory().newDocumentBuilder().newDocument();
@@ -194,7 +192,6 @@ public class ExportServiceImpl implements ExportService {
     /**
      * Uloží DOM Document do súboru.
      * Bezpečnostné nastavenia zabraňujú načítaniu externých DTD a stylesheetov.
-     * Formátovanie: UTF-8, odsadenie 4 medzery pre čitateľnosť.
      */
     private void saveDocument(Document doc, String filePath) throws Exception {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();

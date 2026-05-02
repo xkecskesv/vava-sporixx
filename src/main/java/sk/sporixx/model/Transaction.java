@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * Reprezentuje finančnú transakciu (príjem, výdavok, investment).
- * Ak je to transakcia medzi účtami (saving, savaing_expense)
+ * Ak je to transakcia medzi účtami (saving, saving_expense)
  */
 @Data
 @Builder
@@ -51,4 +51,6 @@ public class Transaction {
     // System Category IDs - neprebíjateľné používateľom (user_id = null v DB)
     public static final int CATEGORY_SAVING         = 6;  // main to saving transfer
     public static final int CATEGORY_SAVING_EXPENSE = 7;  // saving to main transfer
+    public static final int CATEGORY_INVESTMENT = 8;
+    public static final int CATEGORY_TRANSFER = 9;
 }

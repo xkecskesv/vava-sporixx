@@ -253,13 +253,43 @@ public class RecurringRuleRepositoryImpl implements RecurringRuleRepository {
 
     @Override
     public Optional<RecurringRule> findById(int id) {
-        // TODO: SELECT * FROM recurring_rules WHERE id = ?
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "SELECT * FROM recurring_rules WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error finding recurring rule by id={}", id, e);
+            throw new RuntimeException("Error reading recurring rule (findById)", e);
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public void deactivateById(int id) {
-        // TODO: UPDATE recurring_rules SET is_active = 0 WHERE id = ?
-        throw new UnsupportedOperationException("Not implemented yet");
+        String sql = "UPDATE recurring_rules SET is_active = 0 WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            int affected = ps.executeUpdate();
+            if (affected == 0) throw new RuntimeException(
+                    "No recurring rule found to deactivate with ID: " + id);
+
+            logger.info("Recurring rule deactivated. ID={}", id);
+
+        } catch (SQLException e) {
+            logger.error("Error deactivating recurring rule ID={}", id, e);
+            throw new RuntimeException("Error deactivating recurring rule", e);
+        }
     }
 }

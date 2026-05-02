@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Kritériá pre vyhľadávanie a filtrovanie transakcií.
  * Používa sa v TransactionService.searchTransactions().
- * Polia sú nullable — null = bez filtra.
+ * Polia sú nullable - null = bez filtra.
  */
 @Data
 @Builder
@@ -18,7 +18,7 @@ public class SearchCriteria {
     /** Regex pattern pre vyhľadávanie v názve transakcie */
     private String searchText;
 
-    /** Filter podľa kategórie — null = všetky */
+    /** Filter podľa kategórie - null = všetky */
     private Integer categoryId;
 
     /** Filter podľa dátumu od */
@@ -33,8 +33,10 @@ public class SearchCriteria {
     /** Filter podľa sumy do */
     private Double amountTo;
 
-    /** Filter podľa typu — null = všetky */
+    /** Filter podľa typu - null = všetky */
     private Integer transactionTypeId;
+
+    private String categoryName;
 
     /**
      * Helper pre UI: nastaví filter na konkrétny dátum.

@@ -294,6 +294,68 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
+    public void saveTransfer(Transaction expense, Transaction income,
+                             int fromAccountId, double fromNewBalance,
+                             int toAccountId, double toNewBalance) {
+        String insertSql = "INSERT INTO transactions " +
+                "(account_id, name, category_id, spending_classification_id, transaction_type_id, amount, status_id, transaction_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String updateBalanceSql = "UPDATE accounts SET current_balance = ? WHERE id = ?";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                insertTransactionInConn(conn, insertSql, expense);
+                insertTransactionInConn(conn, insertSql, income);
+
+                try (PreparedStatement ps = conn.prepareStatement(updateBalanceSql)) {
+                    ps.setDouble(1, fromNewBalance);
+                    ps.setInt(2, fromAccountId);
+                    ps.executeUpdate();
+                }
+                try (PreparedStatement ps = conn.prepareStatement(updateBalanceSql)) {
+                    ps.setDouble(1, toNewBalance);
+                    ps.setInt(2, toAccountId);
+                    ps.executeUpdate();
+                }
+
+                conn.commit();
+                logger.info("Transfer saved atomically: expense id={}, income id={}", expense.getId(), income.getId());
+            } catch (SQLException e) {
+                conn.rollback();
+                logger.error("Transfer rolled back due to error", e);
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving transfer atomically", e);
+        }
+    }
+
+    private void insertTransactionInConn(Connection conn, String sql, Transaction tx) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, tx.getAccountId());
+            pstmt.setString(2, tx.getDescription());
+            pstmt.setInt(3, tx.getCategoryId());
+            if (tx.getSpendingClassificationId() != null) {
+                pstmt.setInt(4, tx.getSpendingClassificationId());
+            } else {
+                pstmt.setNull(4, Types.INTEGER);
+            }
+            pstmt.setInt(5, tx.getTransactionTypeId());
+            pstmt.setDouble(6, Math.round(tx.getAmount() * 100.0) / 100.0);
+            pstmt.setInt(7, tx.getTransactionStatusId());
+            LocalDateTime txDate = tx.getCompleteDate() != null ? tx.getCompleteDate() : LocalDateTime.now();
+            pstmt.setString(8, txDate.toString().replace("T", " "));
+            pstmt.executeUpdate();
+            try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                if (keys.next()) tx.setId(keys.getInt(1));
+            }
+            tx.setCompleteDate(txDate);
+            if (tx.getCreatedAt() == null) tx.setCreatedAt(LocalDateTime.now());
+        }
+    }
+
+    @Override
     public void update(Transaction transaction) {
         String sql = "UPDATE transactions SET " +
                 "account_id = ?, " +
@@ -580,5 +642,62 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             throw new RuntimeException("Error applying transaction filters", e);
         }
         return transactions;
+    }
+
+    @Override
+    public Optional<Transaction> findPairedTransfer(int excludeAccountId,
+                                                    double amount,
+                                                    LocalDateTime createdAt) {
+        String sql = "SELECT * FROM transactions " +
+                "WHERE account_id != ? " +
+                "AND amount = ? " +
+                "AND created_at = ? " +
+                "AND category_id IN (?, ?, ?) " +
+                "LIMIT 1";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, excludeAccountId);
+            pstmt.setDouble(2, amount);
+            pstmt.setString(3, createdAt.toString().replace("T", " "));
+            pstmt.setInt(4, Transaction.CATEGORY_SAVING);
+            pstmt.setInt(5, Transaction.CATEGORY_SAVING_EXPENSE);
+            pstmt.setInt(6, Transaction.CATEGORY_TRANSFER);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error finding paired transfer for accountId={}, amount={}, createdAt={}",
+                    excludeAccountId, amount, createdAt, e);
+            throw new RuntimeException("Error finding paired transfer", e);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsByCategoryId(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM transactions WHERE category_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, categoryId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error checking if category id={} is used in transactions", categoryId, e);
+            throw new RuntimeException("Error checking category usage in transactions", e);
+        }
+
+        return false;
     }
 }

@@ -68,4 +68,8 @@ public interface TransactionService {
      *   TYPE_EXPENSE: balance += amount (reverzia výdavku)
      */
     void deleteTransactions(List<Integer> transactionIds);
+
+    List<Transaction> searchTransactions(String rawInput, int accountId);
+
+    List<Transaction> searchTransactions(String rawInput);
 }

@@ -36,7 +36,6 @@ public class AccountRepositoryImpl implements AccountRepository {
         account.setRegionId(rs.getInt("region_id"));
         account.setDescription(rs.getString("description"));
         account.setAccountTypeId(rs.getInt("account_type_id"));
-        account.setDefaultCurrencyCode(rs.getString("default_currency_code"));
         account.setInitialBalance(rs.getDouble("initial_balance"));
         account.setCurrentBalance(rs.getDouble("current_balance"));
         account.setActive(rs.getInt("is_active") == 1);
@@ -114,8 +113,8 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Account save(Account account) {
         String sql = "INSERT INTO accounts (owner_user_id, region_id, description, account_type_id, " +
-                "default_currency_code, initial_balance, current_balance, is_active, created_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "initial_balance, current_balance, is_active, created_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -124,13 +123,12 @@ public class AccountRepositoryImpl implements AccountRepository {
             pstmt.setInt(2, account.getRegionId());
             pstmt.setString(3, account.getDescription());
             pstmt.setInt(4, account.getAccountTypeId());
-            pstmt.setString(5, account.getDefaultCurrencyCode());
-            pstmt.setDouble(6, account.getInitialBalance());
-            pstmt.setDouble(7, account.getCurrentBalance());
-            pstmt.setInt(8, account.isActive() ? 1 : 0);
+            pstmt.setDouble(5, account.getInitialBalance());
+            pstmt.setDouble(6, account.getCurrentBalance());
+            pstmt.setInt(7, account.isActive() ? 1 : 0);
 
             LocalDateTime createdAt = account.getCreatedAt() != null ? account.getCreatedAt() : LocalDateTime.now();
-            pstmt.setString(9, createdAt.toString().replace("T", " "));
+            pstmt.setString(8, createdAt.toString().replace("T", " "));
 
             int affectedRows = pstmt.executeUpdate();
 

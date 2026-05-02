@@ -22,7 +22,7 @@ import java.util.TreeMap;
  * Spravuje Budget Setup, Custom Allocation a Emergency Fund.
  * Štandardné percentá (z celého monthlyIncome):
  *   emergency_fund = 10%, savings = 30%, to_invest = 40%, fun_money = 20%
- * Fallback percentá (zo zvyšku po essential — pri vysokých výdavkoch):
+ * Fallback percentá (zo zvyšku po essential (pri vysokých výdavkoch)):
  *   emergency_fund = 15%, savings = 40%, to_invest = 30%, fun_money = 15%
  */
 public class BudgetServiceImpl implements BudgetService {
@@ -30,19 +30,19 @@ public class BudgetServiceImpl implements BudgetService {
     private static final Logger logger =
             LoggerFactory.getLogger(BudgetServiceImpl.class);
 
-    // Štandardné percentá (z celého monthlyIncome)
+    // štandardné percentá (z celého monthlyIncome)
     private static final double EMERGENCY_FUND_PERCENT = 0.10;
     private static final double SAVINGS_PERCENT = 0.30;
     private static final double TO_INVEST_PERCENT = 0.40;
 
-    // Fallback percentá (zo zvyšku po essential)
-    // Väčší dôraz na sporenie, menej agresívne investovanie
+    // fallback percentá (zo zvyšku po essential)
+    // väčší dôraz na sporenie, menej agresívne investovanie
     private static final double FALLBACK_EMERGENCY_PERCENT = 0.15;
     private static final double FALLBACK_SAVINGS_PERCENT = 0.40;
     private static final double FALLBACK_TO_INVEST_PERCENT = 0.30;
 
     // Emergency Fund limity
-    // Minimálny = 3x mesačné výdavky, Optimálny = 6x mesačné výdavky
+    // minimálny = 3x mesačné výdavky, optimálny = 6x mesačné výdavky
     private static final double MINIMAL_EMERGENCY_MULTIPLIER = 3.0;
     private static final double OPTIMAL_EMERGENCY_MULTIPLIER = 6.0;
 
@@ -55,14 +55,14 @@ public class BudgetServiceImpl implements BudgetService {
         this.transactionRepository = transactionRepository;
     }
 
-    //  NAČÍTANIE
+    // NAČÍTANIE
     @Override
     public BudgetData loadBudgetData() {
         int userId = SessionManager.getInstance().getCurrentUserId();
         logger.info("Loading budget data for userId: {}", userId);
 
         try {
-            // História emergency fondu sa načíta vždy
+            // história emergency fondu sa načíta vždy
             double emergencyFundCurrent = getEmergencyFundBalance();
             Map<String, Double> emergencyFundHistory = loadEmergencyFundHistory();
 
@@ -105,14 +105,14 @@ public class BudgetServiceImpl implements BudgetService {
         }
     }
 
-    //  BUDGET SETUP
+    // BUDGET SETUP
     @Override
     public BudgetWarning saveBudgetSetup(double monthlyIncome, double food,
                                          double rent, double transport,
                                          double utilities, double other) {
         logger.info("Saving budget setup: monthlyIncome={}", monthlyIncome);
 
-        // Validácia
+        // validácia
         if (monthlyIncome <= 0) {
             throw new BudgetException("budget.error.invalid_income");
         }
@@ -121,7 +121,7 @@ public class BudgetServiceImpl implements BudgetService {
             throw new BudgetException("budget.error.negative_expense");
         }
 
-        double essentialTotal = food + rent + transport + utilities + other;
+        double essentialTotal = round2(food + rent + transport + utilities + other);
         if (essentialTotal > monthlyIncome) {
             throw new BudgetException("budget.error.expenses_exceed_income");
         }
@@ -129,7 +129,7 @@ public class BudgetServiceImpl implements BudgetService {
         try {
             int userId = SessionManager.getInstance().getCurrentUserId();
 
-            // Vypočítaj alokáciu
+            // vypočítaj alokáciu
             AllocationResult allocation = calculateAllocation(
                     monthlyIncome, essentialTotal);
 
@@ -189,7 +189,7 @@ public class BudgetServiceImpl implements BudgetService {
         }
     }
 
-    //  CUSTOM ALLOCATION
+    // CUSTOM ALLOCATION
     @Override
     public BudgetWarning saveCustomAllocation(double essentialExpenses,
                                               double emergencyFund,
@@ -209,13 +209,12 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = existing.get();
         double monthlyIncome = budget.getMonthlyIncome();
 
-        // Validácia: záporné hodnoty
+        // validácia
         if (essentialExpenses < 0 || emergencyFund < 0
                 || savings < 0 || toInvest < 0) {
             throw new BudgetException("budget.error.negative_expense");
         }
 
-        // Validácia: neprekročiť monthlyIncome
         double total = essentialExpenses + emergencyFund + savings + toInvest;
         if (total > monthlyIncome) {
             throw new BudgetException("budget.error.expenses_exceed_income");
@@ -224,7 +223,7 @@ public class BudgetServiceImpl implements BudgetService {
         // funMoney = zvyšok
         double funMoney = monthlyIncome - total;
 
-        // Upozornenie ak essential < skutočné výdavky z Budget Setup
+        // upozornenie ak essential < skutočné výdavky z Budget Setup
         double actualEssential = calculateEssentialTotal(budget);
         BudgetWarning warning = BudgetWarning.NONE;
         if (essentialExpenses < actualEssential) {
@@ -250,32 +249,33 @@ public class BudgetServiceImpl implements BudgetService {
         }
     }
 
-    //  HELPERS - ALOKÁCIA
+    // HELPERS
     /**
      * Vypočíta alokáciu podľa monthlyIncome a essentialTotal.
      * Štandardný prípad: percentá z celého monthlyIncome.
-     * Fallback prípad: percentá zo zvyšku — väčší dôraz na sporenie.
+     * Fallback prípad: percentá zo zvyšku (väčší dôraz na sporenie).
      */
-    private AllocationResult calculateAllocation(double monthlyIncome,
-                                                 double essentialTotal) {
+    private AllocationResult calculateAllocation(double monthlyIncome, double essentialTotal) {
+
         double emergencyFromTotal = monthlyIncome * EMERGENCY_FUND_PERCENT;
         double savingsFromTotal = monthlyIncome * SAVINGS_PERCENT;
         double toInvestFromTotal = monthlyIncome * TO_INVEST_PERCENT;
-        double totalAllocated = essentialTotal + emergencyFromTotal
-                + savingsFromTotal + toInvestFromTotal;
+        double totalAllocated = essentialTotal + emergencyFromTotal + savingsFromTotal + toInvestFromTotal;
 
         if (totalAllocated <= monthlyIncome) {
-            // Štandardný prípad — všetko vychádza z celku
+            // štandardný prípad
             double funMoney = monthlyIncome - essentialTotal
                     - emergencyFromTotal - savingsFromTotal - toInvestFromTotal;
             logger.info("Standard allocation applied");
             return new AllocationResult(
-                    emergencyFromTotal, savingsFromTotal,
-                    toInvestFromTotal, funMoney,
+                    round2(emergencyFromTotal),
+                    round2(savingsFromTotal),
+                    round2(toInvestFromTotal),
+                    round2(funMoney),
                     BudgetWarning.NONE);
         }
 
-        // Fallback: essential príliš vysoké
+        // fallback: essential príliš vysoké
         double remaining = monthlyIncome - essentialTotal;
         logger.info("Essential expenses too high, applying fallback " +
                 "allocation from remaining: {}", remaining);
@@ -285,10 +285,10 @@ public class BudgetServiceImpl implements BudgetService {
             return new AllocationResult(0, 0, 0, 0, BudgetWarning.FALLBACK_ALLOCATION_APPLIED);
         }
 
-        double emergencyFund = remaining * FALLBACK_EMERGENCY_PERCENT;
-        double savings = remaining * FALLBACK_SAVINGS_PERCENT;
-        double toInvest = remaining * FALLBACK_TO_INVEST_PERCENT;
-        double funMoney = remaining - emergencyFund - savings - toInvest;
+        double emergencyFund = round2(remaining * FALLBACK_EMERGENCY_PERCENT);
+        double savings = round2(remaining * FALLBACK_SAVINGS_PERCENT);
+        double toInvest = round2(remaining * FALLBACK_TO_INVEST_PERCENT);
+        double funMoney = round2(remaining - emergencyFund - savings - toInvest);
 
         logger.info("Fallback allocation: emergency={}, savings={}, " +
                         "toInvest={}, funMoney={}",
@@ -306,7 +306,6 @@ public class BudgetServiceImpl implements BudgetService {
                                     BudgetWarning warning) {
     }
 
-    //  HELPERS — OSTATNÉ
     private double calculateEssentialTotal(Budget budget) {
         return budget.getFood() + budget.getRent()
                 + budget.getTransport() + budget.getUtilities()
@@ -342,8 +341,7 @@ public class BudgetServiceImpl implements BudgetService {
                     .minusMonths(11).withDayOfMonth(1)
                     .withHour(0).withMinute(0).withSecond(0);
 
-            // Vypočítaj presný balance k dátumu from
-            // = initialBalance + všetky income - všetky expense od vzniku účtu po from
+            // vypočíta presný balance k dátumu from
             List<Transaction> allBeforeFrom = transactionRepository
                     .findByAccountIdAndDateRange(accountId,
                             emergencyAccount.getCreatedAt(), from);
@@ -354,20 +352,20 @@ public class BudgetServiceImpl implements BudgetService {
                 else balanceAtFrom -= tx.getAmount();
             }
 
-            // Načítaj income a expense za posledných 12 mesiacov
+            // načíta income a expense za posledných 12 mesiacov
             Map<String, Double> incomeByMonth = transactionRepository
                     .sumByTypeAndMonth(accountId, Transaction.TYPE_INCOME, from);
             Map<String, Double> expenseByMonth = transactionRepository
                     .sumByTypeAndMonth(accountId, Transaction.TYPE_EXPENSE, from);
 
-            // Zlúč do net (income - expense)
+            // zlúči do net (income - expense)
             Map<String, Double> netByMonth = new TreeMap<>();
             incomeByMonth.forEach((month, sum) ->
                     netByMonth.merge(month, sum, Double::sum));
             expenseByMonth.forEach((month, sum) ->
                     netByMonth.merge(month, -sum, Double::sum));
 
-            // Doplň chýbajúce mesiace
+            // doplní chýbajúce mesiace
             LocalDateTime current = from;
             LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
             while (!current.isAfter(until)) {
@@ -379,7 +377,7 @@ public class BudgetServiceImpl implements BudgetService {
             logger.info("Emergency fund history size: {}", netByMonth.size());
             logger.info("balanceAtFrom: {}", balanceAtFrom);
 
-            // Kumulatívne od presného balance k dátumu from
+            // kumulatívne od presného balance k dátumu from
             return toCumulative(netByMonth, balanceAtFrom);
 
         } catch (Exception e) {
@@ -414,5 +412,9 @@ public class BudgetServiceImpl implements BudgetService {
             cumulative.put(entry.getKey(), running);
         }
         return cumulative;
+    }
+
+    private double round2(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 }

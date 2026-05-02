@@ -14,8 +14,6 @@ import java.util.List;
 
 /**
  * Správca session prihláseného používateľa.
- * Singleton
- * Kolekcie: ArrayList pre účty, Collections.unmodifiableList() pre read-only prístup
  */
 public class SessionManager {
 
@@ -82,11 +80,19 @@ public class SessionManager {
                 .gender(currentUser.getGender())
                 .photoPath(currentUser.getPhotoPath())
                 .role(currentUser.getRole())
+                .savingXp(currentUser.getSavingXp())
+                .budgetXp(currentUser.getBudgetXp())
+                .investorXp(currentUser.getInvestorXp())
+                .spenderXp(currentUser.getSpenderXp())
+                .savingLevel(currentUser.getSavingLevel())
+                .budgetLevel(currentUser.getBudgetLevel())
+                .investorLevel(currentUser.getInvestorLevel())
+                .spenderLevel(currentUser.getSpenderLevel())
                 .build();
     }
 
     /**
-     * Pre service vrstvu — plný User s passwordHash.
+     * Pre service vrstvu - plný User s passwordHash.
      * Package-private: dostupné len v sk.sporixx.service balíčku.
      */
     User getCurrentUserInternal() {

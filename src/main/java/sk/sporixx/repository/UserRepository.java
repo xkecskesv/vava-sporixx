@@ -70,4 +70,6 @@ public interface UserRepository {
      * @param isFamilyManager požadovaný stav roly rodinného manažéra
      */
     void updateFamilyManagerStatus(int userId, boolean isFamilyManager);
+
+    void updateXpAndLevel(int userId, String category, double xp, int level);
 }

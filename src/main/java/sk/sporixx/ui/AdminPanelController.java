@@ -288,12 +288,15 @@ public class AdminPanelController {
                     return;
                 }
                 AdminUserData row = getTableRow() == null ? null : getTableRow().getItem();
-                if (row != null && row.isAdmin()) {
+                if (row == null) return;
+                if (row.isAdmin()) {
                     setText(Localization.get("admin.users.admin"));
+                } else if (row.isFamilyManager()) {
+                    setText(Localization.get("admin.users.family_manager"));
+                } else if (row.isChild()) {
+                    setText(Localization.get("admin.users.family_user"));
                 } else {
-                    setText(isFamilyManager
-                            ? Localization.get("admin.users.family_manager")
-                            : Localization.get("admin.users.family_user"));
+                    setText(Localization.get("admin.users.user"));
                 }
             }
         });

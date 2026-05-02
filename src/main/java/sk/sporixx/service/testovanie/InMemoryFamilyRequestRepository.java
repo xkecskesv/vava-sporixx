@@ -62,6 +62,14 @@ public class InMemoryFamilyRequestRepository implements FamilyRequestRepository 
                 .ifPresent(r -> r.setStatus(status));
     }
 
+    @Override
+    public void cancelAllPendingByFromUserId(int fromUserId) {
+        requests.stream()
+                .filter(r -> r.getFromUserId() == fromUserId
+                        && FamilyRequest.STATUS_PENDING.equals(r.getStatus()))
+                .forEach(r -> r.setStatus(FamilyRequest.STATUS_REJECTED));
+    }
+
     public List<FamilyRequest> findAll() {
         return new ArrayList<>(requests);
     }

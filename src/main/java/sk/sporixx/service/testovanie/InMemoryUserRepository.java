@@ -97,4 +97,20 @@ public class InMemoryUserRepository implements UserRepository {
     public void updateFamilyManagerStatus(int userId, boolean isFamilyManager) {
         // In-memory repository has no account_access model; profile tests rely on User.role in session.
     }
+
+    @Override
+    public void updateXpAndLevel(int userId, String category, double xp, int level) {
+        users.stream()
+                .filter(u -> u.getId() == userId)
+                .findFirst()
+                .ifPresent(u -> {
+                    switch (category) {
+                        case "saving" -> { u.setSavingXp(xp); u.setSavingLevel(level); }
+                        case "budget" -> { u.setBudgetXp(xp); u.setBudgetLevel(level); }
+                        case "investor" -> { u.setInvestorXp(xp); u.setInvestorLevel(level); }
+                        case "spender" -> { u.setSpenderXp(xp); u.setSpenderLevel(level); }
+                        default -> throw new IllegalArgumentException("Unknown category: " + category);
+                    }
+                });
+    }
 }

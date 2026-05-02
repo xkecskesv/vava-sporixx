@@ -88,10 +88,14 @@ public class SettingsController implements Initializable {
         languageByLabel.put(resources.getString("settings.general.language.english"), "en");
         languageByLabel.put(resources.getString("settings.general.language.slovak"), "sk");
         languageByLabel.put(resources.getString("settings.general.language.czech"), "cs");
+        languageByLabel.put(resources.getString("settings.general.language.polish"), "pl");
+        languageByLabel.put(resources.getString("settings.general.language.german"), "de");
 
         currencyByLabel.put(resources.getString("settings.general.currency.eur"), "EUR");
         currencyByLabel.put(resources.getString("settings.general.currency.usd"), "USD");
         currencyByLabel.put(resources.getString("settings.general.currency.czk"), "CZK");
+        currencyByLabel.put(resources.getString("settings.general.currency.gbp"), "GBP");
+        currencyByLabel.put(resources.getString("settings.general.currency.pln"), "PLN");
 
         languageComboBox.getItems().setAll(languageByLabel.keySet());
         currencyComboBox.getItems().setAll(currencyByLabel.keySet());

@@ -14,6 +14,7 @@ import sk.sporixx.model.FamilyRequest;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.util.AvatarUtil;
+import sk.sporixx.util.CurrencyFormatUtil;
 import sk.sporixx.util.Localization;
 
 import java.io.FileInputStream;
@@ -304,15 +305,11 @@ public class FamilyManagementController {
                 icon.setFitWidth(14); icon.setFitHeight(14); icon.setPreserveRatio(true);
                 editBtn.setGraphic(icon);
             } catch (Exception ignored) {}
-            // TODO: Adelka — updateSavingAccount validuje účet cez SessionManager.getAccountById()
-            // čo vracia len účty prihláseného usera. Pre Family Manager treba buď:
-            // a) pridať updateSavingAccountById ktorý skipuje SessionManager validáciu
-            // b) alebo načítať účet priamo cez AccountRepository
             editBtn.setOnAction(e -> handleEditSavingAccount(account));
             header.getChildren().add(editBtn);
         }
 
-        Label desc = new Label(account.getDescription());
+        Label desc = new Label(ServiceLocator.getAccountService().getLocalizedDescription(account));
         desc.getStyleClass().add("account-card-desc");
 
         Label created = new Label(Localization.get("management.accounts.created") + ": "
@@ -343,7 +340,7 @@ public class FamilyManagementController {
         editingAccount = account;
         clearEditSavingModalError();
 
-        editSavingDescField.setText(account.getDescription());
+        editSavingDescField.setText(ServiceLocator.getAccountService().getLocalizedDescription(account));
         editSavingDatePicker.setConverter(new javafx.util.StringConverter<>() {
             private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             @Override public String toString(LocalDate d) { return d != null ? d.format(fmt) : ""; }
@@ -395,14 +392,14 @@ public class FamilyManagementController {
         }
 
         try {
-            ServiceLocator.getAccountService().updateSavingAccount(
+            ServiceLocator.getFamilyService().updateChildSavingAccount(
                     editingAccount.getId(), desc, goalAmount, editSavingDatePicker.getValue());
             closeEditSavingModal();
             // Reload member accounts
             if (selectedMember != null) loadMemberAccounts(selectedMember);
         } catch (Exception e) {
             String msg = e.getMessage();
-            showEditSavingModalError(msg != null && msg.startsWith("account.error.") ? msg : "error.db_error");
+            showEditSavingModalError(msg != null && msg.startsWith("family.error.") ? msg : "error.db_error");
         }
     }
 
@@ -492,6 +489,6 @@ public class FamilyManagementController {
     }
 
     private String formatCurrency(double value) {
-        return String.format("€%,.2f", value);
+        return CurrencyFormatUtil.format(value);
     }
 }
