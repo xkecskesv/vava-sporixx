@@ -8,6 +8,7 @@ import sk.sporixx.model.RecurringRule;
 import sk.sporixx.model.SavingGoal;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.*;
+import sk.sporixx.util.Localization;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -150,11 +151,14 @@ public class ReportsServiceImpl implements ReportsService {
 
             Map<String, Double> limited = limitToTopCategories(expenseByCategory);
 
-            double totalExpense = limited.values().stream()
+            Map<String, Double> localized = new LinkedHashMap<>();
+            limited.forEach((name, sum) -> localized.put(localizeSystemCategoryName(name), sum));
+
+            double totalExpense = localized.values().stream()
                     .mapToDouble(Double::doubleValue).sum();
 
             return CategoryExpenseData.builder()
-                    .expenseByCategory(limited)
+                    .expenseByCategory(localized)
                     .totalExpense(totalExpense)
                     .build();
 
@@ -549,7 +553,7 @@ public class ReportsServiceImpl implements ReportsService {
                 .sum();
 
         if (otherSum > 0) {
-            result.put("Other", otherSum);
+            result.put(Localization.get("category.other"), otherSum);
         }
 
         return result;
@@ -560,5 +564,14 @@ public class ReportsServiceImpl implements ReportsService {
      */
     private Map<String, Double> toCumulative(Map<String, Double> raw) {
         return toCumulative(raw, 0.0);
+    }
+
+    private String localizeSystemCategoryName(String name) {
+        String key = "category.system." + name.toLowerCase().replace(" ", "_");
+        try {
+            return Localization.get(key);
+        } catch (Exception ignored) {
+            return name;
+        }
     }
 }
