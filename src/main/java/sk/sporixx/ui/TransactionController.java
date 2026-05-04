@@ -254,7 +254,8 @@ public class TransactionController {
             double val = Double.parseDouble(amountField.getText().replace(",", "."));
             boolean isIncome = typeCombo.getValue() != null &&
                     typeCombo.getValue().equals(Localization.get("transactions.type.income"));
-            amountPreview.setText((isIncome ? "+ " : "- ") + formatCurrency(val));
+            var cs = ServiceLocator.getCurrencyService();
+            amountPreview.setText((isIncome ? "+ " : "- ") + cs.format(val, cs.getUserCurrency()));
         } catch (NumberFormatException e) {
             amountPreview.setText("");
         }
@@ -375,7 +376,7 @@ public class TransactionController {
 
             // Naplň editovateľné polia
             nameField.setText(selectedTransaction.getDescription());
-            amountField.setText(String.valueOf(selectedTransaction.getAmount()));
+            amountField.setText(String.format("%.2f", CurrencyFormatUtil.fromEur(selectedTransaction.getAmount())));
             datePicker.setValue(selectedTransaction.getCompleteDate().toLocalDate());
 
             // Zachovaj typ pre submitTransaction()
@@ -550,6 +551,7 @@ public class TransactionController {
         try {
             amount = Double.parseDouble(amountText.replace(",", "."));
             if (amount <= 0) { showModalError("transaction.error.invalid_amount"); return; }
+            amount = CurrencyFormatUtil.toEur(amount);
         } catch (NumberFormatException e) {
             showModalError("transaction.error.invalid_amount");
             return;

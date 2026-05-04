@@ -34,7 +34,6 @@ public final class PasswordUtil {
 
     /**
      * Overí, či zadané heslo zodpovedá uloženému BCrypt hashu.
-     *
      * @param plainPassword heslo v čistom texte na overenie
      * @param hashedPassword uložený BCrypt hash z databázy
      * @return true ak heslo zodpovedá hashu, false inak

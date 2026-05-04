@@ -15,11 +15,4 @@ public class UserSettings {
     private String thousandsSeparator; // z regions.thousands_separator
     private String dateFormat; // "dd.MM.yyyy" alebo "MM/dd/yyyy"
     private String timeFormat; // "HH:mm" alebo "hh:mm a"
-
-    // Notifikácie
-    private boolean upcomingPaymentsEnabled;
-    private boolean budgetLimitAlertsEnabled;
-    private boolean savingRemindersEnabled;
-    private boolean savingGoalsUpdatesEnabled;
-    private boolean achievementsEnabled;
 }

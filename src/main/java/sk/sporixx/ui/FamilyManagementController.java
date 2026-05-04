@@ -352,7 +352,7 @@ public class FamilyManagementController {
             Optional<SavingGoal> goalOpt = ServiceLocator.getAccountService().getSavingGoal(account.getId());
             if (goalOpt.isPresent()) {
                 SavingGoal goal = goalOpt.get();
-                editSavingGoalField.setText(String.format("%.2f", goal.getTargetAmount()));
+                editSavingGoalField.setText(String.format("%.2f", CurrencyFormatUtil.fromEur(goal.getTargetAmount())));
                 editSavingDatePicker.setValue(goal.getTargetDate().toLocalDate());
             } else {
                 editSavingGoalField.clear();
@@ -385,7 +385,7 @@ public class FamilyManagementController {
 
         double goalAmount;
         try {
-            goalAmount = Double.parseDouble(goalText.replace(",", "."));
+            goalAmount = CurrencyFormatUtil.toEur(Double.parseDouble(goalText.replace(",", ".")));
         } catch (NumberFormatException e) {
             showEditSavingModalError("account.error.goal_amount_invalid"); return;
         }
