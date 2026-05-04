@@ -1,10 +1,12 @@
 package sk.sporixx.service;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.sporixx.dto.CategoryExpenseData;
 import sk.sporixx.dto.ChartPeriod;
 import sk.sporixx.model.Transaction;
+import sk.sporixx.util.Localization;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -29,6 +31,11 @@ class ReportsServiceCategoryExpenseJdbcTest extends ReportsServiceJdbcTestSuppor
     private static final int CAT_SALARY = 9;
 
     // ====================== ZÁKLADNÉ AGREGÁCIE ======================
+
+    @BeforeAll
+    static void initLocalization() throws Exception {
+        Localization.load("en");
+    }
 
     @Test
     @DisplayName("Prázdne dáta — totalExpense=0, prázdna mapa")

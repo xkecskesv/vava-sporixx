@@ -101,7 +101,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>sk.stuba.fiit.sporixx.Main</mainClass>
+                            <mainClass>sk.sporixx.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -115,7 +115,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>sk.stuba.fiit.sporixx.Main</mainClass>
+                            <mainClass>sk.sporixx.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -139,7 +139,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>sk.stuba.fiit.sporixx.Main</mainClass>
+                    <mainClass>sk.sporixx.Main</mainClass>
                     <options>
                         <option>--enable-native-access=javafx.graphics</option>
                         <option>--enable-native-access=ALL-UNNAMED</option>
