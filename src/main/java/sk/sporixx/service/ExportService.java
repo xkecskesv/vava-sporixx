@@ -12,7 +12,7 @@ public interface ExportService {
      * Exportuje income a expenses report do XML.
      * Grouping (deň/mesiac) závisí od zvoleného ChartPeriod.
      * @param period zvolené časové obdobie (ONE_WEEK, ONE_MONTH, SIX_MONTHS, TWELVE_MONTHS)
-     * @param filePath absolútna cesta kam uložiť súbor — používateľ vyberá cez FileChooser v UI
+     * @param filePath absolútna cesta kam uložiť súbor - používateľ vyberá cez FileChooser v UI
      */
     void exportIncomeExpenseToXml(ChartPeriod period, String filePath);
 

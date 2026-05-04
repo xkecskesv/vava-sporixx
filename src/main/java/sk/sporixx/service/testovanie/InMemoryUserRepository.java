@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * In-memory implementácia UserRepository pre testovanie bez DB.
  * Dáta sa držia v List-e v pamäti - po reštarte aplikácie sa stratia.
- * Nahradiť JDBC implementáciou keď bude hotová DB vrstva.
  */
 public class InMemoryUserRepository implements UserRepository {
 

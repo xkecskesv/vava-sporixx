@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Reprezentuje pravidlo opakovanej platby (napr. mesačný predplatný, nájom).
+ * Reprezentuje pravidlo opakovanej platby (napr. mesačné predplatné, nájom).
  * Mapuje sa na DB tabuľku 'recurring_rules'.
  */
 @Data
@@ -32,8 +32,8 @@ public class RecurringRule {
     private int frequencyInterval;
     private LocalDateTime startDate;
     private LocalDateTime nextDueDate;
-    private LocalDateTime endDate;          // nullable
-    private Integer maxOccurrences;         // nullable
+    private LocalDateTime endDate; // nullable
+    private Integer maxOccurrences; // nullable
     private int generatedCount;
     private boolean isActive;
     private LocalDateTime createdAt;

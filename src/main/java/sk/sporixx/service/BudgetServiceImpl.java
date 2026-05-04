@@ -22,9 +22,9 @@ import sk.sporixx.util.ValidationUtil;
  * Implementácia BudgetService.
  * Spravuje Budget Setup, Custom Allocation a Emergency Fund.
  * Štandardné percentá (z celého monthlyIncome):
- *   emergency_fund = 10%, savings = 30%, to_invest = 40%, fun_money = 20%
+ * - emergency_fund = 10%, savings = 30%, to_invest = 40%, fun_money = 20%
  * Fallback percentá (zo zvyšku po essential (pri vysokých výdavkoch)):
- *   emergency_fund = 15%, savings = 40%, to_invest = 30%, fun_money = 15%
+ * - emergency_fund = 15%, savings = 40%, to_invest = 30%, fun_money = 15%
  */
 public class BudgetServiceImpl implements BudgetService {
 

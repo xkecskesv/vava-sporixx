@@ -43,7 +43,7 @@ public class FamilyServiceImpl implements FamilyService {
         logger.info("Loading family members for managerId={}", managerId);
 
         try {
-            // načíta prístupy k cudzím účtom (nie k vlastným — self-referenčné záznamy pre rolu preskočíme)
+            // načíta prístupy k cudzím účtom (nie k vlastným - self-referenčné záznamy pre rolu preskočíme)
             List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
             if (accesses.isEmpty()) return new ArrayList<>();
 

@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri recurring rules (vytvorenie, editácia).
+ */
 @Getter
 public class RecurringRuleException extends RuntimeException {
     private final String messageKey;

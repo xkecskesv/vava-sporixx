@@ -102,7 +102,7 @@ public class ImportServiceImpl implements ImportService {
                     updatedCount++;
                 }
 
-                // Importuj transakcie
+                // importuj transakcie
                 NodeList txNodes = accountEl.getElementsByTagName("Transaction");
                 if (txNodes.getLength() > 0) {
                     importTransactions(accountId, txNodes);
