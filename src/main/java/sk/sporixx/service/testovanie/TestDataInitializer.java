@@ -69,12 +69,12 @@ public class TestDataInitializer {
         this.recurringRuleRepository = new InMemoryRecurringRuleRepository();
         this.savingGoalRepository  = new InMemorySavingGoalRepository();
 
-        this.authService    = new AuthServiceImpl(userRepository, accountRepository);
-        this.overviewService = new OverviewServiceImpl(
-                transactionRepository, recurringRuleRepository, savingGoalRepository);
         this.categoryRepository = new InMemoryCategoryRepository();
         this.budgetRepository = new InMemoryBudgetRepository();
         this.accountAccessRepository = new InMemoryAccountAccessRepository();
+        this.authService    = new AuthServiceImpl(userRepository, accountRepository, accountAccessRepository);
+        this.overviewService = new OverviewServiceImpl(
+                transactionRepository, recurringRuleRepository, savingGoalRepository);
         this.familyRequestRepository = new InMemoryFamilyRequestRepository();
 
         initTestData();

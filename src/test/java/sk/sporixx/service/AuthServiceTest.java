@@ -47,7 +47,8 @@ class AuthServiceTest {
         initServiceLocatorForTests();
         authService = new AuthServiceImpl(
                 new InMemoryUserRepository(),
-                new InMemoryAccountRepository()
+                new InMemoryAccountRepository(),
+                new InMemoryAccountAccessRepository()
         );
     }
 
@@ -214,7 +215,7 @@ class AuthServiceTest {
     void register_validInput_userSavedToRepository() throws AuthException {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
-        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
 
         service.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!");
 
@@ -233,7 +234,8 @@ class AuthServiceTest {
     void register_dbErrorOnDuplicateCheck_shouldThrow() {
         AuthService failingService = new AuthServiceImpl(
                 new FailingFindByEmailUserRepository(),
-                new InMemoryAccountRepository()
+                new InMemoryAccountRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertThrows(AuthException.class, () ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
@@ -245,7 +247,8 @@ class AuthServiceTest {
     void register_dbErrorOnSave_shouldThrow() {
         AuthService failingService = new AuthServiceImpl(
                 new FailingSaveUserRepository(),
-                new InMemoryAccountRepository()
+                new InMemoryAccountRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertThrows(AuthException.class, () ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
@@ -257,7 +260,8 @@ class AuthServiceTest {
     void register_accountCreationFails_shouldNotThrow() {
         AuthService failingService = new AuthServiceImpl(
                 new InMemoryUserRepository(),
-                new FailingSaveAccountRepository()
+                new FailingSaveAccountRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertDoesNotThrow(() ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
@@ -269,7 +273,8 @@ class AuthServiceTest {
     void register_autoLoginFails_shouldNotThrow() {
         AuthService failingService = new AuthServiceImpl(
                 new InMemoryUserRepository(),
-                new FailingFindAccountsRepository()
+                new FailingFindAccountsRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertDoesNotThrow(() ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
@@ -342,7 +347,7 @@ class AuthServiceTest {
                 .build();
         userRepo.save(inactiveUser);
 
-        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
 
         assertThrows(AuthException.class, () ->
                 service.login("jan@test.sk", "Heslo123!")
@@ -370,7 +375,7 @@ class AuthServiceTest {
                 .initialBalance(0.0).currentBalance(0.0)
                 .isActive(true).build());
 
-        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
 
         assertDoesNotThrow(() -> service.login("jan@test.sk", "Heslo123!"));
     }
@@ -380,7 +385,8 @@ class AuthServiceTest {
     void login_dbErrorOnFindByEmail_shouldThrow() {
         AuthService failingService = new AuthServiceImpl(
                 new FailingFindByEmailUserRepository(),
-                new InMemoryAccountRepository()
+                new InMemoryAccountRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertThrows(AuthException.class, () ->
                 failingService.login("jan@test.sk", "Heslo123!")
@@ -399,7 +405,8 @@ class AuthServiceTest {
 
         AuthService failingService = new AuthServiceImpl(
                 userRepo,
-                new FailingFindAccountsRepository()
+                new FailingFindAccountsRepository(),
+                new InMemoryAccountAccessRepository()
         );
         assertThrows(AuthException.class, () ->
                 failingService.login("jan@test.sk", "Heslo123!")
@@ -434,7 +441,7 @@ class AuthServiceTest {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
-        new AuthServiceImpl(userRepo, accountRepo);
+        new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
 
         Optional<User> admin = userRepo.findByEmail("admin@sporixx.sk");
         assertTrue(admin.isPresent(), "Admin účet by mal byť vytvorený");
@@ -448,10 +455,10 @@ class AuthServiceTest {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
-        new AuthServiceImpl(userRepo, accountRepo);
+        new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
         Optional<User> firstAdmin = userRepo.findByEmail("admin@sporixx.sk");
 
-        new AuthServiceImpl(userRepo, accountRepo);
+        new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
         Optional<User> secondAdmin = userRepo.findByEmail("admin@sporixx.sk");
 
         assertTrue(firstAdmin.isPresent());
@@ -465,7 +472,7 @@ class AuthServiceTest {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
-        new AuthServiceImpl(userRepo, accountRepo);
+        new AuthServiceImpl(userRepo, accountRepo, new InMemoryAccountAccessRepository());
 
         Optional<User> admin = userRepo.findByEmail("admin@sporixx.sk");
         assertTrue(admin.isPresent());
@@ -481,7 +488,8 @@ class AuthServiceTest {
         assertDoesNotThrow(() ->
                 new AuthServiceImpl(
                         new FailingFindByEmailUserRepository(),
-                        new InMemoryAccountRepository()
+                        new InMemoryAccountRepository(),
+                        new InMemoryAccountAccessRepository()
                 )
         );
     }

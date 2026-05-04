@@ -7,19 +7,14 @@ import sk.sporixx.model.Account;
 import sk.sporixx.model.GenderCode;
 import sk.sporixx.model.Role;
 import sk.sporixx.model.User;
+import sk.sporixx.repository.AccountAccessRepository;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.UserRepository;
-import sk.sporixx.util.DatabaseConfig;
 import sk.sporixx.util.Localization;
 import sk.sporixx.util.PasswordUtil;
 import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDateTime;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final AccountAccessRepository accountAccessRepository;
 
     private static final int DEFAULT_REGION_ID = 1;
     private static final String ADMIN_EMAIL = "admin@sporixx.sk";
@@ -40,9 +36,11 @@ public class AuthServiceImpl implements AuthService {
     private static final String ADMIN_LAST_NAME = "Sporixx";
     private static final int ADMIN_ACCESS_LEVEL = 3;
 
-    public AuthServiceImpl(UserRepository userRepository, AccountRepository accountRepository) {
+    public AuthServiceImpl(UserRepository userRepository, AccountRepository accountRepository,
+                           AccountAccessRepository accountAccessRepository) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.accountAccessRepository = accountAccessRepository;
         ensureAdminAccountExists();
     }
 
@@ -344,32 +342,7 @@ public class AuthServiceImpl implements AuthService {
         if (adminAccounts.isEmpty()) {
             return;
         }
-
         int accountId = adminAccounts.get(0).getId();
-        String checkSql = "SELECT 1 FROM account_access WHERE user_id = ? AND account_id = ? AND access_level >= ?";
-        String insertSql = "INSERT INTO account_access (user_id, account_id, access_level) VALUES (?, ?, ?)";
-
-        try (Connection connection = DriverManager.getConnection(DatabaseConfig.SQLITE_URL);
-             PreparedStatement checkStmt = connection.prepareStatement(checkSql)) {
-
-            checkStmt.setInt(1, adminUser.getId());
-            checkStmt.setInt(2, accountId);
-            checkStmt.setInt(3, ADMIN_ACCESS_LEVEL);
-
-            try (ResultSet resultSet = checkStmt.executeQuery()) {
-                if (resultSet.next()) {
-                    return;
-                }
-            }
-
-            try (PreparedStatement insertStmt = connection.prepareStatement(insertSql)) {
-                insertStmt.setInt(1, adminUser.getId());
-                insertStmt.setInt(2, accountId);
-                insertStmt.setInt(3, ADMIN_ACCESS_LEVEL);
-                insertStmt.executeUpdate();
-            }
-        } catch (SQLException e) {
-            logger.error("Failed to ensure admin access grant for user id={}", adminUser.getId(), e);
-        }
+        accountAccessRepository.grantAccess(adminUser.getId(), accountId, ADMIN_ACCESS_LEVEL);
     }
 }
