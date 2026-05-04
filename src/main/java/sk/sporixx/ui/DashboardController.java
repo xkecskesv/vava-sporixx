@@ -630,7 +630,8 @@ public class DashboardController {
         accountAmountField.textProperty().addListener((obs, oldVal, newVal) -> {
             try {
                 double val = Double.parseDouble(newVal.replace(",", "."));
-                modalAmountPreview.setText(formatCurrency(val));
+                var cs = ServiceLocator.getCurrencyService();
+                modalAmountPreview.setText(cs.format(val, cs.getUserCurrency()));
             } catch (NumberFormatException e) {
                 modalAmountPreview.setText("");
             }
@@ -674,6 +675,7 @@ public class DashboardController {
                 showModalError("account.error.negative_amount");
                 return;
             }
+            amount = CurrencyFormatUtil.toEur(amount);
         } catch (NumberFormatException e) {
             showModalError("account.error.negative_amount");
             return;
@@ -695,7 +697,7 @@ public class DashboardController {
 
                 double goalAmount;
                 try {
-                    goalAmount = Double.parseDouble(goalText.replace(",", "."));
+                    goalAmount = CurrencyFormatUtil.toEur(Double.parseDouble(goalText.replace(",", ".")));
                 } catch (NumberFormatException e) {
                     showModalError("account.error.goal_amount_invalid");
                     return;
@@ -716,7 +718,7 @@ public class DashboardController {
 
         } catch (Exception e) {
             String message = e.getMessage();
-            if (message != null && message.startsWith("account.error.")) {
+            if (message != null && (message.startsWith("account.error.") || message.startsWith("error."))) {
                 showModalError(message);
             } else {
                 showModalError("account.error.invalid_type");

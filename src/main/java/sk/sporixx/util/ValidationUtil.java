@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public final class ValidationUtil {
 
     /**
-     * Email – stredne striktná validácia (bez verifikačného mailu).
+     * Email - stredne striktná validácia (bez verifikačného mailu).
      * Pravidlá:
      *  - lokálna časť: a-z, A-Z, 0-9, znaky . _ % + -  (max 64 znakov)
      *  - žiadne dve bodky za sebou, nezačína ani nekončí bodkou
@@ -34,7 +34,7 @@ public final class ValidationUtil {
      * Pravidlá:
      *  - 1 až 2 slová oddelené jednou medzerou
      *  - každé slovo: písmená vrátane diakritiky, pomlčky, apostrofy
-     *  - OK:  "Ján", "Anna-Mária", "Mary Jane"
+     *  - OK: "Ján", "Anna-Mária", "Mary Jane"
      *  - ZLE: "Ján Pavol Peter", "123", ""
      */
     private static final Pattern NAME_PART_PATTERN = Pattern.compile(
@@ -51,18 +51,18 @@ public final class ValidationUtil {
     );
 
     /**
-     * Normalizuje časť mena – oreže whitespace, zloží viaceré medzery na jednu.
-     * "  Anna  Mária  " → "Anna Mária"
+     * Normalizuje časť mena - oreže whitespace, zloží viaceré medzery na jednu.
+     * "  Anna  Mária  " -> "Anna Mária"
      */
     public static String normalizeName(String name) {
         if (name == null) return "";
         return name.trim()
-                .replaceAll("\\s*-+\\s*", "-")   // viaceré pomlčky + okolité medzery - jedna pomlčka
-                .replaceAll("\\s+", " ");          // viaceré medzery - jedna
+                .replaceAll("\\s*-+\\s*", "-") // viaceré pomlčky + okolité medzery -> jedna pomlčka
+                .replaceAll("\\s+", " "); // viaceré medzery -> jedna
     }
 
     /**
-     * Validuje firstName alebo lastName – max 2 slová.
+     * Validuje firstName alebo lastName - max 2 slová.
      */
     public static boolean isValidNamePart(String name) {
         if (name == null) return false;
@@ -79,6 +79,12 @@ public final class ValidationUtil {
     /** Heslo: minimálne 8 znakov */
     private static final int MIN_PASSWORD_LENGTH = 8;
 
+    /** Maximálna povolená suma pre transakcie, účty aj ciele */
+    public static final double MAX_AMOUNT = 1000000000.0;
+
+    /** Minimálny povolený zostatok na účte */
+    public static final double MIN_BALANCE = -1000000000.0;
+
     public static boolean isValidPassword(String password) {
         return password != null && password.length() >= MIN_PASSWORD_LENGTH;
     }
@@ -90,7 +96,6 @@ public final class ValidationUtil {
     /**
      * Validuje emailovú adresu.
      * Kontroluje formát aj maximálnu dĺžku (254 znakov podľa RFC 5321).
-     *
      * @param email emailová adresa
      * @return true ak je platná
      */

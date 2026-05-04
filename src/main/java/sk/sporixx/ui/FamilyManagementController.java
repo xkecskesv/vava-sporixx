@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import sk.sporixx.dto.FamilyMemberData;
+import sk.sporixx.dto.MilestoneData;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.FamilyRequest;
 import sk.sporixx.model.SavingGoal;
@@ -163,22 +164,20 @@ public class FamilyManagementController {
                 : "-"));
         addedLabel.getStyleClass().add(isSelected ? "account-card-desc-active" : "analytics-subtitle");
 
-        // Bankové ikonky — každá ikona = 1 účet
-        HBox accountIcons = new HBox(8);
-        accountIcons.setAlignment(Pos.CENTER_LEFT);
-        for (Account acc : member.getAccounts()) {
-            try {
-                ImageView bankIcon = new ImageView(new Image(Objects.requireNonNull(
-                        getClass().getResourceAsStream("/assets/icons/management_icon.png"))));
-                bankIcon.setFitWidth(20); bankIcon.setFitHeight(20); bankIcon.setPreserveRatio(true);
-                if (isSelected) bankIcon.setStyle("-fx-opacity: 1.0;");
-                else bankIcon.setStyle("-fx-opacity: 0.4;");
-                Tooltip.install(bankIcon, new Tooltip(acc.getDescription()));
-                accountIcons.getChildren().add(bankIcon);
-            } catch (Exception ignored) {}
+        // Milestones
+        Label milestonesLabel = new Label(Localization.get("family.member.milestones"));
+        milestonesLabel.getStyleClass().add(isSelected ? "account-card-desc-active" : "analytics-subtitle");
+
+        HBox milestonesRow = new HBox(12);
+        milestonesRow.setAlignment(Pos.CENTER_LEFT);
+        if (member.getMilestones() != null) {
+            for (MilestoneData m : member.getMilestones()) {
+                VBox milestoneItem = createMilestoneBadge(m, isSelected);
+                milestonesRow.getChildren().add(milestoneItem);
+            }
         }
 
-        card.getChildren().addAll(header, photo, addedLabel, accountIcons);
+        card.getChildren().addAll(header, photo, addedLabel, milestonesLabel, milestonesRow);
 
         // Klik — vyber člena a zobraz jeho accounty
         card.setOnMouseClicked(e -> selectMember(member));
@@ -353,7 +352,7 @@ public class FamilyManagementController {
             Optional<SavingGoal> goalOpt = ServiceLocator.getAccountService().getSavingGoal(account.getId());
             if (goalOpt.isPresent()) {
                 SavingGoal goal = goalOpt.get();
-                editSavingGoalField.setText(String.format("%.2f", goal.getTargetAmount()));
+                editSavingGoalField.setText(String.format("%.2f", CurrencyFormatUtil.fromEur(goal.getTargetAmount())));
                 editSavingDatePicker.setValue(goal.getTargetDate().toLocalDate());
             } else {
                 editSavingGoalField.clear();
@@ -386,7 +385,7 @@ public class FamilyManagementController {
 
         double goalAmount;
         try {
-            goalAmount = Double.parseDouble(goalText.replace(",", "."));
+            goalAmount = CurrencyFormatUtil.toEur(Double.parseDouble(goalText.replace(",", ".")));
         } catch (NumberFormatException e) {
             showEditSavingModalError("account.error.goal_amount_invalid"); return;
         }
@@ -486,6 +485,40 @@ public class FamilyManagementController {
         if (account.isEmergencyFund()) return Localization.get("dashboard.account.emergency");
         if (account.isSavingAccount()) return Localization.get("dashboard.account.saving");
         return Localization.get("dashboard.account.default");
+    }
+
+    private VBox createMilestoneBadge(MilestoneData m, boolean isSelected) {
+        VBox badge = new VBox(2);
+        badge.setAlignment(Pos.CENTER);
+
+        ImageView icon = new ImageView();
+        String iconPath = "/assets/icons/milestone_level_" + m.getLevel() + ".png";
+        try {
+            icon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
+        } catch (Exception ignored) {}
+        icon.setFitWidth(28); icon.setFitHeight(28); icon.setPreserveRatio(true);
+
+        Label categoryLabel = new Label(Localization.get(getMilestoneCategoryKey(m.getCategory())));
+        categoryLabel.getStyleClass().add(isSelected ? "account-card-desc-active" : "analytics-subtitle");
+        categoryLabel.setStyle("-fx-font-size: 9px;");
+
+        Label levelLabel = new Label("Lv." + m.getLevel());
+        levelLabel.getStyleClass().add(isSelected ? "account-card-title-active" : "account-card-title");
+        levelLabel.setStyle("-fx-font-size: 10px;");
+
+        Tooltip.install(badge, new Tooltip(Localization.get(m.getLevelName())));
+        badge.getChildren().addAll(icon, categoryLabel, levelLabel);
+        return badge;
+    }
+
+    private String getMilestoneCategoryKey(String category) {
+        return switch (category) {
+            case "Saving Master"  -> "profile.milestones.savings_master";
+            case "Budget Keeper"  -> "profile.milestones.budget_keeper";
+            case "Investor"       -> "profile.milestones.investor";
+            case "Smart Spender"  -> "profile.milestones.smart_spender";
+            default               -> category;
+        };
     }
 
     private String formatCurrency(double value) {

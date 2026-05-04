@@ -117,12 +117,12 @@ public class BudgetingController {
     // ============================================================
     private void populateBudgetSetup() {
         if (budgetData == null) return;
-        monthlyIncomeField.setText(formatRaw(budgetData.getMonthlyIncome()));
-        foodField.setText(formatRaw(budgetData.getFood()));
-        rentField.setText(formatRaw(budgetData.getRent()));
-        transportField.setText(formatRaw(budgetData.getTransport()));
-        utilitiesField.setText(formatRaw(budgetData.getUtilities()));
-        otherField.setText(formatRaw(budgetData.getOther()));
+        monthlyIncomeField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getMonthlyIncome())));
+        foodField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getFood())));
+        rentField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getRent())));
+        transportField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getTransport())));
+        utilitiesField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getUtilities())));
+        otherField.setText(formatRaw(CurrencyFormatUtil.fromEur(budgetData.getOther())));
     }
 
     private void setupBudgetSetupListeners() {
@@ -138,12 +138,12 @@ public class BudgetingController {
 
     private void saveBudgetSetup() {
         try {
-            double monthlyIncome = parseDouble(monthlyIncomeField.getText());
-            double food = parseDouble(foodField.getText());
-            double rent = parseDouble(rentField.getText());
-            double transport = parseDouble(transportField.getText());
-            double utilities = parseDouble(utilitiesField.getText());
-            double other = parseDouble(otherField.getText());
+            double monthlyIncome = CurrencyFormatUtil.toEur(parseDouble(monthlyIncomeField.getText()));
+            double food = CurrencyFormatUtil.toEur(parseDouble(foodField.getText()));
+            double rent = CurrencyFormatUtil.toEur(parseDouble(rentField.getText()));
+            double transport = CurrencyFormatUtil.toEur(parseDouble(transportField.getText()));
+            double utilities = CurrencyFormatUtil.toEur(parseDouble(utilitiesField.getText()));
+            double other = CurrencyFormatUtil.toEur(parseDouble(otherField.getText()));
 
             BudgetWarning warning = ServiceLocator.getBudgetService()
                     .saveBudgetSetup(monthlyIncome, food, rent, transport, utilities, other);
@@ -192,7 +192,7 @@ public class BudgetingController {
 
     private void setAllocationRow(TextField amountField, TextField percentField,
                                   double amount, double percent) {
-        amountField.setText(formatRaw(amount));
+        amountField.setText(formatRaw(CurrencyFormatUtil.fromEur(amount)));
         percentField.setText(formatPercent(percent));
     }
 
@@ -201,10 +201,10 @@ public class BudgetingController {
     // ============================================================
     @FXML
     private void handleAllocationEdit() {
-        snapEssential = parseDoubleSafe(essentialAmountField.getText());
-        snapEmergency = parseDoubleSafe(emergencyAmountField.getText());
-        snapSavings = parseDoubleSafe(savingsAmountField.getText());
-        snapToInvest = parseDoubleSafe(toInvestAmountField.getText());
+        snapEssential = CurrencyFormatUtil.toEur(parseDoubleSafe(essentialAmountField.getText()));
+        snapEmergency = CurrencyFormatUtil.toEur(parseDoubleSafe(emergencyAmountField.getText()));
+        snapSavings = CurrencyFormatUtil.toEur(parseDoubleSafe(savingsAmountField.getText()));
+        snapToInvest = CurrencyFormatUtil.toEur(parseDoubleSafe(toInvestAmountField.getText()));
 
         setEditMode(true);
         setupAllocationEditListeners();
@@ -234,10 +234,10 @@ public class BudgetingController {
     @FXML
     private void handleAllocationConfirm() {
         try {
-            double essential = parseDouble(essentialAmountField.getText());
-            double emergency = parseDouble(emergencyAmountField.getText());
-            double savings = parseDouble(savingsAmountField.getText());
-            double toInvest = parseDouble(toInvestAmountField.getText());
+            double essential = CurrencyFormatUtil.toEur(parseDouble(essentialAmountField.getText()));
+            double emergency = CurrencyFormatUtil.toEur(parseDouble(emergencyAmountField.getText()));
+            double savings = CurrencyFormatUtil.toEur(parseDouble(savingsAmountField.getText()));
+            double toInvest = CurrencyFormatUtil.toEur(parseDouble(toInvestAmountField.getText()));
 
             BudgetWarning warning = ServiceLocator.getBudgetService()
                     .saveCustomAllocation(essential, emergency, savings, toInvest);
@@ -294,7 +294,7 @@ public class BudgetingController {
     }
 
     private void setupAllocationEditListeners() {
-        double income = budgetData != null ? budgetData.getMonthlyIncome() : 0;
+        double income = budgetData != null ? CurrencyFormatUtil.fromEur(budgetData.getMonthlyIncome()) : 0;
 
         setupAmountPercentSync(emergencyAmountField, emergencyPercentField, income);
         setupAmountPercentSync(savingsAmountField, savingsPercentField, income);

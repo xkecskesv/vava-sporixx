@@ -64,4 +64,20 @@ public class InMemoryRecurringRuleRepository implements RecurringRuleRepository 
                 .findFirst()
                 .ifPresent(r -> r.setActive(false));
     }
+
+    @Override
+    public void pauseById(int id) {
+        rules.stream()
+                .filter(r -> r.getId() == id)
+                .findFirst()
+                .ifPresent(r -> r.setStatusId(RecurringRule.STATUS_PAUSED_BALANCE));
+    }
+
+    @Override
+    public List<RecurringRule> findVisibleByAccountId(int accountId) {
+        return rules.stream()
+                .filter(r -> r.getAccountId() == accountId && r.isActive())
+                .sorted((a, b) -> a.getNextDueDate().compareTo(b.getNextDueDate()))
+                .collect(Collectors.toList());
+    }
 }

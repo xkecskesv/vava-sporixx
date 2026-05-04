@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Dátový model, ktorý reprezentuje jeden saving goal na saving účte.
+ * Mapuje sa na DB tabuľku 'saving_goals'.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,9 +21,9 @@ public class SavingGoal {
     private int accountId;
     private String name;
     private int goalTypeId;
-    private double targetAmount;   // V UI: 192,000.00
-    private double currentAmount;  // Aktualizuje sa pri transakciách
+    private double targetAmount;
+    private double currentAmount; // Aktualizuje sa pri transakciách
     private LocalDateTime targetDate;
-    private boolean isActive;          // V DB je to integer, ale v Jave to mapujeme na boolean
+    private boolean isActive; // V DB je to integer, ale v Jave to mapujeme na boolean
     private LocalDateTime createdAt;
 }

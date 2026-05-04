@@ -46,35 +46,6 @@ class SettingsServiceTest {
             assertEquals("EUR", service.getCurrencyCode());
         }
 
-        @Test
-        @DisplayName("prázdne repo → upcomingPayments zapnuté")
-        void defaults_upcomingPayments_true() {
-            assertTrue(service.isUpcomingPaymentsEnabled());
-        }
-
-        @Test
-        @DisplayName("prázdne repo → budgetLimitAlerts zapnuté")
-        void defaults_budgetAlerts_true() {
-            assertTrue(service.isBudgetLimitAlertsEnabled());
-        }
-
-        @Test
-        @DisplayName("prázdne repo → savingReminders vypnuté")
-        void defaults_savingReminders_false() {
-            assertFalse(service.isSavingRemindersEnabled());
-        }
-
-        @Test
-        @DisplayName("prázdne repo → savingGoalsUpdates zapnuté")
-        void defaults_savingGoalsUpdates_true() {
-            assertTrue(service.isSavingGoalsUpdatesEnabled());
-        }
-
-        @Test
-        @DisplayName("prázdne repo → achievements zapnuté")
-        void defaults_achievements_true() {
-            assertTrue(service.isAchievementsEnabled());
-        }
     }
 
     // ─── setLanguageCode ──────────────────────────────────────────────────────
@@ -203,63 +174,6 @@ class SettingsServiceTest {
         }
     }
 
-    // ─── Notifikačné prepínače ─────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("Notifikačné prepínače")
-    class Notifications {
-
-        @Test
-        @DisplayName("setUpcomingPaymentsEnabled(false) zmení stav")
-        void upcoming_setFalse_stateChanged() {
-            service.setUpcomingPaymentsEnabled(false);
-            assertFalse(service.isUpcomingPaymentsEnabled());
-        }
-
-        @Test
-        @DisplayName("setUpcomingPaymentsEnabled(true) zmení stav späť")
-        void upcoming_setTrue_stateChanged() {
-            service.setUpcomingPaymentsEnabled(false);
-            service.setUpcomingPaymentsEnabled(true);
-            assertTrue(service.isUpcomingPaymentsEnabled());
-        }
-
-        @Test
-        @DisplayName("setBudgetLimitAlertsEnabled(false) zmení stav")
-        void budget_setFalse_stateChanged() {
-            service.setBudgetLimitAlertsEnabled(false);
-            assertFalse(service.isBudgetLimitAlertsEnabled());
-        }
-
-        @Test
-        @DisplayName("setSavingRemindersEnabled(true) zmení stav")
-        void reminders_setTrue_stateChanged() {
-            service.setSavingRemindersEnabled(true);
-            assertTrue(service.isSavingRemindersEnabled());
-        }
-
-        @Test
-        @DisplayName("setSavingGoalsUpdatesEnabled(false) zmení stav")
-        void goals_setFalse_stateChanged() {
-            service.setSavingGoalsUpdatesEnabled(false);
-            assertFalse(service.isSavingGoalsUpdatesEnabled());
-        }
-
-        @Test
-        @DisplayName("setAchievementsEnabled(false) zmení stav")
-        void achievements_setFalse_stateChanged() {
-            service.setAchievementsEnabled(false);
-            assertFalse(service.isAchievementsEnabled());
-        }
-
-        @Test
-        @DisplayName("prepínač sa persistuje do repo")
-        void notification_persistsToRepo() {
-            service.setUpcomingPaymentsEnabled(false);
-            assertFalse(repo.lastSaved.isUpcomingPaymentsEnabled());
-        }
-    }
-
     // ─── getSettingsSnapshot ──────────────────────────────────────────────────
 
     @Nested
@@ -291,15 +205,6 @@ class SettingsServiceTest {
             assertEquals("sk", snap.getLanguageCode());
         }
 
-        @Test
-        @DisplayName("snapshot obsahuje správne notifikačné hodnoty")
-        void snapshot_containsNotifications() {
-            service.setSavingRemindersEnabled(true);
-            service.setAchievementsEnabled(false);
-            UserSettings snap = service.getSettingsSnapshot();
-            assertTrue(snap.isSavingRemindersEnabled());
-            assertFalse(snap.isAchievementsEnabled());
-        }
     }
 
     // ─── Načítanie z repo pri štarte ──────────────────────────────────────────
@@ -314,19 +219,12 @@ class SettingsServiceTest {
             UserSettings stored = UserSettings.builder()
                     .languageCode("pl")
                     .currencyCode("PLN")
-                    .upcomingPaymentsEnabled(false)
-                    .budgetLimitAlertsEnabled(false)
-                    .savingRemindersEnabled(true)
-                    .savingGoalsUpdatesEnabled(false)
-                    .achievementsEnabled(false)
                     .build();
             InMemorySettingsRepository preloaded = new InMemorySettingsRepository(stored);
             SettingsService svc = new SettingsServiceImpl(preloaded);
 
             assertEquals("pl", svc.getLanguageCode());
             assertEquals("PLN", svc.getCurrencyCode());
-            assertFalse(svc.isUpcomingPaymentsEnabled());
-            assertTrue(svc.isSavingRemindersEnabled());
         }
 
         @Test
@@ -345,10 +243,7 @@ class SettingsServiceTest {
         @DisplayName("neznámy language z repo sa sanitizuje na 'en'")
         void load_unknownLanguageInRepo_sanitized() {
             UserSettings stored = UserSettings.builder()
-                    .languageCode("zz").currencyCode("EUR")
-                    .upcomingPaymentsEnabled(true).budgetLimitAlertsEnabled(true)
-                    .savingRemindersEnabled(false).savingGoalsUpdatesEnabled(true)
-                    .achievementsEnabled(true).build();
+                    .languageCode("zz").currencyCode("EUR").build();
             SettingsService svc = new SettingsServiceImpl(new InMemorySettingsRepository(stored));
             assertEquals("en", svc.getLanguageCode());
         }
@@ -357,10 +252,7 @@ class SettingsServiceTest {
         @DisplayName("neznáma currency z repo sa sanitizuje na 'EUR'")
         void load_unknownCurrencyInRepo_sanitized() {
             UserSettings stored = UserSettings.builder()
-                    .languageCode("en").currencyCode("ZZZ")
-                    .upcomingPaymentsEnabled(true).budgetLimitAlertsEnabled(true)
-                    .savingRemindersEnabled(false).savingGoalsUpdatesEnabled(true)
-                    .achievementsEnabled(true).build();
+                    .languageCode("en").currencyCode("ZZZ").build();
             SettingsService svc = new SettingsServiceImpl(new InMemorySettingsRepository(stored));
             assertEquals("EUR", svc.getCurrencyCode());
         }

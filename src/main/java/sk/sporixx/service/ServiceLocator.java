@@ -87,9 +87,9 @@ public final class ServiceLocator {
 
             recurringRuleService = new RecurringRuleServiceImpl(recurringRuleRepo, transactionService);
 
-            familyService = new FamilyServiceImpl(accountAccessRepo, accountRepo, userRepo, familyRequestRepo, savingGoalRepo);
-
             milestoneService = new MilestoneServiceImpl(reportsService, accountRepo, userRepo, transactionRepo, budgetService);
+
+            familyService = new FamilyServiceImpl(accountAccessRepo, accountRepo, userRepo, familyRequestRepo, savingGoalRepo, milestoneService);
 
         } catch (Exception e) {
             logger.error("FAILED to initialize ServiceLocator!", e);

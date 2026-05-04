@@ -11,6 +11,7 @@ import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.CategoryRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
+import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -246,6 +247,9 @@ public class TransactionServiceImpl implements TransactionService {
         if (amount <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
         }
+        if (amount > ValidationUtil.MAX_AMOUNT) {
+            throw new TransactionException("error.amount_too_large");
+        }
         if (description == null || description.isBlank()) {
             throw new TransactionException("transaction.error.description_required");
         }
@@ -258,7 +262,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Account account = getAccountOrThrow(accountId);
 
-        // Validácia kategórie — len pre štandardné transakcie, nie pre transfer
+        // Validácia kategórie - len pre štandardné transakcie, nie pre transfer
         if (targetAccountId == null && categoryRepository.findById(categoryId).isEmpty()) {
             throw new TransactionException("transaction.error.invalid_category");
         }
@@ -296,6 +300,12 @@ public class TransactionServiceImpl implements TransactionService {
 
         double roundedAmount = Math.round(amount * 100.0) / 100.0;
 
+        double newBalance = Math.round(calculateNewBalance(
+                account.getCurrentBalance(), transactionTypeId, roundedAmount) * 100.0) / 100.0;
+        if (newBalance > ValidationUtil.MAX_AMOUNT || newBalance < ValidationUtil.MIN_BALANCE) {
+            throw new TransactionException("error.balance_limit_exceeded");
+        }
+
         Transaction transaction = Transaction.builder()
                 .accountId(account.getId())
                 .transactionTypeId(transactionTypeId)
@@ -309,9 +319,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
 
         Transaction saved = transactionRepository.save(transaction);
-
-        double newBalance = Math.round(calculateNewBalance(
-                account.getCurrentBalance(), transactionTypeId, roundedAmount) * 100.0) / 100.0;
         updateBalance(account, newBalance);
 
         logger.info("Transaction added: id={}, type={}, amount={}",
@@ -369,6 +376,13 @@ public class TransactionServiceImpl implements TransactionService {
         double newFromBalance = Math.round((fromAccount.getCurrentBalance() - roundedAmount) * 100.0) / 100.0;
         double newToBalance   = Math.round((toAccount.getCurrentBalance()   + roundedAmount) * 100.0) / 100.0;
 
+        if (newFromBalance < ValidationUtil.MIN_BALANCE || newFromBalance > ValidationUtil.MAX_AMOUNT) {
+            throw new TransactionException("error.balance_limit_exceeded");
+        }
+        if (newToBalance > ValidationUtil.MAX_AMOUNT || newToBalance < ValidationUtil.MIN_BALANCE) {
+            throw new TransactionException("error.balance_limit_exceeded");
+        }
+
         // atomický zápis: 2× INSERT + 2× UPDATE balance v jednej SQLite transakcii
         transactionRepository.saveTransfer(expense, income,
                 fromAccount.getId(), newFromBalance,
@@ -406,6 +420,9 @@ public class TransactionServiceImpl implements TransactionService {
         if (updatedTransaction.getAmount() <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
         }
+        if (updatedTransaction.getAmount() > ValidationUtil.MAX_AMOUNT) {
+            throw new TransactionException("error.amount_too_large");
+        }
         if (updatedTransaction.getDescription() == null
                 || updatedTransaction.getDescription().isBlank()) {
             throw new TransactionException("transaction.error.description_required");
@@ -440,6 +457,10 @@ public class TransactionServiceImpl implements TransactionService {
                 newBalance = Math.round((account.getCurrentBalance() - difference) * 100.0) / 100.0;
             }
 
+            if (newBalance > ValidationUtil.MAX_AMOUNT || newBalance < ValidationUtil.MIN_BALANCE) {
+                throw new TransactionException("error.balance_limit_exceeded");
+            }
+
             transactionRepository.update(updatedTransaction);
             updateBalance(account, newBalance);
 
@@ -454,10 +475,6 @@ public class TransactionServiceImpl implements TransactionService {
                         original.getCreatedAt()
                 ).ifPresent(paired -> {
                     double pairedDiff = updatedTransaction.getAmount() - original.getAmount();
-                    paired.setAmount(updatedTransaction.getAmount());
-                    paired.setDescription(updatedTransaction.getDescription());
-                    paired.setCompleteDate(updatedTransaction.getCompleteDate());
-                    transactionRepository.update(paired);
 
                     Account pairedAccount = getAccountOrThrow(paired.getAccountId());
                     double pairedNewBalance;
@@ -466,6 +483,14 @@ public class TransactionServiceImpl implements TransactionService {
                     } else {
                         pairedNewBalance = pairedAccount.getCurrentBalance() - pairedDiff;
                     }
+                    if (pairedNewBalance > ValidationUtil.MAX_AMOUNT || pairedNewBalance < ValidationUtil.MIN_BALANCE) {
+                        throw new TransactionException("error.balance_limit_exceeded");
+                    }
+
+                    paired.setAmount(updatedTransaction.getAmount());
+                    paired.setDescription(updatedTransaction.getDescription());
+                    paired.setCompleteDate(updatedTransaction.getCompleteDate());
+                    transactionRepository.update(paired);
                     updateBalance(pairedAccount, pairedNewBalance);
 
                     if (pairedAccount.isSavingAccount()) {
@@ -602,6 +627,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void updateBalance(Account account, double newBalance) {
+        if (newBalance > ValidationUtil.MAX_AMOUNT || newBalance < ValidationUtil.MIN_BALANCE) {
+            throw new TransactionException("error.balance_limit_exceeded");
+        }
         accountRepository.updateBalance(account.getId(), newBalance);
         account.setCurrentBalance(newBalance);
     }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Dátový model pre účet (Main Account, Emergency Fund, Saving Account).
+ * Dátový model pre účet (Main Account, Emergency Fund, Private Account, Saving Account).
  * Mapuje sa na DB tabuľku 'accounts'.
  */
 @Data

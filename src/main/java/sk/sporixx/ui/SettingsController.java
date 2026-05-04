@@ -2,13 +2,11 @@ package sk.sporixx.ui;
 
 import java.net.URL;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ToggleButton;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SettingsService;
 import sk.sporixx.util.Localization;
@@ -18,14 +16,6 @@ public class SettingsController implements Initializable {
     @FXML private ComboBox<String> languageComboBox;
     @FXML private ComboBox<String> currencyComboBox;
 
-    @FXML private ToggleButton upcomingToggle;
-    @FXML private ToggleButton budgetToggle;
-    @FXML private ToggleButton remindersToggle;
-    @FXML private ToggleButton goalsToggle;
-    @FXML private ToggleButton achievementsToggle;
-
-    private String onText = "On";
-    private String offText = "Off";
     private boolean initializing = true;
 
     private final Map<String, String> languageByLabel = new LinkedHashMap<>();
@@ -43,40 +33,7 @@ public class SettingsController implements Initializable {
         SettingsService settingsService = ServiceLocator.getSettingsService();
         ResourceBundle effectiveResources = resolveResources(resources);
 
-        onText = effectiveResources.getString("settings.value.on");
-        offText = effectiveResources.getString("settings.value.off");
-
         setupGeneralSettings(effectiveResources, settingsService);
-
-        List<ToggleButton> toggles = List.of(
-                upcomingToggle,
-                budgetToggle,
-                remindersToggle,
-                goalsToggle,
-                achievementsToggle
-        );
-
-        upcomingToggle.setSelected(settingsService.isUpcomingPaymentsEnabled());
-        budgetToggle.setSelected(settingsService.isBudgetLimitAlertsEnabled());
-        remindersToggle.setSelected(settingsService.isSavingRemindersEnabled());
-        goalsToggle.setSelected(settingsService.isSavingGoalsUpdatesEnabled());
-        achievementsToggle.setSelected(settingsService.isAchievementsEnabled());
-
-        for (ToggleButton toggle : toggles) {
-            refreshToggleText(toggle);
-            toggle.selectedProperty().addListener((obs, oldValue, newValue) -> refreshToggleText(toggle));
-        }
-
-        upcomingToggle.selectedProperty().addListener((obs, oldValue, newValue) ->
-                settingsService.setUpcomingPaymentsEnabled(newValue));
-        budgetToggle.selectedProperty().addListener((obs, oldValue, newValue) ->
-                settingsService.setBudgetLimitAlertsEnabled(newValue));
-        remindersToggle.selectedProperty().addListener((obs, oldValue, newValue) ->
-                settingsService.setSavingRemindersEnabled(newValue));
-        goalsToggle.selectedProperty().addListener((obs, oldValue, newValue) ->
-                settingsService.setSavingGoalsUpdatesEnabled(newValue));
-        achievementsToggle.selectedProperty().addListener((obs, oldValue, newValue) ->
-                settingsService.setAchievementsEnabled(newValue));
 
         initializing = false;
     }
@@ -163,13 +120,5 @@ public class SettingsController implements Initializable {
                 .orElse(mapping.keySet().iterator().next());
     }
 
-    /**
-     * Updates a toggle button label according to its selected state.
-     *
-     * @param toggle target toggle button
-     */
-    private void refreshToggleText(ToggleButton toggle) {
-        toggle.setText(toggle.isSelected() ? onText : offText);
-    }
 }
 

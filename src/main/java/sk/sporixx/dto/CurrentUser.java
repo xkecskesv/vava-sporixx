@@ -16,7 +16,7 @@ public class CurrentUser {
     private String surname;
     private String email;
     private String gender;
-    private String photoPath;  // môže byť null - nie každý má fotku
+    private String photoPath; // môže byť null - nie každý má fotku
     private Role role;
 
     // XP polia

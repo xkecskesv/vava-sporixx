@@ -53,11 +53,6 @@ public class SettingsServiceImpl implements SettingsService {
         currentSettings = UserSettings.builder()
                 .languageCode(normalizeLanguage(languageCode))
                 .currencyCode(currentSettings.getCurrencyCode())
-                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
-                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
-                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
-                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
-                .achievementsEnabled(currentSettings.isAchievementsEnabled())
                 .build();
         persist();
     }
@@ -72,67 +67,7 @@ public class SettingsServiceImpl implements SettingsService {
         currentSettings = UserSettings.builder()
                 .languageCode(currentSettings.getLanguageCode())
                 .currencyCode(normalizeCurrency(currencyCode))
-                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
-                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
-                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
-                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
-                .achievementsEnabled(currentSettings.isAchievementsEnabled())
                 .build();
-        persist();
-    }
-
-    @Override
-    public boolean isUpcomingPaymentsEnabled() {
-        return currentSettings.isUpcomingPaymentsEnabled();
-    }
-
-    @Override
-    public void setUpcomingPaymentsEnabled(boolean enabled) {
-        currentSettings.setUpcomingPaymentsEnabled(enabled);
-        persist();
-    }
-
-    @Override
-    public boolean isBudgetLimitAlertsEnabled() {
-        return currentSettings.isBudgetLimitAlertsEnabled();
-    }
-
-    @Override
-    public void setBudgetLimitAlertsEnabled(boolean enabled) {
-        currentSettings.setBudgetLimitAlertsEnabled(enabled);
-        persist();
-    }
-
-    @Override
-    public boolean isSavingRemindersEnabled() {
-        return currentSettings.isSavingRemindersEnabled();
-    }
-
-    @Override
-    public void setSavingRemindersEnabled(boolean enabled) {
-        currentSettings.setSavingRemindersEnabled(enabled);
-        persist();
-    }
-
-    @Override
-    public boolean isSavingGoalsUpdatesEnabled() {
-        return currentSettings.isSavingGoalsUpdatesEnabled();
-    }
-
-    @Override
-    public void setSavingGoalsUpdatesEnabled(boolean enabled) {
-        currentSettings.setSavingGoalsUpdatesEnabled(enabled);
-        persist();
-    }
-
-    @Override
-    public boolean isAchievementsEnabled() {
-        return currentSettings.isAchievementsEnabled();
-    }
-
-    @Override
-    public void setAchievementsEnabled(boolean enabled) {
-        currentSettings.setAchievementsEnabled(enabled);
         persist();
     }
 
@@ -141,11 +76,6 @@ public class SettingsServiceImpl implements SettingsService {
         return UserSettings.builder()
                 .languageCode(currentSettings.getLanguageCode())
                 .currencyCode(currentSettings.getCurrencyCode())
-                .upcomingPaymentsEnabled(currentSettings.isUpcomingPaymentsEnabled())
-                .budgetLimitAlertsEnabled(currentSettings.isBudgetLimitAlertsEnabled())
-                .savingRemindersEnabled(currentSettings.isSavingRemindersEnabled())
-                .savingGoalsUpdatesEnabled(currentSettings.isSavingGoalsUpdatesEnabled())
-                .achievementsEnabled(currentSettings.isAchievementsEnabled())
                 .build();
     }
 
@@ -168,11 +98,6 @@ public class SettingsServiceImpl implements SettingsService {
         return UserSettings.builder()
                 .languageCode(normalizeLanguage(settings.getLanguageCode()))
                 .currencyCode(normalizeCurrency(settings.getCurrencyCode()))
-                .upcomingPaymentsEnabled(settings.isUpcomingPaymentsEnabled())
-                .budgetLimitAlertsEnabled(settings.isBudgetLimitAlertsEnabled())
-                .savingRemindersEnabled(settings.isSavingRemindersEnabled())
-                .savingGoalsUpdatesEnabled(settings.isSavingGoalsUpdatesEnabled())
-                .achievementsEnabled(settings.isAchievementsEnabled())
                 .build();
     }
 
@@ -190,11 +115,6 @@ public class SettingsServiceImpl implements SettingsService {
         return UserSettings.builder()
                 .languageCode(DEFAULT_LANGUAGE)
                 .currencyCode(DEFAULT_CURRENCY)
-                .upcomingPaymentsEnabled(true)
-                .budgetLimitAlertsEnabled(true)
-                .savingRemindersEnabled(false)
-                .savingGoalsUpdatesEnabled(true)
-                .achievementsEnabled(true)
                 .build();
     }
 }

@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.Map;
 
+/** DTO pre zobrazenie nastaveného budgetu používateľa.
+ * UI ho používa pri obrazovke budgeting.
+ */
 @Data
 @Builder
 public class BudgetData {

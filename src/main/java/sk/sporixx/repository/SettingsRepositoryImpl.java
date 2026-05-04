@@ -27,12 +27,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 .decimalSeparator(",")
                 .thousandsSeparator(" ")
                 .dateFormat("dd.MM.yyyy")
-                .timeFormat("HH:mm")
-                .upcomingPaymentsEnabled(true)
-                .budgetLimitAlertsEnabled(true)
-                .savingRemindersEnabled(false)
-                .savingGoalsUpdatesEnabled(true)
-                .achievementsEnabled(true);
+                .timeFormat("HH:mm");
 
         String userSql = "SELECT language_code, currency_code FROM users WHERE id = ?";
 
@@ -45,13 +40,6 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 JOIN users u ON u.id = a.owner_user_id
                 WHERE a.owner_user_id = ?
                 LIMIT 1
-                """;
-
-        String notifSql = """
-                SELECT notif_upcoming, notif_budget, notif_reminders,
-                       notif_goals, notif_achievements
-                FROM user_notification_settings
-                WHERE user_id = ?
                 """;
 
         try (Connection conn = getConnection()) {
@@ -78,20 +66,6 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 }
             }
 
-            try (PreparedStatement ps = conn.prepareStatement(notifSql)) {
-                ps.setInt(1, userId);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    builder.upcomingPaymentsEnabled(rs.getInt("notif_upcoming") == 1)
-                            .budgetLimitAlertsEnabled(rs.getInt("notif_budget") == 1)
-                            .savingRemindersEnabled(rs.getInt("notif_reminders") == 1)
-                            .savingGoalsUpdatesEnabled(rs.getInt("notif_goals") == 1)
-                            .achievementsEnabled(rs.getInt("notif_achievements") == 1);
-                } else {
-                    insertDefaultNotifications(conn, userId);
-                }
-            }
-
         } catch (SQLException e) {
             logger.error("Failed to load settings for userId={}, using defaults", userId, e);
         }
@@ -105,30 +79,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
 
         String userSql = "UPDATE users SET language_code = ?, currency_code = ? WHERE id = ?";
 
-        String notifSql = """
-                INSERT INTO user_notification_settings
-                (user_id, notif_upcoming, notif_budget, notif_reminders, notif_goals, notif_achievements)
-                VALUES (?, ?, ?, ?, ?, ?)
-                ON CONFLICT(user_id) DO UPDATE SET
-                    notif_upcoming     = excluded.notif_upcoming,
-                    notif_budget       = excluded.notif_budget,
-                    notif_reminders    = excluded.notif_reminders,
-                    notif_goals        = excluded.notif_goals,
-                    notif_achievements = excluded.notif_achievements
-                """;
-
-
         try (Connection conn = getConnection()) {
-
-            try (PreparedStatement ps = conn.prepareStatement(notifSql)) {
-                ps.setInt(1, userId);
-                ps.setInt(2, settings.isUpcomingPaymentsEnabled() ? 1 : 0);
-                ps.setInt(3, settings.isBudgetLimitAlertsEnabled() ? 1 : 0);
-                ps.setInt(4, settings.isSavingRemindersEnabled() ? 1 : 0);
-                ps.setInt(5, settings.isSavingGoalsUpdatesEnabled() ? 1 : 0);
-                ps.setInt(6, settings.isAchievementsEnabled() ? 1 : 0);
-                ps.executeUpdate();
-            }
 
             try (PreparedStatement psUser = conn.prepareStatement(userSql)) {
                 psUser.setString(1, settings.getLanguageCode());
@@ -137,23 +88,10 @@ public class SettingsRepositoryImpl implements SettingsRepository {
                 psUser.executeUpdate();
             }
 
-            logger.info("Notification and user settings saved for userId={}", userId);
+            logger.info("User settings saved for userId={}", userId);
 
         } catch (SQLException e) {
             logger.error("Failed to save settings for userId={}", userId, e);
-        }
-    }
-
-    private void insertDefaultNotifications(Connection conn, int userId) throws SQLException {
-        String sql = """
-                INSERT OR IGNORE INTO user_notification_settings
-                (user_id, notif_upcoming, notif_budget, notif_reminders, notif_goals, notif_achievements)
-                VALUES (?, 1, 1, 0, 1, 1)
-                """;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-            logger.info("Default notification settings inserted for userId={}", userId);
         }
     }
 }

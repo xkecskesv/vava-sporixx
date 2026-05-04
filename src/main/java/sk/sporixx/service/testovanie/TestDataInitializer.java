@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
  * Dáta zodpovedajú Overview mockupom (Marek Moško).
  *
  * Prihlasovacie údaje:
- *   BEŽNÝ POUŽÍVATEĽ:  marek.mosko@stuba.sk / Heslo123!
- *   ADMIN:             admin@sporixx.sk / Admin123!
- *   RODIČ:             jana.mrkvickova@stuba.sk / Rodic123!
+ *   BEŽNÝ POUŽÍVATEĽ: marek.mosko@stuba.sk / Heslo123!
+ *   ADMIN: admin@sporixx.sk / Admin123!
+ *   RODIČ: jana.mrkvickova@stuba.sk / Rodic123!
  *
  * Kategórie (categoryId):
  *   1 = Clothing
@@ -83,7 +83,7 @@ public class TestDataInitializer {
     private void initTestData() {
         logger.info("=== Inicializácia testovacích dát ===");
 
-        // Systémové kategórie — musia byť prvé, ID musia zodpovedať Transaction konštantám
+        // Systémové kategórie - musia byť prvé, ID musia zodpovedať Transaction konštantám
         categoryRepository.save(Category.builder().userId(null).name("Food").createdAt(LocalDateTime.now()).build());
         categoryRepository.save(Category.builder().userId(null).name("Clothing").createdAt(LocalDateTime.now()).build());
         categoryRepository.save(Category.builder().userId(null).name("Entertainment").createdAt(LocalDateTime.now()).build());
@@ -106,11 +106,7 @@ public class TestDataInitializer {
                 savingGoalRepository.findAll().size());
     }
 
-    // =========================================================================
     //  Bežný používateľ (Marek Moško - podľa Overview mockupov)
-    //  Total balance: €124,256.53
-    //  Main Account: €4,101.32 | Emergency Fund: €31,487.28 | Saving: €88,667.93
-    // =========================================================================
     private void createRegularUser() {
         User savedUser = userRepository.save(User.builder()
                 .firstName("Marek").lastName("Moško")
@@ -119,7 +115,7 @@ public class TestDataInitializer {
                 .gender("M").createdAt(LocalDateTime.of(2026, 1, 15, 10, 0))
                 .build());
 
-        // ---- Účty ----
+        // Účty
         Account mainAccount = accountRepository.save(Account.builder()
                 .ownerUserId(savedUser.getId()).regionId(REGION_SK)
                 .accountTypeId(Account.MAIN_ACCOUNT).defaultCurrencyCode("EUR")
@@ -152,7 +148,7 @@ public class TestDataInitializer {
                 .isActive(true).createdAt(LocalDateTime.of(2026, 3, 1, 8, 0))
                 .build());
 
-        // ---- Saving Goal ----
+        // Saving Goal
         savingGoalRepository.save(SavingGoal.builder()
                 .accountId(savingAccount.getId()).name("Porsche 911")
                 .targetAmount(182_000.00).currentAmount(88_667.93)
@@ -160,7 +156,7 @@ public class TestDataInitializer {
                 .isActive(true).createdAt(LocalDateTime.of(2026, 2, 1, 9, 0))
                 .build());
 
-        // ---- Dnešné transakcie ----
+        // Dnešné transakcie
         LocalDateTime today = LocalDateTime.now().withHour(10).withMinute(0).withSecond(0);
 
         transactionRepository.save(Transaction.builder()
@@ -195,7 +191,7 @@ public class TestDataInitializer {
                 .description("Od babky")
                 .completeDate(today.withHour(9)).createdAt(today.withHour(9)).build());
 
-        // ---- Včerajšie transakcie ----
+        // Včerajšie transakcie
         LocalDateTime yesterday = today.minusDays(1);
 
         transactionRepository.save(Transaction.builder()
@@ -214,7 +210,7 @@ public class TestDataInitializer {
                 .description("ChatGPT sub")
                 .completeDate(yesterday.withHour(15)).createdAt(yesterday.withHour(15)).build());
 
-        // ---- Ďalšie ----
+        // Ďalšie
         transactionRepository.save(Transaction.builder()
                 .accountId(mainAccount.getId())
                 .transactionTypeId(Transaction.TYPE_INCOME)
@@ -223,10 +219,10 @@ public class TestDataInitializer {
                 .description("Len tak")
                 .completeDate(yesterday.withHour(9)).createdAt(yesterday.withHour(9)).build());
 
-        // ---- Historické transakcie za 12 mesiacov ----
+        // Historické transakcie za 12 mesiacov
         createMonthlyData(mainAccount.getId());
 
-        // ---- Recurring rules ----
+        // Recurring rules
         createRecurringRules(mainAccount.getId(), today);
 
         logger.info("Vytvorený USER: {} ({} transakcií, 5 recurring, 1 saving goal)",
@@ -269,18 +265,18 @@ public class TestDataInitializer {
      */
     private void createMonthlyData(int mainAccountId) {
         double[] salaryAmounts = {
-                4_200.00,   // -11 mesiacov
-                3_800.00,   // -10
-                5_100.00,   // -9
-                6_500.00,   // -8
-                4_900.00,   // -7
-                7_200.00,   // -6
-                8_100.00,   // -5
-                6_800.00,   // -4
-                9_500.00,   // -3
-                11_200.00,  // -2
-                8_400.00,   // -1
-                3_200.00    // tento mesiac
+                4_200.00, // -11 mesiacov
+                3_800.00, // -10
+                5_100.00, // -9
+                6_500.00, // -8
+                4_900.00, // -7
+                7_200.00, // -6
+                8_100.00, // -5
+                6_800.00, // -4
+                9_500.00, // -3
+                11_200.00, // -2
+                8_400.00, // -1
+                3_200.00  // tento mesiac
         };
 
         LocalDateTime now = LocalDateTime.now();
@@ -289,7 +285,7 @@ public class TestDataInitializer {
             int monthsAgo = 11 - i;
             LocalDateTime base = now.minusMonths(monthsAgo).withDayOfMonth(15).withHour(12);
 
-            // ── INCOME ──────────────────────────────────────────────
+            // INCOME
             // Salary
             saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
@@ -312,7 +308,7 @@ public class TestDataInitializer {
                         .completeDate(base.withDayOfMonth(20)).createdAt(base.withDayOfMonth(20)).build());
             }
 
-            // ── EXPENSE — NEED ───────────────────────────────────────
+            // EXPENSE - NEED
             // Groceries
             saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
@@ -363,7 +359,7 @@ public class TestDataInitializer {
                     .description("Electricity & Water")
                     .completeDate(base.withDayOfMonth(25)).createdAt(base.withDayOfMonth(25)).build());
 
-            // ── EXPENSE — WANT ───────────────────────────────────────
+            // EXPENSE - WANT
             // GYM membership
             saveIfNotFuture(Transaction.builder()
                     .accountId(mainAccountId)
@@ -507,9 +503,7 @@ public class TestDataInitializer {
                 .build());
     }
 
-    // =========================================================================
     //  Admin
-    // =========================================================================
     private void createAdminUser() {
         if (userRepository.findByEmail("admin@sporixx.sk").isPresent()) {
             logger.info("ADMIN already present in test repository, skipping duplicate seed.");
@@ -535,14 +529,9 @@ public class TestDataInitializer {
         logger.info("Vytvorený ADMIN: {}", savedAdmin.getEmail());
     }
 
-    // =========================================================================
     //  Rodič / Family Manager
-    // =========================================================================
-    // =========================================================================
-//  Rodič / Family Manager
-// =========================================================================
     private void createParentUser() {
-        // ── Rodič 1: Jana Mrkvičková ──
+        // Rodič 1: Jana Mrkvičková
         User savedParent1 = userRepository.save(User.builder()
                 .firstName("Jana").lastName("Mrkvičková")
                 .email("jana.mrkvickova@stuba.sk")
@@ -577,7 +566,7 @@ public class TestDataInitializer {
 
         logger.info("Vytvorený PARENT 1: {}", savedParent1.getEmail());
 
-        // ── Rodič 2: Jano Mrkvička ──
+        // Rodič 2: Jano Mrkvička
         User savedParent2 = userRepository.save(User.builder()
                 .firstName("Jano").lastName("Mrkvička")
                 .email("jano.mrkvicka@stuba.sk")

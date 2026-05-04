@@ -224,16 +224,6 @@ class CurrencyServiceTest {
         // ostatné metódy – no-op / default
         @Override public void setLanguageCode(String c) {}
         @Override public void setCurrencyCode(String c) {}
-        @Override public boolean isUpcomingPaymentsEnabled() { return true; }
-        @Override public void setUpcomingPaymentsEnabled(boolean e) {}
-        @Override public boolean isBudgetLimitAlertsEnabled() { return true; }
-        @Override public void setBudgetLimitAlertsEnabled(boolean e) {}
-        @Override public boolean isSavingRemindersEnabled() { return true; }
-        @Override public void setSavingRemindersEnabled(boolean e) {}
-        @Override public boolean isSavingGoalsUpdatesEnabled() { return true; }
-        @Override public void setSavingGoalsUpdatesEnabled(boolean e) {}
-        @Override public boolean isAchievementsEnabled() { return true; }
-        @Override public void setAchievementsEnabled(boolean e) {}
         @Override public sk.sporixx.dto.UserSettings getSettingsSnapshot() { return null; }
         @Override public void reload() {}
     }

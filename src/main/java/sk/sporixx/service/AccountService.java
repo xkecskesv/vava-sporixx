@@ -16,7 +16,6 @@ public interface AccountService {
 
     /**
      * Vytvorí Saving účet + k nemu SavingGoal.
-     *
      * @param description   popis účtu
      * @param initialAmount počiatočný zostatok
      * @param targetAmount  cieľová suma

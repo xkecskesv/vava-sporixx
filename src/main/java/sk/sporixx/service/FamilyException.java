@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri family managemente.
+ */
 @Getter
 public class FamilyException extends RuntimeException {
 
