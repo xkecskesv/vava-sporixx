@@ -71,10 +71,43 @@
             <version>25</version>
         </dependency>
 
+        <!-- JavaFX natívne knižnice pre všetky platformy (cross-platform fat JAR) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>25</version>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>25</version>
+            <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>25</version>
+            <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>25</version>
+            <classifier>mac-aarch64</classifier>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+
+            <!-- Surefire plugin pre JUnit 5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
 
             <!-- Lombok plugin -->
             <plugin>
@@ -101,7 +134,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>sk.sporixx.Main</mainClass>
+                            <mainClass>sk.sporixx.Launcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -115,7 +148,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>sk.sporixx.Main</mainClass>
+                            <mainClass>sk.sporixx.Launcher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -139,7 +172,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>sk.sporixx.Main</mainClass>
+                    <mainClass>sk.sporixx.Launcher</mainClass>
                     <options>
                         <option>--enable-native-access=javafx.graphics</option>
                         <option>--enable-native-access=ALL-UNNAMED</option>
