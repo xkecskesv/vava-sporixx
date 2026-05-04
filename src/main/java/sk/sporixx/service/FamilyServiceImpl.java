@@ -332,6 +332,9 @@ public class FamilyServiceImpl implements FamilyService {
         if (targetAmount <= 0) {
             throw new FamilyException("family.error.invalid_amount");
         }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new FamilyException("error.amount_too_large");
+        }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new FamilyException("family.error.invalid_date");
         }

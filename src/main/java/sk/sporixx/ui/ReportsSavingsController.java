@@ -333,7 +333,7 @@ public class ReportsSavingsController {
             }
         } catch (Exception e) {
             String message = e.getMessage();
-            if (message != null && message.startsWith("import.error.")) {
+            if (message != null && (message.startsWith("import.error.") || message.startsWith("error."))) {
                 showExportImportError(message);
             } else {
                 showExportImportError("import.error.failed");

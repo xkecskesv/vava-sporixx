@@ -34,7 +34,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
             List<Integer> accountIds = SessionManager.getInstance().getAccountIds();
             List<RecurringRule> all = new ArrayList<>();
             for (int accountId : accountIds) {
-                all.addAll(recurringRuleRepository.findActiveByAccountId(accountId));
+                all.addAll(recurringRuleRepository.findVisibleByAccountId(accountId));
             }
             all.sort(Comparator.comparing(RecurringRule::getNextDueDate));
             return all;
@@ -237,6 +237,7 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
             for (RecurringRule rule : rules) {
                 if (rule.getNextDueDate() == null) continue;
+                if (rule.getStatusId() == RecurringRule.STATUS_PAUSED_BALANCE) continue;
 
                 // všetky zmešklané platby v loop
                 while (!rule.getNextDueDate().isAfter(now)) {
@@ -283,6 +284,20 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                         logger.info("Recurring rule id={} processed, nextDueDate={}",
                                 rule.getId(), nextDueDate);
 
+                    } catch (TransactionException e) {
+                        if ("error.balance_limit_exceeded".equals(e.getMessage())) {
+                            logger.warn("Recurring rule id={} paused — balance limit exceeded",
+                                    rule.getId());
+                            rule.setStatusId(RecurringRule.STATUS_PAUSED_BALANCE);
+                            try {
+                                recurringRuleRepository.pauseById(rule.getId());
+                            } catch (Exception ex) {
+                                logger.error("Failed to persist pause for rule id={}", rule.getId(), ex);
+                            }
+                        } else {
+                            logger.error("Failed to process recurring rule id={}", rule.getId(), e);
+                        }
+                        break;
                     } catch (Exception e) {
                         logger.error("Failed to process recurring rule id={}", rule.getId(), e);
                         break;
@@ -355,6 +370,19 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
                 logger.info("Recurring rule id={} processed immediately, nextDueDate={}",
                         rule.getId(), nextDueDate);
 
+            } catch (TransactionException e) {
+                if ("error.balance_limit_exceeded".equals(e.getMessage())) {
+                    logger.warn("Recurring rule id={} paused — balance limit exceeded", rule.getId());
+                    rule.setStatusId(RecurringRule.STATUS_PAUSED_BALANCE);
+                    try {
+                        recurringRuleRepository.pauseById(rule.getId());
+                    } catch (Exception ex) {
+                        logger.error("Failed to persist pause for rule id={}", rule.getId(), ex);
+                    }
+                } else {
+                    logger.error("Failed to process recurring rule id={} immediately", rule.getId(), e);
+                }
+                break;
             } catch (Exception e) {
                 logger.error("Failed to process recurring rule id={} immediately", rule.getId(), e);
                 break;

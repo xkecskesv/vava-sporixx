@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RecurringRule {
 
+    public static final int STATUS_ACTIVE = 1;
+    public static final int STATUS_PAUSED_BALANCE = 2;
+
     private int id;
     private int accountId;
     private int categoryId;

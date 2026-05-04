@@ -29,6 +29,7 @@ public class LoginController {
         try {
 
             ServiceLocator.getAuthService().login(email, password);
+            ServiceLocator.getRecurringRuleService().processRecurringRules();
             if (SessionManager.getInstance().isAdmin()) {
                 SceneManager.switchTo("admin_panel.fxml");
             } else {
