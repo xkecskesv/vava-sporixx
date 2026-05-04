@@ -20,6 +20,36 @@ import java.util.List;
 
 public class MilestoneServiceImpl implements MilestoneService {
 
+    @Override
+    public List<MilestoneData> getMilestonesFromUser(User user) {
+        return List.of(
+            MilestoneData.builder()
+                .category("Saving Master")
+                .level(user.getSavingLevel())
+                .levelName(getSavingLevelName(user.getSavingLevel()))
+                .xp(user.getSavingXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Budget Keeper")
+                .level(user.getBudgetLevel())
+                .levelName(getBudgetLevelName(user.getBudgetLevel()))
+                .xp(user.getBudgetXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Investor")
+                .level(user.getInvestorLevel())
+                .levelName(getInvestorLevelName(user.getInvestorLevel()))
+                .xp(user.getInvestorXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Smart Spender")
+                .level(user.getSpenderLevel())
+                .levelName(getSmartSpenderLevelName(user.getSpenderLevel()))
+                .xp(user.getSpenderXp())
+                .build()
+        );
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MilestoneServiceImpl.class);
 
     private final ReportsService reportsService;

@@ -17,4 +17,5 @@ public class FamilyMemberData {
     private String photoPath;
     private LocalDateTime grantedAt;
     private List<Account> accounts;
+    private List<MilestoneData> milestones;
 }

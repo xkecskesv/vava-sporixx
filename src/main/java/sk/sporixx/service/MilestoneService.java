@@ -1,8 +1,17 @@
 package sk.sporixx.service;
 
 import sk.sporixx.dto.MilestoneData;
+import sk.sporixx.model.User;
+
+import java.util.List;
 
 public interface MilestoneService {
+
+    /**
+     * Vráti uložené milestones pre daného používateľa bez prepočítavania.
+     * Používa sa pre zobrazenie milestones členov rodiny.
+     */
+    List<MilestoneData> getMilestonesFromUser(User user);
 
     /**
      * Vypočíta Smart Spender level podľa pomeru Want/Need výdavkov.
