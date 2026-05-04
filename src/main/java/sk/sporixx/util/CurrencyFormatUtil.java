@@ -37,4 +37,27 @@ public final class CurrencyFormatUtil {
         double converted = currencyService.convert(amount, fromCurrency, targetCurrency);
         return currencyService.format(converted, targetCurrency);
     }
+
+    /**
+     * Konvertuje sumu zo zadávacej meny používateľa do EUR pre uloženie do DB.
+     * Používa delenie kurzu EUR→userCurrency, čím je zaručená invertovateľnosť
+     * s fromEur() bez ohľadu na prípadnú nekonzistentnosť kurzov v DB.
+     */
+    public static double toEur(double amount) {
+        CurrencyService cs = ServiceLocator.getCurrencyService();
+        String userCurrency = cs.getUserCurrency();
+        if ("EUR".equals(userCurrency)) return amount;
+        double eurToUser = cs.convert(1.0, "EUR", userCurrency);
+        return eurToUser == 0 ? amount : amount / eurToUser;
+    }
+
+    /**
+     * Konvertuje sumu z EUR (uloženú v DB) do meny používateľa pre zobrazenie v inpute.
+     */
+    public static double fromEur(double amount) {
+        CurrencyService cs = ServiceLocator.getCurrencyService();
+        String userCurrency = cs.getUserCurrency();
+        if ("EUR".equals(userCurrency)) return amount;
+        return cs.convert(amount, "EUR", userCurrency);
+    }
 }
