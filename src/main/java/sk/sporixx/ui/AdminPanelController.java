@@ -250,6 +250,7 @@ public class AdminPanelController {
         forcePasswordChangeLabel.setText(Localization.get("admin.password_change_required"));
         usersTitleLabel.setText(Localization.get("admin.users.header"));
         usersSearchField.setPromptText(Localization.get("admin.users.search_placeholder"));
+
         // Column headers are intentionally hidden (empty text is configured in admin_panel.fxml).
 
         firstNameLabel.setText(Localization.get("profile.information.firstName"));
