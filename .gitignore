@@ -44,7 +44,7 @@ replay_pid*
 # =====================
 # Databases / local files
 # =====================
-#*.sqlite
+*.sqlite
 *.db
 
 # =====================
