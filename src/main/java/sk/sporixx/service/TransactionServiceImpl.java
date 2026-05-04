@@ -11,6 +11,7 @@ import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.CategoryRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
+import sk.sporixx.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -246,6 +247,9 @@ public class TransactionServiceImpl implements TransactionService {
         if (amount <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
         }
+        if (amount > ValidationUtil.MAX_AMOUNT) {
+            throw new TransactionException("error.amount_too_large");
+        }
         if (description == null || description.isBlank()) {
             throw new TransactionException("transaction.error.description_required");
         }
@@ -405,6 +409,9 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (updatedTransaction.getAmount() <= 0) {
             throw new TransactionException("transaction.error.invalid_amount");
+        }
+        if (updatedTransaction.getAmount() > ValidationUtil.MAX_AMOUNT) {
+            throw new TransactionException("error.amount_too_large");
         }
         if (updatedTransaction.getDescription() == null
                 || updatedTransaction.getDescription().isBlank()) {
@@ -602,6 +609,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void updateBalance(Account account, double newBalance) {
+        if (newBalance > ValidationUtil.MAX_AMOUNT || newBalance < ValidationUtil.MIN_BALANCE) {
+            throw new TransactionException("error.balance_limit_exceeded");
+        }
         accountRepository.updateBalance(account.getId(), newBalance);
         account.setCurrentBalance(newBalance);
     }

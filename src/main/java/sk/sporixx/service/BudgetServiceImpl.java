@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import sk.sporixx.util.ValidationUtil;
 
 /**
  * Implementácia BudgetService.
@@ -115,6 +116,9 @@ public class BudgetServiceImpl implements BudgetService {
         // validácia
         if (monthlyIncome <= 0) {
             throw new BudgetException("budget.error.invalid_income");
+        }
+        if (monthlyIncome > ValidationUtil.MAX_AMOUNT) {
+            throw new BudgetException("error.amount_too_large");
         }
         if (food < 0 || rent < 0 || transport < 0
                 || utilities < 0 || other < 0) {

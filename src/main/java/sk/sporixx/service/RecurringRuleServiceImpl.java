@@ -3,6 +3,7 @@ package sk.sporixx.service;
 import sk.sporixx.model.RecurringRule;
 import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.RecurringRuleRepository;
+import sk.sporixx.util.ValidationUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,9 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
         if (amount <= 0) {
             throw new RecurringRuleException("recurring.error.invalid_amount");
+        }
+        if (amount > ValidationUtil.MAX_AMOUNT) {
+            throw new RecurringRuleException("error.amount_too_large");
         }
         if (description == null || description.isBlank()) {
             throw new RecurringRuleException("recurring.error.description_required");
@@ -148,6 +152,9 @@ public class RecurringRuleServiceImpl implements RecurringRuleService {
 
         if (amount <= 0) {
             throw new RecurringRuleException("recurring.error.invalid_amount");
+        }
+        if (amount > ValidationUtil.MAX_AMOUNT) {
+            throw new RecurringRuleException("error.amount_too_large");
         }
         if (description == null || description.isBlank()) {
             throw new RecurringRuleException("recurring.error.description_required");

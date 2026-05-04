@@ -65,6 +65,9 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new AccountException("error.amount_too_large");
+        }
         if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");
         }
@@ -150,6 +153,9 @@ public class AccountServiceImpl implements AccountService {
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
         }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new AccountException("error.amount_too_large");
+        }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new AccountException("account.error.goal_date_invalid");
         }
@@ -200,6 +206,9 @@ public class AccountServiceImpl implements AccountService {
         if (initialAmount < 0) {
             throw new AccountException("account.error.negative_amount");
         }
+        if (initialAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new AccountException("error.amount_too_large");
+        }
     }
 
     private Account buildAccount(int accountTypeId, String description,
@@ -232,6 +241,9 @@ public class AccountServiceImpl implements AccountService {
 
         if (targetAmount <= 0) {
             throw new AccountException("account.error.goal_amount_invalid");
+        }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new AccountException("error.amount_too_large");
         }
         if (targetAmount - initialAmount < 0.01) {
             throw new AccountException("account.error.target_below_initial");

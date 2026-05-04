@@ -646,7 +646,7 @@ public class TransactionController {
 
         } catch (Exception e) {
             String msg = e.getMessage();
-            if (msg != null && msg.startsWith("transaction.error.")) {
+            if (msg != null && (msg.startsWith("transaction.error.") || msg.startsWith("error."))) {
                 showModalError(msg);
             } else {
                 showModalError("error.db_error");
