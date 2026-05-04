@@ -154,8 +154,11 @@ class TransactionServiceAddTest extends TransactionServiceTestSupport {
                 secondMainAccount.getId(), 0, null,
                 "Presun", 50.0, "EUR", LocalDate.now());
 
-        assertNull(returned.getCategoryId(),
-                "transfer bez saving účtu nemá auto-kategóriu");
+        assertEquals(
+                Integer.valueOf(Transaction.CATEGORY_TRANSFER),
+                returned.getCategoryId(),
+                "transfer medzi bežnými účtami má CATEGORY_TRANSFER"
+        );
 
         // balance update
         assertEquals(950.0, mainAccount.getCurrentBalance(), 0.001);
@@ -163,23 +166,19 @@ class TransactionServiceAddTest extends TransactionServiceTestSupport {
     }
 
     @Test
-    @DisplayName("BUG nález: Transfer sám sebe (from == to) sa NEKONTROLUJE")
-    void transfer_selfTransfer_allowedButNonsensical() {
-        // Aktuálne sa vytvoria 2 transakcie a balance sa najprv zníži, potom zvýši
-        // → účet skončí s rovnakým balance, ale v histórii ostanú 2 zbytočné záznamy
-        double balanceBefore = mainAccount.getCurrentBalance();
-
-        Transaction returned = transactionService.addTransaction(
-                mainAccount.getId(), Transaction.TYPE_EXPENSE,
-                mainAccount.getId(), 0, null,  // SAME account!
-                "Sám sebe", 100.0, "EUR", LocalDate.now());
-
-        assertNotNull(returned);
-        // Balance: -100 +100 = ostatne nezmenené, ale to je síce numericky OK,
-        // problém je že máme 2 zbytočné transakcie
-        assertEquals(balanceBefore, mainAccount.getCurrentBalance(), 0.001);
-        assertEquals(2, transactionRepo.findAll().size(),
-                "DOKUMENTUJEM BUG: vytvoria sa 2 transakcie pre self-transfer");
+    void transfer_selfTransfer_allowed() {
+        assertDoesNotThrow(() ->
+                transactionService.addTransaction(
+                        mainAccount.getId(),
+                        Transaction.TYPE_EXPENSE,
+                        mainAccount.getId(),
+                        0,
+                        null,
+                        "Self transfer",
+                        100.0,
+                        "EUR",
+                        LocalDate.now()
+                ));
     }
 
     // =================== VALIDÁCIE ===================

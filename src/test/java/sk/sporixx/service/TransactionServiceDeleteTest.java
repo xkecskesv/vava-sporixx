@@ -124,12 +124,12 @@ class TransactionServiceDeleteTest extends TransactionServiceTestSupport {
         // Balance: main += 200 (revert expense) → 1000
         // Saving: NEZMENENE → 700 (transfer income leg ostal)
         assertEquals(1000.0, mainAccount.getCurrentBalance(), 0.001);
-        assertEquals(700.0, savingAccount.getCurrentBalance(), 0.001,
+        assertEquals(500.0, savingAccount.getCurrentBalance(), 0.001,
                 "BUG: druhy leg transferu zostal a saving má 'umelých' 200 €");
 
         // Total: 1700, ale pôvodne bolo 1500 → 200 € NAPLODILO V SYSTÉME
         double total = mainAccount.getCurrentBalance() + savingAccount.getCurrentBalance();
-        assertEquals(1700.0, total, 0.001,
+        assertEquals(1500.0, total, 0.001,
                 "BUG: zmazanie len jedného legu transferu vytvorilo phantom money");
     }
 

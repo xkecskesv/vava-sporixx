@@ -157,7 +157,7 @@ INSERT INTO regions (id, locale_code, decimal_separator, thousands_separator, da
 INSERT INTO account_types (id, name) VALUES (1, 'Main'), (2, 'Emergency'), (3, 'Private'), (4, 'Saving');
 INSERT INTO transaction_type (id, name) VALUES (1, 'INCOME'), (2, 'EXPENSE');
 INSERT INTO transaction_status (id, name) VALUES (1, 'COMPLETED'), (2, 'PENDING');
-INSERT INTO spending_classification (id, name) VALUES (1, 'NEED'), (2, 'WANT');
+INSERT INTO spending_classification (id, name) VALUES (1, 'Needs'), (2, 'Wants');
 
 -- System kategórie (musia mať fixne ID 6 a 7 podľa Transaction.CATEGORY_SAVING / CATEGORY_SAVING_EXPENSE)
 INSERT INTO categories (id, user_id, name) VALUES

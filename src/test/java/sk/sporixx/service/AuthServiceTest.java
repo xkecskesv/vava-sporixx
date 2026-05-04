@@ -1,11 +1,13 @@
 package sk.sporixx.service;
 
 import org.junit.jupiter.api.*;
+import sk.sporixx.dto.UserSettings;
 import sk.sporixx.model.Account;
 import sk.sporixx.model.User;
 import sk.sporixx.model.Role;
 import sk.sporixx.service.testovanie.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,20 +17,65 @@ class AuthServiceTest {
 
     private AuthService authService;
 
+    // ===== STUB: minimálna implementácia SettingsService pre testy =====
+
+    static class StubSettingsService implements SettingsService {
+        @Override public String getLanguageCode() { return "sk"; }
+        @Override public void setLanguageCode(String c) {}
+        @Override public String getCurrencyCode() { return "EUR"; }
+        @Override public void setCurrencyCode(String c) {}
+        @Override public boolean isUpcomingPaymentsEnabled() { return false; }
+        @Override public void setUpcomingPaymentsEnabled(boolean e) {}
+        @Override public boolean isBudgetLimitAlertsEnabled() { return false; }
+        @Override public void setBudgetLimitAlertsEnabled(boolean e) {}
+        @Override public boolean isSavingRemindersEnabled() { return false; }
+        @Override public void setSavingRemindersEnabled(boolean e) {}
+        @Override public boolean isSavingGoalsUpdatesEnabled() { return false; }
+        @Override public void setSavingGoalsUpdatesEnabled(boolean e) {}
+        @Override public boolean isAchievementsEnabled() { return false; }
+        @Override public void setAchievementsEnabled(boolean e) {}
+        @Override public UserSettings getSettingsSnapshot() { return null; }
+        @Override public void reload() {}
+    }
+
+    /**
+     * Inicializuje ServiceLocator s minimálnym stubom SettingsService cez reflexiu.
+     * Obíde požiadavku na plný ServiceLocator.init() bez spustenia celej aplikácie.
+     */
+    private static void initServiceLocatorForTests() throws Exception {
+        Field initializedField = ServiceLocator.class.getDeclaredField("initialized");
+        initializedField.setAccessible(true);
+        initializedField.set(null, true);
+
+        Field settingsField = ServiceLocator.class.getDeclaredField("settingsService");
+        settingsField.setAccessible(true);
+        settingsField.set(null, new StubSettingsService());
+    }
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        initServiceLocatorForTests();
         authService = new AuthServiceImpl(
                 new InMemoryUserRepository(),
                 new InMemoryAccountRepository()
         );
     }
 
-    //  HELPER: "Failing" repozitáre namiesto Mockito
-    //  Dedia z InMemory* a hádžu RuntimeException kde treba
+    @AfterEach
+    void tearDown() throws Exception {
+        SessionManager.getInstance().clearSession();
 
-    /**
-     * UserRepository, ktorý hádže výnimku pri findByEmail.
-     */
+        Field initializedField = ServiceLocator.class.getDeclaredField("initialized");
+        initializedField.setAccessible(true);
+        initializedField.set(null, false);
+
+        Field settingsField = ServiceLocator.class.getDeclaredField("settingsService");
+        settingsField.setAccessible(true);
+        settingsField.set(null, null);
+    }
+
+    // ===== HELPER: "Failing" repozitáre =====
+
     static class FailingFindByEmailUserRepository extends InMemoryUserRepository {
         @Override
         public Optional<User> findByEmail(String email) {
@@ -36,9 +83,6 @@ class AuthServiceTest {
         }
     }
 
-    /**
-     * UserRepository, ktorý hádže výnimku pri save (ale findByEmail funguje normálne).
-     */
     static class FailingSaveUserRepository extends InMemoryUserRepository {
         @Override
         public User save(User user) {
@@ -46,9 +90,6 @@ class AuthServiceTest {
         }
     }
 
-    /**
-     * AccountRepository, ktorý hádže výnimku pri findByOwnerUserId.
-     */
     static class FailingFindAccountsRepository extends InMemoryAccountRepository {
         @Override
         public List<Account> findByOwnerUserId(int userId) {
@@ -56,9 +97,6 @@ class AuthServiceTest {
         }
     }
 
-    /**
-     * AccountRepository, ktorý hádže výnimku pri save (pre zlyhanie vytvorenia default účtov).
-     */
     static class FailingSaveAccountRepository extends InMemoryAccountRepository {
         @Override
         public Account save(Account account) {
@@ -66,7 +104,7 @@ class AuthServiceTest {
         }
     }
 
-    //  REGISTER — základné testy
+    // ===== REGISTER — základné testy =====
 
     @Test
     @DisplayName("Registrácia s platnými údajmi")
@@ -181,7 +219,24 @@ class AuthServiceTest {
         );
     }
 
-    //  REGISTER — DB error testy (bez Mockito, s failing repozitármi)
+    @Test
+    @DisplayName("Registrácia uloží používateľa do repozitára")
+    void register_validInput_userSavedToRepository() throws AuthException {
+        InMemoryUserRepository userRepo = new InMemoryUserRepository();
+        InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
+
+        service.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!");
+
+        Optional<User> saved = userRepo.findByEmail("jan@test.sk");
+        assertTrue(saved.isPresent(), "Používateľ by mal byť uložený v repozitári");
+        assertEquals("Ján", saved.get().getFirstName());
+        assertEquals("Novák", saved.get().getLastName());
+        assertTrue(saved.get().isActive());
+        assertEquals(Role.USER, saved.get().getRole());
+    }
+
+    // ===== REGISTER — DB error testy =====
 
     @Test
     @DisplayName("Registrácia - DB chyba pri kontrole duplicity emailu")
@@ -190,7 +245,6 @@ class AuthServiceTest {
                 new FailingFindByEmailUserRepository(),
                 new InMemoryAccountRepository()
         );
-
         assertThrows(AuthException.class, () ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
         );
@@ -203,7 +257,6 @@ class AuthServiceTest {
                 new FailingSaveUserRepository(),
                 new InMemoryAccountRepository()
         );
-
         assertThrows(AuthException.class, () ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
         );
@@ -216,8 +269,6 @@ class AuthServiceTest {
                 new InMemoryUserRepository(),
                 new FailingSaveAccountRepository()
         );
-
-        // Registrácia by mala prejsť - zlyhanie účtov sa len zaloguje
         assertDoesNotThrow(() ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
         );
@@ -230,16 +281,12 @@ class AuthServiceTest {
                 new InMemoryUserRepository(),
                 new FailingFindAccountsRepository()
         );
-
-        // Registrácia by mala prejsť - auto-login zlyhá, ale registrácia je OK
-        // Pozn: save účtov tiež zlyhá, pretože findByOwnerUserId hádže výnimku,
-        // ale save funguje normálne. Ak potrebujete oddeliť, vytvorte ďalšiu variantu.
         assertDoesNotThrow(() ->
                 failingService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!")
         );
     }
 
-    //  LOGIN — základné testy
+    // ===== LOGIN — základné testy =====
 
     @Test
     @DisplayName("Prihlásenie so správnymi údajmi")
@@ -291,12 +338,9 @@ class AuthServiceTest {
         );
     }
 
-    //  LOGIN — DB error a edge case testy
-
     @Test
     @DisplayName("Prihlásenie - neaktívny účet")
     void login_inactiveAccount_shouldThrow() {
-        // Priamy prístup k InMemory repozitáru — vložíme neaktívneho usera ručne
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
@@ -304,14 +348,14 @@ class AuthServiceTest {
                 .firstName("Ján").lastName("Novák")
                 .email("jan@test.sk")
                 .passwordHash(sk.sporixx.util.PasswordUtil.hashPassword("Heslo123!"))
-                .isActive(false)  // <-- neaktívny!
+                .isActive(false)
                 .build();
         userRepo.save(inactiveUser);
 
-        AuthService serviceWithInactiveUser = new AuthServiceImpl(userRepo, accountRepo);
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
 
         assertThrows(AuthException.class, () ->
-                serviceWithInactiveUser.login("jan@test.sk", "Heslo123!")
+                service.login("jan@test.sk", "Heslo123!")
         );
     }
 
@@ -325,16 +369,20 @@ class AuthServiceTest {
                 .firstName("Ján").lastName("Novák")
                 .email("jan@test.sk")
                 .passwordHash(sk.sporixx.util.PasswordUtil.hashPassword("Heslo123!"))
-                .role(null)  // <-- bez roly
+                .role(null)
                 .isActive(true)
                 .build();
-        userRepo.save(userNoRole);
+        User saved = userRepo.save(userNoRole);
+        accountRepo.save(Account.builder()
+                .ownerUserId(saved.getId())
+                .accountTypeId(Account.MAIN_ACCOUNT)
+                .regionId(1).description("Main")
+                .initialBalance(0.0).currentBalance(0.0)
+                .isActive(true).build());
 
-        AuthService serviceWithNullRole = new AuthServiceImpl(userRepo, accountRepo);
+        AuthService service = new AuthServiceImpl(userRepo, accountRepo);
 
-        assertDoesNotThrow(() ->
-                serviceWithNullRole.login("jan@test.sk", "Heslo123!")
-        );
+        assertDoesNotThrow(() -> service.login("jan@test.sk", "Heslo123!"));
     }
 
     @Test
@@ -344,7 +392,6 @@ class AuthServiceTest {
                 new FailingFindByEmailUserRepository(),
                 new InMemoryAccountRepository()
         );
-
         assertThrows(AuthException.class, () ->
                 failingService.login("jan@test.sk", "Heslo123!")
         );
@@ -352,37 +399,24 @@ class AuthServiceTest {
 
     @Test
     @DisplayName("Prihlásenie - DB chyba pri načítaní účtov")
-    void login_dbErrorOnLoadAccounts_shouldThrow() throws AuthException {
-        // Najprv registrujeme cez normálny repo, potom prihlasujeme cez failing
+    void login_dbErrorOnLoadAccounts_shouldThrow() {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
-
-        User user = User.builder()
+        userRepo.save(User.builder()
                 .firstName("Ján").lastName("Novák")
                 .email("jan@test.sk")
                 .passwordHash(sk.sporixx.util.PasswordUtil.hashPassword("Heslo123!"))
-                .isActive(true)
-                .build();
-        userRepo.save(user);
+                .isActive(true).build());
 
         AuthService failingService = new AuthServiceImpl(
                 userRepo,
                 new FailingFindAccountsRepository()
         );
-
         assertThrows(AuthException.class, () ->
                 failingService.login("jan@test.sk", "Heslo123!")
         );
     }
 
-    //  LOGOUT
-
-    @Test
-    @DisplayName("Odhlásenie prebehne bez chyby")
-    void logout_shouldSucceed() throws AuthException {
-        authService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!");
-        authService.login("jan@test.sk", "Heslo123!");
-        assertDoesNotThrow(() -> authService.logout());
-    }
+    // ===== LOGOUT =====
 
     @Test
     @DisplayName("Odhlásenie bez aktívnej session")
@@ -391,18 +425,15 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Odhlásenie s aktívnou session - pokryje vetvu currentUser != null")
-    void logout_withActiveSession_shouldLogAndClear() throws AuthException {
+    @DisplayName("Odhlásenie s aktívnou session - session je vyčistená")
+    void logout_withActiveSession_shouldClearSession() throws AuthException {
         authService.register("Ján", "Novák", "jan@test.sk", "Heslo123!", "Heslo123!");
         authService.login("jan@test.sk", "Heslo123!");
 
-        // Overíme, že logout prebehne bez chyby (pokrýva if currentUser != null vetvu)
         assertDoesNotThrow(() -> authService.logout());
 
-        // Po logout by opätovný login mal fungovať (session je vyčistená)
-        assertDoesNotThrow(() ->
-                authService.login("jan@test.sk", "Heslo123!")
-        );
+        assertNull(SessionManager.getInstance().getCurrentUserInternal(),
+                "Po odhlásení by mal byť currentUser null");
     }
 
     // ===== ADMIN ACCOUNT TESTY =====
@@ -413,10 +444,8 @@ class AuthServiceTest {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
-        // Konštruktor volá ensureAdminAccountExists()
         new AuthServiceImpl(userRepo, accountRepo);
 
-        // Admin by mal existovať
         Optional<User> admin = userRepo.findByEmail("admin@sporixx.sk");
         assertTrue(admin.isPresent(), "Admin účet by mal byť vytvorený");
         assertEquals(Role.ADMIN, admin.get().getRole());
@@ -429,11 +458,9 @@ class AuthServiceTest {
         InMemoryUserRepository userRepo = new InMemoryUserRepository();
         InMemoryAccountRepository accountRepo = new InMemoryAccountRepository();
 
-        // Prvé volanie vytvorí admina
         new AuthServiceImpl(userRepo, accountRepo);
         Optional<User> firstAdmin = userRepo.findByEmail("admin@sporixx.sk");
 
-        // Druhé volanie by nemalo vytvoriť ďalšieho
         new AuthServiceImpl(userRepo, accountRepo);
         Optional<User> secondAdmin = userRepo.findByEmail("admin@sporixx.sk");
 
