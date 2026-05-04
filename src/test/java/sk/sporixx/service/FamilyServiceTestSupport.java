@@ -5,13 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import sk.sporixx.model.*;
 import sk.sporixx.service.testovanie.*;
 import sk.sporixx.util.PasswordUtil;
+import sk.sporixx.dto.MilestoneData;
+import sk.sporixx.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Spoločný základ pre všetky testy FamilyService.
- */
 abstract class FamilyServiceTestSupport {
 
     protected InMemoryAccountAccessRepository accountAccessRepo;
@@ -19,15 +18,14 @@ abstract class FamilyServiceTestSupport {
     protected InMemoryUserRepository userRepo;
     protected InMemoryFamilyRequestRepository familyRequestRepo;
     protected InMemorySavingGoalRepository savingGoalRepo;
+    protected MilestoneService milestoneService;
     protected FamilyService familyService;
 
-    // Predpripravení používatelia
-    protected User manager;   // FAMILY_MANAGER
-    protected User child;     // USER – dieťa managera
-    protected User child2;    // USER – druhé dieťa
-    protected User stranger;  // USER – cudzí user (nie v rodine)
+    protected User manager;
+    protected User child;
+    protected User child2;
+    protected User stranger;
 
-    // Účty
     protected Account childMainAccount;
     protected Account child2MainAccount;
 
@@ -39,20 +37,34 @@ abstract class FamilyServiceTestSupport {
         familyRequestRepo = new InMemoryFamilyRequestRepository();
         savingGoalRepo    = new InMemorySavingGoalRepository();
 
+        milestoneService = new MilestoneService() {
+            @Override
+            public List<MilestoneData> getMilestonesFromUser(User user) { return List.of(); }
+            @Override
+            public MilestoneData getSavingMasterMilestone() { return null; }
+            @Override
+            public MilestoneData getBudgetKeeperMilestone() { return null; }
+            @Override
+            public MilestoneData getInvestorMilestone() { return null; }
+            @Override
+            public MilestoneData getSmartSpenderMilestone() { return null; }
+            @Override
+            public String getFinancialTitleKey(int totalXp) { return ""; }
+        };
+
         familyService = new FamilyServiceImpl(
                 accountAccessRepo, accountRepo, userRepo,
-                familyRequestRepo, savingGoalRepo);
+                familyRequestRepo, savingGoalRepo,
+                milestoneService);
 
         manager  = saveUser("manager@test.sk", "Jana",  "Mrkvičková", Role.FAMILY_MANAGER);
         child    = saveUser("child@test.sk",   "Marek", "Malý",       Role.USER);
         child2   = saveUser("child2@test.sk",  "Eva",   "Malá",       Role.USER);
         stranger = saveUser("stranger@test.sk", "Cudzí", "User",      Role.USER);
 
-        // child má hlavný účet
         childMainAccount  = giveMainAccount(child.getId());
         child2MainAccount = giveMainAccount(child2.getId());
 
-        // manager má prístup k child's accountu (= child je v rodine)
         accountAccessRepo.grantAccess(manager.getId(), childMainAccount.getId(),
                 Role.USER.getAccessLevel());
 
@@ -63,8 +75,6 @@ abstract class FamilyServiceTestSupport {
     void baseTearDown() {
         SessionManager.getInstance().clearSession();
     }
-
-    // ─── helpers ─────────────────────────────────────────────────────────────
 
     protected User saveUser(String email, String firstName, String lastName, Role role) {
         User u = User.builder()
@@ -133,4 +143,3 @@ abstract class FamilyServiceTestSupport {
         SessionManager.getInstance().clearSession();
     }
 }
-
