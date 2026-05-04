@@ -28,7 +28,7 @@
                             <ColumnConstraints hgrow="ALWAYS" percentWidth="40.0" />
                         </columnConstraints>
 
-                        <!-- Left column: General + Notifications -->
+                        <!-- Left column: General -->
                         <VBox maxHeight="Infinity" spacing="28.0" styleClass="settings-column" GridPane.columnIndex="0" GridPane.vgrow="ALWAYS">
                             <padding>
                                 <Insets bottom="24.0" left="30.0" right="30.0" top="24.0" />
@@ -48,57 +48,6 @@
                                 </VBox>
                             </VBox>
 
-                            <Region prefHeight="30" />
-
-                            <!-- Notifications section -->
-                            <VBox spacing="12.0">
-                                <Label styleClass="settings-section-title" text="%settings.notifications.title" />
-
-                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox maxWidth="320.0" spacing="4.0" HBox.hgrow="ALWAYS">
-                                        <Label styleClass="settings-notification-title" text="%settings.notifications.upcoming.title" />
-                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.upcoming.subtitle" wrapText="true" />
-                                    </VBox>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <ToggleButton fx:id="upcomingToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
-                                </HBox>
-
-                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
-                                        <Label styleClass="settings-notification-title" text="%settings.notifications.budget.title" />
-                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.budget.subtitle" wrapText="true" />
-                                    </VBox>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <ToggleButton fx:id="budgetToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
-                                </HBox>
-
-                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
-                                        <Label styleClass="settings-notification-title" text="%settings.notifications.reminders.title" />
-                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.reminders.subtitle" wrapText="true" />
-                                    </VBox>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <ToggleButton fx:id="remindersToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.off" HBox.hgrow="NEVER" />
-                                </HBox>
-
-                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
-                                        <Label styleClass="settings-notification-title" text="%settings.notifications.goals.title" />
-                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.goals.subtitle" wrapText="true" />
-                                    </VBox>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <ToggleButton fx:id="goalsToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
-                                </HBox>
-
-                                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="settings-notification-row">
-                                    <VBox maxWidth="400.0" spacing="4.0" HBox.hgrow="ALWAYS">
-                                        <Label styleClass="settings-notification-title" text="%settings.notifications.achievements.title" />
-                                        <Label styleClass="settings-notification-subtitle" text="%settings.notifications.achievements.subtitle" wrapText="true" />
-                                    </VBox>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <ToggleButton fx:id="achievementsToggle" maxWidth="170.0" minWidth="65.0" prefHeight="44.0" selected="true" styleClass="settings-switch" text="%settings.value.on" HBox.hgrow="NEVER" />
-                                </HBox>
-                            </VBox>
                             <Region VBox.vgrow="ALWAYS" />
                         </VBox>
 
