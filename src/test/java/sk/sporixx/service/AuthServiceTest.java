@@ -24,16 +24,6 @@ class AuthServiceTest {
         @Override public void setLanguageCode(String c) {}
         @Override public String getCurrencyCode() { return "EUR"; }
         @Override public void setCurrencyCode(String c) {}
-        @Override public boolean isUpcomingPaymentsEnabled() { return false; }
-        @Override public void setUpcomingPaymentsEnabled(boolean e) {}
-        @Override public boolean isBudgetLimitAlertsEnabled() { return false; }
-        @Override public void setBudgetLimitAlertsEnabled(boolean e) {}
-        @Override public boolean isSavingRemindersEnabled() { return false; }
-        @Override public void setSavingRemindersEnabled(boolean e) {}
-        @Override public boolean isSavingGoalsUpdatesEnabled() { return false; }
-        @Override public void setSavingGoalsUpdatesEnabled(boolean e) {}
-        @Override public boolean isAchievementsEnabled() { return false; }
-        @Override public void setAchievementsEnabled(boolean e) {}
         @Override public UserSettings getSettingsSnapshot() { return null; }
         @Override public void reload() {}
     }

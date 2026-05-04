@@ -1,4 +1,4 @@
-package sk.stuba.fiit.sporixx;
+package sk.sporixx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
