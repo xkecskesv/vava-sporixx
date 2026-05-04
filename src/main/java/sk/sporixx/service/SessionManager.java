@@ -164,7 +164,7 @@ public class SessionManager {
 
     /**
      * Kontroluje, či prihlásený má aspoň danú úroveň prístupu.
-     * ADMIN(3) > FAMILY_MANAGER(2) > USER(1)
+     * ADMIN(3) -> FAMILY_MANAGER(2) -> USER(1)
      */
     public boolean hasMinimumRole(Role minimumRole) {
         if (currentUser == null || currentUser.getRole() == null) {

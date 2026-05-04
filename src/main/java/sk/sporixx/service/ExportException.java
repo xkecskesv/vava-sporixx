@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri exporte XML.
+ */
 @Getter
 public class ExportException extends RuntimeException {
 

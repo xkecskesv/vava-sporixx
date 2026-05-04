@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri transakciách.
+ */
 @Getter
 public class TransactionException extends RuntimeException {
 

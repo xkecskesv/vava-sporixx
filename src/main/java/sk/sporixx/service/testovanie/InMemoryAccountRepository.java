@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 /**
  * In-memory implementácia AccountRepository pre testovanie bez DB.
  * Dáta sa držia v List-e v pamäti - po reštarte aplikácie sa stratia.
- * Nahradiť JDBC implementáciou keď bude hotová DB vrstva.
  */
 public class InMemoryAccountRepository implements AccountRepository {
 

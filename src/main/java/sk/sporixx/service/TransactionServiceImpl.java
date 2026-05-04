@@ -262,7 +262,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Account account = getAccountOrThrow(accountId);
 
-        // Validácia kategórie — len pre štandardné transakcie, nie pre transfer
+        // Validácia kategórie - len pre štandardné transakcie, nie pre transfer
         if (targetAccountId == null && categoryRepository.findById(categoryId).isEmpty()) {
             throw new TransactionException("transaction.error.invalid_category");
         }

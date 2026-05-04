@@ -43,7 +43,7 @@ public interface TransactionService {
      * Pre TYPE_EXPENSE: balance -= amount
      * Pre Transfer (Transaction Between Accounts):
      *   From Account: balance -= amount
-     *   To Account:   balance += amount
+     *   To Account: balance += amount
      */
     Transaction addTransaction(int accountId,
                                int transactionTypeId,

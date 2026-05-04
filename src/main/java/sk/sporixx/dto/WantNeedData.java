@@ -11,6 +11,7 @@ import lombok.Data;
 public class WantNeedData {
     private double totalWant;
     private double totalNeed;
+
     /** Pre percento v UI */
     private double wantPercentage;
     private double needPercentage;

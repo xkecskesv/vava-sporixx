@@ -11,6 +11,7 @@ import java.util.Map;
 @Data
 @Builder
 public class CategoryExpenseData {
+
     /** Kľúč: názov kategórie, hodnota: suma */
     private Map<String, Double> expenseByCategory;
 

@@ -86,7 +86,7 @@ public class AccountServiceImpl implements AccountService {
 
         SavingGoal goal = SavingGoal.builder()
                 .accountId(saved.getId())
-                .name(description)        // description ako goalName
+                .name(description) // description ako goalName
                 .targetAmount(targetAmount)
                 .currentAmount(initialAmount)
                 .targetDate(targetDate.atStartOfDay())
