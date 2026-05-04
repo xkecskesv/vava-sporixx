@@ -449,10 +449,13 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndDay(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
+        transactionRepository.sumByTypeAndDay(
+                accountId, Transaction.TYPE_EXPENSE, goal.getCreatedAt())
+                .forEach((day, expense) -> raw.merge(day, -expense, Double::sum));
 
-        double initialBalance = getInitialBalance(accountId);
+        double initialBalance = getInitialBalance(accountId)
+                + getPreCreationNet(accountId, goal.getCreatedAt());
 
-        // doplní chýbajúce dni medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt();
         LocalDateTime until = LocalDateTime.now();
         while (!current.isAfter(until)) {
@@ -467,10 +470,13 @@ public class ReportsServiceImpl implements ReportsService {
         Map<String, Double> raw = new TreeMap<>(
                 transactionRepository.sumByTypeAndMonth(
                         accountId, Transaction.TYPE_INCOME, goal.getCreatedAt()));
+        transactionRepository.sumByTypeAndMonth(
+                accountId, Transaction.TYPE_EXPENSE, goal.getCreatedAt())
+                .forEach((month, expense) -> raw.merge(month, -expense, Double::sum));
 
-        double initialBalance = getInitialBalance(accountId);
+        double initialBalance = getInitialBalance(accountId)
+                + getPreCreationNet(accountId, goal.getCreatedAt());
 
-        // doplní chýbajúce mesiace medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt().withDayOfMonth(1);
         LocalDateTime until = LocalDateTime.now().withDayOfMonth(1);
         while (!current.isAfter(until)) {
@@ -482,18 +488,20 @@ public class ReportsServiceImpl implements ReportsService {
     }
 
     private Map<String, Double> calculateActualByYear(int accountId, SavingGoal goal) {
-        Map<String, Double> monthly = transactionRepository.sumByTypeAndMonth(
+        Map<String, Double> incomeMonthly = transactionRepository.sumByTypeAndMonth(
                 accountId, Transaction.TYPE_INCOME, goal.getCreatedAt());
+        Map<String, Double> expenseMonthly = transactionRepository.sumByTypeAndMonth(
+                accountId, Transaction.TYPE_EXPENSE, goal.getCreatedAt());
 
         Map<String, Double> yearly = new TreeMap<>();
-        monthly.forEach((month, sum) -> {
-            String year = month.substring(0, 4);
-            yearly.merge(year, sum, Double::sum);
-        });
+        incomeMonthly.forEach((month, sum) ->
+                yearly.merge(month.substring(0, 4), sum, Double::sum));
+        expenseMonthly.forEach((month, expense) ->
+                yearly.merge(month.substring(0, 4), -expense, Double::sum));
 
-        double initialBalance = getInitialBalance(accountId);
+        double initialBalance = getInitialBalance(accountId)
+                + getPreCreationNet(accountId, goal.getCreatedAt());
 
-        // doplní chýbajúce roky medzi createdAt a dnes
         LocalDateTime current = goal.getCreatedAt();
         LocalDateTime until = LocalDateTime.now();
         while (!current.isAfter(until)) {
@@ -511,6 +519,22 @@ public class ReportsServiceImpl implements ReportsService {
     private double getInitialBalance(int accountId) {
         Account account = SessionManager.getInstance().getAccountById(accountId);
         return account != null ? account.getInitialBalance() : 0.0;
+    }
+
+    /**
+     * Spočíta čistý efekt (income − expense) všetkých transakcií
+     * zadaných pred vznikom účtu (transaction_date < createdAt).
+     * Výsledok sa pripočíta k initialBalance, takže sa prejaví od prvého bodu grafu.
+     */
+    private double getPreCreationNet(int accountId, LocalDateTime createdAt) {
+        LocalDateTime veryOld = LocalDateTime.of(2000, 1, 1, 0, 0);
+        LocalDateTime justBefore = createdAt.minusSeconds(1);
+        if (!veryOld.isBefore(justBefore)) return 0.0;
+        return transactionRepository.findByAccountIdAndDateRange(accountId, veryOld, justBefore)
+                .stream()
+                .mapToDouble(t -> t.getTransactionTypeId() == Transaction.TYPE_INCOME
+                        ? t.getAmount() : -t.getAmount())
+                .sum();
     }
 
     /**
