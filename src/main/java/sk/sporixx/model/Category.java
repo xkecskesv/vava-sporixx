@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Datový model pre kategóriu transakcie.
- * * Kategória môže byť:
- *  * - systémová (userId = null) - default kategórie pre všetkých
- *  * - používateľská (userId = konkrétny user) - vlastné kategórie
+ * Dátový model pre kategóriu transakcie.
+ * Kategória môže byť:
+ * - systémová (userId = null) - default kategórie pre všetkých
+ * - používateľská (userId = konkrétny user) - vlastné kategórie
  */
 @Data
 @Builder

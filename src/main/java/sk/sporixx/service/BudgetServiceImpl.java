@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import sk.sporixx.util.ValidationUtil;
 
 /**
  * Implementácia BudgetService.
  * Spravuje Budget Setup, Custom Allocation a Emergency Fund.
  * Štandardné percentá (z celého monthlyIncome):
- *   emergency_fund = 10%, savings = 30%, to_invest = 40%, fun_money = 20%
+ * - emergency_fund = 10%, savings = 30%, to_invest = 40%, fun_money = 20%
  * Fallback percentá (zo zvyšku po essential (pri vysokých výdavkoch)):
- *   emergency_fund = 15%, savings = 40%, to_invest = 30%, fun_money = 15%
+ * - emergency_fund = 15%, savings = 40%, to_invest = 30%, fun_money = 15%
  */
 public class BudgetServiceImpl implements BudgetService {
 
@@ -116,6 +117,9 @@ public class BudgetServiceImpl implements BudgetService {
         if (monthlyIncome <= 0) {
             throw new BudgetException("budget.error.invalid_income");
         }
+        if (monthlyIncome > ValidationUtil.MAX_AMOUNT) {
+            throw new BudgetException("error.amount_too_large");
+        }
         if (food < 0 || rent < 0 || transport < 0
                 || utilities < 0 || other < 0) {
             throw new BudgetException("budget.error.negative_expense");
@@ -145,7 +149,8 @@ public class BudgetServiceImpl implements BudgetService {
                 Budget budget = Budget.builder()
                         .userId(userId)
                         .monthlyIncome(monthlyIncome)
-                        .food(food).rent(rent)
+                        .food(food)
+                        .rent(rent)
                         .transport(transport)
                         .utilities(utilities).other(other)
                         .essentialExpenses(essentialTotal)

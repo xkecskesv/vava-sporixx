@@ -20,6 +20,36 @@ import java.util.List;
 
 public class MilestoneServiceImpl implements MilestoneService {
 
+    @Override
+    public List<MilestoneData> getMilestonesFromUser(User user) {
+        return List.of(
+            MilestoneData.builder()
+                .category("Saving Master")
+                .level(user.getSavingLevel())
+                .levelName(getSavingLevelName(user.getSavingLevel()))
+                .xp(user.getSavingXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Budget Keeper")
+                .level(user.getBudgetLevel())
+                .levelName(getBudgetLevelName(user.getBudgetLevel()))
+                .xp(user.getBudgetXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Investor")
+                .level(user.getInvestorLevel())
+                .levelName(getInvestorLevelName(user.getInvestorLevel()))
+                .xp(user.getInvestorXp())
+                .build(),
+            MilestoneData.builder()
+                .category("Smart Spender")
+                .level(user.getSpenderLevel())
+                .levelName(getSmartSpenderLevelName(user.getSpenderLevel()))
+                .xp(user.getSpenderXp())
+                .build()
+        );
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MilestoneServiceImpl.class);
 
     private final ReportsService reportsService;
@@ -82,21 +112,21 @@ public class MilestoneServiceImpl implements MilestoneService {
     }
 
     private int calculateSmartSpenderLevel(double wantPercentage) {
-        if (wantPercentage == 0) return 0;        // žiadne transakcie
-        if (wantPercentage > 70) return 1;        // Impulse Buyer
-        if (wantPercentage > 50) return 2;        // Careful Spender
-        if (wantPercentage > 30) return 3;        // Mindful Spender
-        if (wantPercentage > 10) return 4;        // Disciplined Spender
-        return 5;                                 // Smart Spender
+        if (wantPercentage == 0) return 0; // žiadne transakcie
+        if (wantPercentage > 70) return 1; // Impulse Buyer
+        if (wantPercentage > 50) return 2; // Careful Spender
+        if (wantPercentage > 30) return 3; // Mindful Spender
+        if (wantPercentage > 10) return 4; // Disciplined Spender
+        return 5; // Smart Spender
     }
 
     private double calculateSmartSpenderProgress(double wantPercentage, int level) {
         // progress v rámci aktuálneho levelu (0.0 - 1.0)
         return switch (level) {
-            case 1 -> 1.0 - ((wantPercentage - 70) / 30.0);  // 70-100%
-            case 2 -> 1.0 - ((wantPercentage - 50) / 20.0);  // 50-70%
-            case 3 -> 1.0 - ((wantPercentage - 30) / 20.0);  // 30-50%
-            case 4 -> 1.0 - ((wantPercentage - 10) / 20.0);  // 10-30%
+            case 1 -> 1.0 - ((wantPercentage - 70) / 30.0); // 70-100%
+            case 2 -> 1.0 - ((wantPercentage - 50) / 20.0); // 50-70%
+            case 3 -> 1.0 - ((wantPercentage - 30) / 20.0); // 30-50%
+            case 4 -> 1.0 - ((wantPercentage - 10) / 20.0); // 10-30%
             case 5 -> 1.0;
             default -> 0.0;
         };

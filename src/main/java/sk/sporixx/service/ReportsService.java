@@ -13,7 +13,7 @@ public interface ReportsService {
 
     /**
      * Načíta dáta pre Income vs Expenses líniový graf.
-     * @param period počet mesiacov/týždňov dozadu (zvyčajne 12)
+     * @param period počet mesiacov/týždňov dozadu
      */
     IncomeExpenseData loadIncomeExpenseData(ChartPeriod period);
 

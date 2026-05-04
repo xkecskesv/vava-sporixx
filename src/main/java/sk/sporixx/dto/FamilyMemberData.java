@@ -7,6 +7,10 @@ import sk.sporixx.model.Account;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Uchováva dáta členov rodinky (detí)
+ * Zobrazujú sa vo Family Managemente rodiča
+ */
 @Data
 @Builder
 public class FamilyMemberData {
@@ -17,4 +21,5 @@ public class FamilyMemberData {
     private String photoPath;
     private LocalDateTime grantedAt;
     private List<Account> accounts;
+    private List<MilestoneData> milestones;
 }

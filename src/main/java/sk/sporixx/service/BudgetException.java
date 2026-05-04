@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri budgetingu.
+ */
 @Getter
 public class BudgetException extends RuntimeException {
     private final String messageKey;

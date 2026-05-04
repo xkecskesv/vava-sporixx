@@ -2,6 +2,9 @@ package sk.sporixx.service;
 
 import lombok.Getter;
 
+/**
+ * Výnimka pre chyby pri kategóriách (vytváranie, editovanie).
+ */
 @Getter
 public class CategoryException extends RuntimeException {
 

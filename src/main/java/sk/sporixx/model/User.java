@@ -23,7 +23,7 @@ public class User {
     private String passwordHash;
     private String firstName;
     private String lastName;
-    private String photoPath;   // nullable
+    private String photoPath; // nullable
     private String gender;
     private LocalDateTime createdAt;
 

@@ -292,4 +292,49 @@ public class RecurringRuleRepositoryImpl implements RecurringRuleRepository {
             throw new RuntimeException("Error deactivating recurring rule", e);
         }
     }
+
+    @Override
+    public void pauseById(int id) {
+        String sql = "UPDATE recurring_rules SET status_id = 2 WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            int affected = ps.executeUpdate();
+            if (affected == 0) throw new RuntimeException(
+                    "No recurring rule found to pause with ID: " + id);
+
+            logger.info("Recurring rule paused (balance limit). ID={}", id);
+
+        } catch (SQLException e) {
+            logger.error("Error pausing recurring rule ID={}", id, e);
+            throw new RuntimeException("Error pausing recurring rule", e);
+        }
+    }
+
+    @Override
+    public List<RecurringRule> findVisibleByAccountId(int accountId) {
+        String sql = "SELECT * FROM recurring_rules " +
+                "WHERE account_id = ? AND is_active = 1 " +
+                "ORDER BY next_due_date ASC";
+
+        List<RecurringRule> rules = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, accountId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                rules.add(mapResult(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error finding visible recurring rules for accountId={}", accountId, e);
+            throw new RuntimeException("Error reading recurring rules (findVisibleByAccountId)", e);
+        }
+
+        return rules;
+    }
 }

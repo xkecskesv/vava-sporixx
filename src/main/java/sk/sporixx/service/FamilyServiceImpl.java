@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.sporixx.dto.FamilyMemberData;
 import sk.sporixx.dto.FamilyRequestData;
+import sk.sporixx.dto.MilestoneData;
 import sk.sporixx.model.*;
 import sk.sporixx.repository.*;
 import sk.sporixx.util.ValidationUtil;
@@ -24,17 +25,20 @@ public class FamilyServiceImpl implements FamilyService {
     private final UserRepository userRepository;
     private final FamilyRequestRepository familyRequestRepository;
     private final SavingGoalRepository savingGoalRepository;
+    private final MilestoneService milestoneService;
 
     public FamilyServiceImpl(AccountAccessRepository accountAccessRepository,
                              AccountRepository accountRepository,
                              UserRepository userRepository,
                              FamilyRequestRepository familyRequestRepository,
-                             SavingGoalRepository savingGoalRepository) {
+                             SavingGoalRepository savingGoalRepository,
+                             MilestoneService milestoneService) {
         this.accountAccessRepository = accountAccessRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.familyRequestRepository = familyRequestRepository;
         this.savingGoalRepository = savingGoalRepository;
+        this.milestoneService = milestoneService;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class FamilyServiceImpl implements FamilyService {
         logger.info("Loading family members for managerId={}", managerId);
 
         try {
-            // načíta prístupy k cudzím účtom (nie k vlastným — self-referenčné záznamy pre rolu preskočíme)
+            // načíta prístupy k cudzím účtom (nie k vlastným - self-referenčné záznamy pre rolu preskočíme)
             List<AccountAccess> accesses = accountAccessRepository.findByUserId(managerId);
             if (accesses.isEmpty()) return new ArrayList<>();
 
@@ -80,6 +84,8 @@ public class FamilyServiceImpl implements FamilyService {
                         .findFirst()
                         .orElse(null);
 
+                List<MilestoneData> milestones = milestoneService.getMilestonesFromUser(user);
+
                 result.add(FamilyMemberData.builder()
                         .userId(user.getId())
                         .firstName(user.getFirstName())
@@ -88,6 +94,7 @@ public class FamilyServiceImpl implements FamilyService {
                         .photoPath(user.getPhotoPath())
                         .grantedAt(grantedAt)
                         .accounts(entry.getValue())
+                        .milestones(milestones)
                         .build());
             }
 
@@ -331,6 +338,9 @@ public class FamilyServiceImpl implements FamilyService {
         }
         if (targetAmount <= 0) {
             throw new FamilyException("family.error.invalid_amount");
+        }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT) {
+            throw new FamilyException("error.amount_too_large");
         }
         if (targetDate == null || targetDate.isBefore(LocalDate.now())) {
             throw new FamilyException("family.error.invalid_date");

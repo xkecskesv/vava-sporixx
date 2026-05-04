@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * Reprezentuje finančnú transakciu (príjem, výdavok, investment).
- * Ak je to transakcia medzi účtami (saving, saving_expense)
+ * Ak je to transakcia medzi saving účtami (saving, saving_expense),
+ * transakcia medzi účtami (transfer).
  */
 @Data
 @Builder
@@ -19,11 +20,11 @@ public class Transaction {
 
     private int id;
     private int accountId;
-    private Integer targetAccountId;    // nullable - len pre prevody medzi účtami
+    private Integer targetAccountId; // nullable - len pre prevody medzi účtami
     private Integer categoryId;
     private int transactionTypeId;
     private int transactionStatusId;
-    private Integer spendingClassificationId;   // nullable - len pre TYPE_EXPENSE
+    private Integer spendingClassificationId; // nullable - len pre TYPE_EXPENSE
     private double amount;
     private String currencyCode;
     private String description;
@@ -34,8 +35,8 @@ public class Transaction {
     public static final int TYPE_INCOME = 1;
     public static final int TYPE_EXPENSE = 2;
 
-    public boolean isIncome()        { return this.transactionTypeId == TYPE_INCOME; }
-    public boolean isExpense()       { return this.transactionTypeId == TYPE_EXPENSE; }
+    public boolean isIncome() { return this.transactionTypeId == TYPE_INCOME; }
+    public boolean isExpense() { return this.transactionTypeId == TYPE_EXPENSE; }
 
     // Spending Classification (DB tabuľka spending_classification)
     public static final int CLASSIFICATION_NEED = 1;
@@ -49,8 +50,8 @@ public class Transaction {
     public static final int STATUS_PENDING = 2;
 
     // System Category IDs - neprebíjateľné používateľom (user_id = null v DB)
-    public static final int CATEGORY_SAVING         = 6;  // main to saving transfer
-    public static final int CATEGORY_SAVING_EXPENSE = 7;  // saving to main transfer
+    public static final int CATEGORY_SAVING = 6; // main to saving transfer
+    public static final int CATEGORY_SAVING_EXPENSE = 7; // saving to main transfer
     public static final int CATEGORY_INVESTMENT = 8;
     public static final int CATEGORY_TRANSFER = 9;
 }

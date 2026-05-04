@@ -39,4 +39,15 @@ public interface RecurringRuleRepository {
     Optional<RecurringRule> findById(int id);
 
     void deactivateById(int id);
+
+    /**
+     * Pozastaví pravidlo kvôli limitu zostatku — is_active ostáva 1, status_id sa nastaví na 2.
+     * Rule zostáva viditeľná v UI, ale nie je spracovávaná.
+     */
+    void pauseById(int id);
+
+    /**
+     * Nájde všetky aktívne aj pozastavené pravidlá pre daný účet (is_active = 1).
+     */
+    List<RecurringRule> findVisibleByAccountId(int accountId);
 }

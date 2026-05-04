@@ -17,9 +17,9 @@ import java.util.Map;
 @Builder
 public class SavingAccountReportData {
     private int accountId;
-    private String accountName;      // description účtu = goalName
-    private double savedUp;          // currentAmount zo SavingGoal
-    private double needToSave;       // targetAmount - currentAmount
+    private String accountName; // description účtu = goalName
+    private double savedUp; // currentAmount zo SavingGoal
+    private double needToSave; // targetAmount - currentAmount
     private double targetAmount;
     private LocalDateTime targetDate;
     private double initialBalance;
@@ -42,10 +42,10 @@ public class SavingAccountReportData {
 
     /**
      * Určuje ako sú dáta zoskupené v grafoch expectedProgress a actualProgress.
-     * "DAY"   — goal kratší ako 3 mesiace → os X zobrazuje dni  ("2026-03-25")
-     * "MONTH" — goal 3 mesiace až 2 roky  → os X zobrazuje mesiace ("2026-03")
-     * "YEAR"  — goal dlhší ako 2 roky     → os X zobrazuje roky ("2026")
+     * "DAY" - goal kratší ako 3 mesiace - os X zobrazuje dni  ("2026-03-25")
+     * "MONTH" - goal 3 mesiace až 2 roky - os X zobrazuje mesiace ("2026-03")
+     * "YEAR" - goal dlhší ako 2 roky - os X zobrazuje roky ("2026")
      * UI controller použije túto hodnotu na správne naformátovanie osi X.
      */
-    private String progressGrouping;  // DAY/MONTH/YEAR
+    private String progressGrouping; // DAY/MONTH/YEAR
 }

@@ -9,18 +9,12 @@ import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.service.SessionManager;
 import sk.sporixx.util.Localization;
 
-/**
- * JavaFX kontrolér pre prihlasovaciu obrazovku.
- */
 public class LoginController {
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
 
-    /**
-     * Spracuje prihlásenie používateľa a presmeruje ho podľa roly.
-     */
     @FXML
     private void handleLogin() {
         String email = emailField.getText().trim();
@@ -29,6 +23,7 @@ public class LoginController {
         try {
 
             ServiceLocator.getAuthService().login(email, password);
+            ServiceLocator.getRecurringRuleService().processRecurringRules();
             if (SessionManager.getInstance().isAdmin()) {
                 SceneManager.switchTo("admin_panel.fxml");
             } else {
@@ -52,7 +47,6 @@ public class LoginController {
 
             errorLabel.setVisible(true);
         } catch (Exception e) {
-            // Login was successful but next UI step failed (e.g. FXML/controller init).
             e.printStackTrace();
             errorLabel.setText(Localization.get("error.unexpected"));
             errorLabel.setVisible(true);

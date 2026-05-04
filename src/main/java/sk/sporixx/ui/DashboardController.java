@@ -716,7 +716,7 @@ public class DashboardController {
 
         } catch (Exception e) {
             String message = e.getMessage();
-            if (message != null && message.startsWith("account.error.")) {
+            if (message != null && (message.startsWith("account.error.") || message.startsWith("error."))) {
                 showModalError(message);
             } else {
                 showModalError("account.error.invalid_type");

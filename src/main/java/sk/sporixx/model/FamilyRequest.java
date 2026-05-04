@@ -3,6 +3,10 @@ package sk.sporixx.model;
 import lombok.*;
 import java.time.LocalDateTime;
 
+/**
+ * Dátový model pre family requests.
+ * Mapuje sa na DB tabuľku 'family_requests'.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,7 +16,7 @@ public class FamilyRequest {
     private int id;
     private int fromUserId;
     private int toUserId;
-    private String status;  // PENDING, ACCEPTED, REJECTED
+    private String status; // PENDING, ACCEPTED, REJECTED
     private LocalDateTime createdAt;
 
     public static final String STATUS_PENDING  = "PENDING";
