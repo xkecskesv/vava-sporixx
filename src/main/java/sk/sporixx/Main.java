@@ -8,6 +8,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import sk.sporixx.service.ServiceLocator;
 import sk.sporixx.ui.SceneManager;
+import sk.sporixx.util.DatabaseInitializer;
 import sk.sporixx.util.Localization;
 
 /*DOCASNY MAIN - TREBA HO NAHRADIT NESKOR*/
@@ -18,6 +19,7 @@ public class Main extends Application {
 
         loadFonts();
 
+        DatabaseInitializer.init();
         ServiceLocator.init();
         Localization.setLanguage(ServiceLocator.getSettingsService().getLanguageCode());
 
