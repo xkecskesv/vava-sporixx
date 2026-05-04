@@ -81,8 +81,9 @@ public class CategoryServiceImpl implements CategoryService {
         int userId = SessionManager.getInstance().getCurrentUserId();
 
         List<Category> existing = categoryRepository.findByUserIdOrSystem(userId);
+        String trimmedName = name.trim();
         boolean duplicate = existing.stream()
-                .anyMatch(c -> c.getName().equalsIgnoreCase(name.trim()));
+                .anyMatch(c -> matchesCategoryName(c, trimmedName));
 
         if (duplicate) {
             logger.warn("Category already exists: {}", name);
@@ -133,9 +134,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         List<Category> existing = categoryRepository.findByUserIdOrSystem(userId);
+        String trimmedNewName = newName.trim();
         boolean duplicate = existing.stream()
                 .filter(c -> c.getId() != categoryId)
-                .anyMatch(c -> c.getName().equalsIgnoreCase(newName.trim()));
+                .anyMatch(c -> matchesCategoryName(c, trimmedNewName));
 
         if (duplicate) {
             throw new CategoryException("category.error.already_exists");
@@ -187,6 +189,17 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Failed to delete category id={}", categoryId, e);
             throw new CategoryException("error.db_error", e);
         }
+    }
+
+    private boolean matchesCategoryName(Category category, String input) {
+        if (category.getName().equalsIgnoreCase(input)) return true;
+        if (category.isSystemCategory()) {
+            String key = "category.system." + category.getName().toLowerCase().replace(" ", "_");
+            try {
+                return Localization.get(key).equalsIgnoreCase(input);
+            } catch (Exception ignored) {}
+        }
+        return false;
     }
 
     private Category localizeIfSystem(Category category) {

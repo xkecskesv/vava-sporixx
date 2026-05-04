@@ -484,7 +484,7 @@ public class ManagementController {
             loadAccounts();
         } catch (Exception e) {
             String msg = e.getMessage();
-            showAccountModalError(msg != null && msg.startsWith("account.error.") ? msg : "account.error.invalid_type");
+            showAccountModalError(msg != null && (msg.startsWith("account.error.") || msg.startsWith("error.")) ? msg : "account.error.invalid_type");
         }
     }
 
@@ -620,6 +620,13 @@ public class ManagementController {
         Label freq = new Label(formatFrequency(rule.getFrequencyType(), rule.getFrequencyInterval()));
         freq.getStyleClass().add("activity-type");
         info.getChildren().addAll(name, freq);
+
+        if (rule.getStatusId() == RecurringRule.STATUS_PAUSED_BALANCE) {
+            Label paused = new Label(Localization.get("recurring.paused.balance"));
+            paused.getStyleClass().add("modal-error-label");
+            info.getChildren().add(paused);
+        }
+
         row.getChildren().add(info);
 
         Label amount = new Label("- " + formatCurrency(rule.getAmount()));
@@ -677,7 +684,7 @@ public class ManagementController {
             loadRecurring();
         } catch (Exception e) {
             String msg = e.getMessage();
-            showRecurringError(msg != null && msg.startsWith("recurring.error.") ? msg : "error.db_error");
+            showRecurringError(msg != null && (msg.startsWith("recurring.error.") || msg.startsWith("error.")) ? msg : "error.db_error");
         }
     }
 
@@ -762,7 +769,7 @@ public class ManagementController {
             loadRecurring();
         } catch (Exception e) {
             String msg = e.getMessage();
-            showRecurringModalError(msg != null && msg.startsWith("recurring.error.") ? msg : "error.db_error");
+            showRecurringModalError(msg != null && (msg.startsWith("recurring.error.") || msg.startsWith("error.")) ? msg : "error.db_error");
         }
     }
 

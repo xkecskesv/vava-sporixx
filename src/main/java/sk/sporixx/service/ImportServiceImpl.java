@@ -11,6 +11,7 @@ import sk.sporixx.model.Transaction;
 import sk.sporixx.repository.AccountRepository;
 import sk.sporixx.repository.SavingGoalRepository;
 import sk.sporixx.repository.TransactionRepository;
+import sk.sporixx.util.ValidationUtil;
 import sk.sporixx.util.XmlUtil;
 
 import java.io.File;
@@ -112,6 +113,8 @@ public class ImportServiceImpl implements ImportService {
 
         } catch (ImportException e) {
             throw e;
+        } catch (AccountException e) {
+            throw new ImportException(e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Failed to import saving accounts XML", e);
             throw new ImportException("import.error.failed", e);
@@ -133,6 +136,14 @@ public class ImportServiceImpl implements ImportService {
         }
 
         SavingGoal goal = goals.getFirst();
+
+        if (savedUp > ValidationUtil.MAX_AMOUNT || savedUp < ValidationUtil.MIN_BALANCE) {
+            throw new ImportException("error.balance_limit_exceeded");
+        }
+        if (targetAmount > ValidationUtil.MAX_AMOUNT || targetAmount <= 0) {
+            throw new ImportException("error.amount_too_large");
+        }
+
         savingGoalRepository.updateCurrentAmount(goal.getId(), savedUp);
         savingGoalRepository.updateTargetAmount(goal.getId(), targetAmount);
 
@@ -228,7 +239,7 @@ public class ImportServiceImpl implements ImportService {
             int categoryId = (int) parseDouble(txEl.getAttribute("categoryId"), 0);
             String currencyCode = txEl.getAttribute("currencyCode");
 
-            if (amount <= 0) continue;
+            if (amount <= 0 || amount > ValidationUtil.MAX_AMOUNT) continue;
 
             LocalDateTime date = parseDateTime(dateStr);
 

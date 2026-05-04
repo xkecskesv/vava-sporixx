@@ -79,6 +79,12 @@ public final class ValidationUtil {
     /** Heslo: minimálne 8 znakov */
     private static final int MIN_PASSWORD_LENGTH = 8;
 
+    /** Maximálna povolená suma pre transakcie, účty aj ciele */
+    public static final double MAX_AMOUNT = 1000000000.0;
+
+    /** Minimálny povolený zostatok na účte */
+    public static final double MIN_BALANCE = -1000000000.0;
+
     public static boolean isValidPassword(String password) {
         return password != null && password.length() >= MIN_PASSWORD_LENGTH;
     }
