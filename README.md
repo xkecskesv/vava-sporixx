@@ -1,64 +1,108 @@
 # Šporixx
-Desktopová aplikácia na správu osobných financií.
-Vyvinutá v rámci predmetu VAVA 2026, STU FIIT.
+
+Desktopová aplikácia na správu osobných financií.  
+Vyvinutá v rámci predmetu **VAVA 2026**, STU FIIT.
 
 ---
 
-## Nastavenie projektu
+# Návod na spustenie
 
-### Požiadavky
-- Java SE JDK 25
-- IntelliJ IDEA Ultimate
-- Maven (zabudovaný v IntelliJ)
+## Systémové požiadavky
 
----
+- **Java JDK 25**
+- 64-bitový operačný systém (Windows, macOS, Linux)
+- Minimálne rozlíšenie: 1024 × 700
 
-## Vetvy (Branch stratégia)
-
-| Vetva | Účel |
-|---|---|
-| `main` | Finálna, odovzdaná verzia |
-| `develop` | Hlavná vývojová vetva |
-| `feature/xxx` | Vývoj konkrétnej funkcie |
-
-**Nikto nepushuje priamo na `main` ani `develop`.**
-Každá zmena ide cez Pull Request.
+Stiahnutie Java 25: https://jdk.java.net/25/
 
 ---
 
-## Pravidlá code review
+## Spustenie
 
-### Pred otvorením Pull Requestu
-- Kód musí byť otestovaný lokálne – aplikácia nesmie padať
-- Názov PR musí jasne popisovať čo robí, napr. `Pridanie JDBC pre transakcie`
-- PR smeruje vždy do `develop`, nikdy priamo do `main`
-- Jeden PR = jedna funkcionalita, nemiešaj viac vecí dokopy
+Otvor terminál v priečinku kde sa nachádza JAR súbor a spusti:
 
-### Počas code review
-- Každý PR musí schváliť aspoň **1 člen tímu** pred mergnutím
-- Reviewer kontroluje:
-  - Či kód funguje a dáva zmysel
-  - Či sú dodržané konvencie pomenovania (camelCase pre premenné, PascalCase pre triedy)
-  - Či nie sú public polia – všetko cez gettery/settery (alebo Lombok)
-  - Či je prítomné logovanie pri dôležitých akciách
-  - Či nie sú v kóde SQL injekcie (používať prepared statements)
-  - Či nie je zbytočne duplicitný kód (DRY princíp)
+```
+java -jar sporixx-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 
-### Komentáre v PR
-- Komentáre píš konštruktívne – nie "toto je zle" ale "navrhoval/a by som to urobiť takto: ..."
-- Autor PR musí reagovať na každý komentár – buď opraviť alebo vysvetliť prečo nie
-- PR sa merguje až keď sú všetky komentáre vyriešené
-
-### Po mergnutí
-- Feature vetva sa zmaže
-- Autor skontroluje že `develop` funguje správne po merge
+> Dvojklik na JAR súbor nemusí fungovať na všetkých systémoch — použi príkaz vyššie cez terminál.
 
 ---
 
-## Konvencie kódu
+## Časté problémy
 
-- Jazyk kódu: **angličtina** (názvy tried, metód, premenných)
-- Komentáre: slovenčina alebo angličtina
-- Balíčky: `sk.stuba.fiit.sporixx.nazovvrstvy`
-- Na modelové triedy používať **Lombok** (@Data, @Builder...)
-- Každá vrstva v samostatnom balíčku – GUI nesmie pristupovať priamo na DB
+---
+
+### "UnsupportedClassVersionError" alebo aplikácia sa vôbec nespustí
+
+**Príčina:** Máš nainštalovanú staršiu verziu Javy.
+
+**Riešenie:**
+1. Skontroluj verziu Javy: `java -version`
+2. Ak zobrazuje verziu nižšiu ako 25, stiahni Java 25 z https://jdk.java.net/25/
+3. Po inštalácii sa uisti že nová Java je nastavená v PATH
+
+---
+
+### Windows — "Windows protected your PC" (SmartScreen)
+
+**Príčina:** JAR nie je podpísaný plateným certifikátom.
+
+**Riešenie:** Klikni na **"More info"** → **"Run anyway"**
+
+---
+
+### Windows — aplikácia sa otvorí ale hneď spadne / neočakávaná chyba
+
+**Príčina:** Nainštalovaných viac verzií Javy, systém používa nesprávnu.
+
+**Riešenie:** Spusti explicitne s plnou cestou k Java 25:
+```
+"C:\Program Files\Java\jdk-25\bin\java.exe" -jar sporixx-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+Uprav cestu podľa toho kde máš nainštalovaný JDK 25.
+
+---
+
+### macOS — "cannot be opened because it is from an unidentified developer"
+
+**Riešenie (možnosť 1):** Pravý klik na JAR → **Otvoriť** → **Otvoriť** v dialógu.
+
+**Riešenie (možnosť 2):** Prejdi do **Nastavenia systému → Súkromie a bezpečnosť** → scrolluj dole → klikni **"Otvoriť napriek tomu"** vedľa záznamu Sporixx.
+
+---
+
+### Umiestnenie databázy
+
+Pri prvom spustení Sporixx automaticky vytvorí `sporixx.sqlite` v **rovnakom priečinku ako JAR**. Uisti sa že máš práva na zápis v danom priečinku.
+
+Ak presunieš JAR do iného priečinka, databáza sa s ním nepresunie — vytvorí sa nová prázdna databáza.
+
+---
+
+### Predvolené prihlasovacie údaje admina
+
+```
+Email:    admin@sporixx.sk
+Heslo:    Admin123!
+```
+
+> Po prvom prihlásení zmeň heslo admina.
+
+---
+
+# Autori
+
+| Meno               | GitHub |
+|--------------------|---|
+| *David Babiš*      | [@xbabis](https://github.com/xbabis) |
+| *Matúš Béreš*      | [@xberesm](https://github.com/xberesm) |
+| *Štefan Čomor*     | [@xcomor](https://github.com/xcomor) |
+| *Adriana Kaňová*   | [@Adriana603](https://github.com/Adriana603) |
+| *Viktória Kecskés* | [@xkecskesv](https://github.com/xkecskesv) |
+| *Adam Kubaliak*    | [@KubaliakAdam](https://github.com/KubaliakAdam) |
+| *Adela Kudláčová*  | [@adelakudlacova](https://github.com/adelakudlacova) |
+| *Marek Moško*      | [@MrM4r3k](https://github.com/MrM4r3k) |
+| *Adam Pašteka*     | [@Tencobijemuchy](https://github.com/Tencobijemuchy) |
+| *Marek Rakús*      | [@marekrakus03](https://github.com/marekrakus03) |

@@ -1,0 +1,61 @@
+package sk.sporixx.repository;
+
+import sk.sporixx.model.Account;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Rozhranie pre prístup k dátam účtov.
+ */
+public interface AccountRepository {
+
+    /**
+     * Nájde všetky účty používateľa.
+     * SQL: SELECT * FROM accounts WHERE owner_user_id = ? AND is_active = 1
+     *
+     * @param ownerUserId ID vlastníka účtov
+     * @return zoznam AKTÍVNYCH účtov používateľa (Main, Emergency, Saving...)
+     */
+    List<Account> findByOwnerUserId(int ownerUserId);
+
+    /**
+     * Nájde všetky účty používateľa vrátane neaktívnych.
+     */
+    List<Account> findAllByOwnerUserId(int ownerUserId);
+
+    /**
+     * Nájde účet podľa ID.
+     */
+    Optional<Account> findById(int accountId);
+
+    /**
+     * Uloží nový účet do DB.
+     * DÔLEŽITÉ: Po inserte nastaví vygenerované ID na Account objekt.
+     *
+     * @param account objekt s vyplnenými údajmi (bez id)
+     * @return Account s nastaveným ID z DB
+     */
+    Account save(Account account);
+
+    /**
+     * Aktualizuje zostatok na účte.
+     */
+    void updateBalance(int accountId, double newBalance);
+
+    /**
+     * Aktualizuje popis účtu.
+     */
+    void update(Account account);
+
+    /**
+     * Soft delete — nastaví is_active = false.
+     * Main Account a Emergency Fund sa nedajú mazať (kontroluje service vrstva).
+     */
+    void deactivateById(int accountId);
+
+    /**
+     * Znovu aktivuje účet nastavením {@code is_active = true}.
+     */
+    void activateById(int accountId);
+}

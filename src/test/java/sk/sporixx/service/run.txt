@@ -1,0 +1,28 @@
+# =============================================================================
+# Spustenie testov – spúšťaj z ROOT adresára projektu:
+#   cd ~/IdeaProjects/vava-sporixx
+#
+# Ak vidíš "vava-sporixx %" v terminári, si na správnom mieste.
+# =============================================================================
+
+# ============================================================
+# OVERVIEW unit testy – jednotlivo
+# ============================================================
+
+'/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn' \
+  -f pom.xml test \
+  -Dtest="AdminServiceAuthorizationTest,AdminServiceChangeOwnPasswordTest,AdminServiceGetAllUsersTest,AdminServiceIntegrationTest,AdminServiceLifecycleTest,AdminServicePerformanceTest,AdminServiceUpdateUserTest,AuthServicePerformanceTest,AuthServiceTest,BudgetServiceCustomAllocationTest,BudgetServiceLoadDataTest,BudgetServicePerformanceTest,BudgetServiceSaveSetupTest,BudgetServiceScenarioTest,ManagementAccountServiceTest,ManagementCategoryServiceTest,ManagementPerformanceTest,ManagementRecurringRuleServiceTest,OverviewPerformanceTest,OverviewServiceAccountsSummaryTest,OverviewServiceActivitiesTest,OverviewServiceAnalyticsTest,ReportsServiceCategoryExpenseJdbcTest,ReportsServiceCategoryExpenseTest,ReportsServiceIncomeExpenseJdbcTest,ReportsServiceIncomeExpenseTest,ReportsServicePerformanceTest,ReportsServiceRecurringExpenseJdbcTest,ReportsServiceRecurringExpenseTest,ReportsServiceSavingAccountsJdbcTest,ReportsServiceSavingAccountsTest,ReportsServiceWantNeedJdbcTest,ReportsServiceWantNeedTest,TransactionServiceAddTest,TransactionServiceDeleteTest,TransactionServicePerformanceTest,TransactionServiceSearchTest,TransactionServiceUpdateTest"
+
+'/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn' \
+  -f pom.xml test \
+  -Dtest="TransactionServiceUpdateTest"
+
+
+
+# ============================================================
+# PERFORMANCE testy
+# ============================================================
+
+'/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn' \
+  -f pom.xml test \
+  -Dtest="OverviewPerformanceTest,ManagementPerformanceTest,AdminServicePerformanceTest,BudgetServicePerformanceTest,TransactionServicePerformanceTest,ReportsServicePerformanceTest"

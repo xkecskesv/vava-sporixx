@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.AdminPanelController">
+    <center>
+        <VBox spacing="20" styleClass="admin-content">
+            <padding>
+                <Insets bottom="30" left="28" right="28" top="30" />
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label fx:id="titleLabel" styleClass="profile-title" text="Admin Panel" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="logoutButton" onAction="#handleLogout" styleClass="profile-logout-btn" text="Logout" />
+            </HBox>
+
+            <Label fx:id="forcePasswordChangeLabel" managed="false" styleClass="profile-feedback-error" visible="false" wrapText="true" />
+
+            <!-- Main admin card with users list (left) and selected-user editor (right) -->
+            <VBox maxHeight="Infinity" maxWidth="Infinity" styleClass="profile-main-card" VBox.vgrow="ALWAYS">
+                <GridPane hgap="16" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="60" />
+                        <ColumnConstraints percentWidth="40" />
+                    </columnConstraints>
+
+                    <!-- Left column: users table with quick search -->
+                    <VBox maxWidth="Infinity" spacing="10" styleClass="admin-users-card" GridPane.columnIndex="0">
+                        <padding>
+                            <Insets bottom="16" left="16" right="16" top="16" />
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label fx:id="usersTitleLabel" styleClass="profile-section-title" text="%admin.users.header" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="usersSearchField" prefHeight="34" prefWidth="220" promptText="%admin.users.search_placeholder" styleClass="profile-input" />
+                        </HBox>
+                        <TableView fx:id="usersTable" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="nameColumn" prefWidth="170"/>
+                                <TableColumn fx:id="emailColumn" prefWidth="230"/>
+                                <TableColumn fx:id="familyManagerColumn" prefWidth="130"/>
+                                <TableColumn fx:id="activeColumn" prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <Separator orientation="VERTICAL" styleClass="profile-divider" GridPane.columnIndex="0" GridPane.halignment="RIGHT" />
+
+                    <!-- Right column: selected user details and actions -->
+                    <VBox styleClass="profile-management-column" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="24" left="30" right="30" top="24" />
+                        </padding>
+
+                        <!-- Header actions for the selected user -->
+                        <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="8">
+                            <Label styleClass="profile-section-title" text="%admin.selected_user.title" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button fx:id="deactivateButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="30" minHeight="30" onAction="#handleDeactivateUser" styleClass="admin-danger-btn" text="%admin.user.deactivate" />
+                            <Button fx:id="deleteUserButton" onAction="#handleDeleteUser" styleClass="admin-icon-btn">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                        <Image url="@../assets/icons/icon_trashcan.png" />
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                        </HBox>
+
+                        <Region prefHeight="18" />
+
+                        <!-- Profile image preview aligned to the left -->
+                        <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                            <ImageView fx:id="profileImage" fitHeight="150" fitWidth="150" styleClass="profile-avatar-large" />
+                        </HBox>
+
+                        <Region prefHeight="18" />
+
+                        <!-- Editable identity fields -->
+                        <HBox maxWidth="Infinity" spacing="12">
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="firstNameLabel" styleClass="profile-label" text="First Name" />
+                                <TextField fx:id="firstNameField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="John" styleClass="profile-input" />
+                            </VBox>
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="lastNameLabel" styleClass="profile-label" text="Last Name" />
+                                <TextField fx:id="lastNameField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="Doe" styleClass="profile-input" />
+                            </VBox>
+                        </HBox>
+                        <Region prefHeight="8" />
+
+                        <!-- Email and gender row -->
+                        <HBox alignment="CENTER" maxWidth="Infinity" spacing="12">
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="emailLabel" styleClass="profile-label" text="E-mail" />
+                                <TextField fx:id="emailField" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="john.doe@email.com" styleClass="profile-input" />
+                            </VBox>
+                            <VBox maxWidth="Infinity" spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="genderLabel" styleClass="profile-label" text="Gender" />
+                                <ComboBox fx:id="genderComboBox" maxWidth="Infinity" prefHeight="44.0" prefWidth="50.0" promptText="Male / Female / -" styleClass="profile-input" />
+                            </VBox>
+                        </HBox>
+
+                        <Region prefHeight="18" />
+
+                        <!-- Password reset section -->
+                        <VBox spacing="5">
+                            <Label fx:id="oldPasswordLabel" styleClass="profile-label" text="%profile.management.old_password" />
+                            <PasswordField fx:id="oldPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
+                            <Region prefHeight="15" />
+                            <Label fx:id="newPasswordLabel" styleClass="profile-label" text="%profile.management.new_password" />
+                            <PasswordField fx:id="newPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
+                            <Region prefHeight="15" />
+                            <Label fx:id="confirmPasswordLabel" styleClass="profile-label" text="%register.password_confirm" />
+                            <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity" prefHeight="44.0" prefWidth="70.0" promptText="***************" styleClass="profile-input"/>
+                        </VBox>
+
+                        <Label fx:id="passwordFeedbackLabel" managed="false" styleClass="profile-feedback-line" visible="false" wrapText="true" />
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <!-- Bottom actions -->
+                        <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" spacing="8">
+                            <Button fx:id="cancelButton" onAction="#handleCancelEdit" styleClass="admin-secondary-btn" text="%admin.action.cancel" />
+                            <Button fx:id="saveProfileButton" onAction="#handleSaveProfile" styleClass="profile-logout-btn" text="%admin.action.confirm" />
+                        </HBox>
+                        <Label fx:id="profileFeedbackLabel" managed="false" styleClass="profile-feedback-line" visible="false" />
+
+                    </VBox>
+               <rowConstraints>
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

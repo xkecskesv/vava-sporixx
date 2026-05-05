@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane styleClass="settings-root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.sporixx.ui.SettingsController">
+    <!-- Sidebar navigation -->
+    <left>
+        <fx:include source="sidebar.fxml" />
+    </left>
+
+    <!-- Main settings content -->
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="settings-scroll">
+            <VBox maxHeight="Infinity" spacing="20.0" styleClass="settings-page">
+                <padding>
+                    <Insets bottom="32.0" left="28.0" right="28.0" top="32.0" />
+                </padding>
+
+                <Label styleClass="settings-title" text="%settings.title" />
+
+                <!-- Main settings card -->
+                <StackPane maxHeight="Infinity" styleClass="settings-card" VBox.vgrow="ALWAYS">
+                    <GridPane maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="60.0" />
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="40.0" />
+                        </columnConstraints>
+
+                        <!-- Left column: General -->
+                        <VBox maxHeight="Infinity" spacing="28.0" styleClass="settings-column" GridPane.columnIndex="0" GridPane.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="24.0" left="30.0" right="30.0" top="24.0" />
+                            </padding>
+                            <!-- General section -->
+                            <VBox spacing="12.0">
+                                <Label styleClass="settings-section-title" text="%settings.general.title" />
+
+                                <VBox spacing="6.0">
+                                    <Label styleClass="settings-field-label" text="%settings.general.language" />
+                                    <ComboBox fx:id="languageComboBox" prefWidth="220.0" styleClass="settings-combobox" />
+                                </VBox>
+
+                                <VBox spacing="6.0">
+                                    <Label styleClass="settings-field-label" text="%settings.general.currency" />
+                                    <ComboBox fx:id="currencyComboBox" prefWidth="220.0" styleClass="settings-combobox" />
+                                </VBox>
+                            </VBox>
+
+                            <Region VBox.vgrow="ALWAYS" />
+                        </VBox>
+
+                        <!-- Vertical divider between columns -->
+                        <Separator orientation="VERTICAL" styleClass="settings-divider" GridPane.columnIndex="0" GridPane.halignment="RIGHT" />
+
+                        <!-- Right column: About section -->
+                        <VBox maxHeight="Infinity" spacing="10.0" styleClass="settings-column" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                            </padding>
+                            <Label styleClass="settings-section-title" text="%settings.about.title" />
+                            <Label styleClass="settings-about-text" text="%settings.about.version" wrapText="true" />
+                            <Label styleClass="settings-about-text" text="%settings.about.description" wrapText="true" />
+                            <Label styleClass="settings-about-text" text="%settings.about.project" wrapText="true" />
+                            <HBox alignment="CENTER_LEFT" spacing="4.0">
+                                <Label styleClass="settings-about-text" text="%settings.about.icons.prefix" />
+                                <Hyperlink styleClass="settings-about-link" text="%settings.about.icons.link" />
+                            </HBox>
+                            <Region VBox.vgrow="ALWAYS" />
+                        </VBox>
+                  <rowConstraints>
+                     <RowConstraints />
+                  </rowConstraints>
+                    </GridPane>
+                </StackPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
