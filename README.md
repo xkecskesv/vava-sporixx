@@ -1,64 +1,44 @@
 # Šporixx
-Desktopová aplikácia na správu osobných financií.
-Vyvinutá v rámci predmetu VAVA 2026, STU FIIT.
+
+Desktopová aplikácia na správu osobných financií.  
+Vyvinutá v rámci predmetu **VAVA 2026**, STU FIIT.
 
 ---
 
-## Nastavenie projektu
+## Požiadavky
 
-### Požiadavky
 - Java SE JDK 25
-- IntelliJ IDEA Ultimate
-- Maven (zabudovaný v IntelliJ)
 
 ---
 
-## Vetvy (Branch stratégia)
+## Spustenie
 
-| Vetva | Účel |
+### Klonovanie
+
+```bash
+git clone https://github.com/<vas-username>/sporixx.git
+cd sporixx
+```
+
+### Windows / macOS / Linux
+
+```cmd
+java -jar <subor-name>.jar
+```
+
+---
+
+## Autori
+ 
+| Meno | GitHub |
 |---|---|
-| `main` | Finálna, odovzdaná verzia |
-| `develop` | Hlavná vývojová vetva |
-| `feature/xxx` | Vývoj konkrétnej funkcie |
-
-**Nikto nepushuje priamo na `main` ani `develop`.**
-Každá zmena ide cez Pull Request.
-
----
-
-## Pravidlá code review
-
-### Pred otvorením Pull Requestu
-- Kód musí byť otestovaný lokálne – aplikácia nesmie padať
-- Názov PR musí jasne popisovať čo robí, napr. `Pridanie JDBC pre transakcie`
-- PR smeruje vždy do `develop`, nikdy priamo do `main`
-- Jeden PR = jedna funkcionalita, nemiešaj viac vecí dokopy
-
-### Počas code review
-- Každý PR musí schváliť aspoň **1 člen tímu** pred mergnutím
-- Reviewer kontroluje:
-  - Či kód funguje a dáva zmysel
-  - Či sú dodržané konvencie pomenovania (camelCase pre premenné, PascalCase pre triedy)
-  - Či nie sú public polia – všetko cez gettery/settery (alebo Lombok)
-  - Či je prítomné logovanie pri dôležitých akciách
-  - Či nie sú v kóde SQL injekcie (používať prepared statements)
-  - Či nie je zbytočne duplicitný kód (DRY princíp)
-
-### Komentáre v PR
-- Komentáre píš konštruktívne – nie "toto je zle" ale "navrhoval/a by som to urobiť takto: ..."
-- Autor PR musí reagovať na každý komentár – buď opraviť alebo vysvetliť prečo nie
-- PR sa merguje až keď sú všetky komentáre vyriešené
-
-### Po mergnutí
-- Feature vetva sa zmaže
-- Autor skontroluje že `develop` funguje správne po merge
-
----
-
-## Konvencie kódu
-
-- Jazyk kódu: **angličtina** (názvy tried, metód, premenných)
-- Komentáre: slovenčina alebo angličtina
-- Balíčky: `sk.stuba.fiit.sporixx.nazovvrstvy`
-- Na modelové triedy používať **Lombok** (@Data, @Builder...)
-- Každá vrstva v samostatnom balíčku – GUI nesmie pristupovať priamo na DB
+| *David Babiš* | [@xbabis](https://github.com/xbabis) |
+| *Matúš Béreš* | [@xberesm](https://github.com/xberesm) |
+| *Štefan Čomor* | [@xcomor](https://github.com/xcomor) |
+| *Adriana Kaňová* | [@Adriana603](https://github.com/Adriana603) |
+| *Viktória Kecskés* | [@xkecskesv](https://github.com/xkecskesv) |
+| *Adam Kubaliak* | [@KubaliakAdam](https://github.com/KubaliakAdam) |
+| *Adela Kudláčová* | [@adelakudlacova](https://github.com/adelakudlacova) |
+| *Marek Moško* | [@MrM4r3k](https://github.com/MrM4r3k) |
+| *Adam Pašteka* | [@Tencobijemuchy](https://github.com/Tencobijemuchy) |
+| *Marek Rakúš* | [@marekrakus03](https://github.com/marekrakus03) |
