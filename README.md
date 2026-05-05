@@ -17,6 +17,21 @@ Stiahnutie Java 25: https://jdk.java.net/25/
 
 ---
 
+## Build zo zdrojového kódu
+
+Ak chceš projekt sám zbuildovať, použi Maven s príslušným profilom pre tvoj operačný systém:
+
+| OS | Príkaz |
+|----|--------|
+| macOS (Apple Silicon) | `mvn clean package -P mac-aarch64 -DskipTests` |
+| macOS (Intel) | `mvn clean package -P mac -DskipTests` |
+| Windows | `mvn clean package -P win -DskipTests` |
+| Linux | `mvn clean package -P linux -DskipTests` |
+
+> Po úspešnom builde nájdeš JAR súbor v priečinku `target/`.
+
+---
+
 ## Spustenie
 
 Otvor terminál v priečinku kde sa nachádza JAR súbor a spusti:
